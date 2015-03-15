@@ -2,6 +2,7 @@
 
 angular
     .module('Ironbane', [
+    	'angular-meteor',
         'game.ui',
         'game.game-loop',
         'game.world-root',
@@ -47,7 +48,7 @@ angular
     .run(function ($window, $rootWorld) {
         // TODO: move to directive
         $rootWorld.renderer.setSize(window.innerWidth, window.innerHeight);
-        // document.body.appendChild($rootWorld.renderer.domElement);
+        document.body.appendChild($rootWorld.renderer.domElement);
         $rootWorld.renderer.setClearColorHex(0xd3fff8);
 
         $window.addEventListener('resize', function () {

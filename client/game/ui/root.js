@@ -7,8 +7,7 @@ angular
     .run(function ($state, GameService) {
         'use strict';
 
-        // GameService.start();
+        GameService.start();
 
         $state.go('main-menu.play-mode');
-        // $state.go('play');
     });

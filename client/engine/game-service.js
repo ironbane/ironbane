@@ -20,83 +20,104 @@ angular
 
         'use strict';
 
-        // var createPlayer = function (data) {
-        //     var defaultData = {
-        //         components: {
-        //             // ghost: {
-        //             //     id: data._id,
-        //             //     player: true // this so we don't sync up TODO: don't ghost player
-        //             // },
-        //             quad: {
-        //                 transparent: true,
-        //                 texture: 'images/characters/skin/2.png'
-        //             },
-        //             rigidBody: {
-        //                 shape: {
-        //                     type: 'capsule',
-        //                     width: 0.5,
-        //                     height: 1.0,
-        //                     depth: 0.5,
-        //                     radius: 0.5
+        var mainMenuPanningCamera = null;
+        var getMainMenuPanningCamera = function () {
+        	if (!mainMenuPanningCamera) {
+		        mainMenuPanningCamera = EntityBuilder.build('MainMenuPanningCamera', {
+		            components: {
+		                camera: {
+		                    aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
+		                },
+		                script: {
+		                    scripts: [
+		                        '/scripts/built-in/camera-pan.js'
+		                    ]
+		                }
+		            }
+		        });
+	    	}
 
-        //                     // type: 'sphere',
-        //                     // radius: 0.5
-        //                 },
-        //                 mass: 1,
-        //                 friction: 0.0,
-        //                 restitution: 0,
-        //                 allowSleep: false,
-        //                 lock: {
-        //                     position: {
-        //                         x: false,
-        //                         y: false,
-        //                         z: false
-        //                     },
-        //                     rotation: {
-        //                         x: true,
-        //                         y: true,
-        //                         z: true
-        //                     }
-        //                 }
-        //             },
-        //             collisionReporter: {
+	        return mainMenuPanningCamera;
+        };
 
-        //             },
-        //             light: {
-        //                 type: 'PointLight',
-        //                 color: 0x60511b,
-        //                 distance: 3.5
-        //             },
-        //             health: {
-        //                 max: 5,
-        //                 value: 5
-        //             },
-        //             shadow: {
 
-        //             },
-        //             camera: {
-        //                 aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
-        //             },
-        //             script: {
-        //                 scripts: [
-        //                     '/scripts/built-in/character-controller.js',
-        //                     '/scripts/built-in/character-multicam.js',
-        //                     '/scripts/built-in/sprite-sheet.js',
-        //                 ]
-        //             }
-        //         }
-        //     };
+        var createPlayer = function (data) {
+            var defaultData = {
+                components: {
+                    // ghost: {
+                    //     id: data._id,
+                    //     player: true // this so we don't sync up TODO: don't ghost player
+                    // },
+                    quad: {
+                        transparent: true,
+                        texture: 'images/characters/skin/2.png'
+                    },
+                    rigidBody: {
+                        shape: {
+                            type: 'capsule',
+                            width: 0.5,
+                            height: 1.0,
+                            depth: 0.5,
+                            radius: 0.5
 
-        //     var finalData = angular.extend({}, data, defaultData);
-        //     angular.extend(finalData.components, data.components);
-        //     $log.log('finalData', finalData);
-        //     // TODO: move this to more specific player creation service method
-        //     var player = EntityBuilder.build('Player', finalData);
-        //     $rootWorld.addEntity(player);
+                            // type: 'sphere',
+                            // radius: 0.5
+                        },
+                        mass: 1,
+                        friction: 0.0,
+                        restitution: 0,
+                        allowSleep: false,
+                        lock: {
+                            position: {
+                                x: false,
+                                y: false,
+                                z: false
+                            },
+                            rotation: {
+                                x: true,
+                                y: true,
+                                z: true
+                            }
+                        }
+                    },
+                    collisionReporter: {
 
-        //     $log.log('player ent: ', player);
-        //     return player;
-        // };
+                    },
+                    light: {
+                        type: 'PointLight',
+                        color: 0x60511b,
+                        distance: 3.5
+                    },
+                    health: {
+                        max: 5,
+                        value: 5
+                    },
+                    shadow: {
+
+                    },
+                    camera: {
+                        aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
+                    },
+                    script: {
+                        scripts: [
+                            '/scripts/built-in/character-controller.js',
+                            '/scripts/built-in/character-multicam.js',
+                            '/scripts/built-in/sprite-sheet.js',
+                        ]
+                    }
+                }
+            };
+
+            var finalData = angular.extend({}, data, defaultData);
+            angular.extend(finalData.components, data.components);
+            $log.log('finalData', finalData);
+            // TODO: move this to more specific player creation service method
+            var player = EntityBuilder.build('Player', finalData);
+            $rootWorld.addEntity(player);
+
+            $log.log('player ent: ', player);
+            return player;
+        };
 
         this.start = function () {
             $log.log('game service start!');
@@ -137,58 +158,43 @@ angular
             // }
 
             LevelLoader.load('obstacle-test-course-one').then(function () {
-                // var characterName = FantasyNameGenerator.generateName('mmo'),
-                //     characterSprite = 'images/characters/prefab/' + _.sample(_.range(1, 11)) + '.png';
 
-                // var playerData = {
-                //     handle: characterName,
-                //     components: {
-                //         quad: {
-                //             texture: characterSprite,
-                //             transparent: true
-                //         },
-                //         'name-mesh': {
-                //             text: characterName
-                //         }
-                //     }
-                // };
-
-
-                // createPlayer({
-                //     _id: 'abc123',
-                //     handle: characterName,
-                //     position: [22, 25, -10],
-                //     rotation: [0, Math.PI - 0.4, 0],
-                //     components: {
-                //         quad: {
-                //             texture: characterSprite,
-                //             transparent: true
-                //         },
-                //         'name-mesh': {
-                //             text: characterName
-                //         }
-                //     }
-                // });
-
-
-	            var panCameraData = {
-	                components: {
-	                    camera: {
-	                        aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
-	                    },
-	                    script: {
-	                        scripts: [
-	                            '/scripts/built-in/camera-pan.js'
-	                        ]
-	                    }
-	                }
-	            };
-
-	            var camera = EntityBuilder.build('Player', panCameraData);
-	            $rootWorld.addEntity(camera);
+	            $rootWorld.addEntity(getMainMenuPanningCamera());
 
             }, function (err) {
                 $log.warn('error loading level: ', err);
             });
+        };
+
+
+        this.enterGame = function () {
+
+			$rootWorld.removeEntity(getMainMenuPanningCamera());
+
+            var characterSprite = 'images/characters/prefab/' + _.sample(_.range(1, 11)) + '.png';
+
+            var playerName = 'Player';
+
+            createPlayer({
+                _id: 'abc123',
+                handle: playerName,
+                position: [22, 25, -10],
+                rotation: [0, Math.PI - 0.4, 0],
+                components: {
+                    quad: {
+                        texture: characterSprite,
+                        transparent: true
+                    },
+                    'name-mesh': {
+                        text: playerName
+                    }
+                }
+            });
+        };
+
+        this.leaveGame = function () {
+
+        	$rootWorld.addEntity(mainMenuPanningCamera);
+
         };
     });
