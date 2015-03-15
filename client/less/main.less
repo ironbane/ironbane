@@ -1,0 +1,70 @@
+
+body {
+	margin: 0;
+	padding: 0;
+
+	canvas {
+		display: block;
+	}
+}
+
+.ui-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 0;
+	overflow: visible;
+	width: 100%;
+
+	.logo {
+		text-align: center;
+		img {
+			padding-top: 5%;
+		}
+	}
+
+	.ibutton, .levelbox {
+		border: 3px solid #1f453c;
+		display: block;
+		color: #37ffac;
+		font-family: Verdana;
+		font-size: 19px;
+		font-weight: bold;
+		padding: 5px 0;
+		text-decoration: none;
+		text-shadow: 2px 1px 0 #06452d;
+		width: 200px;
+		background: #357768;
+		margin: 25px auto;
+		&:hover {
+			background-color: #5ba997;
+		}
+	}
+
+	.levelbox {
+		width: 550px;
+		padding: 4px;
+		img {
+			float: left;
+			margin-right: 8px;
+			width: 92px;
+			height: 48px;
+		}
+		&:hover {
+			cursor: pointer;
+		}
+	}
+
+	#debug {
+		position: fixed;
+		right: 0px;
+		bottom: 0px;
+		width: 200px;
+		height: 200px;
+		background-color: rgba(255, 100, 100, 0.5);
+		padding: 5px;
+		font-size: 14px;
+		color: white;
+		// font-weight: bold;
+	}
+}

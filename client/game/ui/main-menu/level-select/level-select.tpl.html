@@ -1,0 +1,9 @@
+<ul>
+    <li ng-repeat="level in levels">
+        <div class="levelbox" ng-click="chooseLevel(level)">
+            <img ng-src="{{ level.thumb }}" alt="{{ level.name }}" />
+            <p>{{ level.name }}</p>
+            <p>{{ level.descr }}</p>
+        </div>
+    </li>
+</ul>
