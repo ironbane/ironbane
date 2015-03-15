@@ -12,7 +12,7 @@ angular.module('components.scene.shadow', ['ces', 'three', 'engine.texture-loade
     .factory('ShadowSystem', function (System, THREE, TextureLoader, $log) {
         'use strict';
 
-        var SHADOW_PATH = 'assets/images/core/shadow.png';
+        var SHADOW_PATH = 'images/core/shadow.png';
 
         var ShadowSystem = System.extend({
             addedToWorld: function (world) {

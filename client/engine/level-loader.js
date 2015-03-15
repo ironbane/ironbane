@@ -24,7 +24,7 @@ angular
             });
             $rootWorld.addEntity(level);
 
-            entitiesTask = $http.get('assets/scene/' + levelId + '/ib-entities.json')
+            entitiesTask = $http.get('scene/' + levelId + '/ib-entities.json')
                 .then(function (response) {
                     var entities = EntityBuilder.load(response.data);
 

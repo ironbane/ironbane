@@ -8,4 +8,5 @@ angular
         'use strict';
 
         $state.go('main-menu.play-mode');
+        // $state.go('play');
     });

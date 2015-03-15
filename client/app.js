@@ -26,14 +26,14 @@ angular
         // define all of the sounds & music for the game
         SoundSystemProvider.setAudioLibraryData({
             theme: {
-                path: 'assets/music/ib_theme',
+                path: 'music/ib_theme',
                 volume: 0.55,
                 loop: true,
                 type: 'music'
             }
         });
 
-        $locationProvider.html5Mode(false);
+        $locationProvider.html5Mode(true);
     })
     .config(function (IbConfigProvider) {
         // Used for input events

@@ -21,7 +21,8 @@ angular
                         'mode': $state.params.mode || 'online'
                     };
                     $log.debug('chooseLevel', level, params);
-                    $state.go('play', params);
+                    // $state.go('play');
+                    // $state.go('main-menu.play-mode');
                 };
             }
         });

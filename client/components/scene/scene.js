@@ -38,7 +38,7 @@ angular
                 var meshTask;
 
                 // Ravenwood is huge, zip it up!
-                meshTask = $http.get('assets/scene/' + component.id + '/ib-world.zip', {
+                meshTask = $http.get('scene/' + component.id + '/ib-world.zip', {
                         responseType: 'arraybuffer'
                     })
                     .then(function (response) {
@@ -48,7 +48,7 @@ angular
                         return worldData;
                     }, function (err) {
                         // likely we don't have a zip file... try raw
-                        return $http.get('assets/scene/' + component.id + '/ib-world.json')
+                        return $http.get('scene/' + component.id + '/ib-world.json')
                             .then(function (response) {
                                 return response.data;
                             }, $q.reject); // TODO: handle errors here
@@ -61,7 +61,7 @@ angular
 
                         var originalMats = data.materials[0].materials;
                         var loadTexture = function (texName, material, geometry) {
-                            return TextureLoader.load('assets/scene/' + component.id + '/' + texName + '.png')
+                            return TextureLoader.load('scene/' + component.id + '/' + texName + '.png')
                                 .then(function (texture) {
                                     material.map = texture;
                                     material.needsUpdate = true;

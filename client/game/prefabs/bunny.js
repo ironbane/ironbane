@@ -3,7 +3,7 @@ angular.module('game.prefabs.bunny', [])
         components: {
             quad: {
                 transparent: true,
-                texture: 'assets/images/characters/skin/29.png'
+                texture: 'images/characters/skin/29.png'
             },
             rigidBody: {
                 shape: {

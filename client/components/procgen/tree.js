@@ -78,7 +78,7 @@ angular
                         color: 0x875E00
                     }));
 
-                    /*TextureLoader.load('assets/images/trees/' + component.trunkMaterial)
+                    /*TextureLoader.load('images/trees/' + component.trunkMaterial)
                         .then(function (texture) {
                             var material = trunkMesh.material;
                             var geometry = trunkMesh.geometry;
@@ -107,7 +107,7 @@ angular
                         color: 0x00FF00
                     }));
                     /* getting webGL errors...
-                    TextureLoader.load('assets/images/trees/' + component.twigMaterial)
+                    TextureLoader.load('images/trees/' + component.twigMaterial)
                         .then(function (texture) {
                             var material = twigMesh.material;
                             var geometry = twigMesh.geometry;

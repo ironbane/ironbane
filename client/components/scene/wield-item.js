@@ -29,7 +29,7 @@ angular.module('components.scene.wield-item', ['ces', 'three', 'engine.texture-l
                     wieldItem.geometry.dynamic = true;
 
                     if (wieldItemData.item) {
-                        TextureLoader.load('assets/images/items/' + wieldItemData.item + '.png')
+                        TextureLoader.load('images/items/' + wieldItemData.item + '.png')
                             .then(function (texture) {
                                 // texture.needsUpdate = true;
                                 wieldItem.material.map = texture;

@@ -19,7 +19,7 @@ angular.module('game.scripts.spawn-100-bunnies', ['components.script', 'three', 
                     components: {
                         quad: {
                             transparent: true,
-                            texture: 'assets/images/characters/skin/29.png'
+                            texture: 'images/characters/skin/29.png'
                         },
                         rigidBody: {
                             shape: {

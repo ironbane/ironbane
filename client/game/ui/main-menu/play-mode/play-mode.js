@@ -8,13 +8,11 @@ angular
         $stateProvider.state('main-menu.play-mode', {
             templateUrl: 'client/game/ui/main-menu/play-mode/play-mode.ng.html',
             controller: function ($scope, $state) {
-                $scope.playOnline = function() {
+                $scope.play = function() {
                     // TODO: go to server select, take mode out of url
-                    $state.go('^.level-select', {mode: 'online'});
-                };
-
-                $scope.playOffline = function() {
-                    $state.go('^.level-select', {mode: 'offline'});
+                    $state.go('play').then(function(){},function (err) {
+                    	throw err;
+                    });
                 };
             }
         });
