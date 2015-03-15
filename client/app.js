@@ -2,7 +2,6 @@
 
 angular
     .module('Ironbane', [
-        'angus.templates.app',
         'game.ui',
         'game.game-loop',
         'game.world-root',
@@ -19,13 +18,10 @@ angular
         'engine.input.input-system',
         'engine.util',
         'engine.debugger',
-        'game.game-socket',
         'util.deepExtend',
         'util.name-gen'
     ])
-    .config(function (SoundSystemProvider, $gameSocketProvider, $locationProvider) {
-        //$gameSocketProvider.setUrl('http://localhost:5001');
-        $gameSocketProvider.setUrl('http://dev.server.ironbane.com:5001');
+    .config(function (SoundSystemProvider, $locationProvider) {
 
         // define all of the sounds & music for the game
         SoundSystemProvider.setAudioLibraryData({
@@ -58,3 +54,16 @@ angular
             $rootWorld.renderer.setSize(window.innerWidth, window.innerHeight);
         }, false);
     });
+
+
+function onReady() {
+	angular.bootstrap(document, ['Ironbane']);
+}
+
+if (Meteor.isCordova) {
+	angular.element(document).on('deviceready', onReady);
+}
+else {
+	angular.element(document).ready(onReady);
+}
+

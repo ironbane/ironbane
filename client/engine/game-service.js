@@ -15,7 +15,7 @@ angular
     .service('GameService', function ($rootWorld, CameraSystem, ModelSystem,
         LightSystem, SpriteSystem, QuadSystem, HelperSystem, SceneSystem, ScriptSystem,
         SoundSystem, InputSystem, RigidBodySystem, CollisionReporterSystem, WieldItemSystem, NetSystem,
-        EntityBuilder, $gameSocket, $log, LevelLoader, ProcTreeSystem, ShadowSystem,
+        EntityBuilder, $log, LevelLoader, ProcTreeSystem, ShadowSystem,
         FantasyNameGenerator, NameMeshSystem) {
 
         'use strict';
@@ -128,18 +128,18 @@ angular
             // NOTE: this should be the LAST system as it does rendering!!
             $rootWorld.addSystem(new CameraSystem(), 'camera');
 
-            if (!options.offline) {
-                $log.log('online mode!!!');
-                $gameSocket.connect(options.server, options.level);
+            // if (!options.offline) {
+            //     $log.log('online mode!!!');
+            //     $gameSocket.connect(options.server, options.level);
 
-                $gameSocket.on('spawn', function (data) {
-                    $log.log('spawn', data);
+            //     $gameSocket.on('spawn', function (data) {
+            //         $log.log('spawn', data);
 
-                    createPlayer(data);
-                    // we do this AFTER the player is created so the ghost doesn't win
-                    $rootWorld.getSystem('net').enabled = true;
-                });
-            }
+            //         createPlayer(data);
+            //         // we do this AFTER the player is created so the ghost doesn't win
+            //         $rootWorld.getSystem('net').enabled = true;
+            //     });
+            // }
 
             LevelLoader.load(options.level).then(function () {
                 var characterName = FantasyNameGenerator.generateName('mmo'),
@@ -159,8 +159,7 @@ angular
                 };
 
                 if (!options.offline) {
-                    // after the level and whatnot is loaded, request a player spawn
-                    $gameSocket.emit('request spawn', playerData);
+
                 } else {
                     //$log.log('offline mode!');
                     createPlayer({

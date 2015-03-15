@@ -49,3 +49,6 @@ var Jb=[eG,Vr,Qw,ay,_y,qz,pB,uB,nC,sC,vC,BC,LC,XC,eD,xD,RE,QE,NE,eG,eG,eG,eG,eG,
 
   return this;
 }).call({});
+
+// Nick
+window.Ammo = Ammo;

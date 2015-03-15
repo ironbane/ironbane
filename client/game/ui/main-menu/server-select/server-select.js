@@ -6,7 +6,7 @@ angular
         'use strict';
 
         $stateProvider.state('main-menu.server-select', {
-            templateUrl: 'game/ui/main-menu/server-select/server-select.tpl.html',
+            templateUrl: 'client/game/ui/main-menu/server-select/server-select.ng.html',
             controller: function ($scope, $state) {
 
             }

@@ -6,7 +6,7 @@ angular
     .config(function ($stateProvider) {
         $stateProvider.state('play', {
             url: '/play/:mode/:level',
-            templateUrl: 'game/ui/play/play.tpl.html',
+            templateUrl: 'game/ui/play/play.ng.html',
             resolve: {
                 // pass thru injection for onEnter/onExit events
                 GameService: function (GameService) {

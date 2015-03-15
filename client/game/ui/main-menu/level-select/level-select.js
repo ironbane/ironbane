@@ -7,10 +7,10 @@ angular
 
         $stateProvider.state('main-menu.level-select', {
             url: '/level-select/:mode',
-            templateUrl: 'game/ui/main-menu/level-select/level-select.tpl.html',
+            templateUrl: 'client/game/ui/main-menu/level-select/level-select.ng.html',
             controller: function ($scope, $state, $log, $http) {
                 // TODO: move to service?
-                $http.get('assets/scene/scenes.json')
+                $http.get('scene/scenes.json')
                     .then(function (response) {
                         $scope.levels = response.data;
                     });

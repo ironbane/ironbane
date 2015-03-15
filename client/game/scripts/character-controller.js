@@ -2,10 +2,9 @@ angular
     .module('game.scripts.character-controller', [
         'components.script',
         'three',
-        'ammo',
-        'game.game-socket' // passing this in here may not be the best way...
+        'ammo'
     ])
-    .run(function ($log, ScriptBank, THREE, Ammo, $gameSocket) {
+    .run(function ($log, ScriptBank, THREE, Ammo) {
         'use strict';
 
         var acceleration = 0.7;
@@ -219,8 +218,6 @@ angular
                 this.entity.rotateY(-rotateSpeed * dt);
             }
 
-            // prolly needs a perf tweak..
-            $gameSocket.emit('movement', {position: this.entity.position.toArray(), rotation: this.entity.rotation.toArray()});
         };
 
         ScriptBank.add('/scripts/built-in/character-controller.js', CharacterControllerScript);

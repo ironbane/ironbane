@@ -9,7 +9,7 @@ angular
         'use strict';
 
         $stateProvider.state('main-menu', {
-            templateUrl: 'game/ui/main-menu/main-menu.tpl.html',
+            templateUrl: 'client/game/ui/main-menu/main-menu.ng.html',
             abstract: true,
             controller: function ($scope) {
 
