@@ -130,31 +130,31 @@ angular
             }
 
             // keyboard controls
-            if (input.keyboard.isDown(input.KEYS.W) || input.keyboard.isDown(input.KEYS.UP)) {
+            if (input.keyboard.getKey(input.KEYS.W) || input.keyboard.getKey(input.KEYS.UP)) {
                 this.moveForward = true;
             }
 
-            if (input.keyboard.isDown(input.KEYS.S) || input.keyboard.isDown(input.KEYS.DOWN)) {
+            if (input.keyboard.getKey(input.KEYS.S) || input.keyboard.getKey(input.KEYS.DOWN)) {
                 this.moveBackward = true;
             }
 
-            if (input.keyboard.isDown(input.KEYS.A) || input.keyboard.isDown(input.KEYS.LEFT)) {
+            if (input.keyboard.getKey(input.KEYS.A) || input.keyboard.getKey(input.KEYS.LEFT)) {
                 this.rotateLeft = true;
             }
 
-            if (input.keyboard.isDown(input.KEYS.D) || input.keyboard.isDown(input.KEYS.RIGHT)) {
+            if (input.keyboard.getKey(input.KEYS.D) || input.keyboard.getKey(input.KEYS.RIGHT)) {
                 this.rotateRight = true;
             }
 
-            if (input.keyboard.isDown(input.KEYS.Q)) {
+            if (input.keyboard.getKey(input.KEYS.Q)) {
                 this.moveLeft = true;
             }
 
-            if (input.keyboard.isDown(input.KEYS.E)) {
+            if (input.keyboard.getKey(input.KEYS.E)) {
                 this.moveRight = true;
             }
 
-            if (input.keyboard.isDown(input.KEYS.SPACE)) {
+            if (input.keyboard.getKey(input.KEYS.SPACE)) {
                 this.jump = true;
             }
 

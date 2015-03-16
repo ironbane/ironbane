@@ -1,3 +1,5 @@
+@import "mixins.import.less";
+@import "variables.import.less";
 
 body {
 	margin: 0;
@@ -6,7 +8,69 @@ body {
 	canvas {
 		display: block;
 	}
+
+    overflow:hidden;
+    font-family: "Verdana",Verdana, Arial, Helvetica, sans-serif;
+    font-weight:bold;
+    font-size:20px;
+    color: @textColor;
+    /*     text-shadow:2px 2px 1px #06452d; */
+    background-color: #051d1c;
+    background-image : url(images/ui/bg.png);
 }
+
+a {
+    text-decoration: none;
+    color: #66ff66;
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+select,
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"],
+.uneditable-input {
+    border: 1px solid;
+    .box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
+    .transition(~"border linear .2s, box-shadow linear .2s");
+    .placeholder(darken(@textColor, 10%));
+    color: @textColor;
+    border-color: @primary4;
+    background-color: @primary3;
+    padding: 2px;
+    text-indent: 2px;
+
+    // Focus state
+    &:focus {
+        border-color: rgba(113, 236, 82, .8);
+        outline: 0;
+        outline: thin dotted \9; /* IE6-9 */
+        .box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(113, 236, 82, .6)");
+    }
+}
+
+.ib-ui-window {
+	background: rgba(60, 240, 176, 0.5);
+	margin: 0 auto;
+	outline: 3px solid #1f7d5b;
+	outline: 3px solid #06452d;
+    background-color: @bgc1_75;
+}
+
 
 .ui-overlay {
 	position: absolute;
@@ -20,7 +84,7 @@ body {
 	.logo {
 		text-align: center;
 		img {
-			padding-top: 5%;
+			padding-bottom: 25px;
 		}
 	}
 
@@ -34,13 +98,23 @@ body {
 		padding: 5px 0;
 		text-decoration: none;
 		text-shadow: 2px 1px 0 #06452d;
-		width: 200px;
+		// width: 200px;
 		background: #357768;
-		margin: 25px auto;
+		// margin: 25px auto;
 		&:hover {
 			background-color: #5ba997;
 		}
+
+		&.attention {
+			background-color:#356F77;
+			color:#A9F8FC;
+		}
+		&.attention:hover {
+			background-color:#5BA1A9;
+		}
 	}
+
+
 
 	.levelbox {
 		width: 550px;

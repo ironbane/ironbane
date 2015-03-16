@@ -3,7 +3,8 @@ angular.module('engine.input.keyboard', [])
         'use strict';
 
         var Keyboard = function () {
-            this.keys = {};
+            this.keysDown = {};
+            this.keysDownOnce = {};
 
             // TODO: target and focus canvas instead so that UI overlay can function?
             window.addEventListener('keydown', this._onKeyDown.bind(this));
@@ -16,7 +17,12 @@ angular.module('engine.input.keyboard', [])
             // can't access dev tools otherwise
             // e.preventDefault();
 
-            this.keys[e.keyCode] = true;
+            if (!this.keysDown[e.keyCode]) {
+            	this.keysDownOnce[e.keyCode] = true;
+            }
+
+            this.keysDown[e.keyCode] = true;
+
         };
 
         Keyboard.prototype._onKeyUp = function (e) {
@@ -24,15 +30,24 @@ angular.module('engine.input.keyboard', [])
             // can't access dev tools otherwise
             // e.preventDefault();
 
-            this.keys[e.keyCode] = false;
+            this.keysDown[e.keyCode] = false;
         };
 
         Keyboard.prototype._onBlur = function (e) {
-            this.keys = {};
+            this.keysDown = {};
+            this.keysDownOnce = {};
         };
 
-        Keyboard.prototype.isDown = function (code) {
-            return this.keys[code] === true;
+        Keyboard.prototype.getKey = function (code) {
+            return this.keysDown[code] === true;
+        };
+
+        Keyboard.prototype.getKeyDown = function (code) {
+            if (this.keysDownOnce[code] === true) {
+            	this.keysDownOnce[code] = false;
+            	return true;
+            }
+			return false;
         };
 
         // TODO: run update loop on this to test for Pressed and Sequences

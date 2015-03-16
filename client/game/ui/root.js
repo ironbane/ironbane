@@ -9,5 +9,5 @@ angular
 
         GameService.start();
 
-        $state.go('main-menu.play-mode');
+
     });

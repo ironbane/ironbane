@@ -5,6 +5,7 @@ angular
     	'angular-meteor',
         'game.ui',
         'game.game-loop',
+        'game.network',
         'game.world-root',
         'ces',
         'three',
