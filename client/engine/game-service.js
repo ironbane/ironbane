@@ -2,7 +2,6 @@ angular
     .module('engine.game-service', [
         'game.game-loop',
         'game.world-root',
-        'game.main-menu',
         'game.network',
         'components',
         'game.scripts',
@@ -18,7 +17,7 @@ angular
         LightSystem, SpriteSystem, QuadSystem, HelperSystem, SceneSystem, ScriptSystem,
         SoundSystem, InputSystem, RigidBodySystem, CollisionReporterSystem, WieldItemSystem,
         EntityBuilder, $log, LevelLoader, ProcTreeSystem, ShadowSystem,
-        FantasyNameGenerator, NameMeshSystem, Network, MainMenu) {
+        FantasyNameGenerator, NameMeshSystem, Network) {
 
         'use strict';
 
@@ -66,7 +65,7 @@ angular
             // }
 
             LevelLoader.load('obstacle-test-course-one').then(function () {
-				// MainMenu.addMainMenuCamera();
+
             }, function (err) {
                 $log.warn('error loading level: ', err);
             });
@@ -116,11 +115,10 @@ angular
 
 
 
-			// $rootWorld.removeEntity(getMainMenuPanningCamera());
 
         };
 
         this.leaveGame = function () {
-        	// MainMenu.removeMainMenuCamera();
+
         };
     });

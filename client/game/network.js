@@ -25,9 +25,6 @@ angular.module('game.network', [
 					var user = Meteor.user();
 
 					if (user._id === doc.owner) {
-						// MainMenu.removeMainMenuCamera();
-
-						//
 
 						// Add all the stuff to make us a real player
 						angular.extend(doc.components, {
@@ -93,9 +90,6 @@ angular.module('game.network', [
 
 					var user = Meteor.user();
 
-					if (user._id === doc.owner) {
-						// MainMenu.addMainMenuCamera();
-					}
 				}
 			});
 

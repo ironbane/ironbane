@@ -29,15 +29,13 @@ angular.module('game.main-menu', [
 	        return mainMenuPanningCamera;
         };
 
-        this.addMainMenuCamera = function () {
+        var addMainMenuCamera = function () {
         	$rootWorld.addEntity(getMainMenuPanningCamera());
         };
 
-        this.removeMainMenuCamera = function () {
+        var removeMainMenuCamera = function () {
         	$rootWorld.removeEntity(getMainMenuPanningCamera());
         };
-
-		var me = this;
 
 		Tracker.autorun(function () {
 			var user = Meteor.user();
@@ -48,11 +46,11 @@ angular.module('game.main-menu', [
 
 			if (characters.count() === 0) {
 				$state.go('main-menu.play-mode');
-				me.addMainMenuCamera();
+				addMainMenuCamera();
 			}
 			else {
 				$state.go('play');
-				me.removeMainMenuCamera();
+				removeMainMenuCamera();
 			}
 		});
 
