@@ -50,7 +50,14 @@ angular.module('components.scene.shadow', ['ces', 'three', 'engine.texture-loade
                     // and probably also for CPU, so we just copy the position instead
                     // and set the parent to be the same as the entity's parent (usually the scene)
                     world.scene.add(shadow);
+
+                    entity.shadow = shadow;
                 });
+
+				world.entityRemoved('shadow').add(function (entity) {
+					world.scene.remove(entity.shadow);
+					// TODO possible memory leak, dispose of geometry here?
+				});
             },
             update: function () {
                 var world = this.world,

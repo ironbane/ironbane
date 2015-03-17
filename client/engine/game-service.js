@@ -83,12 +83,14 @@ angular
         		owner: user._id
         	});
 
+        	var entityId;
+
         	if (characters.count() === 0) {
 
         		var genName = FantasyNameGenerator.generateName('mmo');
 
         		// Insert a new character
-				Entities.insert({
+				entityId = Entities.insert({
 					owner: user._id,
 					name: genName,
 					position: (new THREE.Vector3(10, 30, 0)).serialize(),
@@ -114,6 +116,17 @@ angular
 					}
 				});
         	}
+        	else {
+        		entityId = characters.fetch()[0]._id;
+        	}
+
+			Entities.update({
+				_id: entityId
+			}, {
+				$set: {
+					active: true
+				}
+			});
 
         };
 

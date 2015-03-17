@@ -16,5 +16,21 @@ angular.module('engine.util', [])
               var newnumber = new Number(number+'').toFixed(parseInt(decimals)); // jshint ignore:line
               return parseFloat(newnumber);
             };
+
+            // The meteor-accounts-guest package is sometimes too slow in logging us in
+            // that's why we need to check here if we have an assigned guest user
+            this.waitForMeteorGuestUserLogin = function (fn) {
+				var doCheck = function () {
+					var user = Meteor.user();
+					if (user) {
+						fn();
+					}
+					else {
+						Meteor.setTimeout(doCheck, 10);
+					}
+				};
+
+				Meteor.setTimeout(doCheck, 10);
+            };
         }
     );
