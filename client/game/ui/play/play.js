@@ -16,7 +16,6 @@ angular
             },
             onExit: function (GameService) {
             	GameService.leaveGame();
-                // TODO: shut down world
             }
         });
     });

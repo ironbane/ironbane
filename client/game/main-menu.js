@@ -6,7 +6,8 @@ angular.module('game.main-menu', [
 		'game.world-root',
 		'engine.entity-builder'
 	])
-	.service('MainMenu', function (World, THREE, $log, EntityBuilder, $rootWorld, $state) {
+	.run(function (World, THREE, $log, EntityBuilder, $rootWorld, $state) {
+
 		'use strict';
 
         var mainMenuPanningCamera = null;
@@ -37,21 +38,31 @@ angular.module('game.main-menu', [
         	$rootWorld.removeEntity(getMainMenuPanningCamera());
         };
 
-		Tracker.autorun(function () {
+		var doCheck = function () {
 			var user = Meteor.user();
+			if (user) {
+				Tracker.autorun(function () {
+					var user = Meteor.user();
 
-			var characters = Entities.find({
-				owner: user._id
-			});
+					var characters = Entities.find({
+						owner: user._id
+					});
 
-			if (characters.count() === 0) {
-				$state.go('main-menu.play-mode');
-				addMainMenuCamera();
+					if (characters.count() === 0) {
+						$state.go('main-menu.play-mode');
+						addMainMenuCamera();
+					}
+					else {
+						$state.go('play');
+						removeMainMenuCamera();
+					}
+				});
 			}
 			else {
-				$state.go('play');
-				removeMainMenuCamera();
+				Meteor.setTimeout(doCheck, 10);
 			}
-		});
+		};
+
+		Meteor.setTimeout(doCheck, 10);
 
 	});

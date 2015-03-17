@@ -29,5 +29,9 @@ angular.module('game.world-root', ['ces', 'three'])
             _world.scene.remove(entity);
         };
 
+        _world.traverse = function (fn) {
+            _world.scene.traverse(fn);
+        };
+
         return _world;
     });

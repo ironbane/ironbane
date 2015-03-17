@@ -84,11 +84,19 @@ angular.module('game.network', [
 					}
 
 					var player = EntityBuilder.build('Player', doc);
+					player.owner = user._id;
+
 					$rootWorld.addEntity(player);
 				},
 				removed: function (doc) {
 
 					var user = Meteor.user();
+
+					$rootWorld.traverse(function (node) {
+						if (node.owner === user._id) {
+							$rootWorld.removeEntity(node);
+						}
+					});
 
 				}
 			});
