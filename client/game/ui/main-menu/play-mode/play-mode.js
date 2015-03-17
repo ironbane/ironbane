@@ -1,5 +1,6 @@
 angular
     .module('game.ui.main-menu.play-mode', [
+    	'engine.game-service',
         'ui.router'
     ])
     .config(function ($stateProvider) {
@@ -7,12 +8,9 @@ angular
 
         $stateProvider.state('main-menu.play-mode', {
             templateUrl: 'client/game/ui/main-menu/play-mode/play-mode.ng.html',
-            controller: function ($scope, $state) {
+            controller: function ($scope, $state, GameService) {
                 $scope.play = function() {
-                    // TODO: go to server select, take mode out of url
-                    $state.go('play').then(function(){},function (err) {
-                    	throw err;
-                    });
+                    GameService.enterGame();
                 };
             }
         });

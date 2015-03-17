@@ -75,6 +75,7 @@ angular
         this.enterGame = function () {
 
         	// Just insert our entity as player
+        	// We'll auto detect later it's in fact the main player
 
         	var user = Meteor.user();
 
@@ -114,12 +115,6 @@ angular
 				});
         	}
 
-
-
-
         };
 
-        this.leaveGame = function () {
-
-        };
     });

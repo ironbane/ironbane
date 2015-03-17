@@ -10,12 +10,6 @@ angular
     	$locationProvider.html5Mode(true);
 
         $stateProvider.state('play', {
-            templateUrl: 'client/game/ui/play/play.ng.html',
-            onEnter: function (GameService) {
-            	GameService.enterGame();
-            },
-            onExit: function (GameService) {
-            	GameService.leaveGame();
-            }
+            templateUrl: 'client/game/ui/play/play.ng.html'
         });
     });
