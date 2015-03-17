@@ -1,10 +1,14 @@
 angular
 	.module('game.scripts.network-receive', [
 		'three',
+		'ammo',
 		'components.script'
 	])
-	.run(function ($log, ScriptBank, THREE) {
+	.run(function ($log, ScriptBank, THREE, Ammo) {
 		'use strict';
+
+		var btVec3 = new Ammo.btVector3();
+		var btQuat = new Ammo.btQuaternion(0, 0, 0, 1);
 
 		var NetworkReceiveScript = function (entity, world) {
 			this.entity = entity;
@@ -47,9 +51,25 @@ angular
 			}
 
 			// var oldy = this.entity.position.y;
-			this.entity.position.lerp(this.desiredPosition, dTime*2);
+			// this.entity.position.lerp(this.desiredPosition, dTime*2);
 			// this.entity.position.y = oldy;
 			// this.entity.position.lerp(this.desiredPosition, dTime);
+
+            var rigidBodyComponent = this.entity.getComponent('rigidBody');
+
+            if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
+            	var toVec = this.desiredPosition.clone().sub(this.entity.position);
+				btVec3.setValue(toVec.x, 0, toVec.z);
+				rigidBodyComponent.rigidBody.setLinearVelocity(btVec3);
+				// rigidBodyComponent.rigidBody.applyCentralImpulse(btVec3);
+
+				if (toVec.lengthSq() > 16) {
+					btVec3.setValue(this.desiredPosition.x, this.desiredPosition.y, this.desiredPosition.z);
+                    var btTransform = new Ammo.btTransform(btQuat, btVec3);
+					rigidBodyComponent.rigidBody.setWorldTransform(btTransform);
+				}
+            }
+
 
             var entityRotationY = toSimpleRotationY(this.entity.rotation);
             var desiredRotationY = toSimpleRotationY(this.desiredRotation);

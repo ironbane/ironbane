@@ -100,6 +100,34 @@ angular
 	                        transparent: true,
 	                        texture: 'images/characters/prefab/' + _.sample(_.range(1, 11)) + '.png'
 	                    },
+	                    rigidBody: {
+	                        shape: {
+	                            type: 'capsule',
+	                            width: 0.5,
+	                            height: 1.0,
+	                            depth: 0.5,
+	                            radius: 0.5
+
+	                            // type: 'sphere',
+	                            // radius: 0.5
+	                        },
+	                        mass: 1,
+	                        friction: 0.0,
+	                        restitution: 0,
+	                        allowSleep: false,
+	                        lock: {
+	                            position: {
+	                                x: false,
+	                                y: false,
+	                                z: false
+	                            },
+	                            rotation: {
+	                                x: true,
+	                                y: true,
+	                                z: true
+	                            }
+	                        }
+	                    },
 						'name-mesh': {
 							text: genName
 						},
