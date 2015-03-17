@@ -110,8 +110,6 @@ angular.module('ces.world', [
                 this._entities.add(entity);
 
                 this._onEntityAddChild(null, entity);
-
-                $log.debug('add entity', entity.name);
             },
 
             /**

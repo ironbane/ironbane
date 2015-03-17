@@ -24,8 +24,6 @@ angular.module('game.network', [
 
 				cursor.observe({
 					added: function (doc) {
-						$log.log(doc);
-
 						var user = Meteor.user();
 
 						if (user._id === doc.owner) {

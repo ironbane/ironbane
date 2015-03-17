@@ -23,8 +23,6 @@ angular
         'use strict';
 
         this.start = function () {
-            $log.log('game service start!');
-
             // ALL these systems have to load before other entities
             // they don't load stuff after the fact...
             // TODO: fix that

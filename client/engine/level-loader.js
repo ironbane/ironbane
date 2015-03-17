@@ -28,8 +28,6 @@ angular
                 .then(function (response) {
                     var entities = EntityBuilder.load(response.data);
 
-                    $log.log('level loader ents: ', entities);
-
                     $rootWorld.addEntity(entities);
                 });
 

@@ -44,7 +44,6 @@ angular
                     .then(function (response) {
                         var zip = new JSZip(response.data);
                         var worldData = JSON.parse(zip.file('ib-world.json').asText());
-                        $log.debug('worldData: ', worldData);
                         return worldData;
                     }, function (err) {
                         // likely we don't have a zip file... try raw
