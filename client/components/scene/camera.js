@@ -56,7 +56,7 @@ angular.module('components.scene.camera', ['ces', 'three'])
                 var cameras = world.getEntities('camera');
 
                 if (cameras.length === 0) {
-                    throw new Error('Must have at least one camera in the scene to render anything!');
+                    return;
                 }
 
                 cameras.sort(function (a, b) {
