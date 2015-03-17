@@ -70,30 +70,31 @@ angular.module('game.network', [
 		                    },
 		                    camera: {
 		                        aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
-		                    },
-		                    script: {
-		                        scripts: [
-		                            '/scripts/built-in/character-controller.js',
-		                            '/scripts/built-in/character-multicam.js',
-		                            '/scripts/built-in/sprite-sheet.js',
-		                            '/scripts/built-in/admin-controls.js',
-		                        ]
 		                    }
 		                });
 
+						doc.components.script.scripts = doc.components.script.scripts.concat([
+                            '/scripts/built-in/character-controller.js',
+                            '/scripts/built-in/character-multicam.js',
+                            '/scripts/built-in/admin-controls.js',
+                            '/scripts/built-in/network-send.js',
+                        ]);
+					}
+					else {
+						doc.components.script.scripts = doc.components.script.scripts.concat([
+                            '/scripts/built-in/network-receive.js',
+                        ]);
 					}
 
 					var player = EntityBuilder.build('Player', doc);
-					player.owner = user._id;
+					player.meteorId = doc._id;
 
 					$rootWorld.addEntity(player);
 				},
 				removed: function (doc) {
 
-					var user = Meteor.user();
-
 					$rootWorld.traverse(function (node) {
-						if (node.owner === user._id) {
+						if (node.meteorId === doc._id) {
 							$rootWorld.removeEntity(node);
 						}
 					});
@@ -101,9 +102,9 @@ angular.module('game.network', [
 				}
 			});
 
-			cursor.observe({
+			cursor.observeChanges({
 				changed: function (doc, fields) {
-					$log.log(doc, fields);
+					// $log.log(doc, fields);
 				},
 			});
 

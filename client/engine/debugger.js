@@ -7,31 +7,44 @@ angular.module('engine.debugger', ['engine.ib-config', 'three', 'engine.util'])
         var domElementId = IbConfig.get('debugDomElementId');
 
         this.watch = function (label, variable) {
-            watched.push({ label: label, variable: variable });
+        	var found = _.find(watched, function (el) {
+        		return el.label === label;
+        	});
+        	if (!found) {
+        		watched.push({ label: label, variable: variable });
+        	}
         };
+
+        var updateTimer = 0.0;
 
         this.tick = function (dt) {
 
-            var domElement = document.getElementById(domElementId);
+        	updateTimer += dt;
 
-            if (!domElement) {
-                return;
-            }
+        	if (updateTimer > 0.5) {
+        		updateTimer = 0;
 
-            var text = '';
+	            var domElement = document.getElementById(domElementId);
 
-            watched.forEach(function (watch) {
-                var info = watch.variable;
+	            if (!domElement) {
+	                return;
+	            }
 
-                if (watch.variable instanceof THREE.Vector3) {
-                    info = 'x: ' + Util.roundNumber(watch.variable.x, 2) + ', y: ' + Util.roundNumber(watch.variable.y, 2) + ', z: ' + Util.roundNumber(watch.variable.z, 2);
-                }
+	            var text = '';
 
-                text += watch.label + ': ' + info + '<br>';
-            });
+	            watched.forEach(function (watch) {
+	                var info = watch.variable;
 
-            domElement.innerHTML = text;
+	                if (watch.variable instanceof THREE.Vector3) {
+	                    info = 'x: ' + Util.roundNumber(watch.variable.x, 2) + ', y: ' + Util.roundNumber(watch.variable.y, 2) + ', z: ' + Util.roundNumber(watch.variable.z, 2);
+	                }
 
-            watched = [];
+	                text += watch.label + ': ' + info + '<br>';
+	            });
+
+	            domElement.innerHTML = text;
+
+				watched = [];
+        	}
         };
     });
