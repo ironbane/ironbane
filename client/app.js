@@ -59,7 +59,14 @@ angular
 
 
 function onReady() {
-	angular.bootstrap(document, ['Ironbane']);
+	// We must wait until Ammo is available! See comments in client/lib/lib/ammo.js
+	// Hacky, but there is no other way for now.
+	if (window.Ammo) {
+		angular.bootstrap(document, ['Ironbane']);
+	}
+	else {
+		setTimeout(onReady, 10);
+	}
 }
 
 if (Meteor.isCordova) {
