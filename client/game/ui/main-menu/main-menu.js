@@ -5,11 +5,11 @@ angular
         'game.ui.main-menu.server-select',
         'game.ui.main-menu.level-select'
     ])
-    .config(function ($stateProvider) {
+    .config(['$stateProvider', function ($stateProvider) {
         'use strict';
 
         $stateProvider.state('main-menu', {
             templateUrl: 'client/game/ui/main-menu/main-menu.ng.html',
             abstract: true
         });
-    });
+    }]);

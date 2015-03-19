@@ -2,7 +2,7 @@ angular.module('ces.entity', [
     'three',
     'ces.signal'
 ])
-    .factory('Entity', function (THREE, Signal, $log) {
+    .factory('Entity', ['THREE', 'Signal', '$log', function (THREE, Signal, $log) {
         'use strict';
 
         var Entity = function () {
@@ -106,4 +106,4 @@ angular.module('ces.entity', [
         };
 
         return Entity;
-    });
+    }]);

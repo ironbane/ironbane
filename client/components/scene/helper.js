@@ -1,5 +1,5 @@
 angular.module('components.scene.helper', ['ces', 'three', 'engine.texture-loader'])
-    .config(function ($componentsProvider) {
+    .config(['$componentsProvider', function ($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -7,8 +7,8 @@ angular.module('components.scene.helper', ['ces', 'three', 'engine.texture-loade
                 line: false
             }
         });
-    })
-    .factory('HelperSystem', function (System, THREE, TextureLoader) {
+    }])
+    .factory('HelperSystem', ['System', 'THREE', 'TextureLoader', function (System, THREE, TextureLoader) {
         'use strict';
 
         var HelperSystem = System.extend({
@@ -47,4 +47,4 @@ angular.module('components.scene.helper', ['ces', 'three', 'engine.texture-loade
         });
 
         return HelperSystem;
-    });
+    }]);

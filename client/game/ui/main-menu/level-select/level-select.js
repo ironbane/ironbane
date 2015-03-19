@@ -2,13 +2,13 @@ angular
     .module('game.ui.main-menu.level-select', [
         'ui.router'
     ])
-    .config(function ($stateProvider) {
+    .config(['$stateProvider', function ($stateProvider) {
         'use strict';
 
         $stateProvider.state('main-menu.level-select', {
             url: '/level-select/:mode',
             templateUrl: 'client/game/ui/main-menu/level-select/level-select.ng.html',
-            controller: function ($scope, $state, $log, $http) {
+            controller: ['$scope', '$state', '$log', '$http', function ($scope, $state, $log, $http) {
                 // TODO: move to service?
                 $http.get('scene/scenes.json')
                     .then(function (response) {
@@ -24,6 +24,6 @@ angular
                     // $state.go('play');
                     // $state.go('main-menu.play-mode');
                 };
-            }
+            }]
         });
-    });
+    }]);

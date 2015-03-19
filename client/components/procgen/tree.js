@@ -4,7 +4,7 @@ angular
         'three',
         'engine.procgen.proctree'
     ])
-    .config(function ($componentsProvider) {
+    .config(['$componentsProvider', function ($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -35,8 +35,8 @@ angular
                 'twigMaterial': 'leaves1.png'
             }
         });
-    })
-    .factory('ProcTreeSystem', function (THREE, System, ProcTree, $log, TextureLoader) {
+    }])
+    .factory('ProcTreeSystem', ['THREE', 'System', 'ProcTree', '$log', 'TextureLoader', function (THREE, System, ProcTree, $log, TextureLoader) {
         var ProcTreeSystem = System.extend({
             addedToWorld: function (world) {
                 var sys = this;
@@ -130,4 +130,4 @@ angular
         });
 
         return ProcTreeSystem;
-    });
+    }]);

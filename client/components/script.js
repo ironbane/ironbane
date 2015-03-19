@@ -1,5 +1,5 @@
 angular.module('components.script', ['ces'])
-    .config(function ($componentsProvider) {
+    .config(['$componentsProvider', function ($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -7,8 +7,8 @@ angular.module('components.script', ['ces'])
                 scripts: []
             }
         });
-    })
-    .service('ScriptBank', function($q, $cacheFactory, $http) {
+    }])
+    .service('ScriptBank', ['$q', '$cacheFactory', '$http', function($q, $cacheFactory, $http) {
         'use strict';
 
         var cache = $cacheFactory('scriptCache');
@@ -32,8 +32,8 @@ angular.module('components.script', ['ces'])
         this.add = function (path, Script) {
             cache.put(path, Script);
         };
-    })
-    .factory('ScriptSystem', function (System, ScriptBank, $log) {
+    }])
+    .factory('ScriptSystem', ['System', 'ScriptBank', '$log', function (System, ScriptBank, $log) {
         'use strict';
 
         var ScriptSystem = System.extend({
@@ -97,4 +97,4 @@ angular.module('components.script', ['ces'])
         });
 
         return ScriptSystem;
-    });
+    }]);

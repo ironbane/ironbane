@@ -12,7 +12,7 @@ angular.module('engine.sound-system', ['howler', 'ces'])
             audioLibraryData[name] = data;
         };
 
-        this.$get = function (Howler, Howl, $cacheFactory, $log, System) {
+        this.$get = ['Howler', 'Howl', '$cacheFactory', '$log', 'System', function (Howler, Howl, $cacheFactory, $log, System) {
             var cache = $cacheFactory('soundCache'),
                 cacheKeys = [],
                 soundVolume = 1,
@@ -224,6 +224,6 @@ angular.module('engine.sound-system', ['howler', 'ces'])
             });
 
             return SoundSystem;
-        };
+        }];
 
     });

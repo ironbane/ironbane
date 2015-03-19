@@ -1,6 +1,6 @@
 // a "quad" is a billboard that doesn't look up
 angular.module('components.scene.quad', ['ces', 'three', 'engine.texture-loader'])
-    .config(function ($componentsProvider) {
+    .config(['$componentsProvider', function ($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -10,8 +10,8 @@ angular.module('components.scene.quad', ['ces', 'three', 'engine.texture-loader'
                 texture: null
             }
         });
-    })
-    .factory('QuadSystem', function (System, THREE, TextureLoader, $log) {
+    }])
+    .factory('QuadSystem', ['System', 'THREE', 'TextureLoader', '$log', function (System, THREE, TextureLoader, $log) {
         'use strict';
 
         var QuadSystem = System.extend({
@@ -92,4 +92,4 @@ angular.module('components.scene.quad', ['ces', 'three', 'engine.texture-loader'
         });
 
         return QuadSystem;
-    });
+    }]);

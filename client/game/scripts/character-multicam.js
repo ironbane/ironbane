@@ -1,5 +1,5 @@
 angular.module('game.scripts.character-multicam', ['components.script'])
-    .run(function ($log, ScriptBank, IbConfig, THREE) {
+    .run(['$log', 'ScriptBank', 'IbConfig', 'THREE', function ($log, ScriptBank, IbConfig, THREE) {
         'use strict';
 
         // The multicam gives you first and third person in one script
@@ -166,4 +166,4 @@ angular.module('game.scripts.character-multicam', ['components.script'])
         };
 
         ScriptBank.add('/scripts/built-in/character-multicam.js', MultiCamScript);
-    });
+    }]);

@@ -2,7 +2,7 @@
 
 (function () {
 	var module = angular.module('three', []);
-	module.factory('THREE', function ($window) {
+	module.factory('THREE', ['$window', function ($window) {
 
         var roundNumber = function (number, decimals) {
 			var newnumber = new Number(number+'').toFixed(parseInt(decimals)); // jshint ignore:line
@@ -30,5 +30,5 @@
         };
 
 		return $window.THREE;
-	});
+	}]);
 })();

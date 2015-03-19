@@ -7,7 +7,7 @@ angular.module('game.main-menu', [
 		'engine.entity-builder',
 		'engine.util'
 	])
-	.run(function (World, THREE, $log, EntityBuilder, $rootWorld, $state, Util) {
+	.run(['World', 'THREE', '$log', 'EntityBuilder', '$rootWorld', '$state', 'Util', function (World, THREE, $log, EntityBuilder, $rootWorld, $state, Util) {
 
 		'use strict';
 
@@ -59,4 +59,4 @@ angular.module('game.main-menu', [
 			});
 		});
 
-	});
+	}]);

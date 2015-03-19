@@ -1,5 +1,5 @@
 angular.module('components.scene.sprite', ['ces', 'three', 'engine.texture-loader'])
-    .config(function ($componentsProvider) {
+    .config(['$componentsProvider', function ($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -8,8 +8,8 @@ angular.module('components.scene.sprite', ['ces', 'three', 'engine.texture-loade
                 texture: null
             }
         });
-    })
-    .factory('SpriteSystem', function (System, THREE, TextureLoader) {
+    }])
+    .factory('SpriteSystem', ['System', 'THREE', 'TextureLoader', function (System, THREE, TextureLoader) {
         'use strict';
 
         var SpriteSystem = System.extend({
@@ -42,4 +42,4 @@ angular.module('components.scene.sprite', ['ces', 'three', 'engine.texture-loade
         });
 
         return SpriteSystem;
-    });
+    }]);

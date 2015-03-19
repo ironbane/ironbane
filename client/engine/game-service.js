@@ -14,7 +14,7 @@ angular
         'util.name-gen',
         'components.scene.name-mesh'
     ])
-    .service('GameService', function ($rootWorld, CameraSystem, ModelSystem,
+    .service('GameService', ['$rootWorld', 'CameraSystem', 'ModelSystem', 'LightSystem', 'SpriteSystem', 'QuadSystem', 'HelperSystem', 'SceneSystem', 'ScriptSystem', 'SoundSystem', 'InputSystem', 'RigidBodySystem', 'CollisionReporterSystem', 'WieldItemSystem', 'EntityBuilder', '$log', 'LevelLoader', 'ProcTreeSystem', 'ShadowSystem', 'FantasyNameGenerator', 'NameMeshSystem', 'Network', function ($rootWorld, CameraSystem, ModelSystem,
         LightSystem, SpriteSystem, QuadSystem, HelperSystem, SceneSystem, ScriptSystem,
         SoundSystem, InputSystem, RigidBodySystem, CollisionReporterSystem, WieldItemSystem,
         EntityBuilder, $log, LevelLoader, ProcTreeSystem, ShadowSystem,
@@ -156,4 +156,4 @@ angular
 
         };
 
-    });
+    }]);

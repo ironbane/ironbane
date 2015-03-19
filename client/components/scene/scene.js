@@ -6,15 +6,15 @@ angular
         'ces',
         'three'
     ])
-    .config(function ($componentsProvider) {
+    .config(['$componentsProvider', function ($componentsProvider) {
 
         $componentsProvider.addComponentData({
             'scene': {
                 'path': ''
             }
         });
-    })
-    .factory('SceneSystem', function (System, THREE, $http, TextureLoader, $log, $q) {
+    }])
+    .factory('SceneSystem', ['System', 'THREE', '$http', 'TextureLoader', '$log', '$q', function (System, THREE, $http, TextureLoader, $log, $q) {
 
         var SceneSystem = System.extend({
             addedToWorld: function (world) {
@@ -100,4 +100,4 @@ angular
         });
 
         return SceneSystem;
-    });
+    }]);

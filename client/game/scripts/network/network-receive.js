@@ -4,7 +4,7 @@ angular
 		'ammo',
 		'components.script'
 	])
-	.run(function ($log, ScriptBank, THREE, Ammo) {
+	.run(['$log', 'ScriptBank', 'THREE', 'Ammo', function ($log, ScriptBank, THREE, Ammo) {
 		'use strict';
 
 		var btVec3 = new Ammo.btVector3();
@@ -97,4 +97,4 @@ angular
 		};
 
 		ScriptBank.add('/scripts/built-in/network-receive.js', NetworkReceiveScript);
-	});
+	}]);

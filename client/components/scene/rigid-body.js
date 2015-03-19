@@ -1,5 +1,5 @@
 angular.module('components.scene.rigid-body', ['ces', 'three', 'ammo', 'ammo.physics-world'])
-    .config(function ($componentsProvider) {
+    .config(['$componentsProvider', function ($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -26,8 +26,8 @@ angular.module('components.scene.rigid-body', ['ces', 'three', 'ammo', 'ammo.phy
                 friction: 0.5
             }
         });
-    })
-    .factory('RigidBodySystem', function (System, THREE, Ammo, $q, PhysicsWorld) {
+    }])
+    .factory('RigidBodySystem', ['System', 'THREE', 'Ammo', '$q', 'PhysicsWorld', function (System, THREE, Ammo, $q, PhysicsWorld) {
         'use strict';
 
         // A lot of code here is based on Chandler Prall's Physijs
@@ -406,4 +406,4 @@ angular.module('components.scene.rigid-body', ['ces', 'three', 'ammo', 'ammo.phy
         });
 
         return RigidBodySystem;
-    });
+    }]);

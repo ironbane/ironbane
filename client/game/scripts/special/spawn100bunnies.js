@@ -1,5 +1,5 @@
 angular.module('game.scripts.spawn-100-bunnies', ['components.script', 'three', 'engine.entity-builder'])
-    .run(function (ScriptBank, THREE, EntityBuilder, $rootWorld, Util) {
+    .run(['ScriptBank', 'THREE', 'EntityBuilder', '$rootWorld', 'Util', function (ScriptBank, THREE, EntityBuilder, $rootWorld, Util) {
         'use strict';
 
         var Spawn100Bunnies = function (entity, world) {
@@ -76,4 +76,4 @@ angular.module('game.scripts.spawn-100-bunnies', ['components.script', 'three', 
         };
 
         ScriptBank.add('/scripts/special/spawn-100-bunnies.js', Spawn100Bunnies);
-    });
+    }]);

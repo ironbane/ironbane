@@ -23,7 +23,7 @@ angular
         'util.deepExtend',
         'util.name-gen'
     ])
-    .config(function (SoundSystemProvider, $locationProvider) {
+    .config(['SoundSystemProvider', '$locationProvider', function (SoundSystemProvider, $locationProvider) {
 
         // define all of the sounds & music for the game
         SoundSystemProvider.setAudioLibraryData({
@@ -36,17 +36,17 @@ angular
         });
 
         $locationProvider.html5Mode(true);
-    })
-    .config(function (IbConfigProvider) {
+    }])
+    .config(['IbConfigProvider', function (IbConfigProvider) {
         // Used for input events
         IbConfigProvider.set('domElement', document);
         IbConfigProvider.set('debugDomElementId', 'debug');
-    })
-    .run(function (Debugger, $window) {
+    }])
+    .run(['Debugger', '$window', function (Debugger, $window) {
         // for convenience
         $window.debug = Debugger;
-    })
-    .run(function ($window, $rootWorld) {
+    }])
+    .run(['$window', '$rootWorld', function ($window, $rootWorld) {
         // TODO: move to directive
         $rootWorld.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild($rootWorld.renderer.domElement);
@@ -55,7 +55,7 @@ angular
         $window.addEventListener('resize', function () {
             $rootWorld.renderer.setSize(window.innerWidth, window.innerHeight);
         }, false);
-    });
+    }]);
 
 
 function onReady() {

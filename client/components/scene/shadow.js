@@ -1,6 +1,6 @@
 // a "shadow" is a billboard that doesn't look up
 angular.module('components.scene.shadow', ['ces', 'three', 'engine.texture-loader'])
-    .config(function ($componentsProvider) {
+    .config(['$componentsProvider', function ($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -8,8 +8,8 @@ angular.module('components.scene.shadow', ['ces', 'three', 'engine.texture-loade
 
             }
         });
-    })
-    .factory('ShadowSystem', function (System, THREE, TextureLoader, $log) {
+    }])
+    .factory('ShadowSystem', ['System', 'THREE', 'TextureLoader', '$log', function (System, THREE, TextureLoader, $log) {
         'use strict';
 
         var SHADOW_PATH = 'images/core/shadow.png';
@@ -83,4 +83,4 @@ angular.module('components.scene.shadow', ['ces', 'three', 'engine.texture-loade
         });
 
         return ShadowSystem;
-    });
+    }]);

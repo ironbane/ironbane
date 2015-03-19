@@ -1,5 +1,5 @@
 angular.module('components.sound', ['ces'])
-    .config(function ($componentsProvider) {
+    .config(['$componentsProvider', function ($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -10,4 +10,4 @@ angular.module('components.sound', ['ces'])
                 autoPlay: true
             }
         });
-    });
+    }]);

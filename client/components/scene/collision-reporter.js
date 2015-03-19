@@ -1,7 +1,7 @@
 /* jshint bitwise: false */
 
 angular.module('components.scene.collision-reporter', ['ces', 'three', 'ammo', 'ammo.physics-world', 'ces.signal'])
-    .config(function ($componentsProvider) {
+    .config(['$componentsProvider', function ($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -9,8 +9,8 @@ angular.module('components.scene.collision-reporter', ['ces', 'three', 'ammo', '
 
             }
         });
-    })
-    .factory('CollisionReporterSystem', function (System, Ammo, $q, PhysicsWorld, THREE, Signal) {
+    }])
+    .factory('CollisionReporterSystem', ['System', 'Ammo', '$q', 'PhysicsWorld', 'THREE', 'Signal', function (System, Ammo, $q, PhysicsWorld, THREE, Signal) {
         'use strict';
 
         // A lot of code here is based on Chandler Prall's Physijs
@@ -345,4 +345,4 @@ angular.module('components.scene.collision-reporter', ['ces', 'three', 'ammo', '
         });
 
         return CollisionReporterSystem;
-    });
+    }]);

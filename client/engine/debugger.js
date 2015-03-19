@@ -1,5 +1,5 @@
 angular.module('engine.debugger', ['engine.ib-config', 'three', 'engine.util'])
-    .service('Debugger', function (IbConfig, THREE, Util) {
+    .service('Debugger', ['IbConfig', 'THREE', 'Util', function (IbConfig, THREE, Util) {
         'use strict';
 
 
@@ -47,4 +47,4 @@ angular.module('engine.debugger', ['engine.ib-config', 'three', 'engine.util'])
 				watched = [];
         	}
         };
-    });
+    }]);

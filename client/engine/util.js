@@ -1,5 +1,5 @@
 angular.module('engine.util', [])
-    .service('Util', function (THREE, $textureCache, $q) {
+    .service('Util', ['THREE', '$textureCache', '$q', function (THREE, $textureCache, $q) {
             'use strict';
 
             this.getRandomInt = function (min, max) {
@@ -32,5 +32,5 @@ angular.module('engine.util', [])
 
 				Meteor.setTimeout(doCheck, 10);
             };
-        }
+        }]
     );

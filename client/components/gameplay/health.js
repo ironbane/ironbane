@@ -1,5 +1,5 @@
 angular.module('components.gameplay.health', ['ces'])
-    .config(function ($componentsProvider) {
+    .config(['$componentsProvider', function ($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -9,4 +9,4 @@ angular.module('components.gameplay.health', ['ces'])
                 value: 10
             }
         });
-    });
+    }]);

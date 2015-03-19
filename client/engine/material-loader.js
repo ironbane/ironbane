@@ -1,5 +1,5 @@
 angular.module('engine.material-loader', ['three', 'engine.texture-loader', 'engine.material-cache'])
-    .service('MaterialLoader', function (THREE, TextureLoader, $materialCache, $q) {
+    .service('MaterialLoader', ['THREE', 'TextureLoader', '$materialCache', '$q', function (THREE, TextureLoader, $materialCache, $q) {
         'use strict';
 
         this.load = function (materialName, options) {
@@ -47,4 +47,4 @@ angular.module('engine.material-loader', ['three', 'engine.texture-loader', 'eng
 
             return deferred.promise;
         };
-    });
+    }]);

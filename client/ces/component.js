@@ -1,5 +1,5 @@
 angular.module('ces.component', ['ces.class'])
-    .factory('Component', function (Class) {
+    .factory('Component', ['Class', function (Class) {
         'use strict';
 
         /**
@@ -20,4 +20,4 @@ angular.module('ces.component', ['ces.class'])
 
         return Component;
 
-    });
+    }]);

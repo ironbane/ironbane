@@ -3,7 +3,7 @@ angular.module('ces.family', [
     'ces.entitylist',
     'ces.signal'
 ])
-    .factory('Family', function (Class, EntityList, Signal) {
+    .factory('Family', ['Class', 'EntityList', 'Signal', function (Class, EntityList, Signal) {
         'use strict';
         /**
          * The family is a collection of entities having all the specified components.
@@ -130,4 +130,4 @@ angular.module('ces.family', [
 
         return Family;
 
-    });
+    }]);

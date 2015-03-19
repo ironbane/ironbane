@@ -3,7 +3,7 @@ angular
         'engine.entity-builder',
         'game.world-root'
     ])
-    .service('LevelLoader', function ($rootWorld, $http, EntityBuilder, $log, $q) {
+    .service('LevelLoader', ['$rootWorld', '$http', 'EntityBuilder', '$log', '$q', function ($rootWorld, $http, EntityBuilder, $log, $q) {
 
         this.load = function (levelId) {
             // TODO: clear world out first?
@@ -34,4 +34,4 @@ angular
             return $q.all([level.getComponent('scene').meshTask, entitiesTask]);
         };
 
-    });
+    }]);

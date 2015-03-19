@@ -1,5 +1,5 @@
 angular.module('engine.entity-builder', ['ces', 'three', 'engine.geometry-cache', 'engine.material-cache'])
-    .service('EntityBuilder', function (Entity, THREE, $components, $geometryCache, $materialCache, $injector) {
+    .service('EntityBuilder', ['Entity', 'THREE', '$components', '$geometryCache', '$materialCache', '$injector', function (Entity, THREE, $components, $geometryCache, $materialCache, $injector) {
         this.build = function (name, data) {
             var entity = new Entity(),
                 transform = data.matrix || {
@@ -69,4 +69,4 @@ angular.module('engine.entity-builder', ['ces', 'three', 'engine.geometry-cache'
 
             return root;
         };
-    });
+    }]);

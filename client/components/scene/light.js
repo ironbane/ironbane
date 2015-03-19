@@ -1,5 +1,5 @@
 angular.module('components.scene.light', ['ces', 'three'])
-    .config(function ($componentsProvider) {
+    .config(['$componentsProvider', function ($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -14,8 +14,8 @@ angular.module('components.scene.light', ['ces', 'three'])
                 groundColor: 0xffaa00
             }
         });
-    })
-    .factory('LightSystem', function (System, THREE) {
+    }])
+    .factory('LightSystem', ['System', 'THREE', function (System, THREE) {
         'use strict';
 
         var LIGHTS = ['PointLight', 'DirectionalLight', 'SpotLight', 'AmbientLight', 'HemisphereLight'];
@@ -70,4 +70,4 @@ angular.module('components.scene.light', ['ces', 'three'])
         });
 
         return LightSystem;
-    });
+    }]);

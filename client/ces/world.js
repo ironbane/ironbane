@@ -4,7 +4,7 @@ angular.module('ces.world', [
     'ces.entity',
     'ces.entitylist'
 ])
-    .factory('World', function (Class, Family, Entity, EntityList, $log) {
+    .factory('World', ['Class', 'Family', 'Entity', 'EntityList', '$log', function (Class, Family, Entity, EntityList, $log) {
         'use strict';
 
         /**
@@ -290,4 +290,4 @@ angular.module('ces.world', [
 
         return World;
 
-    });
+    }]);

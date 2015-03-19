@@ -1,5 +1,5 @@
 angular.module('components.scene.camera', ['ces', 'three'])
-    .config(function ($componentsProvider) {
+    .config(['$componentsProvider', function ($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -16,8 +16,8 @@ angular.module('components.scene.camera', ['ces', 'three'])
                 bottom: 1
             }
         });
-    })
-    .factory('CameraSystem', function (System, THREE) {
+    }])
+    .factory('CameraSystem', ['System', 'THREE', function (System, THREE) {
         'use strict';
 
         var CameraSystem = System.extend({
@@ -78,4 +78,4 @@ angular.module('components.scene.camera', ['ces', 'three'])
         });
 
         return CameraSystem;
-    });
+    }]);

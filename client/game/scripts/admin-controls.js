@@ -3,7 +3,7 @@ angular
 		'components.script',
 		'util.name-gen'
 	])
-	.run(function ($log, ScriptBank, FantasyNameGenerator) {
+	.run(['$log', 'ScriptBank', 'FantasyNameGenerator', function ($log, ScriptBank, FantasyNameGenerator) {
 		'use strict';
 
 		var AdminControlsScript = function (entity, world) {
@@ -49,4 +49,4 @@ angular
 		};
 
 		ScriptBank.add('/scripts/built-in/admin-controls.js', AdminControlsScript);
-	});
+	}]);

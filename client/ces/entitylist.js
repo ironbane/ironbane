@@ -1,7 +1,7 @@
 angular.module('ces.entitylist', [
     'ces.class'
 ])
-    .factory('EntityList', function (Class) {
+    .factory('EntityList', ['Class', function (Class) {
         'use strict';
         /**
          * The entity node is a wrapper around an entity, to be added into
@@ -138,4 +138,4 @@ angular.module('ces.entitylist', [
 
         return EntityList;
 
-    });
+    }]);

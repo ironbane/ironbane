@@ -2,7 +2,7 @@ angular
 	.module('game.scripts.network-send', [
 		'components.script'
 	])
-	.run(function ($log, ScriptBank) {
+	.run(['$log', 'ScriptBank', function ($log, ScriptBank) {
 		'use strict';
 
 		var NetworkSendScript = function (entity, world) {
@@ -35,4 +35,4 @@ angular
 		};
 
 		ScriptBank.add('/scripts/built-in/network-send.js', NetworkSendScript);
-	});
+	}]);

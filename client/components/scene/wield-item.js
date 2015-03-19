@@ -1,5 +1,5 @@
 angular.module('components.scene.wield-item', ['ces', 'three', 'engine.texture-loader', 'engine.util'])
-    .config(function ($componentsProvider) {
+    .config(['$componentsProvider', function ($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -7,8 +7,8 @@ angular.module('components.scene.wield-item', ['ces', 'three', 'engine.texture-l
                 item: 14
             }
         });
-    })
-    .factory('WieldItemSystem', function (System, THREE, TextureLoader, $timeout, Util) {
+    }])
+    .factory('WieldItemSystem', ['System', 'THREE', 'TextureLoader', '$timeout', 'Util', function (System, THREE, TextureLoader, $timeout, Util) {
         'use strict';
 
 
@@ -159,4 +159,4 @@ angular.module('components.scene.wield-item', ['ces', 'three', 'engine.texture-l
         });
 
         return WieldItemSystem;
-    });
+    }]);

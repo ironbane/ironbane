@@ -1,7 +1,7 @@
 angular.module('ces.signal', [
     'ces.class'
 ])
-    .factory('Signal', function (Class) {
+    .factory('Signal', ['Class', function (Class) {
         'use strict';
         /**
          * The signal can register listeners and invoke the listeners with messages.
@@ -60,4 +60,4 @@ angular.module('ces.signal', [
 
         return Signal;
 
-    });
+    }]);

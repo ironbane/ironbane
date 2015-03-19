@@ -1,5 +1,5 @@
 angular.module('ammo.physics-world', ['ammo'])
-    .factory('PhysicsWorld', function (Ammo) {
+    .factory('PhysicsWorld', ['Ammo', function (Ammo) {
         'use strict';
 
         var broadphase = new Ammo.btDbvtBroadphase();
@@ -12,4 +12,4 @@ angular.module('ammo.physics-world', ['ammo'])
 
         return physicsWorld;
 
-    });
+    }]);

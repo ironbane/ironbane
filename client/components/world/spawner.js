@@ -1,5 +1,5 @@
 angular.module('components.world.spawner', ['ces'])
-    .config(function ($componentsProvider) {
+    .config(['$componentsProvider', function ($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -10,4 +10,4 @@ angular.module('components.world.spawner', ['ces'])
                 spawnCount: 1 // total active spawns
             }
         });
-    });
+    }]);

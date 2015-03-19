@@ -4,10 +4,10 @@ angular
         'game.ui.play',
         'game.ui.main-menu'
     ])
-    .run(function ($state, GameService) {
+    .run(['$state', 'GameService', function ($state, GameService) {
         'use strict';
 
         GameService.start();
 
 
-    });
+    }]);

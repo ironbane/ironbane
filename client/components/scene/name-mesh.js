@@ -4,7 +4,7 @@ angular
         'three',
         'engine.texture-loader'
     ])
-    .config(function ($componentsProvider) {
+    .config(['$componentsProvider', function ($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -16,8 +16,8 @@ angular
                 fontface: 'Arial Black'
             }
         });
-    })
-    .factory('NameMeshSystem', function (System, THREE, TextureLoader, $log) {
+    }])
+    .factory('NameMeshSystem', ['System', 'THREE', 'TextureLoader', '$log', function (System, THREE, TextureLoader, $log) {
         'use strict';
 
         var NameMeshSystem = System.extend({
@@ -68,4 +68,4 @@ angular
         });
 
         return NameMeshSystem;
-    });
+    }]);

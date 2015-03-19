@@ -1,6 +1,6 @@
 // serves as the "main" world for the CES game system
 angular.module('game.world-root', ['ces', 'three'])
-    .service('$rootWorld', function (World, THREE) {
+    .service('$rootWorld', ['World', 'THREE', function (World, THREE) {
         'use strict';
 
         // game instance
@@ -34,4 +34,4 @@ angular.module('game.world-root', ['ces', 'three'])
         };
 
         return _world;
-    });
+    }]);

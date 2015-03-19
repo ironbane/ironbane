@@ -7,7 +7,7 @@ angular.module('game.network', [
 		'engine.entity-builder',
 		'engine.util'
 	])
-	.service('Network', function (World, THREE, $log, EntityBuilder, $rootWorld, Util) {
+	.service('Network', ['World', 'THREE', '$log', 'EntityBuilder', '$rootWorld', 'Util', function (World, THREE, $log, EntityBuilder, $rootWorld, Util) {
 		'use strict';
 
 		var self = {};
@@ -87,4 +87,4 @@ angular.module('game.network', [
 		};
 
 		return self;
-	});
+	}]);

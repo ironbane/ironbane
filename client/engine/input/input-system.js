@@ -4,7 +4,7 @@ angular.module('engine.input.input-system', [
     'engine.input.keys',
     'engine.input.virtual-gamepad'
 ])
-    .factory('InputSystem', function (System, Keyboard, VirtualGamepad, KEYS) {
+    .factory('InputSystem', ['System', 'Keyboard', 'VirtualGamepad', 'KEYS', function (System, Keyboard, VirtualGamepad, KEYS) {
         var InputSystem = System.extend({
             init: function () {
                 this.keyboard = new Keyboard();
@@ -21,4 +21,4 @@ angular.module('engine.input.input-system', [
         });
 
         return InputSystem;
-    });
+    }]);

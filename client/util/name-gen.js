@@ -3,7 +3,7 @@ angular
         'util.name-gen.egyptian',
         'util.name-gen.mmo-name-set'
     ])
-    .service('FantasyNameGenerator', function (NAMEGEN_SET_EGYPTIAN, NAMEGEN_SET_MMO) {
+    .service('FantasyNameGenerator', ['NAMEGEN_SET_EGYPTIAN', 'NAMEGEN_SET_MMO', function (NAMEGEN_SET_EGYPTIAN, NAMEGEN_SET_MMO) {
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         // name_generator.js
         // written and released to the public domain by drow <drow@bin.sh>
@@ -171,4 +171,4 @@ angular
 
         this.generateName = generateName;
         this.generateList = nameList;
-    });
+    }]);

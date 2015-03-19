@@ -1,5 +1,5 @@
 angular.module('game.scripts.sprite-sheet', ['components.script', 'three'])
-    .run(function (ScriptBank, THREE) {
+    .run(['ScriptBank', 'THREE', function (ScriptBank, THREE) {
         'use strict';
 
         var displayUVFrame = function (mesh, indexH, indexV, numberOfSpritesH, numberOfSpritesV, mirror) {
@@ -166,4 +166,4 @@ angular.module('game.scripts.sprite-sheet', ['components.script', 'three'])
         };
 
         ScriptBank.add('/scripts/built-in/sprite-sheet.js', SpriteSheetScript);
-    });
+    }]);

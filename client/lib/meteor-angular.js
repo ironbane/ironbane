@@ -2,10 +2,10 @@
 
 (function() {
     var module = angular.module('meteor', []);
-    module.factory('Meteor', function($window) {
+    module.factory('Meteor', ['$window', function($window) {
         return $window.Meteor;
-    });
-    module.factory('Tracker', function($window) {
+    }]);
+    module.factory('Tracker', ['$window', function($window) {
         return $window.Tracker;
-    });
+    }]);
 })();

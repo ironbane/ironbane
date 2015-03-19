@@ -1,5 +1,5 @@
 angular.module('game.scripts.camera-pan', ['components.script', 'three'])
-    .run(function (ScriptBank, THREE) {
+    .run(['ScriptBank', 'THREE', function (ScriptBank, THREE) {
         'use strict';
 
         var PanScript = function (entity) {
@@ -20,4 +20,4 @@ angular.module('game.scripts.camera-pan', ['components.script', 'three'])
         };
 
         ScriptBank.add('/scripts/built-in/camera-pan.js', PanScript);
-    });
+    }]);

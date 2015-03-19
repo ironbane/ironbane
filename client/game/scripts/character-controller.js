@@ -4,7 +4,7 @@ angular
         'three',
         'ammo'
     ])
-    .run(function ($log, ScriptBank, THREE, Ammo) {
+    .run(['$log', 'ScriptBank', 'THREE', 'Ammo', function ($log, ScriptBank, THREE, Ammo) {
         'use strict';
 
         var acceleration = 0.7;
@@ -221,4 +221,4 @@ angular
         };
 
         ScriptBank.add('/scripts/built-in/character-controller.js', CharacterControllerScript);
-    });
+    }]);

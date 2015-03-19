@@ -1,5 +1,5 @@
 angular.module('components.scene.model', ['ces', 'three', 'engine.geometry-cache', 'engine.material-cache'])
-    .config(function ($componentsProvider) {
+    .config(['$componentsProvider', function ($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -11,8 +11,8 @@ angular.module('components.scene.model', ['ces', 'three', 'engine.geometry-cache
                 'castShadows': false
             }
         });
-    })
-    .factory('ModelSystem', function (System, THREE, $geometryCache, $materialCache, TextureLoader) {
+    }])
+    .factory('ModelSystem', ['System', 'THREE', '$geometryCache', '$materialCache', 'TextureLoader', function (System, THREE, $geometryCache, $materialCache, TextureLoader) {
         'use strict';
 
         function getGeometry(type) {
@@ -90,4 +90,4 @@ angular.module('components.scene.model', ['ces', 'three', 'engine.geometry-cache
         });
 
         return ModelSystem;
-    });
+    }]);
