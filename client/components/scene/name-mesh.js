@@ -12,7 +12,7 @@ angular
                 text: 'name',
                 color: '#FFFFFF',
                 stroke: '#000000',
-                fontsize: 18,
+                fontsize: 52,
                 fontface: 'Arial Black'
             }
         });
@@ -27,9 +27,14 @@ angular
                 sys._super(world);
 
                 world.entityAdded('name-mesh').add(function (entity) {
-                    var canvas = document.createElement('canvas'),
-                        ctx = canvas.getContext('2d'),
-                        component = entity.getComponent('name-mesh');
+                    var canvas = document.createElement('canvas');
+
+                    canvas.width = 800;
+                    canvas.height = 80;
+                    // canvas.style.imageRendering = 'pixelated';
+
+                    var ctx = canvas.getContext('2d');
+					var component = entity.getComponent('name-mesh');
 
                     ctx.font = 'Bold ' + component.fontsize + 'px ' + component.fontface;
 
@@ -37,10 +42,18 @@ angular
                     var metrics = ctx.measureText(component.text);
                     var textWidth = metrics.width;
 
-                    ctx.fillStyle = component.color;
+					// ctx.rect(0,0,800,80);
+                    // ctx.fillStyle = 'red';
+					// ctx.fill();
+
+					ctx.textAlign = 'center';
+
+					ctx.fillStyle = component.color;
+			      	ctx.lineWidth = 3;
                     ctx.strokeStyle = component.stroke;
 
-                    ctx.fillText(component.text, 0, component.fontsize);
+					ctx.fillText(component.text, 400, component.fontsize);
+					ctx.strokeText(component.text, 400, component.fontsize);
 
                     // canvas contents will be used for a texture
                     var texture = new THREE.Texture(canvas);
@@ -51,11 +64,14 @@ angular
                     var sprite = new THREE.Sprite(spriteMaterial);
                     spriteMaterial.needsUpdate = true;
 
+					sprite.scale.x = 2.0;
+                    sprite.scale.y = 0.2;
+
                     entity.add(sprite);
 
                     // place above entity TODO: test size of entity, for now assume player
-                    sprite.position.y = 0.15;
-                    sprite.position.x = 0.35;
+                    sprite.position.y = 0.6;
+                    // sprite.position.x = 0.1;
                 });
 
                 world.entityRemoved('name-mesh').add(function (entity) {
