@@ -136,10 +136,10 @@ angular.module('game.scripts.character-multicam', ['components.script'])
 
                             if (dist < originalThirdPersonPositionLength) {
                                 // cameraThirdPersonLookAtTargetOffset.z = -10;
-                                cameraThirdPersonLookAtTargetOffset.lerp(originalCameraThirdPersonLookAtTargetOffset.clone().add(new THREE.Vector3(0, -5, -20)), dt*5);
+                                cameraThirdPersonLookAtTargetOffset.lerp(originalCameraThirdPersonLookAtTargetOffset.clone().add(new THREE.Vector3(0, -5, -20)), dt*4);
                             }
                             else {
-                                // cameraThirdPersonLookAtTargetOffset.copy(originalCameraThirdPersonLookAtTargetOffset, dt*5);
+                                // cameraThirdPersonLookAtTargetOffset.copy(originalCameraThirdPersonLookAtTargetOffset, dt*4);
                             }
 
                             localCam.position.normalize();
@@ -149,17 +149,17 @@ angular.module('game.scripts.character-multicam', ['components.script'])
                         }
                         else {
                             localCam.position.copy(originalThirdPersonPosition);
-                            // cameraThirdPersonLookAtTargetOffset.copy(originalCameraThirdPersonLookAtTargetOffset, dt*5);
+                            // cameraThirdPersonLookAtTargetOffset.copy(originalCameraThirdPersonLookAtTargetOffset, dt*4);
                         }
                     }
 
                     var worldPos = new THREE.Vector3();
                     worldPos.setFromMatrixPosition(localCam.matrixWorld);
-                    detachedCam.position.lerp(worldPos, dt*5);
+                    detachedCam.position.lerp(worldPos, dt*4);
 
 
                     cameraThirdPersonLookAtTargetOffset.applyQuaternion( this.entity.quaternion );
-                    cameraThirdPersonLookAtTarget.lerp(this.entity.position.clone().add(cameraThirdPersonLookAtTargetOffset), dt*5);
+                    cameraThirdPersonLookAtTarget.lerp(this.entity.position.clone().add(cameraThirdPersonLookAtTargetOffset), dt*4);
                     detachedCam.lookAt(cameraThirdPersonLookAtTarget);
                 }
             }
