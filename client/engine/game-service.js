@@ -70,7 +70,7 @@ angular
             });
         };
 
-        this.enterGame = function () {
+        this.enterGame = function (nickname) {
 
         	// Just insert our entity as player
         	// We'll auto detect later it's in fact the main player
@@ -85,7 +85,7 @@ angular
 
         	if (characters.count() === 0) {
 
-        		var genName = FantasyNameGenerator.generateName('mmo');
+        		var genName = nickname || FantasyNameGenerator.generateName('mmo');
 
         		// Insert a new character
 				entityId = Entities.insert({

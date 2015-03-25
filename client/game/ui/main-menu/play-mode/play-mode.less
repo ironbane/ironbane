@@ -1,11 +1,46 @@
 
+
+@charSize : 16px;
+@charPreviewBoxScale : 8;
+@charPreviewBoxSize : @charSize * @charPreviewBoxScale;
+
 .ib-ui-login-box {
+	position: relative;
+
 	width: 300px;
 	// height: 200px;
 	padding: 10px;
 
-	.ibutton {
+	.ibutton, .iinput {
 		width: 100%;
+		box-sizing: border-box;
+
+		&.vspacer {
+			margin-bottom: 10px;
+		}
+	}
+
+	.char-title {
+		padding-top: 6px;
+		text-align: center;
+	}
+
+	.del-btn {
+		position: absolute;
+		right: 10px;
+		top: 60px;
+	}
+
+	.character-preview {
+		width: @charPreviewBoxSize;
+		height: @charPreviewBoxSize;
+		background-repeat: no-repeat;
+		background-position: @charSize*@charPreviewBoxScale*-1 @charSize*@charPreviewBoxScale*-4;
+		background-size: @charPreviewBoxSize*3 @charPreviewBoxSize*8;
+		image-rendering: pixelated;
+		display: block;
+		margin: 0 auto;
+		margin-bottom: 20px;
 	}
 }
 

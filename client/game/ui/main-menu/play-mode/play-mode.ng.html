@@ -1,5 +1,18 @@
 <!-- <meteor-include src="loginButtons"></meteor-include> -->
 <!-- <button class="ibutton" ng-click="play()">Play</button> -->
 <div class="ib-ui-window ib-ui-login-box">
-	<button class="ibutton attention" ng-click="play()">Play</button>
+	<div ng-if="entities.length === 0">
+		<input type="text" class="iinput vspacer" placeholder="Enter nickname" ng-model="nickname">
+		<button class="ibutton attention" ng-click="create()">Create Character</button>
+	</div>
+	<div ng-if="entities.length > 0">
+		<button class="ibutton del-btn" ng-click="delete()" style="width:40px">&#10006;</button>
+		<button class="ibutton" ng-click="play()" style="width:40px;float:left">←</button>
+		<div class="char-title" style="width:220px;float:left">{{ entities[0].name }}</div>
+		<button class="ibutton" ng-click="play()" style="width:40px">→</button>
+		<div class="character-preview" ng-style="{ 'background-image': 'url(' + entities[0].components.quad.texture + ')' }"></div>
+
+		<button class="ibutton attention" ng-click="play()">Enter Ironbane</button>
+	</div>
+
 </div>

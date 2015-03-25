@@ -69,6 +69,11 @@ input[type="color"],
 	outline: 3px solid #1f7d5b;
 	outline: 3px solid #06452d;
     background-color: @bgc1_75;
+
+    p {
+    	margin: 0;
+    	padding: 0px 5px 10px 5px;
+    }
 }
 
 
@@ -114,6 +119,46 @@ input[type="color"],
 		}
 	}
 
+	.iinput {
+		border: 3px solid #1f453c;
+		display: block;
+		color: #37ffac;
+		font-family: Verdana;
+		font-size: 19px;
+		font-weight: bold;
+		padding: 5px 0;
+		text-decoration: none;
+		text-shadow: 2px 1px 0 #06452d;
+		// width: 200px;
+		background: #357768;
+		// margin: 25px auto;
+		&:hover {
+			background-color: #5ba997;
+		}
+
+		&.attention {
+			background-color:#356F77;
+			color:#A9F8FC;
+		}
+		&.attention:hover {
+			background-color:#5BA1A9;
+		}
+
+		&::-webkit-input-placeholder { /* WebKit browsers */
+		    color:    lighten(@primary3, 10%);
+		}
+		&:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+		   color:    lighten(@primary3, 10%);
+		   opacity:  1;
+		}
+		&::-moz-placeholder { /* Mozilla Firefox 19+ */
+		   color:    lighten(@primary3, 10%);
+		   opacity:  1;
+		}
+		&:-ms-input-placeholder { /* Internet Explorer 10+ */
+		   color:    lighten(@primary3, 10%);
+		}
+	}
 
 
 	.levelbox {
