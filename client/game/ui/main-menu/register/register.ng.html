@@ -1,10 +1,18 @@
 <!-- <meteor-include src="loginButtons"></meteor-include> -->
 <!-- <button class="ibutton" ng-click="play()">Play</button> -->
 <div class="ib-ui-window ib-ui-login-box">
-	<input type="text" class="iinput vspacer" placeholder="Username" ng-model="username">
-	<input type="password" class="iinput vspacer" placeholder="Password" ng-model="password">
-	<input type="password" class="iinput vspacer" placeholder="E-mail" ng-model="email">
+	<form novalidate name="registerForm">
+		<input required ng-maxlength="12" type="text" class="iinput vspacer" placeholder="Username" ng-model="username">
+		<input ng-show="!showPassword" required ng-maxlength="32" type="password" class="iinput vspacer" placeholder="Password" ng-model="password">
+		<input ng-show="showPassword" required ng-maxlength="32" type="text" class="iinput vspacer" placeholder="Password" ng-model="password">
 
-	<button class="ibutton attention" ng-click="register()" style="width:145px;float:left;margin-right:10px">Register</button>
-	<button class="ibutton" ng-click="cancel()" style="width:145px">Cancel</button>
+		<div class="label">
+			Show password <input type="checkbox" ng-model="showPassword">
+		</div>
+
+		<input required type="email" class="iinput vspacer" placeholder="E-mail" ng-model="email">
+
+		<button class="ibutton attention" ng-disabled="registerForm.$invalid" ng-click="register()" style="width:145px;float:left;margin-right:10px">Register</button>
+		<button class="ibutton" ng-click="cancel()" style="width:145px">Cancel</button>
+	</form>
 </div>
