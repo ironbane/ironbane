@@ -35,7 +35,7 @@
 		margin-bottom: 10px;
 	}
 
-	.character-preview {
+	.char-preview {
 		width: @charPreviewBoxSize;
 		height: @charPreviewBoxSize;
 		background-repeat: no-repeat;
@@ -47,6 +47,35 @@
 		margin-bottom: 20px;
 	}
 
+	.char-cust {
+		position: absolute;
+
+		&.skin, &.eyes {
+			top: 130px;
+		}
+
+		&.hair, &.eyes {
+			right: 10px;
+		}
+	}
+
+	.char-cust-label {
+
+	}
+
+	.char-cust-btn {
+		width: 40px;
+	}
+
+	.char-cust-btn-left {
+		width: 40px;
+		float: left;
+	}
+
+	.char-cust-btn-right {
+		width: 40px;
+	}
+
 	.label {
 		margin-bottom: 10px;
 	}
@@ -55,7 +84,7 @@
 		margin-bottom: 10px;
 
 		.label {
-			margin-top: 5px;
+			margin-top: 7px;
 		}
 	}
 }

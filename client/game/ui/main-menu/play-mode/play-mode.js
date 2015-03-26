@@ -32,6 +32,15 @@ angular
                 $scope.register = function () {
 				 	$state.go('main-menu.register');
                 };
+
+                // Character creation
+
+                $scope.boy = true;
+
+                $scope.toggleGender = function () {
+                	$scope.boy = !$scope.boy;
+                };
+
             }]
         });
     }]);

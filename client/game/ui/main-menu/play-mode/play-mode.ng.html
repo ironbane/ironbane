@@ -12,6 +12,40 @@
 	<div ng-if="!$root.currentUser.profile.guest">
 		<div ng-if="entities.length === 0">
 			<input type="text" class="iinput vspacer" placeholder="Character name" ng-model="nickname">
+
+			<div class="char-cust gender">
+				<div class="char-cust-label">Gender</div>
+				<div>
+					<button ng-if="boy" ng-click="toggleGender()" class="ibutton">Boy</button>
+					<button ng-if="!boy" ng-click="toggleGender()" class="ibutton">Girl</button>
+				</div>
+			</div>
+
+			<div class="char-cust skin">
+				<div class="char-cust-label">Skin</div>
+				<div>
+					<button ng-click="" class="ibutton char-cust-btn-left">←</button>
+					<button ng-click="" class="ibutton char-cust-btn-right">→</button>
+				</div>
+			</div>
+
+			<div class="char-cust hair">
+				<div class="char-cust-label">Hair</div>
+				<div>
+					<button ng-click="" class="ibutton char-cust-btn-left">←</button>
+					<button ng-click="" class="ibutton char-cust-btn-right">→</button>
+				</div>
+			</div>
+
+			<div class="char-cust eyes">
+				<div class="char-cust-label">Eyes</div>
+				<div>
+					<button ng-click="" class="ibutton char-cust-btn-left">←</button>
+					<button ng-click="" class="ibutton char-cust-btn-right">→</button>
+				</div>
+			</div>
+
+			<div class="char-preview" ng-style="{ 'background-image': 'url(images/characters/skin/1001.png)' }"></div>
 			<button class="ibutton attention" ng-click="create()">Create Character</button>
 		</div>
 		<div ng-if="entities.length > 0">

@@ -13,7 +13,7 @@ angular
                 color: '#FFFFFF',
                 stroke: '#000000',
                 fontsize: 52,
-                fontface: 'Arial Black'
+                fontface: 'Verdana'
             }
         });
     }])
