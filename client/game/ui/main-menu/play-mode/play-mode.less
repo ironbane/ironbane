@@ -1,8 +1,10 @@
 
 
-@charSize : 16px;
+@charWidth : 16px;
+@charHeight : 18px;
 @charPreviewBoxScale : 8;
-@charPreviewBoxSize : @charSize * @charPreviewBoxScale;
+@charPreviewBoxWidth : @charWidth * @charPreviewBoxScale;
+@charPreviewBoxHeight : @charHeight * @charPreviewBoxScale;
 
 .ib-ui-login-box {
 	position: relative;
@@ -36,11 +38,11 @@
 	}
 
 	.char-preview {
-		width: @charPreviewBoxSize;
-		height: @charPreviewBoxSize;
+		width: @charPreviewBoxWidth;
+		height: @charPreviewBoxHeight;
 		background-repeat: no-repeat;
-		background-position: @charSize*@charPreviewBoxScale*-1 @charSize*@charPreviewBoxScale*-4;
-		background-size: @charPreviewBoxSize*3 @charPreviewBoxSize*8;
+		background-position: @charWidth*@charPreviewBoxScale*-1 @charHeight*@charPreviewBoxScale*-4;
+		background-size: @charPreviewBoxWidth*3 @charPreviewBoxHeight*8;
 		image-rendering: pixelated;
 		display: block;
 		margin: 0 auto;
