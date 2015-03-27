@@ -1,5 +1,5 @@
 // a "quad" is a billboard that doesn't look up
-angular.module('components.scene.quad', ['ces', 'three', 'engine.texture-loader'])
+angular.module('components.scene.quad', ['ces', 'three', 'engine.texture-loader', 'engine.char-builder'])
     .config(['$componentsProvider', function ($componentsProvider) {
         'use strict';
 
@@ -7,11 +7,12 @@ angular.module('components.scene.quad', ['ces', 'three', 'engine.texture-loader'
             'quad': {
                 transparent: false,
                 color: 0xffffff,
-                texture: null
+                texture: null,
+                charBuildData: null
             }
         });
     }])
-    .factory('QuadSystem', ['System', 'THREE', 'TextureLoader', '$log', function (System, THREE, TextureLoader, $log) {
+    .factory('QuadSystem', ['System', 'THREE', 'TextureLoader', '$log', '$q', 'CharBuilder', function (System, THREE, TextureLoader, $log, $q, CharBuilder) {
         'use strict';
 
         var QuadSystem = System.extend({
@@ -30,16 +31,28 @@ angular.module('components.scene.quad', ['ces', 'three', 'engine.texture-loader'
                     quad.material.side = THREE.DoubleSide;
                     quad.geometry.dynamic = true;
 
+                    var promise;
+
                     if (quadData.texture) {
-                        TextureLoader.load(quadData.texture)
-                            .then(function (texture) {
-                                // texture.needsUpdate = true;
-                                quad.material.map = texture;
-                                quad.material.needsUpdate = true;
-                                quad.geometry.buffersNeedUpdate = true;
-                                quad.geometry.uvsNeedUpdate = true;
-                                quad.material.transparent = quadData.transparent;
-                            });
+						var deferred = $q.defer();
+						promise = deferred.resolve(quadData.texture);
+                    }
+                    else if (quadData.charBuildData) {
+						promise = CharBuilder.makeChar(quadData.charBuildData);
+                    }
+
+                    if (promise) {
+                    	promise.then(function (texture) {
+	                        return TextureLoader.load(texture)
+	                            .then(function (loadedTexture) {
+	                                // loadedTexture.needsUpdate = true;
+	                                quad.material.map = loadedTexture;
+	                                quad.material.needsUpdate = true;
+	                                quad.geometry.buffersNeedUpdate = true;
+	                                quad.geometry.uvsNeedUpdate = true;
+	                                quad.material.transparent = quadData.transparent;
+	                            });
+	                    });
                     }
 
                     quadData.quad = quad;

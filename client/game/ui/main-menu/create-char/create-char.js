@@ -1,5 +1,5 @@
 angular
-    .module('game.ui.main-menu.play-mode', [
+    .module('game.ui.main-menu.create-char', [
     	'angular-meteor',
     	'engine.game-service',
     	'engine.char-builder',
@@ -11,30 +11,23 @@ angular
     .config(['$stateProvider', function ($stateProvider) {
         'use strict';
 
-        $stateProvider.state('main-menu.play-mode', {
-            templateUrl: 'client/game/ui/main-menu/play-mode/play-mode.ng.html',
-            controller: ['$scope', '$state', 'GameService', '$meteor', 'CharBuilder', 'Util', '_', 'IbConstants', function ($scope, $state, GameService, $meteor, CharBuilder, Util, _, IbConstants) {
+        $stateProvider.state('main-menu.create-char', {
+            templateUrl: 'client/game/ui/main-menu/create-char/create-char.ng.html',
+            controller: ['$scope', '$state', 'GameService', 'CharBuilder', 'Util', '_', 'IbConstants', function ($scope, $state, GameService, CharBuilder, Util, _, IbConstants) {
 
-            	$scope.currentCharacterIndex = 0;
+            	$scope.back = function () {
+            		$state.go('main-menu.enter-world');
+            	};
 
-		        $scope.entities = $meteor.collection(function() {
-		        	var user = Meteor.user();
-		        	console.log(user);
-					return Entities.find({
-						owner: user._id
-					});
-				});
-
-                $scope.play = function() {
-                    GameService.enterGame($scope.nickname);
-                };
-
-                $scope.login = function () {
-					$state.go('main-menu.login');
-                };
-
-                $scope.register = function () {
-				 	$state.go('main-menu.register');
+                $scope.makeChar = function() {
+                    GameService.makeChar({
+                    	charName: $scope.charName,
+                    	boy: $scope.boy,
+	                	skin: IbConstants.characterParts[gender].skin[$scope.skinIndex],
+	                	eyes: IbConstants.characterParts[gender].eyes[$scope.eyesIndex],
+	                	hair: IbConstants.characterParts[gender].hair[$scope.hairIndex],
+	                });
+	                $state.go('main-menu.enter-world');
                 };
 
                 // Character creation

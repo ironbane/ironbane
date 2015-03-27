@@ -1,7 +1,8 @@
 angular
     .module('game.ui.main-menu', [
         'ui.router',
-        'game.ui.main-menu.play-mode',
+        'game.ui.main-menu.enter-world',
+        'game.ui.main-menu.create-char',
         'game.ui.main-menu.login',
         'game.ui.main-menu.register',
     ])
@@ -10,6 +11,11 @@ angular
 
         $stateProvider.state('main-menu', {
             templateUrl: 'client/game/ui/main-menu/main-menu.ng.html',
-            abstract: true
+            abstract: true,
+            controller: ['$scope', function ($scope) {
+            	$scope.logout = function ()  {
+            		alert('yeah!');
+            	};
+            }]
         });
     }]);

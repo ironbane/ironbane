@@ -70,90 +70,22 @@ angular
             });
         };
 
-        this.enterGame = function (nickname) {
+        this.makeChar = function (options) {
+			Meteor.call('createChar', options, function (error, result) {
+				if (error) {
+					throw error;
+				}
+			});
+        };
 
-        	// Just insert our entity as player
-        	// We'll auto detect later it's in fact the main player
-
-        	var user = Meteor.user();
-
-        	var characters = Entities.find({
-        		owner: user._id
-        	});
-
-        	var entityId;
-
-        	if (characters.count() === 0) {
-
-        		var genName = nickname || FantasyNameGenerator.generateName('mmo');
-
-        		// Insert a new character
-				entityId = Entities.insert({
-					owner: user._id,
-					name: genName,
-					position: (new THREE.Vector3(10, 30, 0)).serialize(),
-					rotation: (new THREE.Euler()).serialize(),
-					components: {
-	                    quad: {
-	                        transparent: true,
-	                        texture: 'images/characters/prefab/' + _.sample(_.range(1, 11)) + '.png'
-	                    },
-	                    rigidBody: {
-	                        shape: {
-	                            type: 'capsule',
-	                            width: 0.5,
-	                            height: 1.0,
-	                            depth: 0.5,
-	                            radius: 0.5
-
-	                            // type: 'sphere',
-	                            // radius: 0.5
-	                        },
-	                        mass: 1,
-	                        friction: 0.0,
-	                        restitution: 0,
-	                        allowSleep: false,
-	                        lock: {
-	                            position: {
-	                                x: false,
-	                                y: false,
-	                                z: false
-	                            },
-	                            rotation: {
-	                                x: true,
-	                                y: true,
-	                                z: true
-	                            }
-	                        }
-	                    },
-						'name-mesh': {
-							text: genName
-						},
-	                    script: {
-	                        scripts: [
-	                            '/scripts/built-in/sprite-sheet.js',
-	                        ]
-	                    },
-	                    shadow: {},
-					}
-				}, function (err) {
-					if (err) {
-						throw err;
-					}
-				});
-        	}
-        	else {
-        		entityId = characters.fetch()[0]._id;
-        	}
-
+        this.enterGame = function (charId) {
 			Entities.update({
-				_id: entityId
+				_id: charId
 			}, {
 				$set: {
 					active: true
 				}
 			});
-
         };
 
     }]);

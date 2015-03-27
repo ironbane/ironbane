@@ -20,14 +20,14 @@ angular
 							throw err;
 						}
 						else {
-							$state.go('main-menu.play-mode');
+							$state.go('main-menu.enter-world');
 						}
 					});
 					// GameService.enterGame($scope.nickname);
 				};
 
 				$scope.cancel = function () {
-					$state.go('main-menu.play-mode');
+					$state.go('main-menu.enter-world');
 				};
 
 				$scope.showPassword = Util.isMobile();

@@ -14,7 +14,7 @@ angular
 				};
 
 				$scope.cancel = function () {
-					$state.go('main-menu.play-mode');
+					$state.go('main-menu.enter-world');
 				}
 			}]
 		});

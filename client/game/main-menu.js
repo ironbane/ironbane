@@ -49,7 +49,7 @@ angular.module('game.main-menu', [
 				});
 
 				if (characters.count() === 0) {
-					$state.go('main-menu.play-mode');
+					$state.go('main-menu.enter-world');
 					addMainMenuCamera();
 				}
 				else {
