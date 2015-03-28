@@ -9,8 +9,8 @@
 		<button ng-hide="currentCharacterIndex === entities.length" class="ibutton del-btn" ng-click="deleteChar()" style="width:40px">&#10006;</button>
 		<button ng-hide="entities.length === 0" class="ibutton" ng-click="prevChar()" style="width:40px;float:left">←</button>
 		<div ng-show="currentCharacterIndex !== entities.length" class="char-title" style="width:220px;float:left">{{ entities[currentCharacterIndex].name }}</div>
-		<div ng-show="entities.length === 0" class="char-title" style="width:220px;float:left">No characters yet</div>
-		<div ng-show="currentCharacterIndex === entities.length" class="char-title" style="width:220px;float:left">{{ freeSlots }} slot{{ freeSlots === 1 ? '' : 's' }} left</div>
+		<div ng-show="entities.length === 0" class="char-title" style="width:300px;text-align: center">No characters yet</div>
+		<div ng-show="entities.length > 0 && currentCharacterIndex === entities.length" class="char-title" style="width:220px;float:left">{{ freeSlots }} slot{{ freeSlots === 1 ? '' : 's' }} left</div>
 		<button ng-hide="entities.length === 0" class="ibutton" ng-click="nextChar()" style="width:40px">→</button>
 
 		<div ng-if="currentCharacterIndex !== entities.length">

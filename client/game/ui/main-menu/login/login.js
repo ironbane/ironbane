@@ -10,6 +10,11 @@ angular
 			controller: ['$scope', '$state', function ($scope, $state) {
 
 				$scope.login = function() {
+					Meteor.loginWithPassword($scope.username, $scope.password, function (err) {
+						if (err) {
+							throw err;
+						}
+					});
 					// GameService.enterGame($scope.nickname);
 				};
 

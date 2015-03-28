@@ -70,22 +70,5 @@ angular
             });
         };
 
-        this.makeChar = function (options) {
-			Meteor.call('createChar', options, function (error, result) {
-				if (error) {
-					throw error;
-				}
-			});
-        };
-
-        this.enterGame = function (charId) {
-			Entities.update({
-				_id: charId
-			}, {
-				$set: {
-					active: true
-				}
-			});
-        };
 
     }]);

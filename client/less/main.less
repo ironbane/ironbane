@@ -27,74 +27,10 @@ a {
     }
 }
 
-select,
-textarea,
-input[type="text"],
-input[type="password"],
-input[type="datetime"],
-input[type="datetime-local"],
-input[type="date"],
-input[type="month"],
-input[type="time"],
-input[type="week"],
-input[type="number"],
-input[type="email"],
-input[type="url"],
-input[type="search"],
-input[type="tel"],
-input[type="color"],
-.uneditable-input {
-    border: 1px solid;
-    .box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
-    .transition(~"border linear .2s, box-shadow linear .2s");
-    .placeholder(darken(@textColor, 10%));
-    color: @textColor;
-    border-color: @primary4;
-    background-color: @primary3;
-    padding: 2px;
-    text-indent: 2px;
 
-    // Focus state
-    &:focus {
-        border-color: rgba(113, 236, 82, .8);
-        outline: 0;
-        outline: thin dotted \9; /* IE6-9 */
-        .box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(113, 236, 82, .6)");
-    }
-}
-
-.ib-ui-window {
-	background: rgba(60, 240, 176, 0.5);
-	margin: 0 auto;
-	outline: 3px solid #1f7d5b;
-	outline: 3px solid #06452d;
-    background-color: @bgc1_75;
-
-    p {
-    	margin: 0;
-    	padding: 0px 5px 10px 5px;
-    }
-}
-
-
-.ui-overlay {
-	position: absolute;
-	top: 0;
-	left: 0;
-	height: 0;
-	overflow: visible;
-	width: 100%;
-	z-index: 10;
-
-	.logo {
-		text-align: center;
-		img {
-			padding-bottom: 25px;
-		}
-	}
 
 	.ibutton, .levelbox {
-		border: 3px solid #1f453c;
+		border: 3px solid #255449;
 		display: block;
 		color: #37ffac;
 		font-family: Verdana;
@@ -140,11 +76,11 @@ input[type="color"],
 		font-family: Verdana;
 		font-size: 19px;
 		font-weight: bold;
-		padding: 5px 0;
+		padding: 5px 0px 5px 5px;
 		text-decoration: none;
 		text-shadow: 2px 1px 0 #06452d;
 		// width: 200px;
-		background: #357768;
+		background: lighten(#357768, 10%);
 		// margin: 25px auto;
 		&:hover {
 			background-color: #5ba997;
@@ -159,21 +95,107 @@ input[type="color"],
 		}
 
 		&::-webkit-input-placeholder { /* WebKit browsers */
-		    color:    lighten(@primary3, 10%);
+		    color:    darken(@primary3, 10%);
+		    padding-left: 5px;
+		    text-shadow: 1px 1px 0 #10dd8f;
+		    font-style: italic;
 		}
 		&:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-		   color:    lighten(@primary3, 10%);
+		   color:    darken(@primary3, 10%);
+		   padding-left: 5px;
+		   text-shadow: 1px 1px 0 #10dd8f;
 		   opacity:  1;
+		   font-style: italic;
 		}
 		&::-moz-placeholder { /* Mozilla Firefox 19+ */
-		   color:    lighten(@primary3, 10%);
+		   color:    darken(@primary3, 10%);
+		   padding-left: 5px;
+		   text-shadow: 1px 1px 0 #10dd8f;
 		   opacity:  1;
+		   font-style: italic;
 		}
 		&:-ms-input-placeholder { /* Internet Explorer 10+ */
-		   color:    lighten(@primary3, 10%);
+		   color:    darken(@primary3, 10%);
+		   padding-left: 5px;
+		   text-shadow: 1px 1px 0 #10dd8f;
+		   font-style: italic;
 		}
 	}
 
+	.ibutton, .iinput {
+		width: 100%;
+		box-sizing: border-box;
+
+		&.vspacer {
+			margin-bottom: 10px;
+		}
+	}
+
+// select,
+// textarea,
+// input[type="text"],
+// input[type="password"],
+// input[type="datetime"],
+// input[type="datetime-local"],
+// input[type="date"],
+// input[type="month"],
+// input[type="time"],
+// input[type="week"],
+// input[type="number"],
+// input[type="email"],
+// input[type="url"],
+// input[type="search"],
+// input[type="tel"],
+// input[type="color"],
+// .uneditable-input {
+//     border: 1px solid;
+//     .box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
+//     .transition(~"border linear .2s, box-shadow linear .2s");
+//     .placeholder(darken(@textColor, 10%));
+//     color: @textColor;
+//     border-color: @primary4;
+//     background-color: @primary3;
+//     padding: 2px;
+//     text-indent: 2px;
+
+//     // Focus state
+//     &:focus {
+//         border-color: rgba(113, 236, 82, .8);
+//         outline: 0;
+//         outline: thin dotted \9; /* IE6-9 */
+//         .box-shadow(~"inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(113, 236, 82, .6)");
+//     }
+// }
+
+.ib-ui-window {
+	background: rgba(60, 240, 176, 0.5);
+	margin: 0 auto;
+	outline: 3px solid #1f7d5b;
+	outline: 3px solid #06452d;
+    background-color: @bgc1_75;
+
+    p {
+    	margin: 0;
+    	padding: 0px 5px 10px 5px;
+    }
+}
+
+
+.ui-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 0;
+	overflow: visible;
+	width: 100%;
+	z-index: 10;
+
+	.logo {
+		text-align: center;
+		img {
+			padding-bottom: 25px;
+		}
+	}
 
 	.levelbox {
 		width: 550px;

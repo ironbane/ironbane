@@ -11,6 +11,10 @@ ironbaneConstants = {
 			hair: [1010, 1011, 1012, 1013, 1014, 1015, 1016, 1017, 1018, 1019],
 			eyes: [1010, 1011, 1012, 1013, 1014, 1015, 1016, 1017, 1018, 1019]
 		}
+	},
+	rules: {
+		minCharNameLength: 2,
+		maxCharNameLength: 15
 	}
 };
 

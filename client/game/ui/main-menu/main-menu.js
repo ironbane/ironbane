@@ -14,7 +14,7 @@ angular
             abstract: true,
             controller: ['$scope', function ($scope) {
             	$scope.logout = function ()  {
-            		alert('yeah!');
+            		Meteor.logout();
             	};
             }]
         });

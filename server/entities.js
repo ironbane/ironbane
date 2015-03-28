@@ -2,14 +2,14 @@
 /* global Entities */
 
 Entities.allow({
-	insert: function (userId, party) {
-		return true;
+	insert: function (userId, entity) {
+		return false;
 	},
-	update: function (userId, party, fields, modifier) {
-		return true;
+	update: function (userId, entity, fields, modifier) {
+		return entity.owner === userId;
 	},
-	remove: function (userId, party) {
-		return true;
+	remove: function (userId, entity) {
+		return entity.owner === userId;
 	}
 });
 

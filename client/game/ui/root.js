@@ -1,6 +1,7 @@
 angular
     .module('game.ui', [
         'ui.router',
+        'game.ui.directives',
         'game.ui.play',
         'game.ui.main-menu'
     ])
