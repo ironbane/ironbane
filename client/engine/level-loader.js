@@ -24,14 +24,7 @@ angular
             });
             $rootWorld.addEntity(level);
 
-            entitiesTask = $http.get('scene/' + levelId + '/ib-entities.json')
-                .then(function (response) {
-                    var entities = EntityBuilder.load(response.data);
-
-                    $rootWorld.addEntity(entities);
-                });
-
-            return $q.all([level.getComponent('scene').meshTask, entitiesTask]);
+            return $q.all([level.getComponent('scene').meshTask]);
         };
 
     }]);

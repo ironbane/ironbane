@@ -1,8 +1,12 @@
 'use strict';
 
+// This task imports scenes from Clara, merges all geometry and uses a FaceMaterial.
+// multi-id isn't supported inside clara, but it doesn't really affect performance for us since we postprocess the mesh that clara produces.
+
 var entityExporter = new EntityExporter();
 
 var fs = Npm.require('fs');
+var fse = Meteor.npmRequire('fs-extra');
 var path = Npm.require('path');
 var AdmZip = Meteor.npmRequire('adm-zip');
 var walk = Meteor.npmRequire('walkdir');
@@ -81,35 +85,23 @@ World.importZoneFromClara = function (scene) {
 
 							var claraExportFilepath = path.dirname(filePath) + '/clara-export.json';
 							var ibWorldFilepath = path.dirname(filePath) + '/ib-world.json';
-							var ibEntitiesFilepath = path.dirname(filePath) + '/ib-entities.json';
-							// var ibEntitiesServerFilepath = path.dirname(filePath) + '/ib-entities-server.json';
-
-							// console.log(filePath, ibWorldFilepath, meteorRootProjectPath + filePath, claraExportFilepath);
+							var ibEntitiesFilepath = path.dirname(filePath) + '/ib-entities-test.json';
 
 							fs.renameSync(filePath, claraExportFilepath);
 
-							console.log('test1');
+							console.log(filePath, path.dirname(filePath));
 
 							var claraExportJson = JSON.parse(fs.readFileSync(claraExportFilepath, 'utf8'));
 							var ibWorld = postProcessWorld(claraExportJson);
 
-							console.log('test2');
-
 							Q.all([
-								saveProcessedWorld(claraExportJson, path.dirname(filePath) + '/clara-export-test.json'),
-								saveProcessedWorld(ibWorld.worldMesh, ibWorldFilepath),
-								// saveProcessedEntities(ibWorld.entities, ibEntitiesFilepath)
+								saveProcessedWorld(ibWorld.worldMesh, ibWorldFilepath)
 							]).then(deferred.resolve, deferred.reject).then(function () {
-								fs.unlink(zipFilepath, function (err) {
-									if (err) {
-										throw err;
-									}
-								});
-								fs.unlink(claraExportFilepath, function (err) {
-									if (err) {
-										throw err;
-									}
-								});
+								fs.unlinkSync(zipFilepath);
+								fs.unlinkSync(claraExportFilepath);
+
+								// Do checks for these on production, probably not even needed
+								fse.copySync(path.dirname(filePath), path.dirname(filePath).replace('.meteor/local/build/programs/server/', ''));
 							});
 						}
 					});
@@ -155,17 +147,22 @@ World.importZoneFromClara = function (scene) {
 
 		obj.traverse(function (child) {
 			if (child.userData.entity) {
+
 				if (obj.userData.entity) {
 					// Only if the parent is an entity, we save the uuid
 					// Otherwise it would be no use since the parent will be merged into one world mesh
 					child.parentUuid = obj.uuid;
 				}
-				child.updateMatrixWorld(true);
-				// store to array for later (don't mess with the tree during traversal)
-				if(child.parent === obj) {
-					// only push in parent ents, don't want parent jacking later...
-					ents.push(child);
-				}
+
+				// Push these straight into Meteor
+				saveEntity(child);
+
+				// child.updateMatrixWorld(true);
+				// // store to array for later (don't mess with the tree during traversal)
+				// if(child.parent === obj) {
+				// 	// only push in parent ents, don't want parent jacking later...
+				// 	ents.push(child);
+				// }
 			} else {
 				if (child.geometry) {
 					computeCentroids(child.geometry);
@@ -181,8 +178,6 @@ World.importZoneFromClara = function (scene) {
 					});
 
 					mergeMaterials(mergedMeshesGeometry, mergedMaterialsCollection, clonedGeometry, [child.material]);
-
-					// computeCentroids(mergedMeshesGeometry);
 				}
 			}
 		});
@@ -325,11 +320,8 @@ World.importZoneFromClara = function (scene) {
 		};
 	};
 
-
 	var saveProcessedWorld = function (world, savePath) {
-		var deferred = Q.defer(),
-			exporter = new THREE.SceneExporter();
-			// parsedWorld = exporter.parse(world);
+		var deferred = Q.defer();
 
 		mkdirp.sync(path.dirname(savePath));
 
@@ -346,22 +338,9 @@ World.importZoneFromClara = function (scene) {
 		return deferred.promise;
 	};
 
-	var saveProcessedEntities = function(object, savePath) {
-		var deferred = Q.defer(),
-			exporter = new THREE.SceneExporter(),
-			parsed = exporter.parse(object);
+	var saveEntity = function(entity) {
+		// Push straight into the Meteor entities collection!
 
-		fs.writeFile(savePath, JSON.stringify(parsed, null, 4), function(err) {
-			if (err) {
-				console.log(err);
-				return deferred.reject(err);
-			} else {
-				console.log('Saved ' + savePath);
-				return deferred.resolve();
-			}
-		});
-
-		return deferred.promise;
 	};
 
 	exportClaraScenes(scene);
@@ -375,3 +354,13 @@ World.importZoneFromClara = function (scene) {
 
 	return deferred.promise;
 };
+
+
+if (process.env.CLARA_IMPORT) {
+	Meteor.startup(function () {
+		Meteor.setTimeout(function () {
+			console.log('Importing zones from Clara');
+			World.importZoneFromClara();
+		}, 500);
+	});
+}
