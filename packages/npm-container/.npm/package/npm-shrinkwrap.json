@@ -1,10 +1,30 @@
 {
   "dependencies": {
+    "adm-zip": {
+      "version": "0.4.4"
+    },
+    "curlrequest": {
+      "version": "0.5.1"
+    },
+    "mkdirp": {
+      "version": "0.5.0",
+      "dependencies": {
+        "minimist": {
+          "version": "0.0.8"
+        }
+      }
+    },
+    "q": {
+      "version": "1.2.0"
+    },
     "three": {
       "version": "0.69.0"
     },
     "validator": {
       "version": "3.35.0"
+    },
+    "walkdir": {
+      "version": "0.0.7"
     }
   }
 }

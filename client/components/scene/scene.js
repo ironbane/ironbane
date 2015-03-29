@@ -38,20 +38,24 @@ angular
                 var meshTask;
 
                 // Ravenwood is huge, zip it up!
-                meshTask = $http.get('scene/' + component.id + '/ib-world.zip', {
-                        responseType: 'arraybuffer'
-                    })
+                // meshTask = $http.get('scene/' + component.id + '/ib-world.zip', {
+                //         responseType: 'arraybuffer'
+                //     })
+                //     .then(function (response) {
+                //         var zip = new JSZip(response.data);
+                //         var worldData = JSON.parse(zip.file('ib-world.json').asText());
+                //         return worldData;
+                //     }, function (err) {
+                //         // likely we don't have a zip file... try raw
+                //         return $http.get('scene/' + component.id + '/ib-world.json')
+                //             .then(function (response) {
+                //                 return response.data;
+                //             }, $q.reject); // TODO: handle errors here
+                //     })
+				meshTask = $http.get('scene/' + component.id + '/ib-world.json')
                     .then(function (response) {
-                        var zip = new JSZip(response.data);
-                        var worldData = JSON.parse(zip.file('ib-world.json').asText());
-                        return worldData;
-                    }, function (err) {
-                        // likely we don't have a zip file... try raw
-                        return $http.get('scene/' + component.id + '/ib-world.json')
-                            .then(function (response) {
-                                return response.data;
-                            }, $q.reject); // TODO: handle errors here
-                    })
+                        return response.data;
+                    }, $q.reject)
                     .then(function (data) {
                         // THREE does not store material names/metadata when it recreates the materials
                         // so we need to store them here and then load the material maps ourselves

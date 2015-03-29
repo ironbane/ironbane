@@ -1,4 +1,6 @@
 
+// The parent folder contains _ so Meteor loads the files in this folder first.
+
 THREE = Meteor.npmRequire('three');
 
 var roundNumber = function (number, decimals) {
