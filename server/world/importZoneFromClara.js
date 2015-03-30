@@ -55,9 +55,9 @@ World.importZoneFromClara = function (scene) {
 
 			});
 
-			return Q.all(promises).then(function () {
+			return Q.all(promises).then(function (ar) {
 				console.log('All done.');
-				deferred.resolve();
+				deferred.resolve(ar);
 			});
 		});
 	};
@@ -96,13 +96,18 @@ World.importZoneFromClara = function (scene) {
 
 							Q.all([
 								saveProcessedWorld(ibWorld.worldMesh, ibWorldFilepath)
-							]).then(deferred.resolve, deferred.reject).then(function () {
+							]).then(function () {
 								fs.unlinkSync(zipFilepath);
 								fs.unlinkSync(claraExportFilepath);
 
 								// Do checks for these on production, probably not even needed
 								fse.copySync(path.dirname(filePath), path.dirname(filePath).replace('.meteor/local/build/programs/server/', ''));
-							});
+							}).then(function () {
+								deferred.resolve({
+									name: ibSceneId,
+									entities: ibWorld.entities
+								});
+							}, deferred.reject);
 						}
 					});
 				}
@@ -140,10 +145,7 @@ World.importZoneFromClara = function (scene) {
 		var mergedMeshesGeometry = new THREE.Geometry();
 		var mergedMaterialsCollection = [];
 
-		var entitiesCollection = new THREE.Object3D(),
-			ents = [];
-
-		entitiesCollection.name = 'Entities';
+		var entitiesCollection = [];
 
 		obj.traverse(function (child) {
 			if (child.userData.entity) {
@@ -154,15 +156,11 @@ World.importZoneFromClara = function (scene) {
 					child.parentUuid = obj.uuid;
 				}
 
-				// Push these straight into Meteor
-				saveEntity(child);
+				child.updateMatrixWorld(true);
 
-				// child.updateMatrixWorld(true);
-				// // store to array for later (don't mess with the tree during traversal)
-				// if(child.parent === obj) {
-				// 	// only push in parent ents, don't want parent jacking later...
-				// 	ents.push(child);
-				// }
+				// Push these straight into Meteor
+				var parsedEntity = parseEntity(child);
+				entitiesCollection.push(parsedEntity);
 			} else {
 				if (child.geometry) {
 					computeCentroids(child.geometry);
@@ -180,10 +178,6 @@ World.importZoneFromClara = function (scene) {
 					mergeMaterials(mergedMeshesGeometry, mergedMaterialsCollection, clonedGeometry, [child.material]);
 				}
 			}
-		});
-
-		ents.forEach(function (entity) {
-			entitiesCollection.add(entity);
 		});
 
 		function mergeMaterials(geometry1, materials1, geometry2, materials2) {
@@ -338,8 +332,117 @@ World.importZoneFromClara = function (scene) {
 		return deferred.promise;
 	};
 
-	var saveEntity = function(entity) {
+	var parseEntity = function(entity) {
 		// Push straight into the Meteor entities collection!
+		// console.log(entity);
+        var parseObject = function (object) {
+
+            var data = {};
+
+            if (object.name !== '') {
+                data.name = object.name;
+            }
+
+            if (JSON.stringify(object.userData) !== '{}') {
+                data.userData = object.userData;
+            }
+
+            if (object.visible !== true) {
+                data.visible = object.visible;
+            }
+
+            data.matrix = object.matrix.toArray();
+
+            data.components = {};
+
+            // only IF this object has been marked as an entity, otherwise it's for the editor or something else
+            if (object.userData && object.userData.entity) {
+                if (object instanceof THREE.Scene) {
+                    // scene won't be anything in Entity-Speak
+                } else if (object instanceof THREE.PerspectiveCamera && object.userData.entity === 'camera') {
+                    data.components.camera = {
+                        projection: 'perspective',
+                        fov: object.fov,
+                        aspect: object.aspect,
+                        near: object.near,
+                        far: object.far
+                    };
+                } else if (object instanceof THREE.OrthographicCamera && object.userData.entity === 'camera') {
+                    data.components.camera = {
+                        type: 'OrthographicCamera',
+                        left: object.left,
+                        right: object.right,
+                        top: object.top,
+                        bottom: object.bottom,
+                        near: object.near,
+                        far: object.far
+                    };
+                // clara doesn't let you add ambient lights, we hack them into the scene using directional with a specific name
+                } else if ((object instanceof THREE.AmbientLight && object.userData.entity === 'light') || (object.userData.entity === 'light' && object.name === 'AmbientLight')) {
+                    data.components.light = {
+                        type: 'AmbientLight',
+                        color: object.color.getHex()
+                    };
+                } else if (object instanceof THREE.DirectionalLight && object.userData.entity === 'light') {
+                    data.components.light = {
+                        type: 'DirectionalLight',
+                        color: object.color.getHex(),
+                        intensity: object.intensity
+                    };
+                } else if (object instanceof THREE.PointLight && object.userData.entity === 'light') {
+                    data.components.light = {
+                        type: 'PointLight',
+                        color: object.color.getHex(),
+                        intensity: object.intensity,
+                        distance: object.distance
+                    };
+                } else if (object instanceof THREE.SpotLight && object.userData.entity === 'light') {
+                    data.components.light = {
+                        type: 'SpotLight',
+                        color: object.color.getHex(),
+                        intensity: object.intensity,
+                        distance: object.distance,
+                        angle: object.angle,
+                        exponent: object.exponent
+                    };
+                } else if (object instanceof THREE.HemisphereLight && object.userData.entity === 'light') {
+                    data.components.light = {
+                        type: 'HemisphereLight',
+                        color: object.color.getHex(),
+                        groundColor: object.groundColor.getHex()
+                    };
+                } else if (object instanceof THREE.Mesh && object.userData.entity === 'model') {
+                    var modelType = object.userData.modelType || 'mesh';
+
+                    data.components.model = {
+                        type: modelType,
+                        geometry: object.geometry.toJSON(),
+                        material: object.material.toJSON()
+                    };
+                } else if (object instanceof THREE.Sprite && object.userData.entity === 'sprite') {
+                    data.components.sprite = {
+                        material: object.material.toJSON()
+                    };
+                } else if (object.userData.entity) {
+                    // this is where we are using entity templates (prefabs)
+                    data.prefab = object.userData.entity;
+                }
+            }
+
+            if (object.children.length > 0) {
+                data.children = [];
+
+                for (var i = 0; i < object.children.length; i++) {
+                    data.children.push(parseObject(object.children[i]));
+                }
+            }
+
+            return data;
+        };
+
+        var parsedEntity = parseObject(entity);
+
+		return parsedEntity;
 
 	};
 
@@ -360,7 +463,23 @@ if (process.env.CLARA_IMPORT) {
 	Meteor.startup(function () {
 		Meteor.setTimeout(function () {
 			console.log('Importing zones from Clara');
-			World.importZoneFromClara();
+			World.importZoneFromClara().then(Meteor.bindEnvironment(function (levels) {
+				levels.forEach(function (level) {
+					console.log(level.entities);
+					Entities.remove({
+						fromClara: true,
+						level: level.name
+					});
+					level.entities.forEach(function(entity) {
+						entity.fromClara = true;
+						entity.level = level.name;
+						entity.active = true;
+						// console.log(entity);
+						var id = Entities.insert(entity);
+						// console.log(id);
+					});
+				});
+			}));
 		}, 500);
 	});
 }

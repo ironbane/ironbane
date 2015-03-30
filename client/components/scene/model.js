@@ -68,12 +68,12 @@ angular.module('components.scene.model', ['ces', 'three', 'engine.geometry-cache
                     // special handling, for now assume this is a json load
                     var loader = new THREE.ObjectLoader();
                     var fobj = {
-                        geometries: [$geometryCache.get(component.geometry)],
-                        materials: [$materialCache.get(component.material)],
+                        geometries: [$geometryCache.get(component.geometry.uuid)],
+                        materials: [$materialCache.get(component.material.uuid)],
                         object: {
                             type: 'Mesh',
-                            geometry: component.geometry,
-                            material: component.material
+                            geometry: component.geometry.uuid,
+                            material: component.material.uuid
                         }
                     };
 

@@ -35,7 +35,8 @@ angular.module('components.scene.quad', ['ces', 'three', 'engine.texture-loader'
 
                     if (quadData.texture) {
 						var deferred = $q.defer();
-						promise = deferred.resolve(quadData.texture);
+						deferred.resolve(quadData.texture);
+						promise = deferred.promise;
                     }
                     else if (quadData.charBuildData) {
 						promise = CharBuilder.makeChar(quadData.charBuildData);

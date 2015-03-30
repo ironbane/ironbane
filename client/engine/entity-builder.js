@@ -34,7 +34,7 @@ angular.module('engine.entity-builder', ['ces', 'three', 'engine.geometry-cache'
         };
 
         // load from ib-entities.json export
-        this.load = function (json) {
+        this.load = function (entity) {
             var builder = this,
                 root = new Entity();
 
@@ -46,14 +46,12 @@ angular.module('engine.entity-builder', ['ces', 'three', 'engine.geometry-cache'
                 // special handling for models
                 // TODO: handle more of this during the original parse
                 if(data.components && data.components.model) {
-                    var gid = data.components.model.geometry;
-                    var mid = data.components.model.material;
-                    var geoData = _.findWhere(json.geometries, {uuid: gid});
-                    var matData = _.findWhere(json.materials, {uuid: mid});
+                    var geoData = data.components.model.geometry;
+                    var matData = data.components.model.material;
 
                     // these get cached just so other services don't have to pass the whole JSON file around
-                    $geometryCache.put(gid, geoData);
-                    $materialCache.put(mid, matData);
+                    $geometryCache.put(geoData.uuid, geoData);
+                    $materialCache.put(matData.uuid, matData);
                 }
 
                 // build the entity
@@ -65,7 +63,7 @@ angular.module('engine.entity-builder', ['ces', 'three', 'engine.geometry-cache'
                 });
             }
 
-            parse(json.entities, root);
+            parse(entity, root);
 
             return root;
         };

@@ -7,7 +7,6 @@ Meteor.users.find({
 	},
 	removed: function (user) {
 		// user just went offline
-		console.log(user);
 
 		Entities.update({
 			owner: user._id

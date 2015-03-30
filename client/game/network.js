@@ -54,16 +54,24 @@ angular.module('game.network', [
 	                            '/scripts/built-in/network-send.js',
 	                        ]);
 						}
-						else {
+						// For now, skip network syncing if the object came from Clara
+						else if (!doc.fromClara) {
 							doc.components.script.scripts = doc.components.script.scripts.concat([
 	                            '/scripts/built-in/network-receive.js',
 	                        ]);
 						}
 
-						var player = EntityBuilder.build('Player', doc);
-						player.meteorId = doc._id;
+						var builtEntity;
 
-						$rootWorld.addEntity(player);
+						if (doc.fromClara) {
+							builtEntity = EntityBuilder.load(doc);
+						}
+						else {
+							builtEntity = EntityBuilder.build(doc.username, doc);
+						}
+
+						builtEntity.meteorId = doc._id;
+						$rootWorld.addEntity(builtEntity);
 					},
 					removed: function (doc) {
 

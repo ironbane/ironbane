@@ -3,7 +3,9 @@ angular.module('game.prefabs.bunny', [])
         components: {
             quad: {
                 transparent: true,
-                texture: 'images/characters/skin/29.png'
+                charBuildData: {
+                	skin: 29
+                }
             },
             rigidBody: {
                 shape: {
@@ -28,9 +30,9 @@ angular.module('game.prefabs.bunny', [])
                     }
                 }
             },
-            helper: {
-                line: true
-            },
+            // helper: {
+            //     line: true
+            // },
             script: {
                 scripts: [
                     '/scripts/built-in/sprite-sheet.js',
