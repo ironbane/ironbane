@@ -1,3 +1,5 @@
+'use strict';
+
 angular
     .module('engine.level-loader', [
         'engine.entity-builder',
@@ -5,14 +7,20 @@ angular
     ])
     .service('LevelLoader', ['$rootWorld', '$http', 'EntityBuilder', '$log', '$q', function ($rootWorld, $http, EntityBuilder, $log, $q) {
 
-        this.load = function (levelId) {
-            // TODO: clear world out first?
-            var entitiesTask;
+    	var me = this;
+
+    	this.activeLevel = null;
+
+        this.load = function (sceneId) {
+
+        	if (me.activeLevel) {
+        		$rootWorld.removeEntity(me.activeLevel.level);
+        	}
 
             var level = EntityBuilder.build('WorldMesh', {
                 components: {
                     scene: {
-                        id: levelId
+                        id: sceneId
                     },
                     rigidBody: {
                         shape: {
@@ -22,6 +30,12 @@ angular
                     }
                 }
             });
+
+            me.activeLevel = {
+            	level: level,
+            	sceneId: sceneId
+            };
+
             $rootWorld.addEntity(level);
 
             return $q.all([level.getComponent('scene').meshTask]);

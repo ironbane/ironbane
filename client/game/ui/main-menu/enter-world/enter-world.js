@@ -48,6 +48,13 @@ angular
 				});
 
 				var enterGame = function (charId) {
+
+					var activeChar = Entities.findOne({
+						_id: charId
+					});
+
+					Session.set('activeLevel', activeChar.level);
+
 					Entities.update({
 						_id: charId
 					}, {

@@ -14,11 +14,11 @@ angular
         'util.name-gen',
         'components.scene.name-mesh'
     ])
-    .service('GameService', ['$rootWorld', 'CameraSystem', 'ModelSystem', 'LightSystem', 'SpriteSystem', 'QuadSystem', 'HelperSystem', 'SceneSystem', 'ScriptSystem', 'SoundSystem', 'InputSystem', 'RigidBodySystem', 'CollisionReporterSystem', 'WieldItemSystem', 'EntityBuilder', '$log', 'LevelLoader', 'ProcTreeSystem', 'ShadowSystem', 'FantasyNameGenerator', 'NameMeshSystem', 'Network', function ($rootWorld, CameraSystem, ModelSystem,
+    .service('GameService', ['$rootWorld', 'CameraSystem', 'ModelSystem', 'LightSystem', 'SpriteSystem', 'QuadSystem', 'HelperSystem', 'SceneSystem', 'ScriptSystem', 'SoundSystem', 'InputSystem', 'RigidBodySystem', 'CollisionReporterSystem', 'WieldItemSystem', 'EntityBuilder', '$log', 'LevelLoader', 'ProcTreeSystem', 'ShadowSystem', 'FantasyNameGenerator', 'NameMeshSystem', 'Network', 'Util', function ($rootWorld, CameraSystem, ModelSystem,
         LightSystem, SpriteSystem, QuadSystem, HelperSystem, SceneSystem, ScriptSystem,
         SoundSystem, InputSystem, RigidBodySystem, CollisionReporterSystem, WieldItemSystem,
         EntityBuilder, $log, LevelLoader, ProcTreeSystem, ShadowSystem,
-        FantasyNameGenerator, NameMeshSystem, Network) {
+        FantasyNameGenerator, NameMeshSystem, Network, Util) {
 
         'use strict';
 
@@ -49,25 +49,33 @@ angular
             // Initialize Meteor's entities collection
             Network.init();
 
+            // Autorun means it auto runs the function when reactive variables inside change
+            // In this case, when the activeLevel var changes. So it's very easy for us to change the level
+            // just change the activeLevel variable. In addition subscription calls will be auto updated as well
+            Util.waitForMeteorGuestUserLogin(function () {
+	            Session.set('activeLevel', 'obstacle-test-course-one');
+	            Meteor.autorun(function () {
 
-            // if (!options.offline) {
-            //     $log.log('online mode!!!');
-            //     $gameSocket.connect(options.server, options.level);
+	            	var nodesToBeRemoved = [];
 
-            //     $gameSocket.on('spawn', function (data) {
-            //         $log.log('spawn', data);
+					$rootWorld.traverse(function (node) {
+						if (node.doc && node.doc.level !== Session.get('activeLevel')) {
+							nodesToBeRemoved.push(node);
+						}
+					});
 
-            //         createPlayer(data);
-            //         // we do this AFTER the player is created so the ghost doesn't win
-            //         $rootWorld.getSystem('net').enabled = true;
-            //     });
-            // }
+					nodesToBeRemoved.forEach(function (node) {
+						$rootWorld.removeEntity(node);
+					});
 
-            LevelLoader.load('obstacle-test-course-one').then(function () {
+		            LevelLoader.load(Session.get('activeLevel')).then(function () {
 
-            }, function (err) {
-                $log.warn('error loading level: ', err);
+		            }, function (err) {
+		                $log.warn('error loading level: ', err);
+		            });
+	            });
             });
+
         };
 
 
