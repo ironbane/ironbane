@@ -10,6 +10,7 @@ angular.module('game.world-root', ['ces', 'three'])
 
         _world.renderer = new THREE.WebGLRenderer();
         _world.scene = new THREE.Scene();
+        _world.stats = new Stats();
 
         var oldAddEntity = _world.addEntity;
         _world.addEntity = function (entity) {

@@ -55,8 +55,18 @@ angular
         $window.addEventListener('resize', function () {
             $rootWorld.renderer.setSize(window.innerWidth, window.innerHeight);
         }, false);
-    }]);
+    }])
+    .run(['$window', '$rootWorld', function ($window, $rootWorld) {
+		$rootWorld.stats.setMode(0); // 0: fps, 1: ms
 
+		// align top-left
+		$rootWorld.stats.domElement.style.position = 'absolute';
+		$rootWorld.stats.domElement.style.right = '0px';
+		$rootWorld.stats.domElement.style.bottom = '0px';
+		$rootWorld.stats.domElement.style.zIndex = 100;
+
+		document.body.appendChild( $rootWorld.stats.domElement );
+    }]);
 
 function onReady() {
 	// We must wait until Ammo is available! See comments in client/lib/lib/ammo.js
