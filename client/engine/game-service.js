@@ -11,14 +11,15 @@ angular
         'engine.sound-system',
         'engine.input.input-system',
         'engine.level-loader',
+        'engine.ib-constants',
         'util.name-gen',
         'components.scene.name-mesh'
     ])
-    .service('GameService', ['$rootWorld', 'CameraSystem', 'ModelSystem', 'LightSystem', 'SpriteSystem', 'QuadSystem', 'HelperSystem', 'SceneSystem', 'ScriptSystem', 'SoundSystem', 'InputSystem', 'RigidBodySystem', 'CollisionReporterSystem', 'WieldItemSystem', 'EntityBuilder', '$log', 'LevelLoader', 'ProcTreeSystem', 'ShadowSystem', 'FantasyNameGenerator', 'NameMeshSystem', 'Network', 'Util', function ($rootWorld, CameraSystem, ModelSystem,
+    .service('GameService', ['$rootWorld', 'CameraSystem', 'ModelSystem', 'LightSystem', 'SpriteSystem', 'QuadSystem', 'HelperSystem', 'SceneSystem', 'ScriptSystem', 'SoundSystem', 'InputSystem', 'RigidBodySystem', 'CollisionReporterSystem', 'WieldItemSystem', 'EntityBuilder', '$log', 'LevelLoader', 'ProcTreeSystem', 'ShadowSystem', 'FantasyNameGenerator', 'NameMeshSystem', 'Network', 'Util', 'IbConstants', function ($rootWorld, CameraSystem, ModelSystem,
         LightSystem, SpriteSystem, QuadSystem, HelperSystem, SceneSystem, ScriptSystem,
         SoundSystem, InputSystem, RigidBodySystem, CollisionReporterSystem, WieldItemSystem,
         EntityBuilder, $log, LevelLoader, ProcTreeSystem, ShadowSystem,
-        FantasyNameGenerator, NameMeshSystem, Network, Util) {
+        FantasyNameGenerator, NameMeshSystem, Network, Util, IbConstants) {
 
         'use strict';
 
@@ -53,7 +54,7 @@ angular
             // In this case, when the activeLevel var changes. So it's very easy for us to change the level
             // just change the activeLevel variable. In addition subscription calls will be auto updated as well
             Util.waitForMeteorGuestUserLogin(function () {
-	            Session.set('activeLevel', 'obstacle-test-course-one');
+	            Session.set('activeLevel', IbConstants.world.mainMenuLevel);
 	            Meteor.autorun(function () {
 
 	            	var nodesToBeRemoved = [];

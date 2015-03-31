@@ -39,9 +39,9 @@ Meteor.methods({
 	var entityId = Entities.insert({
 		owner: user._id,
 		name: charName,
-		position: (new THREE.Vector3(10, 30, 0)).serialize(),
-		rotation: (new THREE.Euler()).serialize(),
-		level: 'obstacle-test-course-one',
+		position: ironbaneConstants.world.startPosition,
+		rotation: ironbaneConstants.world.startRotation,
+		level: ironbaneConstants.world.startLevel,
 		components: {
             quad: {
                 transparent: true,

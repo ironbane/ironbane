@@ -41,7 +41,7 @@ angular
 				this.networkReceiveTimer = 0.0;
 
 				var meteorEntity = Entities.findOne({
-					_id: this.entity.meteorId,
+					_id: this.entity.doc._id
 				});
 
 				if (meteorEntity) {

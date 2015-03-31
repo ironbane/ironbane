@@ -3,7 +3,7 @@
 angular.module('game.ui.dialog', [
 	'ui.bootstrap'
 ])
-.factory('dialogService', function ($modal) {
+.factory('dialogService', ['$modal', function ($modal) {
 
 	// Exampe usage:
 	//
@@ -72,4 +72,4 @@ angular.module('game.ui.dialog', [
 	};
 
 	return self;
-});
+}]);

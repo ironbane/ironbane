@@ -22,7 +22,6 @@ angular
 
 				$scope.entities = $meteor.collection(function() {
 					var user = Meteor.user();
-					console.log(user);
 					return $meteorUtils.getCollectionByName('entities').find({
 						owner: user._id
 					});

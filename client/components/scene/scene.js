@@ -4,7 +4,8 @@
 angular
     .module('components.scene.scene', [
         'ces',
-        'three'
+        'three',
+        'engine.entity-cache'
     ])
     .config(['$componentsProvider', function ($componentsProvider) {
 
@@ -14,7 +15,8 @@ angular
             }
         });
     }])
-    .factory('SceneSystem', ['System', 'THREE', '$http', 'TextureLoader', '$log', '$q', function (System, THREE, $http, TextureLoader, $log, $q) {
+    .factory('SceneSystem', ['System', 'THREE', '$http', 'TextureLoader', '$log', '$q', '$entityCache',
+    	function (System, THREE, $http, TextureLoader, $log, $q, $entityCache) {
 
         var SceneSystem = System.extend({
             addedToWorld: function (world) {
@@ -25,9 +27,26 @@ angular
                 world.entityAdded('scene').add(function (entity) {
                     sys.onEntityAdded(entity);
                 });
+
+                this.world = world;
+
             },
             update: function () {
-                // override because we have to
+
+            	var mainPlayer = $entityCache.get('mainPlayer');
+
+            	// Kind of weird...we'll only have one scene?
+            	var scenes = this.world.getEntities('scene');
+
+            	scenes.forEach(function(scene) {
+		        	if ( mainPlayer && scene.lastOctreeBuildPosition.clone().sub(mainPlayer.position).lengthSq() > 100 ) {
+		            	scene.lastOctreeBuildPosition.copy(mainPlayer.position);
+					    scene.octreeResultsNearPlayer = scene.octree
+					                            .search(scene.lastOctreeBuildPosition, 15, true);
+                        console.log('rebuilt octree results');
+		        	}
+            	});
+
             },
             onEntityAdded: function (entity) {
                 var component = entity.getComponent('scene');
@@ -68,6 +87,7 @@ angular
                                 .then(function (texture) {
                                     material.map = texture;
                                     material.needsUpdate = true;
+                                    // material.wireframe = true;
                                     geometry.buffersNeedUpdate = true;
                                     geometry.uvsNeedUpdate = true;
                                 });
@@ -87,6 +107,9 @@ angular
                             useFaces: true
                         });
                         entity.octree.add(component.scene);
+
+		                entity.lastOctreeBuildPosition = new THREE.Vector3(0, 1000000, 0);
+		                entity.octreeResultsNearPlayer = null;
 
                         component.scene.material.needsUpdate = true;
 

@@ -1,3 +1,4 @@
 private/clara.json
-public/scene/
-workshop
+public/scene/*
+!public/scene/obstacle-test-course-one
+private/workshop

@@ -68,12 +68,12 @@ angular.module('components.scene.shadow', ['ces', 'three', 'engine.texture-loade
                     var shadow = shadowEnt.getComponent('shadow').shadow;
 
                     if (scenes.length) {
-                        var octree = scenes[0].octree;
+                        var octree = scenes[0].octreeResultsNearPlayer;
 
                         if (octree) {
 	                        var ray = new THREE.Raycaster(shadowEnt.position, new THREE.Vector3(0, -1, 0));
 
-	                        var intersections = ray.intersectOctreeObjects( octree.objects );
+	                        var intersections = ray.intersectOctreeObjects( octree );
 
 	                        if (intersections.length) {
 	                            shadow.position.copy(intersections[0].point.add(new THREE.Vector3(0, 0.01, 0)));

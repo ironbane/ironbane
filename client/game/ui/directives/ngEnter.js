@@ -1,6 +1,4 @@
-angular
-	.module('game.ui.directives', [
-	])
+angular.module('game.ui.directives')
 	.directive('ngEnter', function() {
 		return function(scope, element, attrs) {
 			element.bind('keydown keypress', function(event) {

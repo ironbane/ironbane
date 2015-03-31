@@ -1,5 +1,11 @@
 
 ironbaneConstants = {
+	world: {
+		mainMenuLevel: 'obstacle-test-course-one',
+		startLevel: 'obstacle-test-course-one',
+		startPosition: [20, 1, -7],
+		startRotation: [0, Math.PI - 0.3, 0]
+	},
 	characterParts: {
 		male: {
 			skin: [1000, 1001, 1002, 1003, 1004],

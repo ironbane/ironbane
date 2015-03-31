@@ -23,7 +23,7 @@ angular
 				// Send our updated position to Meteor
 
 				Entities.update({
-					_id: this.entity.meteorId,
+					_id: this.entity.doc._id
 				}, {
 					$set: {
 						position: this.entity.position.serialize(),
