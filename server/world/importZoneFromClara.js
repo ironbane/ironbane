@@ -14,20 +14,21 @@ var mkdirp = Meteor.npmRequire('mkdirp');
 var Q = Meteor.npmRequire('q');
 var curl = Meteor.npmRequire('curlrequest');
 
-var claraUser = JSON.parse(Assets.getText('clara.json'));
-
-var claraOptions = function (url, encoding) {
-	return {
-		url: url,
-		'user': claraUser.name + ':' + claraUser.apiKey,
-		encoding: encoding
-	};
-};
-
 var meteorBuildPath = path.resolve('.') + '/';
 var meteorRootProjectPath = meteorBuildPath.split('.meteor')[0];
 
 World.importZoneFromClara = function (scene) {
+
+	var claraUser = JSON.parse(Assets.getText('clara.json'));
+
+	var claraOptions = function (url, encoding) {
+		return {
+			url: url,
+			'user': claraUser.name + ':' + claraUser.apiKey,
+			encoding: encoding
+		};
+	};
+
 	var deferred = Q.defer();
 
 	var exportClaraScenes = function (sceneNameToExport) {
