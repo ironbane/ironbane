@@ -108,6 +108,11 @@ angular
                 }
             }
 
+            if (this.entity.doc.cheats.jump) {
+            	this.canJump = true;
+            	this.jumpTimer = minimumJumpDelay*2;
+            }
+
             // virtual gamepad (touch ipad) controls
             if (leftStick) {
                 if (leftStick.delta.y < 0) {

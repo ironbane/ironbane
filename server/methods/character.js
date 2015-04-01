@@ -42,6 +42,7 @@ Meteor.methods({
 		position: ironbaneConstants.world.startPosition,
 		rotation: ironbaneConstants.world.startRotation,
 		level: ironbaneConstants.world.startLevel,
+		cheats: {},
 		components: {
             quad: {
                 transparent: true,
