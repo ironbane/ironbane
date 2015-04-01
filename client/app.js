@@ -17,6 +17,7 @@ angular
         'engine.entity-builder',
         'engine.sound-system',
         'engine.ib-config',
+        'engine.ib-constants',
         'engine.input.input-system',
         'engine.util',
         'engine.debugger',
@@ -38,9 +39,7 @@ angular
         $locationProvider.html5Mode(true);
     }])
     .config(['IbConfigProvider', function (IbConfigProvider) {
-        // Used for input events
         IbConfigProvider.set('domElement', document);
-        IbConfigProvider.set('debugDomElementId', 'debug');
     }])
     .run(['Debugger', '$window', function (Debugger, $window) {
         // for convenience
@@ -56,16 +55,26 @@ angular
             $rootWorld.renderer.setSize(window.innerWidth, window.innerHeight);
         }, false);
     }])
-    .run(['$window', '$rootWorld', function ($window, $rootWorld) {
-		$rootWorld.stats.setMode(0); // 0: fps, 1: ms
+    .run(['$window', '$rootWorld', 'IbConstants', function ($window, $rootWorld, IbConstants) {
+    	if (IbConstants.isDev) {
+			$rootWorld.stats.setMode(0); // 0: fps, 1: ms
 
-		// align top-left
-		$rootWorld.stats.domElement.style.position = 'absolute';
-		$rootWorld.stats.domElement.style.right = '0px';
-		$rootWorld.stats.domElement.style.bottom = '0px';
-		$rootWorld.stats.domElement.style.zIndex = 100;
+			// align top-left
+			$rootWorld.stats.domElement.style.position = 'absolute';
+			$rootWorld.stats.domElement.style.right = '0px';
+			$rootWorld.stats.domElement.style.bottom = '0px';
+			$rootWorld.stats.domElement.style.zIndex = 100;
 
-		document.body.appendChild( $rootWorld.stats.domElement );
+			document.body.appendChild( $rootWorld.stats.domElement );
+
+			var debugDiv = document.createElement('div');
+			debugDiv.id = 'debug';
+
+			var uiOverlays = document.getElementsByClassName('ui-overlay');
+			if (uiOverlays.length) {
+				uiOverlays[0].appendChild(debugDiv);
+			}
+		}
     }]);
 
 function onReady() {

@@ -4,7 +4,7 @@ angular.module('engine.debugger', ['engine.ib-config', 'three', 'engine.util'])
 
 
         var watched = [];
-        var domElementId = IbConfig.get('debugDomElementId');
+        var domElementId = 'debug';
 
         this.watch = function (label, variable) {
         	var found = _.find(watched, function (el) {

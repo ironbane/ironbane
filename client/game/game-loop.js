@@ -1,9 +1,10 @@
-angular.module('game.game-loop', ['game.world-root', 'engine.debugger'])
+angular.module('game.game-loop', ['game.world-root', 'engine.debugger', 'engine.ib-constants'])
     .run([
         '$rootWorld',
         '$window',
         'Debugger',
-        function ($rootWorld, $window, Debugger) {
+        'IbConstants',
+        function ($rootWorld, $window, Debugger, IbConstants) {
             'use strict';
 
             var startTime = $window.performance.now() / 1000.0;
@@ -19,13 +20,17 @@ angular.module('game.game-loop', ['game.world-root', 'engine.debugger'])
 
                 _timing.frameTime = Math.min(_timing.frameTime, 0.3);
 
-                $rootWorld.stats.begin();
+                if (IbConstants.isDev) {
+                	$rootWorld.stats.begin();
+                }
 
                 $rootWorld.update(_timing.frameTime, _timing.elapsed, _timing.timestamp);
 
                 Debugger.tick(_timing.frameTime);
 
-                $rootWorld.stats.end();
+				if (IbConstants.isDev) {
+                	$rootWorld.stats.end();
+                }
 
                 lastTimestamp = timestamp;
 
