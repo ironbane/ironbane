@@ -1,9 +1,9 @@
 
 ironbaneConstants = {
 	world: {
-		mainMenuLevel: 'obstacle-test-course-one',
-		startLevel: 'obstacle-test-course-one',
-		startPosition: [20, 1, -7],
+		mainMenuLevel: 'tower-of-doom',
+		startLevel: 'tower-of-doom',
+		startPosition: [-15, 2, 12],
 		startRotation: [0, Math.PI - 0.3, 0]
 	},
 	characterParts: {
