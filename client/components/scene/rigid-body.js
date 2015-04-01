@@ -313,6 +313,7 @@ angular.module('components.scene.rigid-body', ['ces', 'three', 'ammo', 'ammo.phy
                         rigidBody.entity = entity;
 
                         rigidBodyData.rigidBody = rigidBody;
+                        rigidBodyData.rigidBodyInfo = rigidBodyInfo;
 
                         if (!rigidBodyData.allowSleep) {
                             rigidBody.setActivationState(activationStates.RIGIDBODY_DISABLE_DEACTIVATION);
@@ -332,8 +333,17 @@ angular.module('components.scene.rigid-body', ['ces', 'three', 'ammo', 'ammo.phy
 
                 });
 
-            },
+                world.entityRemoved('rigidBody').add(function (entity) {
+                	var rigidBodyData = entity.getComponent('rigidBody');
 
+                	if (rigidBodyData && rigidBodyData.rigidBody) {
+                		PhysicsWorld.removeRigidBody(rigidBodyData.rigidBody);
+                		Ammo.destroy(rigidBodyData.rigidBody);
+                		Ammo.destroy(rigidBodyData.rigidBodyInfo);
+                	}
+                });
+
+            },
             // This native ammojs raycast function wworks but it only works by raycasting every object in the scene,
             // and we don't seem to have support to filter out some entities.
             // This is because AllHitsRayResultCallback is not implemented yet in Ammojs so we
