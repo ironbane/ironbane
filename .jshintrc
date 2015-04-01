@@ -39,6 +39,7 @@
 	"globals": {
 		"angular": false,
 		"window": true,
-		"document": true
+		"document": true,
+		"Meteor": true
 	}
 }
