@@ -17,6 +17,9 @@ var curl = Meteor.npmRequire('curlrequest');
 var meteorBuildPath = path.resolve('.') + '/';
 var meteorRootProjectPath = meteorBuildPath.split('.meteor')[0];
 
+var meteorBuildPublicPath = meteorBuildPath + '../web.browser/app/';
+var meteorRootProjectPublicPath = meteorRootProjectPath + 'public/';
+
 World.importZoneFromClara = function (scene) {
 
 	var claraUser = JSON.parse(Assets.getText('clara.json'));
@@ -68,7 +71,7 @@ World.importZoneFromClara = function (scene) {
 
 		curl.request(claraOptions('http://clara.io/api/scenes/' + claraSceneId + '/export/json?zip=true', null), function (err, file) {
 
-			var zonePath = meteorBuildPath + 'public/scene/' + ibSceneId;
+			var zonePath = meteorRootProjectPublicPath + 'scene/' + ibSceneId;
 
 			mkdirp.sync(zonePath);
 
@@ -86,7 +89,7 @@ World.importZoneFromClara = function (scene) {
 
 							var claraExportFilepath = path.dirname(filePath) + '/clara-export.json';
 							var ibWorldFilepath = path.dirname(filePath) + '/ib-world.json';
-							var ibEntitiesFilepath = path.dirname(filePath) + '/ib-entities-test.json';
+							var ibEntitiesFilepath = path.dirname(filePath) + '/ib-entities.json';
 
 							fs.renameSync(filePath, claraExportFilepath);
 
@@ -95,14 +98,19 @@ World.importZoneFromClara = function (scene) {
 							var claraExportJson = JSON.parse(fs.readFileSync(claraExportFilepath, 'utf8'));
 							var ibWorld = postProcessWorld(claraExportJson);
 
+
+							// var part2 = '.meteor' + meteorBuildPublicPath.split('.meteor')[1];
+							// console.log('part2', part2);
+
 							Q.all([
-								saveProcessedWorld(ibWorld.worldMesh, ibWorldFilepath)
+								saveJson(ibWorld.worldMesh, ibWorldFilepath),
+								saveJson(ibWorld.entities, ibEntitiesFilepath)
 							]).then(function () {
 								fs.unlinkSync(zipFilepath);
 								fs.unlinkSync(claraExportFilepath);
 
 								// Do checks for these on production, probably not even needed
-								fse.copySync(path.dirname(filePath), path.dirname(filePath).replace('.meteor/local/build/programs/server/', ''));
+								// fse.copySync(path.dirname(filePath), path.dirname(filePath).replace('.meteor/local/build/programs/server/', ''));
 							}).then(function () {
 								deferred.resolve({
 									name: ibSceneId,
@@ -315,12 +323,12 @@ World.importZoneFromClara = function (scene) {
 		};
 	};
 
-	var saveProcessedWorld = function (world, savePath) {
+	var saveJson = function (data, savePath) {
 		var deferred = Q.defer();
 
 		mkdirp.sync(path.dirname(savePath));
 
-		fs.writeFile(savePath, JSON.stringify(world, null, 4), function (err) {
+		fs.writeFile(savePath, JSON.stringify(data, null, 4), function (err) {
 			if (err) {
 				console.log(err);
 				return deferred.reject(err);
@@ -460,27 +468,13 @@ World.importZoneFromClara = function (scene) {
 };
 
 
-if (process.env.CLARA_IMPORT) {
-	Meteor.startup(function () {
-		Meteor.setTimeout(function () {
-			console.log('Importing zones from Clara');
-			World.importZoneFromClara().then(Meteor.bindEnvironment(function (levels) {
-				levels.forEach(function (level) {
-					console.log(level.entities);
-					Entities.remove({
-						fromClara: true,
-						level: level.name
-					});
-					level.entities.forEach(function(entity) {
-						entity.fromClara = true;
-						entity.level = level.name;
-						entity.active = true;
-						// console.log(entity);
-						var id = Entities.insert(entity);
-						// console.log(id);
-					});
-				});
-			}));
-		}, 500);
-	});
+if (process.env.TASK ) {
+	if (process.env.TASK == 'importlevels') {
+		Meteor.startup(function () {
+			Meteor.setTimeout(function () {
+				console.log('Importing levels from Clara');
+				World.importZoneFromClara();
+			}, 500);
+		});
+	}
 }
