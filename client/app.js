@@ -55,7 +55,9 @@ angular
             $rootWorld.renderer.setSize(window.innerWidth, window.innerHeight);
         }, false);
     }])
-    .run(['$window', '$rootWorld', 'IbConstants', function ($window, $rootWorld, IbConstants) {
+    .run(['$window', '$rootWorld', 'IbConstants', '$rootScope', function ($window, $rootWorld, IbConstants, $rootScope) {
+        $rootScope.IB_CONSTANTS = IbConstants;
+
     	if (IbConstants.isDev) {
 			$rootWorld.stats.setMode(0); // 0: fps, 1: ms
 
