@@ -39,7 +39,7 @@ angular
             	var scenes = this.world.getEntities('scene');
 
             	scenes.forEach(function(scene) {
-		        	if ( mainPlayer && scene.lastOctreeBuildPosition.clone().sub(mainPlayer.position).lengthSq() > 100 ) {
+		        	if ( mainPlayer && scene.octree && scene.lastOctreeBuildPosition.clone().sub(mainPlayer.position).lengthSq() > 100 ) {
 		            	scene.lastOctreeBuildPosition.copy(mainPlayer.position);
 					    scene.octreeResultsNearPlayer = scene.octree
 					                            .search(scene.lastOctreeBuildPosition, 15, true);

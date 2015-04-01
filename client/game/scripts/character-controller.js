@@ -89,23 +89,25 @@ angular
             this.canJump = false;
 
             if (scenes.length) {
-                var octree = scenes[0].octree;
+                var octree = scenes[0].octreeResultsNearPlayer;
 
-                var ray = new THREE.Raycaster(this.entity.position, new THREE.Vector3(0, -1, 0));
+                if (octree) {
+	                var ray = new THREE.Raycaster(this.entity.position, new THREE.Vector3(0, -1, 0));
 
-                var intersections = ray.intersectOctreeObjects(octree.objects);
+	                var intersections = ray.intersectOctreeObjects(octree);
 
-                if (intersections.length) {
-                    if (intersections[0].distance <= 0.55) {
-                        // We can jump when the ray distance is less than 0.5, since the player pos is at 0.5 and is 1 in height.
-                        // Add 0.05 to take into account slopes, which have a small offset when casting rays downwards = 0.55
-                        this.canJump = true;
-                    }
-                    else {
-                        // Get rid of friction so we don't slow down on the walls while falling
-                        rigidBodyComponent.rigidBody.setFriction(0.0);
-                    }
-                }
+	                if (intersections.length) {
+	                    if (intersections[0].distance <= 0.55) {
+	                        // We can jump when the ray distance is less than 0.5, since the player pos is at 0.5 and is 1 in height.
+	                        // Add 0.05 to take into account slopes, which have a small offset when casting rays downwards = 0.55
+	                        this.canJump = true;
+	                    }
+	                    else {
+	                        // Get rid of friction so we don't slow down on the walls while falling
+	                        rigidBodyComponent.rigidBody.setFriction(0.0);
+	                    }
+	                }
+            	}
             }
 
             if (this.entity.doc.cheats.jump) {
