@@ -4,7 +4,7 @@ angular
         'three',
         'engine.texture-loader'
     ])
-    .config(['$componentsProvider', function ($componentsProvider) {
+    .config(['$componentsProvider', function($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -17,16 +17,16 @@ angular
             }
         });
     }])
-    .factory('NameMeshSystem', ['System', 'THREE', 'TextureLoader', '$log', function (System, THREE, TextureLoader, $log) {
+    .factory('NameMeshSystem', ['System', 'THREE', function(System, THREE) {
         'use strict';
 
         var NameMeshSystem = System.extend({
-            addedToWorld: function (world) {
+            addedToWorld: function(world) {
                 var sys = this;
 
                 sys._super(world);
 
-                world.entityAdded('name-mesh').add(function (entity) {
+                world.entityAdded('name-mesh').add(function(entity) {
                     var canvas = document.createElement('canvas');
 
                     canvas.width = 800;
@@ -34,26 +34,18 @@ angular
                     // canvas.style.imageRendering = 'pixelated';
 
                     var ctx = canvas.getContext('2d');
-					var component = entity.getComponent('name-mesh');
+                    var component = entity.getComponent('name-mesh');
 
                     ctx.font = 'Bold ' + component.fontsize + 'px ' + component.fontface;
 
-                    // get size data (height depends only on font size)
-                    var metrics = ctx.measureText(component.text);
-                    var textWidth = metrics.width;
+                    ctx.textAlign = 'center';
 
-					// ctx.rect(0,0,800,80);
-                    // ctx.fillStyle = 'red';
-					// ctx.fill();
-
-					ctx.textAlign = 'center';
-
-					ctx.fillStyle = component.color;
-			      	ctx.lineWidth = 3;
+                    ctx.fillStyle = component.color;
+                    ctx.lineWidth = 3;
                     ctx.strokeStyle = component.stroke;
 
-					ctx.fillText(component.text, 400, component.fontsize);
-					ctx.strokeText(component.text, 400, component.fontsize);
+                    ctx.fillText(component.text, 400, component.fontsize);
+                    ctx.strokeText(component.text, 400, component.fontsize);
 
                     // canvas contents will be used for a texture
                     var texture = new THREE.Texture(canvas);
@@ -64,7 +56,7 @@ angular
                     var sprite = new THREE.Sprite(spriteMaterial);
                     spriteMaterial.needsUpdate = true;
 
-					sprite.scale.x = 2.0;
+                    sprite.scale.x = 2.0;
                     sprite.scale.y = 0.2;
 
                     entity.add(sprite);
@@ -73,12 +65,8 @@ angular
                     sprite.position.y = 0.6;
                     // sprite.position.x = 0.1;
                 });
-
-                world.entityRemoved('name-mesh').add(function (entity) {
-                    // not sure if we need anything here
-                });
             },
-            update: function () {
+            update: function() {
                 // no update behavior needed
             }
         });
