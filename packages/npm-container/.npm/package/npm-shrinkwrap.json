@@ -30,7 +30,7 @@
                   }
                 },
                 "inherits": {
-                  "version": "2.0.1"
+                  "version": "http://registry.npmjs.org/inherits/-/inherits-2.0.1.tgz"
                 },
                 "minimatch": {
                   "version": "2.0.4",
