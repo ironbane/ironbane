@@ -15,7 +15,17 @@ angular.module('game.ui.debug.debugDiv', [
                     function() {
                         this.items = Debugger.watched;
                     }
-                ]
+                ],
+                link: function(scope) {
+                    // speed this one up to get a more "realtime" feel
+                    var boost = setInterval(function() {
+                        scope.$digest();
+                    }, 100);
+
+                    scope.$on('$destroy', function() {
+                        clearInterval(boost);
+                    });
+                }
             };
         }
     ]);
