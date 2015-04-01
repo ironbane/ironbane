@@ -218,6 +218,25 @@ angular.module('components.scene.rigid-body', ['ces', 'three', 'ammo', 'ammo.phy
             return shape;
         };
 
+        // rigidBodyData.shape.triangles = getTrianglesFromMesh(sceneComponent.scene);
+
+        var calculateMeshTriangles = function (mesh) {
+        	var deferred = $q.defer();
+
+        	var myWorker = new Worker('web-workers/getTrianglesFromMesh.js');
+
+        	var geometry = JSON.stringify(mesh.geometry);
+
+        	myWorker.postMessage(geometry);
+
+			myWorker.onmessage = function (e) {
+				var triangles = e.data;
+				deferred.resolve(triangles);
+			};
+
+        	return deferred.promise;
+        };
+
         var getTrianglesFromMesh = function (mesh) {
             var face, i, triangles = [];
             var geometry = mesh.geometry;
@@ -276,9 +295,10 @@ angular.module('components.scene.rigid-body', ['ces', 'three', 'ammo', 'ammo.phy
                         var sceneComponent = entity.getComponent('scene');
                         if (sceneComponent) {
                             // Wait for the triangles to load first
-                            promise = sceneComponent.meshTask;
-                            promise.then(function () {
-                                rigidBodyData.shape.triangles = getTrianglesFromMesh(sceneComponent.scene);
+                            promise = sceneComponent.meshTask.then(function () {
+                            	return calculateMeshTriangles(sceneComponent.scene);
+                            }).then(function(triangles) {
+								rigidBodyData.shape.triangles = triangles;
                             });
                         }
                     }
