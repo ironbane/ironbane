@@ -6,7 +6,7 @@
     },
     "geometries": [
         {
-            "uuid": "A73C7B9E-9CE4-4B7B-98CB-6D5391848B3F",
+            "uuid": "B87B1082-EE08-4911-8FDA-FBCEED955E58",
             "type": "Geometry",
             "data": {
                 "vertices": [
@@ -13974,7 +13974,7 @@
     ],
     "materials": [
         {
-            "uuid": "A50CCC7E-7850-4D38-B52F-E6A0A8F8C3F9",
+            "uuid": "A063BF18-D469-47E7-8895-8EDB52A0AAD0",
             "type": "MeshFaceMaterial",
             "materials": [
                 {
@@ -14086,11 +14086,11 @@
         }
     ],
     "object": {
-        "uuid": "7A5C5ECF-D621-4219-B1DF-F352681D6049",
+        "uuid": "DCAB9863-6AC7-414B-B128-97135BA123E1",
         "type": "Mesh",
         "name": "WorldMesh",
-        "geometry": "A73C7B9E-9CE4-4B7B-98CB-6D5391848B3F",
-        "material": "A50CCC7E-7850-4D38-B52F-E6A0A8F8C3F9",
+        "geometry": "B87B1082-EE08-4911-8FDA-FBCEED955E58",
+        "material": "A063BF18-D469-47E7-8895-8EDB52A0AAD0",
         "matrix": [
             1,
             0,
