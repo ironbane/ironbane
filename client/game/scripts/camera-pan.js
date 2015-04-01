@@ -15,8 +15,10 @@ angular.module('game.scripts.camera-pan', ['components.script', 'three'])
                 return;
             }
 
-            cameraComponent.camera.position.set(Math.cos(timestamp / 10) * 40, 20, Math.sin(timestamp / 10) * 20);
-            cameraComponent.camera.lookAt(new THREE.Vector3(-10, 15, 0));
+            var multiplier = 1.0;
+
+            cameraComponent.camera.position.set(Math.sin(timestamp * multiplier / 20) * -18, 37 + Math.cos(timestamp * multiplier / 20) * 35, Math.cos(timestamp * multiplier / 20) * 18);
+            cameraComponent.camera.rotation.set(0, - timestamp * multiplier / 20, 0);
         };
 
         ScriptBank.add('/scripts/built-in/camera-pan.js', PanScript);
