@@ -87,6 +87,13 @@ angular
                                 .then(function (texture) {
                                     material.map = texture;
                                     material.needsUpdate = true;
+
+                                	// By default, the diffuse property in Clara is set
+                                	// while ambient is not. To avoid confusion just use the
+                                	// same color. Otherwise materials will show black even when there is
+                                	// ambient light.
+                                    material.ambient.copy(material.color);
+
                                     // material.wireframe = true;
                                     geometry.buffersNeedUpdate = true;
                                     geometry.uvsNeedUpdate = true;

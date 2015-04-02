@@ -223,16 +223,8 @@ angular.module('components.scene.rigid-body', ['ces', 'three', 'ammo', 'ammo.phy
         var calculateMeshTriangles = function (mesh) {
         	var deferred = $q.defer();
 
-        	var myWorker = new Worker('web-workers/getTrianglesFromMesh.js');
-
-        	var geometry = JSON.stringify(mesh.geometry);
-
-        	myWorker.postMessage(geometry);
-
-			myWorker.onmessage = function (e) {
-				var triangles = e.data;
-				deferred.resolve(triangles);
-			};
+			var triangles = getTrianglesFromMesh(mesh);
+			deferred.resolve(triangles);
 
         	return deferred.promise;
         };

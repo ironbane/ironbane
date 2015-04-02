@@ -5,6 +5,24 @@ var validator = Meteor.npmRequire('validator');
 Meteor.methods({
   createChar: function (options) {
 
+  	var user = Meteor.user();
+
+	var charCount = Entities.find({
+		owner: user._id
+	}).count();
+
+	if (user.profile && user.profile.guest) {
+		if (charCount >= 1) {
+			// Just return the characterId we already have on file
+			return Entities.findOne({owner:user._id})._id;
+		}
+	}
+	else {
+		if (charCount >= ironbaneConstants.rules.maxCharactersAllowed) {
+			throw new Meteor.Error('tooManyChars', 'You\'ve reached the limit of characters you can create.');
+		}
+	}
+
   	options = options || {};
 
   	options.charName = options.charName || 'Guest';

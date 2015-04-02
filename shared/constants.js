@@ -18,6 +18,7 @@ ironbaneConstants = {
 		}
 	},
 	rules: {
+		maxCharactersAllowed: 3,
 		minCharNameLength: 2,
 		maxCharNameLength: 15
 	}
