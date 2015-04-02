@@ -22,12 +22,16 @@ angular
                     '$rootWorld',
                     '$log',
                     function($scope, $rootWorld, $log) {
+                        $scope.gui = {
+                            showChatInput: false
+                        };
+
                         // player commands that aren't tied to an entity
                         var inputSystem = $rootWorld.getSystem('input'),
                             openChatHandler = function() {
-                                $log.debug('input actions working!');
-                                $scope.showInput = true;
-                                $scope.$apply(); // this is outside the digest loop!
+                                $scope.$applyAsync(function() {
+                                    $scope.gui.showChatInput = true;
+                                });
                             };
 
                         inputSystem.register('open-chat', openChatHandler);
