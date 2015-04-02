@@ -15,8 +15,8 @@ angular
 
 		$stateProvider.state('main-menu.enter-world', {
 			templateUrl: 'client/game/ui/main-menu/enter-world/enter-world.ng.html',
-			controller: ['$scope', '$state', 'GameService', '$meteor', 'CharBuilder', '$meteorUtils', 'dialogService', 'FantasyNameGenerator',
-			function ($scope, $state, GameService, $meteor, CharBuilder, $meteorUtils, dialogService, FantasyNameGenerator) {
+			controller: ['$scope', '$state', 'GameService', '$meteor', 'CharBuilder', '$meteorUtils', 'dialogService', 'FantasyNameGenerator', 'IbConstants',
+			function ($scope, $state, GameService, $meteor, CharBuilder, $meteorUtils, dialogService, FantasyNameGenerator, IbConstants) {
 
 				$scope.currentCharacterIndex = 0;
 
@@ -43,7 +43,7 @@ angular
 				$scope.$watch('entities.length', function () {
 					updateCharacterPreview();
 
-					$scope.freeSlots = 5 - $scope.entities.length;
+					$scope.freeSlots = IbConstants.rules.maxCharactersAllowed - $scope.entities.length;
 				});
 
 				var enterGame = function (charId) {
