@@ -1,6 +1,6 @@
 <div>
     <ul>
-        <li ng-repeat="message in chatBox.messages | orderBy:'-ts'" class="chat-message" ng-class="{system: message.system}">
+        <li ng-repeat="message in chatBox.messages | orderBy:'+ts'" class="chat-message" ng-class="{system: message.system}">
             <span class='char-name' ng-class="{admin: message.admin}" ng-if="message.name">[{{ message.name }}]:</span> {{ message.msg }}
         </li>
     </ul>

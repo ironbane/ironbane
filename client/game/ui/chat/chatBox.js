@@ -4,7 +4,8 @@ angular.module('game.ui.chat.chatBoxDirective', [
         'game.ui.directives'
     ])
     .directive('chatBox', [
-        function() {
+        '$timeout',
+        function($timeout) {
             'use strict';
 
             return {
@@ -59,7 +60,10 @@ angular.module('game.ui.chat.chatBoxDirective', [
                             $window.removeEventListener('keydown', keyTrapHandler, true);
                         };
                     }
-                ]
+                ],
+                link: function(scope, el) {
+                    $timeout(function() { el.find('ul').scrollTop(9999);}, 100);
+                }
             };
         }
     ]);
