@@ -59,7 +59,9 @@ angular
 
             if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
             	var toVec = this.desiredPosition.clone().sub(this.entity.position);
-				btVec3.setValue(toVec.x, 0, toVec.z);
+				var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity();
+                currentVel = currentVel.toTHREEVector3();
+                btVec3.setValue(toVec.x, currentVel.y, toVec.z);
 				rigidBodyComponent.rigidBody.setLinearVelocity(btVec3);
 				// rigidBodyComponent.rigidBody.applyCentralImpulse(btVec3);
 

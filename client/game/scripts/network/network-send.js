@@ -16,7 +16,7 @@ angular
 
 			this.networkSendTimer += dt;
 
-			if (this.networkSendTimer > 1.0) {
+			if (this.networkSendTimer > 0.5) {
 				this.networkSendTimer = 0.0;
 
 				// var user = Meteor.user();
