@@ -1,24 +1,79 @@
-angular.module('engine.input.input-system', [
-    'ces',
-    'engine.input.keyboard',
-    'engine.input.keys',
-    'engine.input.virtual-gamepad'
-])
-    .factory('InputSystem', ['System', 'Keyboard', 'VirtualGamepad', 'KEYS', function (System, Keyboard, VirtualGamepad, KEYS) {
-        var InputSystem = System.extend({
-            init: function () {
-                this.keyboard = new Keyboard();
+angular
+    .module('engine.input.input-system', [
+        'ces',
+        'ces.signal',
+        'engine.input.keyboard',
+        'engine.input.keys',
+        'engine.input.virtual-gamepad'
+    ])
+    .provider('InputSystem', function() {
+        'use strict';
 
-                // TODO: enable / disable this based on settings / need
-                this.virtualGamepad = new VirtualGamepad();
-                this.virtualGamepad.draw();
+        var _actionMappings = {};
 
-                this.KEYS = KEYS;
-            },
-            update: function () {
-                // not yet implemented...
+        this.setActionMapping = function(action, mappings) {
+            if (!angular.isArray(mappings)) {
+                mappings = [mappings];
             }
-        });
 
-        return InputSystem;
-    }]);
+            _actionMappings[action] = mappings;
+        };
+
+        this.$get = [
+            'System',
+            'Keyboard',
+            'VirtualGamepad',
+            'KEYS',
+            'Signal',
+            function(System, Keyboard, VirtualGamepad, KEYS, Signal) {
+                var InputSystem = System.extend({
+                    init: function() {
+                        var sys = this;
+
+                        this.keyboard = new Keyboard();
+
+                        // TODO: enable / disable this based on settings / need
+                        this.virtualGamepad = new VirtualGamepad();
+                        this.virtualGamepad.draw();
+
+                        this.KEYS = KEYS;
+
+                        // build signals for all action mappings
+                        // they need to be pre-defined in .config
+                        this.actions = {};
+                        angular.forEach(_actionMappings, function(mappings, action) {
+                            sys.actions[action] = new Signal();
+                        });
+                    },
+                    update: function() {
+                        var sys = this;
+
+                        // check if action mapping conditions have been met
+                        // if so, emit action event
+                        angular.forEach(_actionMappings, function(mappings, action) {
+                            angular.forEach(mappings, function(mapping) {
+                                // for the moment, just going to support single key actions
+                                if (mapping.type === 'keyboard') {
+                                    if (sys.keyboard.getKey(sys.KEYS[mapping.keys[0]])) {
+                                        sys.actions[action].emit();
+                                    }
+                                }
+                            });
+                        });
+                    },
+                    register: function(action, callback) {
+                        if (this.actions[action]) {
+                            this.actions[action].add(callback);
+                        }
+                    },
+                    unregister: function(action, callback) {
+                        if (this.actions[action]) {
+                            this.actions[action].remove(callback);
+                        }
+                    }
+                });
+
+                return InputSystem;
+            }
+        ];
+    });

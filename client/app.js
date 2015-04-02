@@ -38,9 +38,18 @@ angular
 
         $locationProvider.html5Mode(true);
     }])
-    .config(['IbConfigProvider', function(IbConfigProvider) {
-        IbConfigProvider.set('domElement', document);
-    }])
+    .config([
+        'IbConfigProvider',
+        'InputSystemProvider',
+        function(IbConfigProvider, InputSystemProvider) {
+            IbConfigProvider.set('domElement', document);
+
+            InputSystemProvider.setActionMapping('open-chat', [{
+                type: 'keyboard',
+                keys: ['ENTER']
+            }]);
+        }
+    ])
     .run(['Debugger', '$window', function(Debugger, $window) {
         // for convenience
         $window.debug = Debugger;
