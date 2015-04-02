@@ -84,10 +84,16 @@ angular.module('game.network', [
 						},
 						removed: function (doc) {
 
+							var toBeRemoved = [];
+
 							$rootWorld.traverse(function (node) {
 								if (node.doc && node.doc._id === doc._id) {
-									$rootWorld.removeEntity(node);
+									toBeRemoved.push(node);
 								}
+							});
+
+							toBeRemoved.forEach(function (node) {
+								$rootWorld.removeEntity(node);
 							});
 
 						}
