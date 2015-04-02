@@ -3,7 +3,8 @@ angular
         'ui.router',
         'engine.game-service',
         'engine.entity-builder',
-        'game.ui.debug.debugDiv'
+        'game.ui.debug.debugDiv',
+        'game.ui.chat.chatBoxDirective'
     ])
     .config([
         '$stateProvider',
