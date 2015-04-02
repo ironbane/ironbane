@@ -1,4 +1,3 @@
-
 ironbaneConstants = {
 	world: {
 		mainMenuLevel: 'tower-of-doom',

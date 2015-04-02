@@ -1,25 +1,10 @@
-(function(global) {
-    'use strict';
+/*global Collections:true*/
+'use strict';
 
-    global.ChatRooms = new global.Mongo.Collection('chatRooms');
+Collections.ChatRooms = new Mongo.Collection('chatRooms');
 
-    if (Meteor.isServer) {
-
-        global.ChatRooms.deny({
-            insert: function(userId, doc) {
-                return true;
-            },
-            update: function(userId, doc, fieldNames, modifier) {
-                return true;
-            },
-            remove: function(userId, doc) {
-                return true;
-            }
-        });
-
-        Meteor.publish('chatRooms', function() {
-            return global.ChatRooms.find();
-        });
-    }
-
-})(this);
+if (Meteor.isServer) {
+    Meteor.publish('chatRooms', function() {
+        return Collections.ChatRooms.find();
+    });
+}

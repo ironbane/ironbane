@@ -1,15 +1,10 @@
+/*global Collections:true*/
 'use strict';
 
 Meteor.startup(function () {
-    ChatRooms.remove({});
+    Collections.ChatRooms.remove({});
 
-    ChatRooms.insert({
-        roomname: 'global',
-        areaBased: false
-    });
-
-    ChatRooms.insert({
-        roomname: 'local',
-        areaBased: true
+    Collections.ChatRooms.insert({
+        roomname: 'global'
     });
 });
