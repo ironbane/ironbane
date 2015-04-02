@@ -10,6 +10,10 @@ angular.module('game.ui.chat.chatBoxDirective', [
             return {
                 restrict: 'EA',
                 templateUrl: 'client/game/ui/chat/chatBox.ng.html',
+                scope: {
+                    showInput: '='
+                },
+                bindToController: true,
                 controllerAs: 'chatBox',
                 controller: [
                     '$meteor',
@@ -24,9 +28,10 @@ angular.module('game.ui.chat.chatBoxDirective', [
                                 event.stopPropagation();
 
                                 if (event.keyCode === 13) {
-                                    $scope.$apply(function(scope) {
+                                    $scope.$apply(function() {
                                         ctrl.messages.push({ts: new Date(), msg: ctrl.newmsg, userId: Meteor.userId()});
                                         ctrl.showInput = false;
+                                        ctrl.newmsg = '';
                                     });
                                 }
                             };
@@ -42,13 +47,6 @@ angular.module('game.ui.chat.chatBoxDirective', [
                         ctrl.untrapKeys = function() {
                             $window.removeEventListener('keydown', keyTrapHandler, true);
                         };
-
-                        ctrl.showInput = $scope.$eval($attrs.showInput);
-
-                        $scope.$watch($attrs.showInput, function(value) {
-                            //$log.debug('watch', value, $attrs.showInput);
-                            ctrl.showInput = value;
-                        });
                     }
                 ]
             };
