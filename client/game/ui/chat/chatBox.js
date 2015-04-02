@@ -1,4 +1,4 @@
-/*global Collections:true*/
+/*global Collections:true, Entities: true*/
 angular.module('game.ui.chat.chatBoxDirective', [
         'angular-meteor',
         'game.ui.directives'
@@ -23,13 +23,24 @@ angular.module('game.ui.chat.chatBoxDirective', [
                     '$log',
                     function($meteor, $scope, $attrs, $window, $log) {
                         var ctrl = this,
+                            currentCharacter = Entities.findOne({
+                                owner: Meteor.userId(),
+                                active: true
+                            }),
                             keyTrapHandler = function(event) {
                                 //$log.debug('keyTrapHandler');
                                 event.stopPropagation();
 
                                 if (event.keyCode === 13) {
                                     $scope.$apply(function() {
-                                        ctrl.messages.push({ts: new Date(), msg: ctrl.newmsg, userId: Meteor.userId()});
+                                        ctrl.messages.unshift({
+                                            ts: new Date(),
+                                            msg: ctrl.newmsg,
+                                            userId: Meteor.userId(),
+                                            name: currentCharacter.name,
+                                            pos: currentCharacter.position,
+                                            room: currentCharacter.level
+                                        });
                                         ctrl.showInput = false;
                                         ctrl.newmsg = '';
                                     });
