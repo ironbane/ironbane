@@ -260,6 +260,17 @@ chat-box {
 		overflow-y: scroll;
 		overflow-x: hidden;
 		height: 160px;
+		.chat-message {
+			&.system {
+				color: yellow;
+			}
+			.char-name {
+				color: aqua;
+				&.admin {
+					color: green;
+				}
+			}
+		}
 	}
 	.iinput {
 		position: absolute;

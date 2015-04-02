@@ -8,7 +8,8 @@ if (Meteor.isServer) {
         return Collections.ChatMessages.find({}, {
             sort: {
                 ts: -1
-            }
+            },
+            limit: 50
         });
     });
 }
