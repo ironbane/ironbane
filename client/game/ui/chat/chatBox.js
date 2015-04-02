@@ -12,10 +12,34 @@ angular.module('game.ui.chat.chatBoxDirective', [
                 controllerAs: 'chatBox',
                 controller: [
                     '$meteor',
-                    function($meteor) {
+                    '$scope',
+                    '$attrs',
+                    '$window',
+                    '$log',
+                    function($meteor, $scope, $attrs, $window, $log) {
+                        var ctrl = this,
+                            keyTrapHandler = function(event) {
+                                $log.debug('keyTrapHandler');
+                                event.stopPropagation();
+                            };
+
                         $meteor.subscribe('chatMessages');
 
-                        this.messages = $meteor.collection(Collections.ChatMessages);
+                        ctrl.messages = $meteor.collection(Collections.ChatMessages);
+
+                        ctrl.trapKeys = function() {
+                            $window.addEventListener('keydown', keyTrapHandler, true);
+                        };
+
+                        ctrl.untrapKeys = function() {
+                            $window.removeEventListener('keydown', keyTrapHandler, true);
+                        };
+
+                        $scope.$watch($attrs.showInput, function(showInput) {
+                            var shouldShowInput = $scope.$eval(showInput);
+
+                            ctrl.showInput = shouldShowInput;
+                        });
                     }
                 ]
             };

@@ -1,5 +1,5 @@
 angular.module('game.ui.directives')
-	.directive('ngFocus', function($timeout) {
+	.directive('n0gFocus', function($timeout) {
 	return {
 		link: function ( scope, element, attrs ) {
 			scope.$watch( attrs.ngFocus, function ( val ) {

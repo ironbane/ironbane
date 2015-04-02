@@ -46,7 +46,8 @@ angular
 
             InputSystemProvider.setActionMapping('open-chat', [{
                 type: 'keyboard',
-                keys: ['ENTER']
+                keys: ['ENTER'],
+                check: 'pressed'
             }]);
         }
     ])

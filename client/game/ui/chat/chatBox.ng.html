@@ -4,4 +4,5 @@
             {{ message.msg }}
         </li>
     </ul>
+    <input class="iinput" ng-show="chatBox.showInput" ng-model="chatBox.newmsg" ng-focus="chatBox.trapKeys()" ng-blur="chatBox.untrapKeys()" />
 </div>

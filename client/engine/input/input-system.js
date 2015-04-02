@@ -54,7 +54,10 @@ angular
                             angular.forEach(mappings, function(mapping) {
                                 // for the moment, just going to support single key actions
                                 if (mapping.type === 'keyboard') {
-                                    if (sys.keyboard.getKey(sys.KEYS[mapping.keys[0]])) {
+                                    var testFn = mapping.check === 'pressed' ?
+                                        sys.keyboard.getKeyDown.bind(sys.keyboard) : sys.keyboard.getKey.bind(sys.keyboard);
+
+                                    if (testFn(sys.KEYS[mapping.keys[0]])) {
                                         sys.actions[action].emit();
                                     }
                                 }
