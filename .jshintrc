@@ -40,6 +40,7 @@
 		"angular": false,
 		"window": true,
 		"document": true,
-		"Meteor": true
+		"Meteor": true,
+		"Mongo": true
 	}
 }

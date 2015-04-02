@@ -1,8 +1,8 @@
 angular.module('engine.input.keyboard', [])
-    .factory('Keyboard', function () {
+    .factory('Keyboard', function() {
         'use strict';
 
-        var Keyboard = function () {
+        var Keyboard = function() {
             this.keysDown = {};
             this.keysDownOnce = {};
 
@@ -12,20 +12,20 @@ angular.module('engine.input.keyboard', [])
             window.addEventListener('blur', this._onBlur.bind(this));
         };
 
-        Keyboard.prototype._onKeyDown = function (e) {
+        Keyboard.prototype._onKeyDown = function(e) {
             // TODO only preventDefault for specific keys
             // can't access dev tools otherwise
             // e.preventDefault();
 
             if (!this.keysDown[e.keyCode]) {
-            	this.keysDownOnce[e.keyCode] = true;
+                this.keysDownOnce[e.keyCode] = true;
             }
 
             this.keysDown[e.keyCode] = true;
 
         };
 
-        Keyboard.prototype._onKeyUp = function (e) {
+        Keyboard.prototype._onKeyUp = function(e) {
             // TODO only preventDefault for specific keys
             // can't access dev tools otherwise
             // e.preventDefault();
@@ -33,21 +33,21 @@ angular.module('engine.input.keyboard', [])
             this.keysDown[e.keyCode] = false;
         };
 
-        Keyboard.prototype._onBlur = function (e) {
+        Keyboard.prototype._onBlur = function() {
             this.keysDown = {};
             this.keysDownOnce = {};
         };
 
-        Keyboard.prototype.getKey = function (code) {
+        Keyboard.prototype.getKey = function(code) {
             return this.keysDown[code] === true;
         };
 
-        Keyboard.prototype.getKeyDown = function (code) {
+        Keyboard.prototype.getKeyDown = function(code) {
             if (this.keysDownOnce[code] === true) {
-            	this.keysDownOnce[code] = false;
-            	return true;
+                this.keysDownOnce[code] = false;
+                return true;
             }
-			return false;
+            return false;
         };
 
         // TODO: run update loop on this to test for Pressed and Sequences
