@@ -24,38 +24,51 @@ angular
         'util.deepExtend',
         'util.name-gen'
     ])
-    .config(['SoundSystemProvider', '$locationProvider', function(SoundSystemProvider, $locationProvider) {
-
-        // define all of the sounds & music for the game
-        SoundSystemProvider.setAudioLibraryData({
-            theme: {
-                path: 'music/ib_theme',
-                volume: 0.55,
-                loop: true,
-                type: 'music'
-            }
-        });
-
-        $locationProvider.html5Mode(true);
-    }])
     .config([
+        '$locationProvider',
+        'SoundSystemProvider',
         'IbConfigProvider',
         'InputSystemProvider',
-        function(IbConfigProvider, InputSystemProvider) {
+        function($locationProvider, SoundSystemProvider, IbConfigProvider, InputSystemProvider) {
+            $locationProvider.html5Mode(true);
+
             IbConfigProvider.set('domElement', document);
 
+            // define all of the sounds & music for the game
+            // TODO: load from a config file
+            SoundSystemProvider.setAudioLibraryData({
+                theme: {
+                    path: 'music/ib_theme',
+                    volume: 0.55,
+                    loop: true,
+                    type: 'music'
+                }
+            });
+
+            // setup all input actions TODO: pull from config / local storage
             InputSystemProvider.setActionMapping('open-chat', [{
                 type: 'keyboard',
                 keys: ['ENTER'],
                 check: 'pressed'
             }]);
+
+            InputSystemProvider.setActionMapping('escape', [{
+                type: 'keyboard',
+                keys: ['ESC'],
+                check: 'pressed'
+            }]);
         }
     ])
-    .run(['Debugger', '$window', function(Debugger, $window) {
+    .run([
+        '$window',
+        '$rootWorld',
+        'Debugger',
+        'IbConstants',
+        '$rootScope',
+        function($window, $rootWorld, Debugger, IbConstants, $rootScope) {
         // for convenience
         $window.debug = Debugger;
-    }])
-    .run(['$window', '$rootWorld', function($window, $rootWorld) {
+
         // TODO: move to directive
         $rootWorld.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild($rootWorld.renderer.domElement);
@@ -64,10 +77,11 @@ angular
         $window.addEventListener('resize', function() {
             $rootWorld.renderer.setSize(window.innerWidth, window.innerHeight);
         }, false);
-    }])
-    .run(['$window', '$rootWorld', 'IbConstants', '$rootScope', function($window, $rootWorld, IbConstants, $rootScope) {
+
+        // TODO: move to angular constant
         $rootScope.IB_CONSTANTS = IbConstants;
 
+        // this might also be a good directive
         if (IbConstants.isDev) {
             $rootWorld.stats.setMode(0); // 0: fps, 1: ms
 

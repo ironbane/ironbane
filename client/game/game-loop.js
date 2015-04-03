@@ -1,4 +1,5 @@
-angular.module('game.game-loop', [
+angular
+    .module('game.game-loop', [
         'game.world-root',
         'engine.ib-constants'
     ])

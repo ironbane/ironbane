@@ -9,6 +9,4 @@ angular
         'use strict';
 
         GameService.start();
-
-
     }]);
