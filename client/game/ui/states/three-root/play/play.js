@@ -1,5 +1,5 @@
 angular
-    .module('game.ui.play', [
+    .module('game.ui.states.three-root.play', [
         'ui.router',
         'angular-meteor',
         'game.ui.debug.debugDiv',
@@ -11,8 +11,8 @@ angular
         function($stateProvider) {
             'use strict';
 
-            $stateProvider.state('play', {
-                templateUrl: 'client/game/ui/play/play.ng.html',
+            $stateProvider.state('three-root.play', {
+                templateUrl: 'client/game/ui/states/three-root/play/play.ng.html',
                 resolve: {
                     'currentUser': [
                         '$meteor',
@@ -40,7 +40,7 @@ angular
                             },
                             escapeHandler = function() {
                                 $log.debug('escape pressed');
-                                $state.go('main-menu.enter-world');
+                                $state.go('three-root.main-menu.enter-world');
                             };
 
                         inputSystem.register('open-chat', openChatHandler);

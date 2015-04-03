@@ -1,5 +1,5 @@
 angular
-    .module('game.ui.main-menu.enter-world', [
+    .module('game.ui.states.three-root.main-menu.enter-world', [
         'angular-meteor',
         'underscore',
         'ui.router',
@@ -14,26 +14,25 @@ angular
     .config(['$stateProvider', function($stateProvider) {
         'use strict';
 
-        $stateProvider.state('main-menu.enter-world', {
-            templateUrl: 'client/game/ui/main-menu/enter-world/enter-world.ng.html',
+        $stateProvider.state('three-root.main-menu.enter-world', {
+            templateUrl: 'client/game/ui/states/three-root/main-menu/enter-world/enter-world.ng.html',
             controller: [
                 '$scope',
                 '$state',
-                'GameService',
                 '$meteor',
                 'CharBuilder',
-                '$meteorUtils',
                 'dialogService',
                 'FantasyNameGenerator',
                 'IbConstants',
                 'ChatService',
-                function($scope, $state, GameService, $meteor, CharBuilder, $meteorUtils, dialogService, FantasyNameGenerator, IbConstants, ChatService) {
+                function($scope, $state, $meteor, CharBuilder, dialogService,
+                    FantasyNameGenerator, IbConstants, ChatService) {
 
                     $scope.currentCharacterIndex = 0;
 
                     $scope.entities = $meteor.collection(function() {
-                        var user = Meteor.user();
-                        return $meteorUtils.getCollectionByName('entities').find({
+                        var user = $meteor.user();
+                        return $meteor.getCollectionByName('entities').find({
                             owner: user._id
                         });
                     }, false);
@@ -84,7 +83,7 @@ angular
                                     charName: FantasyNameGenerator.generateName('mmo')
                                 })
                                 .then(function(charId) {
-                                    $state.go('main-menu.enter-world');
+                                    $state.go('^.enter-world');
 
                                     enterGame(charId);
 
@@ -101,15 +100,15 @@ angular
                     };
 
                     $scope.login = function() {
-                        $state.go('main-menu.login');
+                        $state.go('^.login');
                     };
 
                     $scope.register = function() {
-                        $state.go('main-menu.register');
+                        $state.go('^.register');
                     };
 
                     $scope.createChar = function() {
-                        $state.go('main-menu.create-char');
+                        $state.go('^.create-char');
                     };
 
                     $scope.prevChar = function() {
@@ -138,8 +137,6 @@ angular
                                 });
                             });
                     };
-
-
                 }
             ]
         });

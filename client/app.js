@@ -61,39 +61,36 @@ angular
     ])
     .run([
         '$window',
-        '$rootWorld',
         'Debugger',
         'IbConstants',
         '$rootScope',
-        function($window, $rootWorld, Debugger, IbConstants, $rootScope) {
-        // for convenience
-        $window.debug = Debugger;
+        '$meteor',
+        '$state',
+        function($window, Debugger, IbConstants, $rootScope, $meteor, $state) {
+            // for convenience
+            $window.debug = Debugger;
 
-        // TODO: move to directive
-        $rootWorld.renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild($rootWorld.renderer.domElement);
-        $rootWorld.renderer.setClearColor(0xd3fff8);
+            // TODO: move to angular constant
+            $rootScope.IB_CONSTANTS = IbConstants;
 
-        $window.addEventListener('resize', function() {
-            $rootWorld.renderer.setSize(window.innerWidth, window.innerHeight);
-        }, false);
+            // THIS IS WHERE IT ALL BEGINS!
+            $meteor.waitForUser()
+                .then(function(currentUser) {
+                    $meteor.autorun($rootScope, function() {
+                        var characters = Entities.find({
+                            owner: currentUser._id,
+                            active: true
+                        });
 
-        // TODO: move to angular constant
-        $rootScope.IB_CONSTANTS = IbConstants;
-
-        // this might also be a good directive
-        if (IbConstants.isDev) {
-            $rootWorld.stats.setMode(0); // 0: fps, 1: ms
-
-            // align top-left
-            $rootWorld.stats.domElement.style.position = 'absolute';
-            $rootWorld.stats.domElement.style.right = '0px';
-            $rootWorld.stats.domElement.style.bottom = '0px';
-            $rootWorld.stats.domElement.style.zIndex = 100;
-
-            document.body.appendChild($rootWorld.stats.domElement);
+                        if (characters.count() === 0) {
+                            $state.go('.main-menu.enter-world');
+                        } else {
+                            $state.go('.play');
+                        }
+                    });
+                });
         }
-    }]);
+    ]);
 
 function onReady() {
     // We must wait until Ammo is available! See comments in client/lib/lib/ammo.js
