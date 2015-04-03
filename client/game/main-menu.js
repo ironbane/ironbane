@@ -1,62 +1,69 @@
+angular
+    .module('game.main-menu', [
+        'ces',
+        'three',
+        'angular-meteor',
+        'ui.router',
+        'game.world-root',
+        'engine.entity-builder',
+        'engine.util'
+    ])
+    .run([
+        'World',
+        'THREE',
+        '$log',
+        'EntityBuilder',
+        '$rootWorld',
+        '$state',
+        '$meteor',
+        '$rootScope',
+        function(World, THREE, $log, EntityBuilder, $rootWorld, $state, $meteor, $rootScope) {
+            'use strict';
 
-angular.module('game.main-menu', [
-		'ces',
-		'three',
-		'ui.router',
-		'game.world-root',
-		'engine.entity-builder',
-		'engine.util'
-	])
-	.run(['World', 'THREE', '$log', 'EntityBuilder', '$rootWorld', '$state', 'Util', function (World, THREE, $log, EntityBuilder, $rootWorld, $state, Util) {
+            var mainMenuPanningCamera = null;
+            var getMainMenuPanningCamera = function() {
+                if (!mainMenuPanningCamera) {
+                    mainMenuPanningCamera = EntityBuilder.build('MainMenuPanningCamera', {
+                        components: {
+                            camera: {
+                                aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
+                            },
+                            script: {
+                                scripts: [
+                                    '/scripts/built-in/camera-pan.js'
+                                ]
+                            }
+                        }
+                    });
+                }
 
-		'use strict';
+                return mainMenuPanningCamera;
+            };
 
-        var mainMenuPanningCamera = null;
-        var getMainMenuPanningCamera = function () {
-        	if (!mainMenuPanningCamera) {
-		        mainMenuPanningCamera = EntityBuilder.build('MainMenuPanningCamera', {
-		            components: {
-		                camera: {
-		                    aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
-		                },
-		                script: {
-		                    scripts: [
-		                        '/scripts/built-in/camera-pan.js'
-		                    ]
-		                }
-		            }
-		        });
-	    	}
+            var addMainMenuCamera = function() {
+                $rootWorld.addEntity(getMainMenuPanningCamera());
+            };
 
-	        return mainMenuPanningCamera;
-        };
+            var removeMainMenuCamera = function() {
+                $rootWorld.removeEntity(getMainMenuPanningCamera());
+            };
 
-        var addMainMenuCamera = function () {
-        	$rootWorld.addEntity(getMainMenuPanningCamera());
-        };
+            $meteor.waitForUser()
+                .then(function(currentUser) {
+                    $meteor.autorun($rootScope, function() {
+                        var characters = Entities.find({
+                            owner: currentUser._id,
+                            active: true
+                        });
 
-        var removeMainMenuCamera = function () {
-        	$rootWorld.removeEntity(getMainMenuPanningCamera());
-        };
-
-		Util.waitForMeteorGuestUserLogin(function () {
-			Tracker.autorun(function () {
-				var user = Meteor.user();
-
-				var characters = Entities.find({
-					owner: user._id,
-					active: true
-				});
-
-				if (characters.count() === 0) {
-					$state.go('main-menu.enter-world');
-					addMainMenuCamera();
-				}
-				else {
-					$state.go('play');
-					removeMainMenuCamera();
-				}
-			});
-		});
-
-	}]);
+                        if (characters.count() === 0) {
+                            $state.go('main-menu.enter-world');
+                            addMainMenuCamera();
+                        } else {
+                            $state.go('play');
+                            removeMainMenuCamera();
+                        }
+                    });
+                });
+        }
+    ]);
