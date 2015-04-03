@@ -1,27 +1,32 @@
 angular
     .module('game.ui.play', [
         'ui.router',
-        'engine.game-service',
-        'engine.entity-builder',
+        'angular-meteor',
         'game.ui.debug.debugDiv',
         'game.ui.chat.chatBoxDirective',
         'game.world-root'
     ])
     .config([
         '$stateProvider',
-        '$locationProvider',
-        function($stateProvider, $locationProvider) {
+        function($stateProvider) {
             'use strict';
-
-            $locationProvider.html5Mode(true);
 
             $stateProvider.state('play', {
                 templateUrl: 'client/game/ui/play/play.ng.html',
+                resolve: {
+                    'currentUser': [
+                        '$meteor',
+                        function($meteor) {
+                            return $meteor.requireUser();
+                        }
+                    ]
+                },
                 controller: [
                     '$scope',
                     '$rootWorld',
                     '$log',
-                    function($scope, $rootWorld, $log) {
+                    '$state',
+                    function($scope, $rootWorld, $log, $state) {
                         $scope.gui = {
                             showChatInput: false
                         };
@@ -32,12 +37,18 @@ angular
                                 $scope.$applyAsync(function() {
                                     $scope.gui.showChatInput = true;
                                 });
+                            },
+                            escapeHandler = function() {
+                                $log.debug('escape pressed');
+                                $state.go('main-menu.enter-world');
                             };
 
                         inputSystem.register('open-chat', openChatHandler);
+                        //inputSystem.register('escape', escapeHandler);
 
                         $scope.$on('$destroy', function() {
                             inputSystem.unregister('open-chat', openChatHandler);
+                            //inputSystem.unregister('escape', escapeHandler);
                         });
                     }
                 ]
