@@ -31,7 +31,7 @@ angular
                     $scope.currentCharacterIndex = 0;
 
                     $scope.entities = $meteor.collection(function() {
-                        var user = $meteor.user();
+                        var user = $scope.currentUser;
                         return $meteor.getCollectionByName('entities').find({
                             owner: user._id
                         });

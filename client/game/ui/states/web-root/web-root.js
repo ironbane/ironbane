@@ -1,5 +1,5 @@
 angular
-    .module('game.ui.web-root', [
+    .module('game.ui.states.web-root', [
         'ui.router',
         'angular-meteor'
     ])

@@ -40,7 +40,7 @@ angular
                             },
                             escapeHandler = function() {
                                 $log.debug('escape pressed');
-                                $state.go('three-root.main-menu.enter-world');
+                                $state.go('^.main-menu.enter-world');
                             };
 
                         inputSystem.register('open-chat', openChatHandler);

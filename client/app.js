@@ -3,7 +3,7 @@
 angular
     .module('Ironbane', [
         'angular-meteor',
-        'game.ui',
+        'game.ui.states',
         'game.game-loop',
         'game.network',
         'game.world-root',
@@ -74,6 +74,7 @@ angular
             $rootScope.IB_CONSTANTS = IbConstants;
 
             // THIS IS WHERE IT ALL BEGINS!
+            // NOTE: if we want to go to another state that isn't 3D, change logic here
             $meteor.waitForUser()
                 .then(function(currentUser) {
                     $meteor.autorun($rootScope, function() {
@@ -83,9 +84,9 @@ angular
                         });
 
                         if (characters.count() === 0) {
-                            $state.go('.main-menu.enter-world');
+                            $state.go('three-root.main-menu.enter-world');
                         } else {
-                            $state.go('.play');
+                            $state.go('three-root.play');
                         }
                     });
                 });

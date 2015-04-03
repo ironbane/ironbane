@@ -2,7 +2,6 @@ angular
     .module('engine.game-service', [
         'game.game-loop',
         'game.world-root',
-        'game.main-menu',
         'game.network',
         'components',
         'game.scripts',
