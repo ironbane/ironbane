@@ -1,11 +1,11 @@
 <div>
     <div class="ib-ui-logo" />
-    	<div class="ib-ui-version">0.4.0 pre-alpha</div>
-    	<img ng-src="images/ui/logo.png">
+        <div class="ib-ui-version">{{ IB_CONSTANTS.GAME_VERSION }}</div>
+        <img ng-src="images/ui/logo.png">
     </div>
 </div>
 <div class="ib-ui-window ib-ui-login-box login-info" ng-if="!$root.currentUser.profile.guest">
-	<div style="width:200px;float:left" class="label">{{ $root.currentUser.username }}</div>
-	<button class="ibutton" ng-click="logout()" style="width:100px">Log out</button>
+    <div style="width:200px;float:left" class="label">{{ $root.currentUser.username }}</div>
+    <button class="ibutton" ng-click="logout()" style="width:100px">Log out</button>
 </div>
 <div ui-view class="sub-menu"></div>
