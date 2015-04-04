@@ -3,7 +3,8 @@
 angular
     .module('Ironbane', [
         'angular-meteor',
-        'game.ui',
+        'game.ui.states',
+        'game.constants',
         'game.game-loop',
         'game.network',
         'game.world-root',
@@ -17,7 +18,6 @@ angular
         'engine.entity-builder',
         'engine.sound-system',
         'engine.ib-config',
-        'engine.ib-constants',
         'engine.input.input-system',
         'engine.util',
         'engine.debugger',
@@ -61,39 +61,34 @@ angular
     ])
     .run([
         '$window',
-        '$rootWorld',
         'Debugger',
-        'IbConstants',
+        'IB_CONSTANTS',
         '$rootScope',
-        function($window, $rootWorld, Debugger, IbConstants, $rootScope) {
-        // for convenience
-        $window.debug = Debugger;
+        '$meteor',
+        '$state',
+        function($window, Debugger, IB_CONSTANTS, $rootScope, $meteor, $state) {
+            // for convenience
+            $window.debug = Debugger;
 
-        // TODO: move to directive
-        $rootWorld.renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild($rootWorld.renderer.domElement);
-        $rootWorld.renderer.setClearColor(0xd3fff8);
+            // THIS IS WHERE IT ALL BEGINS!
+            // NOTE: if we want to go to another state that isn't 3D, change logic here
+            $meteor.waitForUser()
+                .then(function(currentUser) {
+                    $meteor.autorun($rootScope, function() {
+                        var characters = Entities.find({
+                            owner: currentUser._id,
+                            active: true
+                        });
 
-        $window.addEventListener('resize', function() {
-            $rootWorld.renderer.setSize(window.innerWidth, window.innerHeight);
-        }, false);
-
-        // TODO: move to angular constant
-        $rootScope.IB_CONSTANTS = IbConstants;
-
-        // this might also be a good directive
-        if (IbConstants.isDev) {
-            $rootWorld.stats.setMode(0); // 0: fps, 1: ms
-
-            // align top-left
-            $rootWorld.stats.domElement.style.position = 'absolute';
-            $rootWorld.stats.domElement.style.right = '0px';
-            $rootWorld.stats.domElement.style.bottom = '0px';
-            $rootWorld.stats.domElement.style.zIndex = 100;
-
-            document.body.appendChild($rootWorld.stats.domElement);
+                        if (characters.count() === 0) {
+                            $state.go('three-root.main-menu.enter-world');
+                        } else {
+                            $state.go('three-root.play');
+                        }
+                    });
+                });
         }
-    }]);
+    ]);
 
 function onReady() {
     // We must wait until Ammo is available! See comments in client/lib/lib/ammo.js

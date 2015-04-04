@@ -2,7 +2,6 @@ angular
     .module('engine.game-service', [
         'game.game-loop',
         'game.world-root',
-        'game.main-menu',
         'game.network',
         'components',
         'game.scripts',
@@ -11,7 +10,7 @@ angular
         'engine.sound-system',
         'engine.input.input-system',
         'engine.level-loader',
-        'engine.ib-constants',
+        'game.constants',
         'util.name-gen',
         'components.scene.name-mesh'
     ])
@@ -39,12 +38,12 @@ angular
         'NameMeshSystem',
         'Network',
         'Util',
-        'IbConstants',
+        'IB_CONSTANTS',
         function($rootWorld, CameraSystem, ModelSystem,
             LightSystem, SpriteSystem, QuadSystem, HelperSystem, SceneSystem, ScriptSystem,
             SoundSystem, InputSystem, RigidBodySystem, CollisionReporterSystem, WieldItemSystem,
             EntityBuilder, $log, LevelLoader, ProcTreeSystem, ShadowSystem,
-            FantasyNameGenerator, NameMeshSystem, Network, Util, IbConstants) {
+            FantasyNameGenerator, NameMeshSystem, Network, Util, IB_CONSTANTS) {
             'use strict';
 
             this.start = function() {
@@ -77,7 +76,7 @@ angular
                 // In this case, when the activeLevel var changes. So it's very easy for us to change the level
                 // just change the activeLevel variable. In addition subscription calls will be auto updated as well
                 Util.waitForMeteorGuestUserLogin(function() {
-                    Session.set('activeLevel', IbConstants.world.mainMenuLevel);
+                    Session.set('activeLevel', IB_CONSTANTS.world.mainMenuLevel);
                     Meteor.autorun(function() {
 
                         var nodesToBeRemoved = [];
