@@ -6,7 +6,7 @@ angular
         'engine.game-service',
         'engine.char-builder',
         'engine.util',
-        'engine.ib-constants',
+        'game.constants',
         'game.ui.dialog',
         'util.name-gen',
         'game.ui.chat.chatService'
@@ -23,10 +23,10 @@ angular
                 'CharBuilder',
                 'dialogService',
                 'FantasyNameGenerator',
-                'IbConstants',
+                'IB_CONSTANTS',
                 'ChatService',
                 function($scope, $state, $meteor, CharBuilder, dialogService,
-                    FantasyNameGenerator, IbConstants, ChatService) {
+                    FantasyNameGenerator, IB_CONSTANTS, ChatService) {
 
                     $scope.currentCharacterIndex = 0;
 
@@ -53,7 +53,7 @@ angular
                     $scope.$watch('entities.length', function() {
                         updateCharacterPreview();
 
-                        $scope.freeSlots = IbConstants.rules.maxCharactersAllowed - $scope.entities.length;
+                        $scope.freeSlots = IB_CONSTANTS.rules.maxCharactersAllowed - $scope.entities.length;
                     });
 
                     var enterGame = function(charId) {

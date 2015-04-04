@@ -1,13 +1,13 @@
 angular
     .module('game.game-loop', [
         'game.world-root',
-        'engine.ib-constants'
+        'game.constants'
     ])
     .run([
         '$rootWorld',
         '$window',
-        'IbConstants',
-        function($rootWorld, $window, IbConstants) {
+        'IB_CONSTANTS',
+        function($rootWorld, $window, IB_CONSTANTS) {
             'use strict';
 
             var startTime = $window.performance.now() / 1000.0;
@@ -23,13 +23,13 @@ angular
 
                 _timing.frameTime = Math.min(_timing.frameTime, 0.3);
 
-                if (IbConstants.isDev) {
+                if (IB_CONSTANTS.isDev) {
                     $rootWorld.stats.begin();
                 }
 
                 $rootWorld.update(_timing.frameTime, _timing.elapsed, _timing.timestamp);
 
-                if (IbConstants.isDev) {
+                if (IB_CONSTANTS.isDev) {
                     $rootWorld.stats.end();
                 }
 

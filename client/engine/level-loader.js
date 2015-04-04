@@ -1,44 +1,50 @@
-'use strict';
-
 angular
     .module('engine.level-loader', [
         'engine.entity-builder',
         'game.world-root'
     ])
-    .service('LevelLoader', ['$rootWorld', '$http', 'EntityBuilder', '$log', '$q', function ($rootWorld, $http, EntityBuilder, $log, $q) {
+    .service('LevelLoader', [
+        '$rootWorld',
+        '$http',
+        'EntityBuilder',
+        '$log',
+        '$q',
+        function($rootWorld, $http, EntityBuilder, $log, $q) {
+            'use strict';
 
-    	var me = this;
+            var me = this;
 
-    	this.activeLevel = null;
+            this.activeLevel = null;
 
-        this.load = function (sceneId) {
+            this.load = function(sceneId) {
 
-        	if (me.activeLevel) {
-        		$rootWorld.removeEntity(me.activeLevel.level);
-        	}
-
-            var level = EntityBuilder.build('WorldMesh', {
-                components: {
-                    scene: {
-                        id: sceneId
-                    },
-                    rigidBody: {
-                        shape: {
-                            type: 'concave'
-                        },
-                        mass: 0
-                    }
+                if (me.activeLevel) {
+                    $rootWorld.removeEntity(me.activeLevel.level);
                 }
-            });
 
-            me.activeLevel = {
-            	level: level,
-            	sceneId: sceneId
+                var level = EntityBuilder.build('WorldMesh', {
+                    components: {
+                        scene: {
+                            id: sceneId
+                        },
+                        rigidBody: {
+                            shape: {
+                                type: 'concave'
+                            },
+                            mass: 0
+                        }
+                    }
+                });
+
+                me.activeLevel = {
+                    level: level,
+                    sceneId: sceneId
+                };
+
+                $rootWorld.addEntity(level);
+
+                return $q.all([level.getComponent('scene').meshTask]);
             };
 
-            $rootWorld.addEntity(level);
-
-            return $q.all([level.getComponent('scene').meshTask]);
-        };
-
-    }]);
+        }
+    ]);

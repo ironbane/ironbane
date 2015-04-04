@@ -4,7 +4,7 @@ angular
         'engine.game-service',
         'engine.char-builder',
         'engine.util',
-        'engine.ib-constants',
+        'game.constants',
         'game.ui.dialog',
         'underscore',
         'ui.router'
@@ -23,11 +23,11 @@ angular
                     'CharBuilder',
                     'Util',
                     '_',
-                    'IbConstants',
+                    'IB_CONSTANTS',
                     '$meteor',
                     'dialogService',
                     '$log',
-                    function($scope, $state, GameService, CharBuilder, Util, _, IbConstants, $meteor, dialogService, $log) {
+                    function($scope, $state, GameService, CharBuilder, Util, _, IB_CONSTANTS, $meteor, dialogService, $log) {
 
                         $scope.back = function() {
                             $state.go('^.enter-world');
@@ -38,9 +38,9 @@ angular
                             var options = {
                                 charName: $scope.charName,
                                 boy: $scope.boy,
-                                skin: IbConstants.characterParts[gender].skin[$scope.skinIndex],
-                                eyes: IbConstants.characterParts[gender].eyes[$scope.eyesIndex],
-                                hair: IbConstants.characterParts[gender].hair[$scope.hairIndex],
+                                skin: IB_CONSTANTS.characterParts[gender].skin[$scope.skinIndex],
+                                eyes: IB_CONSTANTS.characterParts[gender].eyes[$scope.eyesIndex],
+                                hair: IB_CONSTANTS.characterParts[gender].hair[$scope.hairIndex],
                             };
 
                             $meteor.call('createChar', options)
@@ -59,28 +59,28 @@ angular
                             var gender = $scope.boy ? 'male' : 'female';
 
                             // Make sure the attributes are correct
-                            if ($scope.skinIndex >= IbConstants.characterParts[gender].skin.length) {
+                            if ($scope.skinIndex >= IB_CONSTANTS.characterParts[gender].skin.length) {
                                 $scope.skinIndex = 0;
                             } else if ($scope.skinIndex < 0) {
-                                $scope.skinIndex = IbConstants.characterParts[gender].skin.length - 1;
+                                $scope.skinIndex = IB_CONSTANTS.characterParts[gender].skin.length - 1;
                             }
 
-                            if ($scope.eyesIndex >= IbConstants.characterParts[gender].eyes.length) {
+                            if ($scope.eyesIndex >= IB_CONSTANTS.characterParts[gender].eyes.length) {
                                 $scope.eyesIndex = 0;
                             } else if ($scope.eyesIndex < 0) {
-                                $scope.eyesIndex = IbConstants.characterParts[gender].eyes.length - 1;
+                                $scope.eyesIndex = IB_CONSTANTS.characterParts[gender].eyes.length - 1;
                             }
 
-                            if ($scope.hairIndex >= IbConstants.characterParts[gender].hair.length) {
+                            if ($scope.hairIndex >= IB_CONSTANTS.characterParts[gender].hair.length) {
                                 $scope.hairIndex = 0;
                             } else if ($scope.hairIndex < 0) {
-                                $scope.hairIndex = IbConstants.characterParts[gender].hair.length - 1;
+                                $scope.hairIndex = IB_CONSTANTS.characterParts[gender].hair.length - 1;
                             }
 
                             CharBuilder.makeChar({
-                                skin: IbConstants.characterParts[gender].skin[$scope.skinIndex],
-                                eyes: IbConstants.characterParts[gender].eyes[$scope.eyesIndex],
-                                hair: IbConstants.characterParts[gender].hair[$scope.hairIndex],
+                                skin: IB_CONSTANTS.characterParts[gender].skin[$scope.skinIndex],
+                                eyes: IB_CONSTANTS.characterParts[gender].eyes[$scope.eyesIndex],
+                                hair: IB_CONSTANTS.characterParts[gender].hair[$scope.hairIndex],
                             }).then(function(url) {
                                 $scope.charPrevImg = url;
                             });
@@ -88,9 +88,9 @@ angular
 
                         $scope.boy = Util.getRandomInt(0, 1) ? true : false;
                         var gender = $scope.boy ? 'male' : 'female';
-                        $scope.skinIndex = Util.getRandomInt(0, IbConstants.characterParts[gender].skin.length - 1);
-                        $scope.eyesIndex = Util.getRandomInt(0, IbConstants.characterParts[gender].eyes.length - 1);
-                        $scope.hairIndex = Util.getRandomInt(0, IbConstants.characterParts[gender].hair.length - 1);
+                        $scope.skinIndex = Util.getRandomInt(0, IB_CONSTANTS.characterParts[gender].skin.length - 1);
+                        $scope.eyesIndex = Util.getRandomInt(0, IB_CONSTANTS.characterParts[gender].eyes.length - 1);
+                        $scope.hairIndex = Util.getRandomInt(0, IB_CONSTANTS.characterParts[gender].hair.length - 1);
 
                         $scope.nextSkin = function() {
                             $scope.skinIndex++;
@@ -129,7 +129,7 @@ angular
                             updateCharacterPreview();
                         };
 
-                        $scope.charParts = IbConstants.characterParts;
+                        $scope.charParts = IB_CONSTANTS.characterParts;
 
                     }
                 ]

@@ -4,6 +4,7 @@ angular
     .module('Ironbane', [
         'angular-meteor',
         'game.ui.states',
+        'game.constants',
         'game.game-loop',
         'game.network',
         'game.world-root',
@@ -17,7 +18,6 @@ angular
         'engine.entity-builder',
         'engine.sound-system',
         'engine.ib-config',
-        'engine.ib-constants',
         'engine.input.input-system',
         'engine.util',
         'engine.debugger',
@@ -62,16 +62,13 @@ angular
     .run([
         '$window',
         'Debugger',
-        'IbConstants',
+        'IB_CONSTANTS',
         '$rootScope',
         '$meteor',
         '$state',
-        function($window, Debugger, IbConstants, $rootScope, $meteor, $state) {
+        function($window, Debugger, IB_CONSTANTS, $rootScope, $meteor, $state) {
             // for convenience
             $window.debug = Debugger;
-
-            // TODO: move to angular constant
-            $rootScope.IB_CONSTANTS = IbConstants;
 
             // THIS IS WHERE IT ALL BEGINS!
             // NOTE: if we want to go to another state that isn't 3D, change logic here

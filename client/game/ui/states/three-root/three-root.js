@@ -2,6 +2,7 @@ angular
     .module('game.ui.states.three-root', [
         'ui.router',
         'angular-meteor',
+        'game.constants',
         'game.ui.directives',
         'game.ui.states.three-root.play',
         'game.ui.states.three-root.main-menu'
@@ -24,11 +25,11 @@ angular
             ],
             onEnter: [
                 '$rootWorld',
-                '$rootScope',
+                'IB_CONSTANTS',
                 '$state',
                 '$window',
                 'GameService',
-                function($rootWorld, $rootScope, $state, $window, GameService) {
+                function($rootWorld, IB_CONSTANTS, $state, $window, GameService) {
                     $rootWorld.renderer.setSize($window.innerWidth, $window.innerHeight);
                     document.body.appendChild($rootWorld.renderer.domElement);
                     $rootWorld.renderer.setClearColor(0xd3fff8);
@@ -38,7 +39,7 @@ angular
                     }, false);
 
                     // this might also be a good directive
-                    if ($rootScope.IB_CONSTANTS.isDev) {
+                    if (IB_CONSTANTS.isDev) {
                         $rootWorld.stats.setMode(0); // 0: fps, 1: ms
 
                         // align top-left
