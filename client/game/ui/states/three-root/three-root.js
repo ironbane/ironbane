@@ -5,22 +5,65 @@ angular
         'game.constants',
         'game.ui.directives',
         'game.ui.states.three-root.play',
-        'game.ui.states.three-root.main-menu'
+        'game.ui.states.three-root.main-menu',
+        'engine.level-loader',
+        'game.constants',
+        'game.world-root'
     ])
     .config(['$stateProvider', function($stateProvider) {
         'use strict';
 
-        // currently unused, the purpose of splitting is to allow a non-canvas view
-        // (perhaps admin page)
-
         $stateProvider.state('three-root', {
             abstract: true,
             templateUrl: 'client/game/ui/states/three-root/three-root.ng.html',
+            resolve: {
+                'currentUser': [
+                    '$meteor',
+                    function($meteor) {
+                        return $meteor.requireUser();
+                    }
+                ]
+            },
             controller: [
                 '$meteor',
                 '$scope',
-                function($meteor, $scope) {
+                '$log',
+                'IB_CONSTANTS',
+                'LevelLoader',
+                '$rootWorld',
+                function($meteor, $scope, $log, IB_CONSTANTS, LevelLoader, $rootWorld) {
                     $scope.logout = $meteor.logout;
+
+                    function clearOldLevel(level) {
+                        var nodesToBeRemoved = [];
+
+                        $rootWorld.traverse(function(node) {
+                            if (node.doc && node.doc.level !== level) {
+                                nodesToBeRemoved.push(node);
+                            }
+                        });
+
+                        nodesToBeRemoved.forEach(function(node) {
+                            $rootWorld.removeEntity(node);
+                        });
+                    }
+
+                    $meteor.session('activeLevel').bind($scope, 'activeLevel');
+
+                    $scope.$watch('activeLevel', function(level) {
+                        $log.debug('activeLevel changed: ', level);
+
+                        if (!angular.isString(level)) {
+                            return;
+                        }
+
+                        clearOldLevel(level);
+
+                        LevelLoader.load(level)
+                            .catch(function(err) {
+                                $log.debug('error loading level ', level, err);
+                            });
+                    });
                 }
             ],
             onEnter: [

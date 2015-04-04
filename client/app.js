@@ -72,21 +72,8 @@ angular
 
             // THIS IS WHERE IT ALL BEGINS!
             // NOTE: if we want to go to another state that isn't 3D, change logic here
-            $meteor.waitForUser()
-                .then(function(currentUser) {
-                    $meteor.autorun($rootScope, function() {
-                        var characters = Entities.find({
-                            owner: currentUser._id,
-                            active: true
-                        });
-
-                        if (characters.count() === 0) {
-                            $state.go('three-root.main-menu.enter-world');
-                        } else {
-                            $state.go('three-root.play');
-                        }
-                    });
-                });
+            // maybe a router?
+            $state.go('three-root.main-menu.enter-world');
         }
     ]);
 

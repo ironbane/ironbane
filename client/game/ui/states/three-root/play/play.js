@@ -4,7 +4,8 @@ angular
         'angular-meteor',
         'game.ui.debug.debugDiv',
         'game.ui.chat.chatBoxDirective',
-        'game.world-root'
+        'game.world-root',
+        'engine.entity-cache'
     ])
     .config([
         '$stateProvider',
@@ -13,14 +14,6 @@ angular
 
             $stateProvider.state('three-root.play', {
                 templateUrl: 'client/game/ui/states/three-root/play/play.ng.html',
-                resolve: {
-                    'currentUser': [
-                        '$meteor',
-                        function($meteor) {
-                            return $meteor.requireUser();
-                        }
-                    ]
-                },
                 controller: [
                     '$scope',
                     '$rootWorld',
@@ -44,11 +37,30 @@ angular
                             };
 
                         inputSystem.register('open-chat', openChatHandler);
-                        //inputSystem.register('escape', escapeHandler);
+                        inputSystem.register('escape', escapeHandler);
 
                         $scope.$on('$destroy', function() {
                             inputSystem.unregister('open-chat', openChatHandler);
-                            //inputSystem.unregister('escape', escapeHandler);
+                            inputSystem.unregister('escape', escapeHandler);
+                        });
+                    }
+                ],
+                onExit: [
+                    '$rootWorld',
+                    'currentUser', // from parent resolve
+                    '$entityCache',
+                    '$log',
+                    function($rootWorld, currentUser, $entityCache, $log) {
+                        var mainPlayer = $entityCache.get('mainPlayer');
+                        $log.debug('mainPlayer', mainPlayer);
+
+                        // the cursor in network should be watching this to remove it from the world
+                        Entities.update({
+                            _id: mainPlayer.doc._id
+                        }, {
+                            $set: {
+                                active: false
+                            }
                         });
                     }
                 ]

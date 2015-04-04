@@ -27,7 +27,6 @@ angular
                                 $state.go('^.enter-world');
                             }
                         });
-                        // GameService.enterGame($scope.nickname);
                     };
 
                     $scope.cancel = function() {
