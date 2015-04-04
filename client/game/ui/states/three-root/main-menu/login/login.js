@@ -15,9 +15,8 @@ angular
                 function($scope, $state, $meteor) {
                     $scope.login = function() {
                         $meteor.loginWithPassword($scope.username, $scope.password)
-                            .catch(function(err) {
-                                // should show error in UI instead?
-                                throw err;
+                            .finally(function() {
+                                $state.go('^.enter-world');
                             });
                     };
 
