@@ -4,7 +4,8 @@ angular
         'angular-meteor',
         'game.ui.debug.debugDiv',
         'game.ui.chat.chatBoxDirective',
-        'game.world-root'
+        'game.ui.chat.chatService',
+        'engine.entity-cache'
     ])
     .config([
         '$stateProvider',
@@ -13,14 +14,6 @@ angular
 
             $stateProvider.state('three-root.play', {
                 templateUrl: 'client/game/ui/states/three-root/play/play.ng.html',
-                resolve: {
-                    'currentUser': [
-                        '$meteor',
-                        function($meteor) {
-                            return $meteor.requireUser();
-                        }
-                    ]
-                },
                 controller: [
                     '$scope',
                     '$rootWorld',
@@ -44,12 +37,33 @@ angular
                             };
 
                         inputSystem.register('open-chat', openChatHandler);
-                        //inputSystem.register('escape', escapeHandler);
+                        inputSystem.register('escape', escapeHandler);
 
                         $scope.$on('$destroy', function() {
                             inputSystem.unregister('open-chat', openChatHandler);
-                            //inputSystem.unregister('escape', escapeHandler);
+                            inputSystem.unregister('escape', escapeHandler);
                         });
+                    }
+                ],
+                onExit: [
+                    '$entityCache',
+                    '$log',
+                    'ChatService',
+                    function($entityCache, $log, ChatService) {
+                        var mainPlayer = $entityCache.get('mainPlayer'),
+                            activeChar = mainPlayer.doc;
+                        $log.debug('mainPlayer', mainPlayer);
+
+                        // the cursor in network should be watching this to remove it from the world
+                        Entities.update({
+                            _id: activeChar._id
+                        }, {
+                            $set: {
+                                active: false
+                            }
+                        });
+
+                        ChatService.announce(activeChar.name + ' has left the world.');
                     }
                 ]
             });

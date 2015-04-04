@@ -57,7 +57,6 @@ angular
                     });
 
                     var enterGame = function(charId) {
-
                         var activeChar = Entities.findOne({
                             _id: charId
                         });
@@ -73,20 +72,19 @@ angular
                         });
 
                         ChatService.announce(activeChar.name + ' has entered the world.');
+
+                        $state.go('three-root.play');
                     };
 
                     $scope.play = function() {
-                        var user = Meteor.user();
+                        var user = $scope.currentUser;
 
                         if (user.profile && user.profile.guest) {
                             $meteor.call('createChar', {
                                     charName: FantasyNameGenerator.generateName('mmo')
                                 })
                                 .then(function(charId) {
-                                    $state.go('^.enter-world');
-
                                     enterGame(charId);
-
                                 }, function(err) {
                                     if (err) {
                                         dialogService.alert(err.reason);

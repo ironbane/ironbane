@@ -6,7 +6,8 @@ angular
         'game.ui.states.three-root.main-menu.login',
         'game.ui.states.three-root.main-menu.register',
         'game.world-root',
-        'engine.entity-builder'
+        'engine.entity-builder',
+        'game.constants'
     ])
     .config(['$stateProvider', function($stateProvider) {
         'use strict';
@@ -41,7 +42,10 @@ angular
             onEnter: [
                 '$rootWorld',
                 'MainMenuPanningCamera',
-                function($rootWorld, MainMenuPanningCamera) {
+                'IB_CONSTANTS',
+                function($rootWorld, MainMenuPanningCamera, IB_CONSTANTS) {
+                    Session.set('activeLevel', IB_CONSTANTS.world.mainMenuLevel);
+
                     $rootWorld.addEntity(MainMenuPanningCamera);
                 }
             ],
