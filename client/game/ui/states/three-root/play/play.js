@@ -4,7 +4,7 @@ angular
         'angular-meteor',
         'game.ui.debug.debugDiv',
         'game.ui.chat.chatBoxDirective',
-        'game.world-root',
+        'game.ui.chat.chatService',
         'engine.entity-cache'
     ])
     .config([
@@ -46,22 +46,24 @@ angular
                     }
                 ],
                 onExit: [
-                    '$rootWorld',
-                    'currentUser', // from parent resolve
                     '$entityCache',
                     '$log',
-                    function($rootWorld, currentUser, $entityCache, $log) {
-                        var mainPlayer = $entityCache.get('mainPlayer');
+                    'ChatService',
+                    function($entityCache, $log, ChatService) {
+                        var mainPlayer = $entityCache.get('mainPlayer'),
+                            activeChar = mainPlayer.doc;
                         $log.debug('mainPlayer', mainPlayer);
 
                         // the cursor in network should be watching this to remove it from the world
                         Entities.update({
-                            _id: mainPlayer.doc._id
+                            _id: activeChar._id
                         }, {
                             $set: {
                                 active: false
                             }
                         });
+
+                        ChatService.announce(activeChar.name + ' has left the world.');
                     }
                 ]
             });
