@@ -71,7 +71,7 @@ angular
                             }
                         });
 
-                        ChatService.announce(activeChar.name + ' has entered the world.');
+                        //ChatService.announce(activeChar.name + ' has entered the world.');
 
                         $state.go('three-root.play');
                     };

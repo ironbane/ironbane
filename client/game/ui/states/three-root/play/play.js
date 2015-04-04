@@ -63,7 +63,7 @@ angular
                             }
                         });
 
-                        ChatService.announce(activeChar.name + ' has left the world.');
+                        //ChatService.announce(activeChar.name + ' has left the world.');
                     }
                 ]
             });
