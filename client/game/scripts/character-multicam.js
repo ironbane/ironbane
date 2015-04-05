@@ -116,41 +116,43 @@ angular.module('game.scripts.character-multicam', ['components.script'])
                     var scenes = this.world.getEntities('scene');
 
                     if (scenes.length) {
-                        var octree = scenes[0].octree;
+	                    var octree = scenes[0].octreeResultsNearPlayer;
 
-                        var rotatedOriginalThirdPersonPosition = originalThirdPersonPosition.clone();
-                        rotatedOriginalThirdPersonPosition.applyQuaternion( this.entity.quaternion );
-                        rotatedOriginalThirdPersonPosition.normalize();
+	                    if (octree) {
+	                        var rotatedOriginalThirdPersonPosition = originalThirdPersonPosition.clone();
+	                        rotatedOriginalThirdPersonPosition.applyQuaternion( this.entity.quaternion );
+	                        rotatedOriginalThirdPersonPosition.normalize();
 
-                        var ray = new THREE.Raycaster(this.entity.position, rotatedOriginalThirdPersonPosition);
+	                        var ray = new THREE.Raycaster(this.entity.position, rotatedOriginalThirdPersonPosition);
 
-                        // debug.drawVector(rotatedOriginalThirdPersonPosition, this.entity.position);
+	                        // debug.drawVector(rotatedOriginalThirdPersonPosition, this.entity.position);
 
-                        var intersections = ray.intersectOctreeObjects(octree.objects);
+	                        var intersections = ray.intersectOctreeObjects(octree);
 
-                        if (intersections.length) {
-                            var dist = intersections[0].distance;
-                            // debug.watch('cam ray distance', dist);
+	                        if (intersections.length) {
+	                            var dist = intersections[0].distance;
+	                            // debug.watch('cam ray distance', dist);
 
-                            dist -= 1;
+	                            dist -= 1;
 
-                            if (dist < originalThirdPersonPositionLength) {
-                                // cameraThirdPersonLookAtTargetOffset.z = -10;
-                                cameraThirdPersonLookAtTargetOffset.lerp(originalCameraThirdPersonLookAtTargetOffset.clone().add(new THREE.Vector3(0, -5, -20)), dt*4);
-                            }
-                            else {
-                                // cameraThirdPersonLookAtTargetOffset.copy(originalCameraThirdPersonLookAtTargetOffset, dt*4);
-                            }
+	                            if (dist < originalThirdPersonPositionLength) {
+	                                // cameraThirdPersonLookAtTargetOffset.z = -10;
+	                                cameraThirdPersonLookAtTargetOffset.lerp(originalCameraThirdPersonLookAtTargetOffset.clone().add(new THREE.Vector3(0, -5, -20)), dt*4);
+	                            }
+	                            else {
+	                                // cameraThirdPersonLookAtTargetOffset.copy(originalCameraThirdPersonLookAtTargetOffset, dt*4);
+	                            }
 
-                            localCam.position.normalize();
-                            localCam.position.multiplyScalar(dist > originalThirdPersonPositionLength ?
-                                originalThirdPersonPositionLength : dist);
-                            localCam.position.y = Math.max(localCam.position.y, 0.5);
-                        }
-                        else {
-                            localCam.position.copy(originalThirdPersonPosition);
-                            // cameraThirdPersonLookAtTargetOffset.copy(originalCameraThirdPersonLookAtTargetOffset, dt*4);
-                        }
+	                            localCam.position.normalize();
+	                            localCam.position.multiplyScalar(dist > originalThirdPersonPositionLength ?
+	                                originalThirdPersonPositionLength : dist);
+	                            localCam.position.y = Math.max(localCam.position.y, 0.5);
+	                        }
+	                        else {
+	                            localCam.position.copy(originalThirdPersonPosition);
+	                            // cameraThirdPersonLookAtTargetOffset.copy(originalCameraThirdPersonLookAtTargetOffset, dt*4);
+	                        }
+                    	}
                     }
 
                     var worldPos = new THREE.Vector3();
