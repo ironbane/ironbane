@@ -1,1 +1,1 @@
-World = {};
+World = function () {};
