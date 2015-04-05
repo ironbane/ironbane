@@ -1,6 +1,7 @@
 /*global Collections:true, Entities: true*/
 angular.module('game.ui.chat.chatBoxDirective', [
         'angular-meteor',
+        'luegg.directives',
         'game.ui.directives'
     ])
     .directive('chatBox', [
@@ -59,11 +60,9 @@ angular.module('game.ui.chat.chatBoxDirective', [
                         ctrl.untrapKeys = function() {
                             $window.removeEventListener('keydown', keyTrapHandler, true);
                         };
+
                     }
-                ],
-                link: function(scope, el) {
-                    $timeout(function() { el.find('ul').scrollTop(9999);}, 100);
-                }
+                ]
             };
         }
     ]);

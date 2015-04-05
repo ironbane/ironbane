@@ -1,8 +1,8 @@
 <div>
-    <ul>
+    <ul scroll-glue>
         <li ng-repeat="message in chatBox.messages | orderBy:'+ts'" class="chat-message" ng-class="{system: message.system}">
-            <span class='char-name' ng-class="{admin: message.admin}" ng-if="message.name">[{{ message.name }}]:</span> {{ message.msg }}
+            <span class="char-name" ng-class="{admin: message.admin}" ng-if="message.name">[{{ message.name }}]:</span> {{ message.msg }}
         </li>
     </ul>
-    <input class="iinput" ng-show="chatBox.showInput" ib-focus="chatBox.showInput" ng-model="chatBox.newmsg" ng-focus="chatBox.trapKeys()" ng-blur="chatBox.untrapKeys()" />
+    <input class="iinput" ng-show="chatBox.showInput" ib-focus="chatBox.showInput" ng-model="chatBox.newmsg" ng-focus="chatBox.trapKeys()" ng-blur="chatBox.untrapKeys()" maxlength="255" />
 </div>
