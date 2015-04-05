@@ -32,6 +32,7 @@ angular
                 'LevelLoader',
                 '$rootWorld',
                 function($meteor, $scope, $log, IB_CONSTANTS, LevelLoader, $rootWorld) {
+                	$scope.IB_CONSTANTS = IB_CONSTANTS;
                     $scope.logout = $meteor.logout;
 
                     function clearOldLevel(level) {
