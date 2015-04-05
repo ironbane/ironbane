@@ -26,7 +26,7 @@ Meteor.methods({
   	options = options || {};
 
   	options.charName = options.charName || 'Guest';
-  	options.boy = options.boy || _.random(1, 2) === 1 ? true : false;
+  	options.boy = !_.isUndefined(options.boy) ? options.boy : (_.random(1, 2) === 1 ? true : false);
   	options.boy = options.boy ? 'male' : 'female';
   	options.skin = options.skin || _.sample(ironbaneConstants.characterParts[options.boy].skin);
   	options.eyes = options.eyes || _.sample(ironbaneConstants.characterParts[options.boy].eyes);
