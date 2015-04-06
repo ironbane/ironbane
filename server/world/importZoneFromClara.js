@@ -432,6 +432,12 @@ World.importZoneFromClara = function (scene) {
                     data.components.sprite = {
                         material: object.material.toJSON()
                     };
+                }
+                else if (object.userData.entity === 'achievement') {
+                    data.components.achievement = {
+                        type: object['achievement-type'],
+                        radius: object.radius
+                    };
                 } else if (object.userData.entity) {
                     // this is where we are using entity templates (prefabs)
                     data.prefab = object.userData.entity;

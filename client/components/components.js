@@ -15,7 +15,10 @@ angular.module('components', [
     'components.scene.shadow',
 
     'components.script',
+
     'components.sound',
+
+    'components.gameplay.achievement',
     'components.gameplay.health',
 
     'components.procgen.tree'

@@ -33,12 +33,13 @@ angular
         'ShadowSystem',
         'FantasyNameGenerator',
         'NameMeshSystem',
+        'AchievementSystem',
         'Network',
         function($rootWorld, CameraSystem, ModelSystem,
             LightSystem, SpriteSystem, QuadSystem, HelperSystem, SceneSystem, ScriptSystem,
             SoundSystem, InputSystem, RigidBodySystem, CollisionReporterSystem, WieldItemSystem,
             EntityBuilder, $log, ProcTreeSystem, ShadowSystem,
-            FantasyNameGenerator, NameMeshSystem, Network) {
+            FantasyNameGenerator, NameMeshSystem, AchievementSystem, Network) {
             'use strict';
 
             this.start = function() {
@@ -60,6 +61,7 @@ angular
                 $rootWorld.addSystem(new HelperSystem());
                 $rootWorld.addSystem(new WieldItemSystem());
                 $rootWorld.addSystem(new ShadowSystem());
+                $rootWorld.addSystem(new AchievementSystem());
 
                 // NOTE: this should be the LAST system as it does rendering!!
                 $rootWorld.addSystem(new CameraSystem(), 'camera');
