@@ -28,5 +28,201 @@
                 "color": 16777215
             }
         }
+    },
+    {
+        "name": "Stage3Achievement",
+        "userData": {
+            "entity": "achievement",
+            "message": "{{ charname }} has reached Stage 3!"
+        },
+        "matrix": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            -14.803899765014648,
+            24.484899520874023,
+            -13.649700164794922,
+            1
+        ],
+        "components": {
+            "achievement": {}
+        }
+    },
+    {
+        "name": "Stage2Achievement",
+        "userData": {
+            "entity": "achievement",
+            "message": "{{ charname }} has reached Stage 2!"
+        },
+        "matrix": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            15.026000022888184,
+            19.154499053955078,
+            0,
+            1
+        ],
+        "components": {
+            "achievement": {}
+        }
+    },
+    {
+        "name": "Stage4Achievement",
+        "userData": {
+            "entity": "achievement",
+            "message": "{{ charname }} has reached Stage 4!"
+        },
+        "matrix": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            7.357500076293945,
+            38.23780059814453,
+            -12.638999938964844,
+            1
+        ],
+        "components": {
+            "achievement": {}
+        }
+    },
+    {
+        "name": "Stage5Achievement",
+        "userData": {
+            "entity": "achievement",
+            "message": "{{ charname }} has reached Stage 5!"
+        },
+        "matrix": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            -11.862899780273438,
+            61.76750183105469,
+            -8.384599685668945,
+            1
+        ],
+        "components": {
+            "achievement": {}
+        }
+    },
+    {
+        "name": "Stage6Achievement",
+        "userData": {
+            "entity": "achievement",
+            "message": "{{ charname }} has reached Stage 6!"
+        },
+        "matrix": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            -60.0614013671875,
+            53.96889877319336,
+            -58.58760070800781,
+            1
+        ],
+        "components": {
+            "achievement": {}
+        }
+    },
+    {
+        "name": "TopAchievement",
+        "userData": {
+            "entity": "achievement",
+            "message": "{{ charname }} has reached the top!"
+        },
+        "matrix": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            -0.08129999786615372,
+            72.71119689941406,
+            -0.22949999570846558,
+            1
+        ],
+        "components": {
+            "achievement": {}
+        }
+    },
+    {
+        "name": "Stage7Achievement",
+        "userData": {
+            "entity": "achievement",
+            "message": "{{ charname }} has reached Stage 7!"
+        },
+        "matrix": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            -25.032400131225586,
+            65.13870239257812,
+            -79.97509765625,
+            1
+        ],
+        "components": {
+            "achievement": {}
+        }
     }
 ]
