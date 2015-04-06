@@ -51,7 +51,11 @@ Meteor.methods({
 		throw new Meteor.Error('charAppearance', 'Invalid character appearance.');
 	}
 
-	var user = Meteor.user();
+	var cheats = {};
+
+ 	if (Roles.userIsInRole(user, ['game-master'])) {
+    	cheats.jump = true;
+    }
 
 	// Insert a new character
 	var entityId = Entities.insert({
@@ -60,7 +64,7 @@ Meteor.methods({
 		position: ironbaneConstants.world.startPosition,
 		rotation: ironbaneConstants.world.startRotation,
 		level: ironbaneConstants.world.startLevel,
-		cheats: {},
+		cheats: cheats,
 		components: {
             quad: {
                 transparent: true,
