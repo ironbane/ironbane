@@ -46,7 +46,7 @@ World.prototype.update = function (dTime) {
 		]);
 
 		messages.forEach(function (msg) {
-			Meteor.call('chatAnnounce', msg);
+			Meteor.call('chatAnnounce', msg, {server: true});
 		});
 
 		this.timeUntilAnnouncement = ironbaneConstants.serverAnnouncementsTimeout;

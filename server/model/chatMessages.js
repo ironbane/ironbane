@@ -18,13 +18,13 @@ Meteor.startup(function() {
     Collections.ChatMessages.allow({
         insert: function(userId, doc) {
 
-			if (doc.msg.length <= 0) {
-				return false;
-			}
+            if (doc.msg.length <= 0) {
+                return false;
+            }
 
-			doc.msg = doc.msg.substr(0, 255);
+            doc.msg = doc.msg.substr(0, 255);
 
-			// TODO do checks for character name, pos, level etc
+            // TODO do checks for character name, pos, level etc
 
             return (userId !== null);
         }

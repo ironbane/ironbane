@@ -25,9 +25,9 @@ Entities.find({
     owner: {$exists: true}
 }).observe({
     added: function(character) {
-        Meteor.call('chatAnnounce', character.name + ' has entered the world.');
+        Meteor.call('chatAnnounce', character.name + ' has entered the world.', {join: true});
     },
     removed: function(character) {
-        Meteor.call('chatAnnounce', character.name + ' has left the world.');
+        Meteor.call('chatAnnounce', character.name + ' has left the world.', {leave: true});
     }
 });

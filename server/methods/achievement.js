@@ -42,7 +42,7 @@ Meteor.methods({
         });
 
         if (entity.userData && entity.userData.message) {
-            Meteor.call('chatAnnounce', entity.userData.message.replace('{{ charname }}', character.name));
+            Meteor.call('chatAnnounce', entity.userData.message.replace('{{ charname }}', character.name, {achievement: true}));
         }
 
     }

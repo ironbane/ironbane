@@ -5,8 +5,7 @@ angular.module('game.ui.chat.chatBoxDirective', [
         'game.ui.directives'
     ])
     .directive('chatBox', [
-        '$timeout',
-        function($timeout) {
+        function() {
             'use strict';
 
             return {
@@ -22,8 +21,7 @@ angular.module('game.ui.chat.chatBoxDirective', [
                     '$scope',
                     '$attrs',
                     '$window',
-                    '$log',
-                    function($meteor, $scope, $attrs, $window, $log) {
+                    function($meteor, $scope, $attrs, $window) {
                         var ctrl = this,
                             currentCharacter = Entities.findOne({
                                 owner: Meteor.userId(),
@@ -39,7 +37,10 @@ angular.module('game.ui.chat.chatBoxDirective', [
                                             ts: new Date(),
                                             msg: ctrl.newmsg,
                                             userId: Meteor.userId(),
-                                            name: currentCharacter.name,
+                                            user: {
+                                                name: currentCharacter.name
+                                                // TODO: add flags here, based on roles? (publish?)
+                                            },
                                             pos: currentCharacter.position,
                                             room: currentCharacter.level
                                         });
