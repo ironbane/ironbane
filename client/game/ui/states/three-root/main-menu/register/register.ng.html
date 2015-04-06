@@ -1,6 +1,6 @@
 <div class="ib-ui-window ib-ui-login-box">
     <form novalidate name="registerForm" ng-enter="register()">
-        <input required ng-maxlength="12" type="text" class="iinput vspacer" placeholder="Username" ng-model="username">
+        <input required ng-maxlength="12" type="text" class="iinput vspacer" placeholder="Username" ng-model="username" ib-focus="true">
         <input ng-show="!showPassword" required ng-maxlength="32" type="password" class="iinput vspacer" placeholder="Password" ng-model="password">
         <input ng-show="showPassword" required ng-maxlength="32" type="text" class="iinput vspacer" placeholder="Password" ng-model="password">
 
