@@ -1,65 +1,74 @@
-angular.module('components.gameplay.achievement', ['ces', 'three', 'engine.entity-cache'])
+angular
+    .module('components.gameplay.achievement', [
+        'ces',
+        'three',
+        'engine.entity-cache'
+    ])
     .config(['$componentsProvider', function($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
             'achievement': {
+                id: '',
                 type: 'area',
-                radius: 5
+                radius: 5,
+                message: 'You got an achievement!'
             }
         });
     }])
-    .factory('AchievementSystem', ['System', 'THREE', '$entityCache', function(System, THREE, $entityCache) {
-        'use strict';
+    .factory('AchievementSystem', [
+        'System',
+        'THREE',
+        '$entityCache',
+        '$log',
+        function(System, THREE, $entityCache, $log) {
+            'use strict';
 
-        var AchievementSystem = System.extend({
-            addedToWorld: function(world) {
-                var sys = this;
+            var AchievementSystem = System.extend({
+                addedToWorld: function(world) {
+                    var sys = this;
 
-                sys._super(world);
+                    sys._super(world);
 
-                world.entityAdded('achievement').add(function(entity) {
-                    var achievementData = entity.getComponent('achievement'),
-                        achievement;
+                    this.achieved = {};
+                },
+                achieve: function(achievementData) {
+                    //$log.debug('AchievementSystem: achieve', achievementData);
 
-                    achievementData.achievement = achievement;
-                });
+                    // TODO: active charId because char switching doesn't reset systems
+                    if (!this.achieved[achievementData.name]) {
+                        this.achieved[achievementData.name] = true;
 
-                this.achieved = {};
-            },
-            achieve: function(achievementData) {
+                        Meteor.call('achieve', achievementData);
+                    }
+                },
+                update: function() {
+                    var world = this.world;
 
-                if (!this.achieved[achievementData.name]) {
-                    this.achieved[achievementData.name] = true;
+                    var mainPlayer = $entityCache.get('mainPlayer');
 
-                    Meteor.call('achieve', achievementData);
-                }
+                    var self = this;
 
-            },
-            update: function() {
-                var world = this.world;
+                    var achievementEntities = world.getEntities('achievement');
 
-                var mainPlayer = $entityCache.get('mainPlayer');
+                    achievementEntities.forEach(function(entity) {
+                        if (mainPlayer) {
+                            var achievementData = entity.getComponent('achievement');
+                            if (achievementData.type === 'area') {
+                                if (mainPlayer.position.clone().sub(entity.position).lengthSq() < achievementData.radius * achievementData.radius) {
+                                    //$log.debug('AchievementSystem: update', entity, achievementData);
 
-                var self = this;
-
-                var achievementEntities = world.getEntities('achievement');
-
-                achievementEntities.forEach(function(entity) {
-                    if (mainPlayer) {
-                        var achievementData = entity.getComponent('achievement');
-                        if (achievementData.type === 'area') {
-                            if (mainPlayer.position.clone().sub(entity.position).lengthSq() < achievementData.radius * achievementData.radius) {
-                                self.achieve({
-                                    name: entity.name,
-                                    level: entity.level
-                                });
+                                    self.achieve({
+                                        name: entity.name,
+                                        level: entity.doc ? entity.doc.level : 'unknown'
+                                    });
+                                }
                             }
                         }
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
 
-        return AchievementSystem;
-    }]);
+            return AchievementSystem;
+        }
+    ]);
