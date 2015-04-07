@@ -58,6 +58,13 @@ angular
 
                     var enterGame = function(charId) {
 
+                    	// We need to first change to playmode so network.js can test whether
+                    	// we are already playing, and add the player as a normal entity instead
+                    	// of one with special player components. Should this fail (e.g. we are already logged in)
+                    	// we'll just go back to our lastState.
+                    	var lastState = $state.current.name;
+                    	$state.go('three-root.play');
+
                         $meteor.call('enterGame', charId)
                         .then(function () {
 	                        var activeChar = Entities.findOne({
@@ -65,10 +72,9 @@ angular
 	                        });
 
 	                        Session.set('activeLevel', activeChar.level);
-
-	                        $state.go('three-root.play');
                         }, function(err) {
                             if (err) {
+                            	$state.go(lastState);
                                 dialogService.alert(err.reason);
                             }
                         });
