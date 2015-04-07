@@ -97,17 +97,20 @@ angular
 
                                 $rootWorld.traverse(function(node) {
                                     if (node.doc && node.doc._id === doc._id) {
+		                                if (user._id === doc.owner) {
+		                                	$entityCache.remove('mainPlayer');
 
-                                    	// If another game session tries to log us in, they will get notified
-                                    	// that someone else is already playing (us) and it will try to disconnect
-                                    	// this client. When that happens, the main player will get removed here
-                                    	// so we must check for it and put us back in the main menu.
-                                    	// A side effect of this approach is that if your account gets hijacked
-                                    	// someone can annoy you all the time by "disconnecting you" by repeatingly
-                                    	// trying to log in. On the other hand this may be a good thing as it becomes
-                                    	// obvious that your account got compromised. Changing your password should solve that.
-		                                if (user._id === doc.owner && $state.current.name === 'three-root.play') {
-		                                	$state.go('^.main-menu.enter-world');
+	                                    	// If another game session tries to log us in, they will get notified
+	                                    	// that someone else is already playing (us) and it will try to disconnect
+	                                    	// this client. When that happens, the main player will get removed here
+	                                    	// so we must check for it and put us back in the main menu.
+	                                    	// A side effect of this approach is that if your account gets hijacked
+	                                    	// someone can annoy you all the time by "disconnecting you" by repeatingly
+	                                    	// trying to log in. On the other hand this may be a good thing as it becomes
+	                                    	// obvious that your account got compromised. Changing your password should solve that.
+		                                	if ($state.current.name === 'three-root.play') {
+		                                		$state.go('^.main-menu.enter-world');
+		                                	}
 		                                }
 
                                         toBeRemoved.push(node);
