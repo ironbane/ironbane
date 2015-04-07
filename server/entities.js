@@ -15,7 +15,7 @@ Entities.allow({
 			}
 		});
 
-		return entity.owner === userId && !containsInvalidFields;
+		return entity.active && entity.owner === userId && !containsInvalidFields;
 	},
 	remove: function (userId, entity) {
 		return entity.owner === userId;
