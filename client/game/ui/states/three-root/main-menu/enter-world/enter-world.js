@@ -57,23 +57,22 @@ angular
                     });
 
                     var enterGame = function(charId) {
-                        var activeChar = Entities.findOne({
-                            _id: charId
-                        });
 
-                        Session.set('activeLevel', activeChar.level);
+                        $meteor.call('enterGame', charId)
+                        .then(function () {
+	                        var activeChar = Entities.findOne({
+	                            _id: charId
+	                        });
 
-                        Entities.update({
-                            _id: charId
-                        }, {
-                            $set: {
-                                active: true
+	                        Session.set('activeLevel', activeChar.level);
+
+	                        $state.go('three-root.play');
+                        }, function(err) {
+                            if (err) {
+                                dialogService.alert(err.reason);
                             }
                         });
 
-                        //ChatService.announce(activeChar.name + ' has entered the world.');
-
-                        $state.go('three-root.play');
                     };
 
                     $scope.play = function() {
