@@ -23,15 +23,17 @@ angular.module('game.ui.chat.chatBoxDirective', [
                     '$window',
                     function($meteor, $scope, $attrs, $window) {
                         var ctrl = this,
-                            currentCharacter = Entities.findOne({
-                                owner: Meteor.userId(),
-                                active: true
-                            }),
                             keyTrapHandler = function(event) {
                                 //$log.debug('keyTrapHandler');
                                 event.stopPropagation();
 
                                 if (event.keyCode === 13) {
+
+		                            var currentCharacter = Entities.findOne({
+		                                owner: Meteor.userId(),
+		                                active: true
+		                            });
+
                                     $scope.$apply(function() {
                                         ctrl.messages.unshift({
                                             ts: new Date(),
