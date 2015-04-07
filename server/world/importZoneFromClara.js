@@ -20,331 +20,331 @@ var meteorRootProjectPath = meteorBuildPath.split('.meteor')[0];
 var meteorBuildPublicPath = meteorBuildPath + '../web.browser/app/';
 var meteorRootProjectPublicPath = meteorRootProjectPath + 'public/';
 
-World.importZoneFromClara = function (scene) {
-
-	var claraUser = JSON.parse(Assets.getText('clara.json'));
+World.importZoneFromClara = function(scene) {
+
+    var claraUser = JSON.parse(Assets.getText('clara.json'));
 
-	var claraOptions = function (url, encoding) {
-		return {
-			url: url,
-			'user': claraUser.name + ':' + claraUser.apiKey,
-			encoding: encoding
-		};
-	};
+    var claraOptions = function(url, encoding) {
+        return {
+            url: url,
+            'user': claraUser.name + ':' + claraUser.apiKey,
+            encoding: encoding
+        };
+    };
 
-	var deferred = Q.defer();
+    var deferred = Q.defer();
 
-	var exportClaraScenes = function (sceneNameToExport) {
-		curl.request(claraOptions('http://clara.io/api/users/' + claraUser.name + '/scenes'), function (err, file) {
-			var promises = [];
+    var exportClaraScenes = function(sceneNameToExport) {
+        curl.request(claraOptions('http://clara.io/api/users/' + claraUser.name + '/scenes'), function(err, file) {
+            var promises = [];
 
-			var json = JSON.parse(file);
+            var json = JSON.parse(file);
 
-			if (!sceneNameToExport) {
-				// If no scene name given, export the ones declared in clara.json
-				// Filter the models by the list of scenes we want to export
-				json.models = _.filter(json.models, function (model) {
-					return _.contains(claraUser.sceneNamesToExport, model.name);
-				});
-			}
+            if (!sceneNameToExport) {
+                // If no scene name given, export the ones declared in clara.json
+                // Filter the models by the list of scenes we want to export
+                json.models = _.filter(json.models, function(model) {
+                    return _.contains(claraUser.sceneNamesToExport, model.name);
+                });
+            }
 
-			json.models.forEach(function (model) {
-				var ibSceneId = model.name.toLowerCase().replace(/ /g, '-');
+            json.models.forEach(function(model) {
+                var ibSceneId = model.name.toLowerCase().replace(/ /g, '-');
 
-				if ((sceneNameToExport && sceneNameToExport === ibSceneId) || !sceneNameToExport) {
-					console.log(ibSceneId);
-					console.log(model.id);
-					promises.push(extractWorld(ibSceneId, model.id));
-				}
+                if ((sceneNameToExport && sceneNameToExport === ibSceneId) || !sceneNameToExport) {
+                    console.log(ibSceneId);
+                    console.log(model.id);
+                    promises.push(extractWorld(ibSceneId, model.id));
+                }
 
-			});
+            });
 
-			return Q.all(promises).then(function (ar) {
-				console.log('All done.');
-				deferred.resolve(ar);
-			});
-		});
-	};
+            return Q.all(promises).then(function(ar) {
+                console.log('All done.');
+                deferred.resolve(ar);
+            });
+        });
+    };
 
-	var extractWorld = function (ibSceneId, claraSceneId) {
-		var deferred = Q.defer();
+    var extractWorld = function(ibSceneId, claraSceneId) {
+        var deferred = Q.defer();
 
-		curl.request(claraOptions('http://clara.io/api/scenes/' + claraSceneId + '/export/json?zip=true', null), function (err, file) {
+        curl.request(claraOptions('http://clara.io/api/scenes/' + claraSceneId + '/export/json?zip=true', null), function(err, file) {
 
-			var zonePath = meteorRootProjectPublicPath + 'scene/' + ibSceneId;
+            var zonePath = meteorRootProjectPublicPath + 'scene/' + ibSceneId;
 
-			mkdirp.sync(zonePath);
+            mkdirp.sync(zonePath);
 
-			var zipFilepath = zonePath + '/clara-export.zip';
+            var zipFilepath = zonePath + '/clara-export.zip';
 
-			fs.writeFile(zipFilepath, file, function (err) {
-				if (err) {
-					console.log(err);
-				} else {
-					var zip = new AdmZip(zipFilepath);
-					zip.extractAllTo(zonePath, true);
+            fs.writeFile(zipFilepath, file, function(err) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    var zip = new AdmZip(zipFilepath);
+                    zip.extractAllTo(zonePath, true);
 
-					walk(zonePath, function (filePath, stat) {
-						if (path.basename(filePath, '.json') === ibSceneId) {
+                    walk(zonePath, function(filePath, stat) {
+                        if (path.basename(filePath, '.json') === ibSceneId) {
 
-							var claraExportFilepath = path.dirname(filePath) + '/clara-export.json';
-							var ibWorldFilepath = path.dirname(filePath) + '/ib-world.json';
-							var ibEntitiesFilepath = path.dirname(filePath) + '/ib-entities.json';
+                            var claraExportFilepath = path.dirname(filePath) + '/clara-export.json';
+                            var ibWorldFilepath = path.dirname(filePath) + '/ib-world.json';
+                            var ibEntitiesFilepath = path.dirname(filePath) + '/ib-entities.json';
 
-							fs.renameSync(filePath, claraExportFilepath);
+                            fs.renameSync(filePath, claraExportFilepath);
 
-							console.log(filePath, path.dirname(filePath));
+                            console.log(filePath, path.dirname(filePath));
 
-							var claraExportJson = JSON.parse(fs.readFileSync(claraExportFilepath, 'utf8'));
-							var ibWorld = postProcessWorld(claraExportJson);
+                            var claraExportJson = JSON.parse(fs.readFileSync(claraExportFilepath, 'utf8'));
+                            var ibWorld = postProcessWorld(claraExportJson);
 
 
-							// var part2 = '.meteor' + meteorBuildPublicPath.split('.meteor')[1];
-							// console.log('part2', part2);
+                            // var part2 = '.meteor' + meteorBuildPublicPath.split('.meteor')[1];
+                            // console.log('part2', part2);
 
-							Q.all([
-								saveJson(ibWorld.worldMesh, ibWorldFilepath),
-								saveJson(ibWorld.entities, ibEntitiesFilepath)
-							]).then(function () {
-								fs.unlinkSync(zipFilepath);
-								fs.unlinkSync(claraExportFilepath);
+                            Q.all([
+                                saveJson(ibWorld.worldMesh, ibWorldFilepath),
+                                saveJson(ibWorld.entities, ibEntitiesFilepath)
+                            ]).then(function() {
+                                fs.unlinkSync(zipFilepath);
+                                fs.unlinkSync(claraExportFilepath);
 
-								// Do checks for these on production, probably not even needed
-								// fse.copySync(path.dirname(filePath), path.dirname(filePath).replace('.meteor/local/build/programs/server/', ''));
-							}).then(function () {
-								deferred.resolve({
-									name: ibSceneId,
-									entities: ibWorld.entities
-								});
-							}, deferred.reject);
-						}
-					});
-				}
-			});
+                                // Do checks for these on production, probably not even needed
+                                // fse.copySync(path.dirname(filePath), path.dirname(filePath).replace('.meteor/local/build/programs/server/', ''));
+                            }).then(function() {
+                                deferred.resolve({
+                                    name: ibSceneId,
+                                    entities: ibWorld.entities
+                                });
+                            }, deferred.reject);
+                        }
+                    });
+                }
+            });
 
-		});
+        });
 
-		return deferred.promise;
-	};
+        return deferred.promise;
+    };
 
-	var postProcessWorld = function (json) {
-		var loader = new THREE.ObjectLoader();
+    var postProcessWorld = function(json) {
+        var loader = new THREE.ObjectLoader();
 
-		var obj = loader.parse(json);
+        var obj = loader.parse(json);
 
 
-		// Calculate centroids (gone in three r71)
-		var computeCentroidPerFace = function (face, geometry) {
-			face.centroid = new THREE.Vector3( 0, 0, 0 );
-			face.centroid.add( geometry.vertices[ face.a ] );
-			face.centroid.add( geometry.vertices[ face.b ] );
-			face.centroid.add( geometry.vertices[ face.c ] );
-			face.centroid.divideScalar( 3 );
-		};
-		var computeCentroids = function (geometry) {
-			var f, fl, face;
+        // Calculate centroids (gone in three r71)
+        var computeCentroidPerFace = function(face, geometry) {
+            face.centroid = new THREE.Vector3(0, 0, 0);
+            face.centroid.add(geometry.vertices[face.a]);
+            face.centroid.add(geometry.vertices[face.b]);
+            face.centroid.add(geometry.vertices[face.c]);
+            face.centroid.divideScalar(3);
+        };
+        var computeCentroids = function(geometry) {
+            var f, fl, face;
 
-			for ( f = 0, fl = geometry.faces.length; f < fl; f ++ ) {
-				face = geometry.faces[ f ];
-				computeCentroidPerFace(face, geometry);
-			}
-		};
+            for (f = 0, fl = geometry.faces.length; f < fl; f++) {
+                face = geometry.faces[f];
+                computeCentroidPerFace(face, geometry);
+            }
+        };
 
 
-		var mergedMeshesGeometry = new THREE.Geometry();
-		var mergedMaterialsCollection = [];
+        var mergedMeshesGeometry = new THREE.Geometry();
+        var mergedMaterialsCollection = [];
 
-		var entitiesCollection = [];
+        var entitiesCollection = [];
 
-		obj.traverse(function (child) {
-			if (child.userData.entity) {
+        obj.traverse(function(child) {
+            if (child.userData.entity) {
 
-				if (obj.userData.entity) {
-					// Only if the parent is an entity, we save the uuid
-					// Otherwise it would be no use since the parent will be merged into one world mesh
-					child.parentUuid = obj.uuid;
-				}
+                if (obj.userData.entity) {
+                    // Only if the parent is an entity, we save the uuid
+                    // Otherwise it would be no use since the parent will be merged into one world mesh
+                    child.parentUuid = obj.uuid;
+                }
 
-				child.updateMatrixWorld(true);
+                child.updateMatrixWorld(true);
 
-				// Push these straight into Meteor
-				var parsedEntity = parseEntity(child);
-				entitiesCollection.push(parsedEntity);
-			} else {
-				if (child.geometry) {
-					computeCentroids(child.geometry);
+                // Push these straight into Meteor
+                var parsedEntity = parseEntity(child);
+                entitiesCollection.push(parsedEntity);
+            } else {
+                if (child.geometry) {
+                    computeCentroids(child.geometry);
 
-					var clonedGeometry = child.geometry.clone();
+                    var clonedGeometry = child.geometry.clone();
 
-					computeCentroids(clonedGeometry);
+                    computeCentroids(clonedGeometry);
 
-					child.updateMatrixWorld(true);
+                    child.updateMatrixWorld(true);
 
-					clonedGeometry.vertices.forEach(function (v) {
-						v.applyMatrix4(child.matrixWorld);
-					});
+                    clonedGeometry.vertices.forEach(function(v) {
+                        v.applyMatrix4(child.matrixWorld);
+                    });
 
-					mergeMaterials(mergedMeshesGeometry, mergedMaterialsCollection, clonedGeometry, [child.material]);
-				}
-			}
-		});
+                    mergeMaterials(mergedMeshesGeometry, mergedMaterialsCollection, clonedGeometry, [child.material]);
+                }
+            }
+        });
 
-		function mergeMaterials(geometry1, materials1, geometry2, materials2) {
+        function mergeMaterials(geometry1, materials1, geometry2, materials2) {
 
-			var matrix, matrixRotation,
-				vertexOffset = geometry1.vertices.length,
-				uvPosition = geometry1.faceVertexUvs[0].length,
-				vertices1 = geometry1.vertices,
-				vertices2 = geometry2.vertices,
-				faces1 = geometry1.faces,
-				faces2 = geometry2.faces,
-				uvs1 = geometry1.faceVertexUvs[0],
-				uvs2 = geometry2.faceVertexUvs[0];
+            var matrix, matrixRotation,
+                vertexOffset = geometry1.vertices.length,
+                uvPosition = geometry1.faceVertexUvs[0].length,
+                vertices1 = geometry1.vertices,
+                vertices2 = geometry2.vertices,
+                faces1 = geometry1.faces,
+                faces2 = geometry2.faces,
+                uvs1 = geometry1.faceVertexUvs[0],
+                uvs2 = geometry2.faceVertexUvs[0];
 
-			var geo1MaterialsMap = {};
+            var geo1MaterialsMap = {};
 
-			for (var i = 0; i < materials1.length; i++) {
+            for (var i = 0; i < materials1.length; i++) {
 
-				var id = materials1[i].id;
+                var id = materials1[i].id;
 
-				geo1MaterialsMap[id] = i;
+                geo1MaterialsMap[id] = i;
 
-			}
+            }
 
-			// vertices
-			for (var i = 0, il = vertices2.length; i < il; i++) {
+            // vertices
+            for (var i = 0, il = vertices2.length; i < il; i++) {
 
-				var vertex = vertices2[i];
+                var vertex = vertices2[i];
 
-				var vertexCopy = vertex.clone();
+                var vertexCopy = vertex.clone();
 
-				if (matrix) {
-					matrix.multiplyVector3(vertexCopy);
-				}
+                if (matrix) {
+                    matrix.multiplyVector3(vertexCopy);
+                }
 
-				vertices1.push(vertexCopy);
+                vertices1.push(vertexCopy);
 
-			}
+            }
 
-			// faces
-			for (i = 0, il = faces2.length; i < il; i++) {
+            // faces
+            for (i = 0, il = faces2.length; i < il; i++) {
 
-				var face = faces2[i],
-					faceCopy, normal, color,
-					faceVertexNormals = face.vertexNormals,
-					faceVertexColors = face.vertexColors;
+                var face = faces2[i],
+                    faceCopy, normal, color,
+                    faceVertexNormals = face.vertexNormals,
+                    faceVertexColors = face.vertexColors;
 
 
-				faceCopy = new THREE.Face3(face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset);
-				computeCentroidPerFace(faceCopy, geometry1);
+                faceCopy = new THREE.Face3(face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset);
+                computeCentroidPerFace(faceCopy, geometry1);
 
-				faceCopy.normal.copy(face.normal);
+                faceCopy.normal.copy(face.normal);
 
-				if (matrixRotation) {
-					matrixRotation.multiplyVector3(faceCopy.normal);
-				}
+                if (matrixRotation) {
+                    matrixRotation.multiplyVector3(faceCopy.normal);
+                }
 
-				for (var j = 0, jl = faceVertexNormals.length; j < jl; j++) {
+                for (var j = 0, jl = faceVertexNormals.length; j < jl; j++) {
 
-					normal = faceVertexNormals[j].clone();
+                    normal = faceVertexNormals[j].clone();
 
-					if (matrixRotation) {
-						matrixRotation.multiplyVector3(normal);
-					}
+                    if (matrixRotation) {
+                        matrixRotation.multiplyVector3(normal);
+                    }
 
-					faceCopy.vertexNormals.push(normal);
+                    faceCopy.vertexNormals.push(normal);
 
-				}
+                }
 
-				faceCopy.color.copy(face.color);
+                faceCopy.color.copy(face.color);
 
-				for (var j = 0, jl = faceVertexColors.length; j < jl; j++) {
+                for (var j = 0, jl = faceVertexColors.length; j < jl; j++) {
 
-					color = faceVertexColors[j];
-					faceCopy.vertexColors.push(color.clone());
+                    color = faceVertexColors[j];
+                    faceCopy.vertexColors.push(color.clone());
 
-				}
+                }
 
-				if (face.materialIndex !== undefined) {
+                if (face.materialIndex !== undefined) {
 
 
 
-					var material2 = materials2[face.materialIndex];
-					var materialId2 = material2.id;
+                    var material2 = materials2[face.materialIndex];
+                    var materialId2 = material2.id;
 
-					var materialIndex = geo1MaterialsMap[materialId2];
+                    var materialIndex = geo1MaterialsMap[materialId2];
 
-					if (materialIndex === undefined) {
+                    if (materialIndex === undefined) {
 
-						materialIndex = materials1.length;
-						geo1MaterialsMap[materialId2] = materialIndex;
+                        materialIndex = materials1.length;
+                        geo1MaterialsMap[materialId2] = materialIndex;
 
-						materials1.push(material2);
+                        materials1.push(material2);
 
-					}
+                    }
 
-					faceCopy.materialIndex = materialIndex;
+                    faceCopy.materialIndex = materialIndex;
 
-				}
+                }
 
-				faceCopy.centroid.copy(face.centroid);
-				if (matrix) {
-					matrix.multiplyVector3(faceCopy.centroid);
-				}
+                faceCopy.centroid.copy(face.centroid);
+                if (matrix) {
+                    matrix.multiplyVector3(faceCopy.centroid);
+                }
 
-				faces1.push(faceCopy);
+                faces1.push(faceCopy);
 
-			}
+            }
 
-			// uvs
-			for (i = 0, il = uvs2.length; i < il; i++) {
+            // uvs
+            for (i = 0, il = uvs2.length; i < il; i++) {
 
-				var uv = uvs2[i],
-					uvCopy = [];
+                var uv = uvs2[i],
+                    uvCopy = [];
 
-				for (var j = 0, jl = uv.length; j < jl; j++) {
+                for (var j = 0, jl = uv.length; j < jl; j++) {
 
-					uvCopy.push(new THREE.Vector2(uv[j].x, uv[j].y));
+                    uvCopy.push(new THREE.Vector2(uv[j].x, uv[j].y));
 
-				}
+                }
 
-				uvs1.push(uvCopy);
+                uvs1.push(uvCopy);
 
-			}
+            }
 
-		}
+        }
 
-		var mergedMeshes = new THREE.Mesh(mergedMeshesGeometry, new THREE.MeshFaceMaterial(mergedMaterialsCollection));
-		mergedMeshes.name = 'WorldMesh';
+        var mergedMeshes = new THREE.Mesh(mergedMeshesGeometry, new THREE.MeshFaceMaterial(mergedMaterialsCollection));
+        mergedMeshes.name = 'WorldMesh';
 
-		return {
-			worldMesh: mergedMeshes,
-			entities: entitiesCollection
-		};
-	};
+        return {
+            worldMesh: mergedMeshes,
+            entities: entitiesCollection
+        };
+    };
 
-	var saveJson = function (data, savePath) {
-		var deferred = Q.defer();
+    var saveJson = function(data, savePath) {
+        var deferred = Q.defer();
 
-		mkdirp.sync(path.dirname(savePath));
+        mkdirp.sync(path.dirname(savePath));
 
-		fs.writeFile(savePath, JSON.stringify(data, null, 4), function (err) {
-			if (err) {
-				console.log(err);
-				return deferred.reject(err);
-			} else {
-				console.log('Saved ' + savePath);
-				return deferred.resolve();
-			}
-		});
+        fs.writeFile(savePath, JSON.stringify(data, null, 4), function(err) {
+            if (err) {
+                console.log(err);
+                return deferred.reject(err);
+            } else {
+                console.log('Saved ' + savePath);
+                return deferred.resolve();
+            }
+        });
 
-		return deferred.promise;
-	};
+        return deferred.promise;
+    };
 
-	var parseEntity = function(entity) {
-		// Push straight into the Meteor entities collection!
-		// console.log(entity);
-        var parseObject = function (object) {
+    var parseEntity = function(entity) {
+        // Push straight into the Meteor entities collection!
+        // console.log(entity);
+        var parseObject = function(object) {
 
             var data = {};
 
@@ -386,7 +386,7 @@ World.importZoneFromClara = function (scene) {
                         near: object.near,
                         far: object.far
                     };
-                // clara doesn't let you add ambient lights, we hack them into the scene using directional with a specific name
+                    // clara doesn't let you add ambient lights, we hack them into the scene using directional with a specific name
                 } else if ((object instanceof THREE.AmbientLight && object.userData.entity === 'light') || (object.userData.entity === 'light' && object.name === 'AmbientLight')) {
                     data.components.light = {
                         type: 'AmbientLight',
@@ -432,14 +432,15 @@ World.importZoneFromClara = function (scene) {
                     data.components.sprite = {
                         material: object.material.toJSON()
                     };
-                }
-                else if (object.userData.entity === 'achievement') {
+                } else if (object.userData.entity === 'achievement') {
                     data.components.achievement = {
-                        type: object['achievement-type'],
-                        radius: object.radius
+                        type: object.userData['achievement-type'],
+                        radius: object.userData.radius
                     };
                 } else if (object.userData.entity) {
                     // this is where we are using entity templates (prefabs)
+                    // all userData is passed to the prefab, you only need something custom above IIF
+                    // you have need for properties that lie outside of userData (postion, material, etc)
                     data.prefab = object.userData.entity;
                 }
             }
@@ -457,30 +458,30 @@ World.importZoneFromClara = function (scene) {
 
         var parsedEntity = parseObject(entity);
 
-		return parsedEntity;
+        return parsedEntity;
 
-	};
+    };
 
-	exportClaraScenes(scene);
+    exportClaraScenes(scene);
 
-	// For testing...
-	// var zonePath = angus.appPath + '/src/assets/scene/storage-room';
-	// var claraExportJson = require(zonePath + '/clara-export.json');
-	// var ibWorldFilepath = zonePath + '/ib-world.json';
-	// var ibWorld = postProcessWorld(claraExportJson);
-	// saveProcessedWorld(ibWorld, ibWorldFilepath);
+    // For testing...
+    // var zonePath = angus.appPath + '/src/assets/scene/storage-room';
+    // var claraExportJson = require(zonePath + '/clara-export.json');
+    // var ibWorldFilepath = zonePath + '/ib-world.json';
+    // var ibWorld = postProcessWorld(claraExportJson);
+    // saveProcessedWorld(ibWorld, ibWorldFilepath);
 
-	return deferred.promise;
+    return deferred.promise;
 };
 
 
-if (process.env.TASK ) {
-	if (process.env.TASK == 'importlevels') {
-		Meteor.startup(function () {
-			Meteor.setTimeout(function () {
-				console.log('Importing levels from Clara');
-				World.importZoneFromClara();
-			}, 500);
-		});
-	}
+if (process.env.TASK) {
+    if (process.env.TASK === 'importlevels') {
+        Meteor.startup(function() {
+            Meteor.setTimeout(function() {
+                console.log('Importing levels from Clara');
+                World.importZoneFromClara();
+            }, 500);
+        });
+    }
 }
