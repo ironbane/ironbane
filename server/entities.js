@@ -6,7 +6,15 @@ Entities.allow({
 		return false;
 	},
 	update: function (userId, entity, fields, modifier) {
-		var containsInvalidFields = !!_.difference(fields, ['position', 'rotation']).length;
+		var allowedFields = ['position', 'rotation'];
+
+		var containsInvalidFields = false;
+		fields.forEach(function (field) {
+			if (!_.contains(allowedFields, field)) {
+				containsInvalidFields = true;
+			}
+		});
+
 		return entity.owner === userId && !containsInvalidFields;
 	},
 	remove: function (userId, entity) {
