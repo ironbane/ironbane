@@ -29,6 +29,20 @@ angular
 
                 Util.waitForMeteorGuestUserLogin(function() {
                     Tracker.autorun(function() {
+						var user = Meteor.user();
+
+						// Remove all entities that have a document attached, as we may have
+						// logged in/out in the meantime in another game session
+						var toBeRemoved = [];
+                        $rootWorld.traverse(function(node) {
+                            if (node.doc) {
+                            	toBeRemoved.push(node);
+                            }
+                        });
+						toBeRemoved.forEach(function (node) {
+							$rootWorld.removeEntity(node);
+						});
+
                         var cursor = Entities.find({
                             active: true,
                             level: Session.get('activeLevel')
@@ -36,8 +50,6 @@ angular
 
                         cursor.observe({
                             added: function(doc) {
-                                var user = Meteor.user();
-
                                 if (user._id === doc.owner && $state.current.name === 'three-root.play') {
 
                                     // Add all the stuff to make us a real player
@@ -90,9 +102,6 @@ angular
                                 }
                             },
                             removed: function(doc) {
-
-                            	var user = Meteor.user();
-
                                 var toBeRemoved = [];
 
                                 $rootWorld.traverse(function(node) {
