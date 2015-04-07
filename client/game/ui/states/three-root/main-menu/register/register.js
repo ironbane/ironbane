@@ -2,6 +2,7 @@
 angular
     .module('game.ui.states.three-root.main-menu.register', [
         'engine.util.browserUtil',
+        'game.ui.dialog',
         'ui.router'
     ])
     .config(['$stateProvider', function($stateProvider) {
@@ -13,7 +14,8 @@ angular
                 '$scope',
                 '$state',
                 'BrowserUtil',
-                function($scope, $state, BrowserUtil) {
+                'dialogService',
+                function($scope, $state, BrowserUtil, dialogService) {
 
                     $scope.register = function() {
                         Accounts.createUser({
@@ -22,7 +24,7 @@ angular
                             email: $scope.email
                         }, function(err) {
                             if (err) {
-                                throw err;
+                                dialogService.alert(err.reason);
                             } else {
                                 $state.go('^.enter-world');
                             }

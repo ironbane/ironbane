@@ -25,6 +25,10 @@ Meteor.methods({
 
   	options = options || {};
 
+  	if (!options.charName) {
+  		throw new Meteor.Error('noCharNameGiven', 'Enter a character name.');
+  	}
+
   	options.charName = options.charName || 'Guest';
   	options.boy = !_.isUndefined(options.boy) ? options.boy : (_.random(1, 2) === 1 ? true : false);
   	options.boy = options.boy ? 'male' : 'female';
@@ -43,6 +47,15 @@ Meteor.methods({
 		throw new Meteor.Error('charNameLength', 'Character name must be between ' +
 			ironbaneConstants.rules.minCharNameLength + ' and ' +
 			ironbaneConstants.rules.maxCharNameLength + ' chars.');
+	}
+
+	// Check if this character already exists
+	// Note that this checks NPC's as well! We probably don't want
+	// players to have the same name as an NPC.
+	if (Entities.find({
+		name: charName
+	}).count() !== 0) {
+		throw new Meteor.Error('charNameTaken', 'Character name already taken.');
 	}
 
 	if (!_.contains(ironbaneConstants.characterParts[options.boy].skin, options.skin) ||

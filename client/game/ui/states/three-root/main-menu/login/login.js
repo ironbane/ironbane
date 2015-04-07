@@ -1,6 +1,7 @@
 angular
     .module('game.ui.states.three-root.main-menu.login', [
         'ui.router',
+        'game.ui.dialog',
         'angular-meteor'
     ])
     .config(['$stateProvider', function($stateProvider) {
@@ -12,11 +13,16 @@ angular
                 '$scope',
                 '$state',
                 '$meteor',
-                function($scope, $state, $meteor) {
+                'dialogService',
+                function($scope, $state, $meteor, dialogService) {
                     $scope.login = function() {
                         $meteor.loginWithPassword($scope.username, $scope.password)
-                            .finally(function() {
-                                $state.go('^.enter-world');
+                        	.then(function () {
+								$state.go('^.enter-world');
+                        	}, function(err) {
+                            	if (err) {
+                            		dialogService.alert(err.reason);
+                            	}
                             });
                     };
 
