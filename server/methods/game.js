@@ -35,5 +35,20 @@ Meteor.methods({
 			}
 		});
 
+	},
+	leaveGame: function() {
+
+		var user = Meteor.user();
+
+		Entities.update({
+			owner: user._id
+		}, {
+			$set: {
+				active: false
+			}
+		}, {
+            multi: true
+        });
+
 	}
 });

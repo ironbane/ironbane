@@ -5,6 +5,7 @@ angular
         'game.ui.debug.debugDiv',
         'game.ui.chat.chatBoxDirective',
         'game.ui.chat.chatService',
+        'game.ui.dialog',
         'engine.entity-cache'
     ])
     .config([
@@ -49,21 +50,20 @@ angular
                     '$entityCache',
                     '$log',
                     'ChatService',
-                    function($entityCache, $log, ChatService) {
+                    '$meteor',
+                    'dialogService',
+                    function($entityCache, $log, ChatService, $meteor, dialogService) {
                         var mainPlayer = $entityCache.get('mainPlayer'),
                             activeChar = mainPlayer.doc;
                         $log.debug('mainPlayer', mainPlayer);
 
                         // the cursor in network should be watching this to remove it from the world
-                        Entities.update({
-                            _id: activeChar._id
-                        }, {
-                            $set: {
-                                active: false
-                            }
-                        });
-
-                        //ChatService.announce(activeChar.name + ' has left the world.');
+                        $meteor.call('leaveGame')
+                            .then(null, function(err) {
+                                if (err) {
+                                    dialogService.alert(err.reason);
+                                }
+                            });
                     }
                 ]
             });
