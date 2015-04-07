@@ -50,11 +50,10 @@ angular
             };
 
             // load from ib-entities.json export
-            this.load = function(entity) {
-                var builder = this,
-                    root = new Entity();
+            this.load = function(entityData) {
+                var builder = this;
 
-                function parse(data, parent) {
+                function parse(data) {
                     //$log.debug('Parsing entity data: ', data);
 
                     if (data.prefab) {
@@ -95,16 +94,17 @@ angular
 
                     // build the entity
                     var entity = builder.build(data.name, data);
-                    parent.add(entity);
 
-                    angular.forEach(data.children, function(child) {
-                        parse(child, entity);
-                    });
+                    if (data.children) {
+                        angular.forEach(data.children, function(child) {
+                            entity.add(parse(child));
+                        });
+                    } else {
+                        return entity;
+                    }
                 }
 
-                parse(entity, root);
-
-                return root;
+                return parse(entityData);
             };
         }
     ]);
