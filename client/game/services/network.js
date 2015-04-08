@@ -50,7 +50,7 @@ angular
 
                         cursor.observe({
                             added: function(doc) {
-                                if (user._id === doc.owner && $state.current.name === 'three-root.play') {
+                                if (user && user._id === doc.owner && $state.current.name === 'three-root.play') {
 
                                     // Add all the stuff to make us a real player
                                     angular.extend(doc.components, {
@@ -98,7 +98,7 @@ angular
                                 $rootWorld.addEntity(builtEntity);
 
                                 // It's the player, tag them
-                                if (user._id === doc.owner) {
+                                if (user && user._id === doc.owner) {
                                     $entityCache.put('mainPlayer', builtEntity);
                                 }
                             },
