@@ -1,21 +1,22 @@
 angular.module('ces.components-registry', ['ces.component'])
-    .provider('$components', function () {
+    .provider('$components', function() {
         'use strict';
 
         var _preload = {};
 
-        this.addComponentData = function (data) {
+        this.addComponentData = function(data) {
             angular.extend(_preload, data);
         };
 
         this.$get = [
             'Component',
-            function (Component) {
+            '$log',
+            function(Component, $log) {
                 var _components = {},
                     _initialized = false,
-                    svc = function () {};
+                    svc = function() {};
 
-                svc.init = function () {
+                svc.init = function() {
                     if (_initialized) {
                         return;
                     }
@@ -26,7 +27,7 @@ angular.module('ces.components-registry', ['ces.component'])
                     _initialized = true;
                 };
 
-                svc.registerComponent = function (name, data) {
+                svc.registerComponent = function(name, data) {
                     var component = new Component();
 
                     component.name = name;
@@ -36,10 +37,15 @@ angular.module('ces.components-registry', ['ces.component'])
                     _components[name] = component;
                 };
 
-                svc.get = function (name, data) {
-                    var c = Object.create(_components[name]);
+                svc.get = function(name, data) {
+                    var c;
+                    try {
+                        c = Object.create(_components[name]);
 
-                    angular.extend(c, data);
+                        angular.extend(c, data);
+                    } catch (err) {
+                        $log.debug('error instantiating component: "', name, '" does not exist');
+                    }
 
                     return c;
                 };
@@ -51,7 +57,7 @@ angular.module('ces.components-registry', ['ces.component'])
     })
     .run([
         '$components',
-        function ($components) {
+        function($components) {
             'use strict';
 
             $components.init();

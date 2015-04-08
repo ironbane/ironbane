@@ -54,6 +54,7 @@ angular
 
                                     // Add all the stuff to make us a real player
                                     angular.extend(doc.components, {
+                                        player:{},
                                         collisionReporter: {
 
                                         },

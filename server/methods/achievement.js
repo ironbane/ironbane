@@ -6,8 +6,9 @@
 
     function getAchievementEntity(achievementId, level) {
         var entity = Entities.findOne({
-            name: achievementId,
-            level: level
+            level: level,
+            'userData.entity': 'AchievementTrigger',
+            'userData.achievementId': achievementId
         });
 
         if (!entity) {

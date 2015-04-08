@@ -3,5 +3,6 @@ angular.module('game.prefabs', [
     'game.prefabs.torch',
     'game.prefabs.bunny',
     'game.prefabs.spawnpoint',
-    'game.prefabs.proctree'
+    'game.prefabs.proctree',
+    'game.prefabs.achievementTrigger'
 ]);

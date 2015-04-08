@@ -43,7 +43,11 @@ angular
                 }
 
                 angular.forEach(data.components, function(componentData, componentName) {
-                    entity.addComponent($components.get(componentName, componentData));
+                    var component = $components.get(componentName, componentData);
+                    // might not find, could be bad/old db data
+                    if (component) {
+                        entity.addComponent(component);
+                    }
                 });
 
                 return entity;
