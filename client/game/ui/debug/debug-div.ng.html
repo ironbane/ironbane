@@ -1,5 +1,5 @@
 <ul>
-    <li ng-repeat="item in debugDiv.items">
-        {{ item.label }}: {{ item.variable | debugItem }}
+    <li ng-repeat="(label, variable) in debugDiv.items">
+        {{ label }}: {{ variable | debugItem }}
     </li>
 </ul>

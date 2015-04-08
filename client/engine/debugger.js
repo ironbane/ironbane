@@ -9,19 +9,10 @@ angular
         function(_, $rootWorld) {
             'use strict';
 
-            this.watched = [];
+            this.watched = {};
 
             this.watch = function(label, variable) {
-                var found = _.find(this.watched, function(item) {
-                    return item.label === label;
-                });
-
-                if (!found) {
-                    this.watched.push({
-                        label: label,
-                        variable: variable
-                    });
-                }
+                this.watched[label] = variable;
             };
 
             this.$rootWorld = $rootWorld;

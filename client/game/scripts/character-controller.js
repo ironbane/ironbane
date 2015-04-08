@@ -24,6 +24,8 @@ angular
             var btVec3 = new Ammo.btVector3();
 
             var CharacterControllerScript = function(entity, world) {
+                Debugger.watch('player.position', entity.position);
+
                 this.entity = entity;
                 this.world = world;
 
@@ -56,9 +58,6 @@ angular
             };
 
             CharacterControllerScript.prototype.update = function(dt, elapsed, timestamp) {
-
-                Debugger.watch('player.position', this.entity.position);
-
                 var input = this.world.getSystem('input'), // should cache this during init?
                     leftStick = input.virtualGamepad.leftThumbstick,
                     rightStick = input.virtualGamepad.rightThumbstick;
