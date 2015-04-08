@@ -1,5 +1,9 @@
-angular.module('components.script', ['ces'])
-    .config(['$componentsProvider', function ($componentsProvider) {
+angular
+    .module('components.script', [
+        'ces',
+        'engine.scriptBank'
+    ])
+    .config(['$componentsProvider', function($componentsProvider) {
         'use strict';
 
         $componentsProvider.addComponentData({
@@ -8,41 +12,16 @@ angular.module('components.script', ['ces'])
             }
         });
     }])
-    .service('ScriptBank', ['$q', '$cacheFactory', '$http', function($q, $cacheFactory, $http) {
-        'use strict';
-
-        var cache = $cacheFactory('scriptCache');
-
-        this.get = function (path) {
-            if(cache.get(path)) {
-                return $q.when(cache.get(path));
-            } else {
-                return $http.get(path)
-                    .then(function(response) {
-                        var Script = eval(response.data); // jshint ignore:line
-                        cache.put(path, Script);
-
-                        return Script;
-                    }, function(response) {
-                        return $q.reject('Ajax Error: ' + path + ' >> ' + response.data);
-                    });
-            }
-        };
-
-        this.add = function (path, Script) {
-            cache.put(path, Script);
-        };
-    }])
-    .factory('ScriptSystem', ['System', 'ScriptBank', '$log', function (System, ScriptBank, $log) {
+    .factory('ScriptSystem', ['System', 'ScriptBank', '$log', function(System, ScriptBank, $log) {
         'use strict';
 
         var ScriptSystem = System.extend({
-            addedToWorld: function (world) {
+            addedToWorld: function(world) {
                 var sys = this;
 
                 sys._super(world);
 
-                world.entityAdded('script').add(function (entity) {
+                world.entityAdded('script').add(function(entity) {
                     var scriptData = entity.getComponent('script');
 
                     // instances are created and stored in _scripts
@@ -52,7 +31,7 @@ angular.module('components.script', ['ces'])
                         var scriptPath,
                             scriptParams = {};
 
-                        if(angular.isString(scr)) {
+                        if (angular.isString(scr)) {
                             scriptPath = scr;
                         } else {
                             scriptPath = scr.src;
@@ -69,18 +48,18 @@ angular.module('components.script', ['ces'])
                     });
                 });
 
-                world.entityRemoved('script').add(function (entity) {
+                world.entityRemoved('script').add(function(entity) {
                     var scripts = entity.getComponent('script')._scripts;
 
                     angular.forEach(scripts, function(script) {
                         // destroy lifecycle for each script
-                        if(angular.isFunction(script.destroy)) {
+                        if (angular.isFunction(script.destroy)) {
                             script.destroy.call(script);
                         }
                     });
                 });
             },
-            update: function (dt, elapsed, timestamp) {
+            update: function(dt, elapsed, timestamp) {
                 var world = this.world;
 
                 world.getEntities('script').forEach(function(scripted) {
@@ -88,7 +67,7 @@ angular.module('components.script', ['ces'])
 
                     angular.forEach(scripts, function(script) {
                         // update lifecycle for each script
-                        if(angular.isFunction(script.update)) {
+                        if (angular.isFunction(script.update)) {
                             script.update.call(script, dt, elapsed, timestamp);
                         }
                     });
