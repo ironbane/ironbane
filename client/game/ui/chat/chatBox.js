@@ -36,7 +36,6 @@ angular.module('game.ui.chat.chatBoxDirective', [
 
                                     $scope.$apply(function() {
                                         ctrl.messages.unshift({
-                                            ts: new Date(),
                                             msg: ctrl.newmsg,
                                             userId: Meteor.userId(),
                                             user: {

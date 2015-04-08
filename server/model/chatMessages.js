@@ -24,6 +24,8 @@ Meteor.startup(function() {
 
             doc.msg = doc.msg.substr(0, 255);
 
+            doc.ts = new Date();
+
             // TODO do checks for character name, pos, level etc
 
             return (userId !== null);
