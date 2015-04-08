@@ -31,9 +31,19 @@ angular
                 'IB_CONSTANTS',
                 'LevelLoader',
                 '$rootWorld',
-                function($meteor, $scope, $log, IB_CONSTANTS, LevelLoader, $rootWorld) {
-                	$scope.IB_CONSTANTS = IB_CONSTANTS;
-                    $scope.logout = $meteor.logout;
+                '$state',
+                function($meteor, $scope, $log, IB_CONSTANTS, LevelLoader, $rootWorld, $state) {
+                    $scope.IB_CONSTANTS = IB_CONSTANTS;
+                    $scope.logout = function() {
+                        return $meteor.logout()
+                            .then(function() {
+                                return $meteor.waitForUser();
+                            })
+                            .then(function(user) {
+                                $log.debug('logged out: ', user);
+                                $state.go('three-root.main-menu.enter-world');
+                            });
+                    };
 
                     function clearOldLevel(level) {
                         var nodesToBeRemoved = [];
