@@ -32,8 +32,9 @@
     {
         "name": "Stage3Achievement",
         "userData": {
-            "entity": "achievement",
-            "message": "{{ charname }} has reached Stage 3!"
+            "entity": "AchievementTrigger",
+            "message": "{{ charname }} has reached Stage 3!",
+            "achievementId": "Stage3Achievement"
         },
         "matrix": [
             1,
@@ -53,15 +54,15 @@
             -13.649700164794922,
             1
         ],
-        "components": {
-            "achievement": {}
-        }
+        "components": {},
+        "prefab": "AchievementTrigger"
     },
     {
         "name": "Stage2Achievement",
         "userData": {
-            "entity": "achievement",
-            "message": "{{ charname }} has reached Stage 2!"
+            "entity": "AchievementTrigger",
+            "message": "{{ charname }} has reached Stage 2!",
+            "achievementId": "Stage2Achievement"
         },
         "matrix": [
             1,
@@ -81,15 +82,15 @@
             0,
             1
         ],
-        "components": {
-            "achievement": {}
-        }
+        "components": {},
+        "prefab": "AchievementTrigger"
     },
     {
         "name": "Stage4Achievement",
         "userData": {
-            "entity": "achievement",
-            "message": "{{ charname }} has reached Stage 4!"
+            "entity": "AchievementTrigger",
+            "message": "{{ charname }} has reached Stage 4!",
+            "achievementId": "Stage4Achievement"
         },
         "matrix": [
             1,
@@ -109,15 +110,15 @@
             -12.638999938964844,
             1
         ],
-        "components": {
-            "achievement": {}
-        }
+        "components": {},
+        "prefab": "AchievementTrigger"
     },
     {
         "name": "Stage5Achievement",
         "userData": {
-            "entity": "achievement",
-            "message": "{{ charname }} has reached Stage 5!"
+            "entity": "AchievementTrigger",
+            "message": "{{ charname }} has reached Stage 5!",
+            "achievementId": "Stage5Achievement"
         },
         "matrix": [
             1,
@@ -137,15 +138,15 @@
             -8.384599685668945,
             1
         ],
-        "components": {
-            "achievement": {}
-        }
+        "components": {},
+        "prefab": "AchievementTrigger"
     },
     {
         "name": "Stage6Achievement",
         "userData": {
-            "entity": "achievement",
-            "message": "{{ charname }} has reached Stage 6!"
+            "entity": "AchievementTrigger",
+            "message": "{{ charname }} has reached Stage 6!",
+            "achievementId": "Stage6Achievement"
         },
         "matrix": [
             1,
@@ -165,15 +166,15 @@
             -58.58760070800781,
             1
         ],
-        "components": {
-            "achievement": {}
-        }
+        "components": {},
+        "prefab": "AchievementTrigger"
     },
     {
         "name": "TopAchievement",
         "userData": {
-            "entity": "achievement",
-            "message": "{{ charname }} has reached the top!"
+            "entity": "AchievementTrigger",
+            "message": "{{ charname }} has reached the top!",
+            "achievementId": "TopAchievement"
         },
         "matrix": [
             1,
@@ -193,15 +194,15 @@
             -0.22949999570846558,
             1
         ],
-        "components": {
-            "achievement": {}
-        }
+        "components": {},
+        "prefab": "AchievementTrigger"
     },
     {
         "name": "Stage7Achievement",
         "userData": {
-            "entity": "achievement",
-            "message": "{{ charname }} has reached Stage 7!"
+            "entity": "AchievementTrigger",
+            "message": "{{ charname }} has reached Stage 7!",
+            "achievementId": "Stage7Achievement"
         },
         "matrix": [
             1,
@@ -221,8 +222,34 @@
             -79.97509765625,
             1
         ],
-        "components": {
-            "achievement": {}
-        }
+        "components": {},
+        "prefab": "AchievementTrigger"
+    },
+    {
+        "name": "Player Spawn",
+        "userData": {
+            "entity": "SpawnPoint",
+            "spawnType": "player"
+        },
+        "matrix": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            0,
+            1
+        ],
+        "components": {},
+        "prefab": "SpawnPoint"
     }
 ]

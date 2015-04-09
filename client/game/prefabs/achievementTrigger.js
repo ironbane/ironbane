@@ -1,19 +1,28 @@
 angular
     .module('game.prefabs.achievementTrigger', [
         'engine.scriptBank',
-        'underscore'
+        'underscore',
+        'engine.entity-cache'
     ])
     .factory('AchievementTriggerPrefab', [
         '$log',
         'ScriptBank',
         '_',
-        function($log, ScriptBank, _) {
+        '$entityCache',
+        function($log, ScriptBank, _, $entityCache) {
             'use strict';
 
             ScriptBank.add('achievementTriggerEnter', function achievementTriggerEnter(triggerEntity, world, params) {
                 return function callbackFn(otherEntity) {
                     var triggerComponent = this;
                     //$log.debug('achievementTriggerEnter callback', triggerEntity, otherEntity, params);
+
+                    // for now it needs to be mainPlayer (or the local client)
+                    // TODO: move all this server side :(
+                    var mainPlayer = $entityCache.get('mainPlayer');
+                    if(otherEntity.id !== mainPlayer.id) {
+                        return;
+                    }
 
                     // otherEntity should be a player (as filtered by the mask)
                     triggerComponent._hasAchieved = triggerComponent._hasAchieved || [];
@@ -32,7 +41,7 @@ angular
             return function(entityData) {
                 var customs = entityData.userData || {};
 
-                return {
+                var assembly = {
                     components: {
                         trigger: {
                             mask: 'player',
@@ -46,6 +55,17 @@ angular
                         }
                     }
                 };
+
+                // because we don't want to merge undefined values
+                if (angular.isDefined(customs.range)) {
+                    assembly.range = customs.range;
+                }
+
+                if (angular.isDefined(customs['trigger-type'])) {
+                    assembly.type = customs['trigger-type'];
+                }
+
+                return assembly;
             };
         }
     ]);
