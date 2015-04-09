@@ -20,7 +20,7 @@ var meteorRootProjectPath = meteorBuildPath.split('.meteor')[0];
 var meteorBuildPublicPath = meteorBuildPath + '../web.browser/app/';
 var meteorRootProjectPublicPath = meteorRootProjectPath + 'public/';
 
-World.importZoneFromClara = function(scene) {
+var importZoneFromClara = function(scene) {
 
     var claraUser = JSON.parse(Assets.getText('clara.json'));
 
@@ -480,7 +480,7 @@ if (process.env.TASK) {
         Meteor.startup(function() {
             Meteor.setTimeout(function() {
                 console.log('Importing levels from Clara');
-                World.importZoneFromClara();
+                importZoneFromClara();
             }, 500);
         });
     }

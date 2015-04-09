@@ -16,5 +16,6 @@ angular
         'components.gameplay.player',
         'components.sound',
         'components.gameplay.health',
-        'components.procgen.tree'
+        'components.procgen.tree',
+        'components.world.spawnPoint'
     ]);
