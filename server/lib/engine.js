@@ -3,6 +3,7 @@ angular
         'ng',
         'game.world-root',
         'systems.autoAnnounceSystem',
+        'components',
         'engine.entity-cache',
         'engine.entity-builder'
     ])

@@ -1,6 +1,6 @@
 angular
     .module('game.scripts.character-controller', [
-        'components.script',
+        'engine.scriptBank',
         'three',
         'ammo',
         'engine.debugger'

@@ -1,38 +1,42 @@
 angular
-	.module('game.scripts.network-send', [
-		'components.script'
-	])
-	.run(['$log', 'ScriptBank', function ($log, ScriptBank) {
-		'use strict';
+    .module('game.scripts.network-send', [
+        'engine.scriptBank'
+    ])
+    .run([
+        '$log',
+        'ScriptBank',
+        function($log, ScriptBank) {
+            'use strict';
 
-		var NetworkSendScript = function (entity, world) {
-			this.entity = entity;
-			this.world = world;
+            var NetworkSendScript = function(entity, world) {
+                this.entity = entity;
+                this.world = world;
 
-			this.networkSendTimer = 0.0;
-		};
+                this.networkSendTimer = 0.0;
+            };
 
-		NetworkSendScript.prototype.update = function (dt, elapsed, timestamp) {
+            NetworkSendScript.prototype.update = function(dt, elapsed, timestamp) {
 
-			this.networkSendTimer += dt;
+                this.networkSendTimer += dt;
 
-			if (this.networkSendTimer > 0.5) {
-				this.networkSendTimer = 0.0;
+                if (this.networkSendTimer > 0.5) {
+                    this.networkSendTimer = 0.0;
 
-				// var user = Meteor.user();
-				// Send our updated position to Meteor
+                    // var user = Meteor.user();
+                    // Send our updated position to Meteor
 
-				Entities.update({
-					_id: this.entity.doc._id
-				}, {
-					$set: {
-						position: this.entity.position.serialize(),
-						rotation: this.entity.rotation.serialize(),
-					}
-				});
-			}
+                    Entities.update({
+                        _id: this.entity.doc._id
+                    }, {
+                        $set: {
+                            position: this.entity.position.serialize(),
+                            rotation: this.entity.rotation.serialize(),
+                        }
+                    });
+                }
 
-		};
+            };
 
-		ScriptBank.add('/scripts/built-in/network-send.js', NetworkSendScript);
-	}]);
+            ScriptBank.add('/scripts/built-in/network-send.js', NetworkSendScript);
+        }
+    ]);

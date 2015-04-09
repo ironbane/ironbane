@@ -4,13 +4,13 @@ angular
         'game.world-root',
         'game.network',
         'components',
+        'game.systems',
         'game.scripts',
         'game.prefabs',
         'engine.entity-builder',
         'engine.sound-system',
         'engine.input.input-system',
-        'util.name-gen',
-        'components.scene.name-mesh'
+        'util.name-gen'
     ])
     .service('GameService', [
         '$rootWorld',

@@ -13,6 +13,7 @@ angular
         'ammo',
         'ammo.physics-world',
         'components',
+        'game.systems',
         'game.scripts',
         'game.prefabs',
         'engine.entity-builder',
