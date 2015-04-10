@@ -157,19 +157,19 @@ var importZoneFromClara = function(scene) {
         var entitiesCollection = [];
 
         obj.traverse(function(child) {
-            if (child.userData.entity) {
+            child.updateMatrixWorld(true);
 
-                if (obj.userData.entity) {
-                    // Only if the parent is an entity, we save the uuid
-                    // Otherwise it would be no use since the parent will be merged into one world mesh
-                    child.parentUuid = obj.uuid;
+            if (child.userData.entity || child.hasEntityAncestor) {
+                if (!child.hasEntityAncestor) { // we only want to push the first parent
+                    child.traverse(function(c) {
+                        // traverse also calls on itself...
+                        if (c !== child) {
+                            c.hasEntityAncestor = true;
+                        }
+                    });
+                    var parsedEntity = parseEntity(child);
+                    entitiesCollection.push(parsedEntity);
                 }
-
-                child.updateMatrixWorld(true);
-
-                // Push these straight into Meteor
-                var parsedEntity = parseEntity(child);
-                entitiesCollection.push(parsedEntity);
             } else {
                 if (child.geometry) {
                     computeCentroids(child.geometry);
@@ -177,8 +177,6 @@ var importZoneFromClara = function(scene) {
                     var clonedGeometry = child.geometry.clone();
 
                     computeCentroids(clonedGeometry);
-
-                    child.updateMatrixWorld(true);
 
                     clonedGeometry.vertices.forEach(function(v) {
                         v.applyMatrix4(child.matrixWorld);
@@ -360,7 +358,12 @@ var importZoneFromClara = function(scene) {
                 data.visible = object.visible;
             }
 
-            data.matrix = object.matrix.toArray();
+            if (object.hasEntityAncestor) {
+                // it's a child of a ripped entity, so use the normal matrix
+                data.matrix = object.matrix.toArray();
+            } else {
+                data.matrix = object.matrixWorld.toArray();
+            }
 
             data.components = {};
 

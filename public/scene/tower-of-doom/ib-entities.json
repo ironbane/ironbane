@@ -229,7 +229,8 @@
         "name": "Player Spawn",
         "userData": {
             "entity": "SpawnPoint",
-            "spawnType": "player"
+            "spawnType": "player",
+            "tag": "playerStart"
         },
         "matrix": [
             1,
@@ -245,11 +246,35 @@
             1,
             0,
             0,
-            1,
-            0,
+            1.1308000087738037,
+            20.880800247192383,
             1
         ],
         "components": {},
-        "prefab": "SpawnPoint"
+        "prefab": "SpawnPoint",
+        "children": [
+            {
+                "name": "Sphere",
+                "matrix": [
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    1,
+                    0,
+                    1.7116999626159668,
+                    0.8752999901771545,
+                    -1.3863999843597412,
+                    1
+                ],
+                "components": {}
+            }
+        ]
     }
 ]
