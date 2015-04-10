@@ -15,7 +15,6 @@ angular
         'components',
         'game.systems',
         'game.scripts',
-        'game.prefabs',
         'engine.entity-builder',
         'engine.sound-system',
         'engine.ib-config',

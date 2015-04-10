@@ -6,7 +6,7 @@ angular
         'components',
         'game.systems',
         'game.scripts',
-        'game.prefabs',
+        'prefabs',
         'engine.entity-builder',
         'engine.sound-system',
         'engine.input.input-system',

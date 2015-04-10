@@ -6,6 +6,7 @@ angular
         'game.threeWorld',
         'systems.autoAnnounceSystem',
         'components',
+        'prefabs',
         'engine.entity-cache',
         'engine.entity-builder'
     ])
@@ -39,8 +40,12 @@ angular
             entitiesCursor.observe({
                 added: function(doc) {
                     if ($activeWorlds[doc.level]) {
-                        var ent = EntityBuilder.build(doc.name, doc);
-                        $activeWorlds[doc.level].addEntity(ent);
+                        var ent = EntityBuilder.load(doc);
+                        if (ent) {
+                            $activeWorlds[doc.level].addEntity(ent);
+                        } else {
+                            $log.log('error building entity for: ', doc);
+                        }
                         //$log.log('adding entity: ', doc.name, ' to ', doc.level, ' count: ', $activeWorlds[doc.level].getEntities().length);
                     }
                 },
