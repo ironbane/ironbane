@@ -39,11 +39,15 @@ angular
 
                     var updateCharacterPreview = function() {
                         if ($scope.entities.length && $scope.currentCharacterIndex < $scope.entities.length) {
-                            var currentChar = $scope.entities[$scope.currentCharacterIndex];
+                            var currentChar = $scope.entities[$scope.currentCharacterIndex],
+                                // testing here because of legacy db items TODO: update db?
+                                skin = currentChar.components ? currentChar.components.quad.charBuildData.skin : currentChar.userData.skin,
+                                hair = currentChar.components ? currentChar.components.quad.charBuildData.hair : currentChar.userData.hair,
+                                eyes = currentChar.components ? currentChar.components.quad.charBuildData.eyes : currentChar.userData.eyes;
                             CharBuilder.makeChar({
-                                skin: currentChar.components.quad.charBuildData.skin,
-                                eyes: currentChar.components.quad.charBuildData.eyes,
-                                hair: currentChar.components.quad.charBuildData.hair,
+                                skin: skin,
+                                eyes: eyes,
+                                hair: hair,
                             }).then(function(url) {
                                 $scope.charPrevImg = url;
                             });

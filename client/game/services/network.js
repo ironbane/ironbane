@@ -17,7 +17,8 @@ angular
         'Util',
         '$entityCache',
         '$state',
-        function(World, THREE, $log, EntityBuilder, $rootWorld, Util, $entityCache, $state) {
+        '$components',
+        function(World, THREE, $log, EntityBuilder, $rootWorld, Util, $entityCache, $state, $components) {
             'use strict';
 
             var self = {};
@@ -29,19 +30,19 @@ angular
 
                 Util.waitForMeteorGuestUserLogin(function() {
                     Tracker.autorun(function() {
-						var user = Meteor.user();
+                        var user = Meteor.user();
 
-						// Remove all entities that have a document attached, as we may have
-						// logged in/out in the meantime in another game session
-						var toBeRemoved = [];
+                        // Remove all entities that have a document attached, as we may have
+                        // logged in/out in the meantime in another game session
+                        var toBeRemoved = [];
                         $rootWorld.traverse(function(node) {
                             if (node.doc) {
-                            	toBeRemoved.push(node);
+                                toBeRemoved.push(node);
                             }
                         });
-						toBeRemoved.forEach(function (node) {
-							$rootWorld.removeEntity(node);
-						});
+                        toBeRemoved.forEach(function(node) {
+                            $rootWorld.removeEntity(node);
+                        });
 
                         var cursor = Entities.find({
                             active: true,
@@ -50,51 +51,46 @@ angular
 
                         cursor.observe({
                             added: function(doc) {
+                                var builtEntity = EntityBuilder.load(doc);
+                                builtEntity.doc = doc;
+
+                                var scriptComponent = builtEntity.getComponent('script');
+
                                 if (user && user._id === doc.owner && $state.current.name === 'three-root.play') {
-
                                     // Add all the stuff to make us a real player
-                                    angular.extend(doc.components, {
-                                        player:{},
-                                        collisionReporter: {
+                                    builtEntity.addComponent($components.get('player'));
+                                    builtEntity.addComponent($components.get('collisionReporter'));
+                                    builtEntity.addComponent($components.get('light', {
+                                        type: 'PointLight',
+                                        color: 0x60511b,
+                                        distance: 3.5
+                                    }));
+                                    builtEntity.addComponent($components.get('health', {
+                                        max: 5,
+                                        value: 5
+                                    }));
+                                    builtEntity.addComponent($components.get('camera', {
+                                        aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
+                                    }));
 
-                                        },
-                                        light: {
-                                            type: 'PointLight',
-                                            color: 0x60511b,
-                                            distance: 3.5
-                                        },
-                                        health: {
-                                            max: 5,
-                                            value: 5
-                                        },
-                                        camera: {
-                                            aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
-                                        }
-                                    });
-
-                                    doc.components.script.scripts = doc.components.script.scripts.concat([
-                                        '/scripts/built-in/character-controller.js',
-                                        '/scripts/built-in/character-multicam.js',
-                                        '/scripts/built-in/admin-controls.js',
-                                        '/scripts/built-in/network-send.js',
-                                    ]);
+                                    if (scriptComponent) {
+                                        scriptComponent.scripts = scriptComponent.scripts.concat([
+                                            '/scripts/built-in/character-controller.js',
+                                            '/scripts/built-in/character-multicam.js',
+                                            '/scripts/built-in/admin-controls.js',
+                                            '/scripts/built-in/network-send.js',
+                                        ]);
+                                    }
                                 }
                                 // For now, skip network syncing if the object came from Clara
                                 else if (!doc.fromClara) {
-                                    doc.components.script.scripts = doc.components.script.scripts.concat([
-                                        '/scripts/built-in/network-receive.js',
-                                    ]);
+                                    if (scriptComponent) {
+                                        scriptComponent.scripts = scriptComponent.scripts.concat([
+                                            '/scripts/built-in/network-receive.js',
+                                        ]);
+                                    }
                                 }
 
-                                var builtEntity;
-
-                                if (doc.fromClara) {
-                                    builtEntity = EntityBuilder.load(doc);
-                                } else {
-                                    builtEntity = EntityBuilder.build(doc.username, doc);
-                                }
-
-                                builtEntity.doc = doc;
                                 $rootWorld.addEntity(builtEntity);
 
                                 // It's the player, tag them
@@ -107,21 +103,21 @@ angular
 
                                 $rootWorld.traverse(function(node) {
                                     if (node.doc && node.doc._id === doc._id) {
-		                                if (user._id === doc.owner) {
-		                                	$entityCache.remove('mainPlayer');
+                                        if (user._id === doc.owner) {
+                                            $entityCache.remove('mainPlayer');
 
-	                                    	// If another game session tries to log us in, they will get notified
-	                                    	// that someone else is already playing (us) and it will try to disconnect
-	                                    	// this client. When that happens, the main player will get removed here
-	                                    	// so we must check for it and put us back in the main menu.
-	                                    	// A side effect of this approach is that if your account gets hijacked
-	                                    	// someone can annoy you all the time by "disconnecting you" by repeatingly
-	                                    	// trying to log in. On the other hand this may be a good thing as it becomes
-	                                    	// obvious that your account got compromised. Changing your password should solve that.
-		                                	if ($state.current.name === 'three-root.play') {
-		                                		$state.go('^.main-menu.enter-world');
-		                                	}
-		                                }
+                                            // If another game session tries to log us in, they will get notified
+                                            // that someone else is already playing (us) and it will try to disconnect
+                                            // this client. When that happens, the main player will get removed here
+                                            // so we must check for it and put us back in the main menu.
+                                            // A side effect of this approach is that if your account gets hijacked
+                                            // someone can annoy you all the time by "disconnecting you" by repeatingly
+                                            // trying to log in. On the other hand this may be a good thing as it becomes
+                                            // obvious that your account got compromised. Changing your password should solve that.
+                                            if ($state.current.name === 'three-root.play') {
+                                                $state.go('^.main-menu.enter-world');
+                                            }
+                                        }
 
                                         toBeRemoved.push(node);
                                     }

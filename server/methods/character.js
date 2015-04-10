@@ -1,137 +1,136 @@
-'use strict';
+/*global Entities:true*/
+angular
+    .module('server.characterService', ['underscore'])
+    .service('CharacterService', [
+        '_',
+        '$activeWorlds',
+        '$log',
+        function(_, $activeWorlds, $log) {
+            'use strict';
 
-var validator = Meteor.npmRequire('validator');
+            this.create = function(options) {
+                var user = Meteor.user();
+                var validator = Meteor.npmRequire('validator');
 
-Meteor.methods({
-    createChar: function(options) {
-
-        var user = Meteor.user();
-
-        var charCount = Entities.find({
-            owner: user._id
-        }).count();
-
-        if (user.profile && user.profile.guest) {
-            if (charCount >= 1) {
-                // Just return the characterId we already have on file
-                return Entities.findOne({
+                var charCount = Entities.find({
                     owner: user._id
-                })._id;
-            }
-        } else {
-            if (charCount >= ironbaneConstants.rules.maxCharactersAllowed) {
-                throw new Meteor.Error('tooManyChars', 'You\'ve reached the limit of characters you can create.');
-            }
-        }
+                }).count();
 
-        options = options || {};
+                if (user.profile && user.profile.guest) {
+                    if (charCount >= 1) {
+                        // Just return the characterId we already have on file
+                        return Entities.findOne({
+                            owner: user._id
+                        })._id;
+                    }
+                } else {
+                    if (charCount >= ironbaneConstants.rules.maxCharactersAllowed) {
+                        throw new Meteor.Error('tooManyChars', 'You\'ve reached the limit of characters you can create.');
+                    }
+                }
 
-        if (!options.charName) {
-            throw new Meteor.Error('noCharNameGiven', 'Enter a character name.');
-        }
+                options = options || {};
 
-        options.charName = options.charName || 'Guest';
-        options.boy = !_.isUndefined(options.boy) ? options.boy : (_.random(1, 2) === 1 ? true : false);
-        options.boy = options.boy ? 'male' : 'female';
-        options.skin = options.skin || _.sample(ironbaneConstants.characterParts[options.boy].skin);
-        options.eyes = options.eyes || _.sample(ironbaneConstants.characterParts[options.boy].eyes);
-        options.hair = options.hair || _.sample(ironbaneConstants.characterParts[options.boy].hair);
+                if (!options.charName) {
+                    throw new Meteor.Error('noCharNameGiven', 'Enter a character name.');
+                }
 
-        var charName = options.charName;
+                options.charName = options.charName || 'Guest';
+                options.boy = !_.isUndefined(options.boy) ? options.boy : (_.random(1, 2) === 1 ? true : false);
+                options.boy = options.boy ? 'male' : 'female';
+                options.skin = options.skin || _.sample(ironbaneConstants.characterParts[options.boy].skin);
+                options.eyes = options.eyes || _.sample(ironbaneConstants.characterParts[options.boy].eyes);
+                options.hair = options.hair || _.sample(ironbaneConstants.characterParts[options.boy].hair);
 
-        if (!validator.isAlphanumeric(charName)) {
-            throw new Meteor.Error('charAlphanumeric', 'Character name can only have letters and numbers.');
-        }
+                var charName = options.charName;
 
-        if (!charName || charName.length < ironbaneConstants.rules.minCharNameLength ||
-            charName.length > ironbaneConstants.rules.maxCharNameLength) {
-            throw new Meteor.Error('charNameLength', 'Character name must be between ' +
-                ironbaneConstants.rules.minCharNameLength + ' and ' +
-                ironbaneConstants.rules.maxCharNameLength + ' chars.');
-        }
+                if (!validator.isAlphanumeric(charName)) {
+                    throw new Meteor.Error('charAlphanumeric', 'Character name can only have letters and numbers.');
+                }
 
-        // Check if this character already exists
-        // Note that this checks NPC's as well! We probably don't want
-        // players to have the same name as an NPC.
-        if (Entities.find({
-                name: charName
-            }).count() !== 0) {
-            throw new Meteor.Error('charNameTaken', 'Character name already taken.');
-        }
+                if (!charName || charName.length < ironbaneConstants.rules.minCharNameLength ||
+                    charName.length > ironbaneConstants.rules.maxCharNameLength) {
+                    throw new Meteor.Error('charNameLength', 'Character name must be between ' +
+                        ironbaneConstants.rules.minCharNameLength + ' and ' +
+                        ironbaneConstants.rules.maxCharNameLength + ' chars.');
+                }
 
-        if (!_.contains(ironbaneConstants.characterParts[options.boy].skin, options.skin) ||
-            !_.contains(ironbaneConstants.characterParts[options.boy].eyes, options.eyes) ||
-            !_.contains(ironbaneConstants.characterParts[options.boy].hair, options.hair)) {
-            throw new Meteor.Error('charAppearance', 'Invalid character appearance.');
-        }
+                // Check if this character already exists
+                // Note that this checks NPC's as well! We probably don't want
+                // players to have the same name as an NPC.
+                if (Entities.find({
+                        name: charName
+                    }).count() !== 0) {
+                    throw new Meteor.Error('charNameTaken', 'Character name already taken.');
+                }
 
-        var cheats = {};
+                if (!_.contains(ironbaneConstants.characterParts[options.boy].skin, options.skin) ||
+                    !_.contains(ironbaneConstants.characterParts[options.boy].eyes, options.eyes) ||
+                    !_.contains(ironbaneConstants.characterParts[options.boy].hair, options.hair)) {
+                    throw new Meteor.Error('charAppearance', 'Invalid character appearance.');
+                }
 
-        if (Roles.userIsInRole(user, ['game-master'])) {
-            cheats.jump = true;
-        }
+                var cheats = {};
 
-        // Insert a new character
-        var entityId = Entities.insert({
-            owner: user._id,
-            name: charName,
-            position: ironbaneConstants.world.startPosition,
-            rotation: ironbaneConstants.world.startRotation,
-            level: ironbaneConstants.world.startLevel,
-            cheats: cheats,
-            components: {
-                quad: {
-                    transparent: true,
-                    charBuildData: {
+                if (Roles.userIsInRole(user, ['game-master'])) {
+                    cheats.jump = true;
+                }
+
+                var startLevel = ironbaneConstants.world.startLevel,
+                    initialPosition = ironbaneConstants.world.startPosition,
+                    initialRotation = ironbaneConstants.world.startRotation;
+
+                if ($activeWorlds[startLevel]) {
+                    // if not we have a problem!
+                    var spawns = $activeWorlds[startLevel].getEntities('spawnPoint');
+                    if (spawns.length === 0) {
+                        $log.log(startLevel, ' has no spawn points defined!');
+                    }
+                    spawns.forEach(function(spawn) {
+                        var component = spawn.getComponent('spawnPoint');
+                        // there should only be one of these, and maybe a better way to find it?
+                        if (component.tag === 'playerStart') {
+                            initialPosition = spawn.position.toArray();
+                            initialRotation = spawn.rotation.toArray();
+                        }
+                    });
+                } else {
+                    $log.log('NO ACTIVE WORLD: ', startLevel);
+                }
+
+                // Insert a new character
+                var entityId = Entities.insert({
+                    owner: user._id,
+                    name: charName,
+                    position: initialPosition,
+                    rotation: initialRotation,
+                    level: startLevel,
+                    cheats: cheats,
+                    prefab: 'Character',
+                    userData: {
                         skin: options.skin,
                         eyes: options.eyes,
-                        hair: options.hair
+                        hair: options.hair,
+                        charName: charName
                     }
-                },
-                rigidBody: {
-                    shape: {
-                        type: 'capsule',
-                        width: 0.5,
-                        height: 1.0,
-                        depth: 0.5,
-                        radius: 0.5
-
-                        // type: 'sphere',
-                        // radius: 0.5
-                    },
-                    mass: 1,
-                    friction: 0.0,
-                    restitution: 0,
-                    allowSleep: false,
-                    lock: {
-                        position: {
-                            x: false,
-                            y: false,
-                            z: false
-                        },
-                        rotation: {
-                            x: true,
-                            y: true,
-                            z: true
-                        }
+                }, function(err) {
+                    if (err) {
+                        throw err;
                     }
-                },
-                'name-mesh': {
-                    text: charName
-                },
-                script: {
-                    scripts: [
-                        '/scripts/built-in/sprite-sheet.js',
-                    ]
-                },
-                shadow: {},
-            }
-        }, function(err) {
-            if (err) {
-                throw err;
-            }
-        });
+                });
 
-        return entityId;
-    }
-});
+                return entityId;
+            };
+        }
+    ])
+    .run([
+        'CharacterService',
+        function(CharacterService) {
+            'use strict';
+
+            // here we expose any API
+            Meteor.methods({
+                createChar: CharacterService.create
+            });
+        }
+    ]);

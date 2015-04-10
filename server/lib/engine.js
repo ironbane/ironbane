@@ -8,7 +8,8 @@ angular
         'components',
         'prefabs',
         'engine.entity-cache',
-        'engine.entity-builder'
+        'engine.entity-builder',
+        'server.characterService'
     ])
     .value('$activeWorlds', {})
     .run([
