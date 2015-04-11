@@ -1,9 +1,8 @@
+/*global THREE*/
 'use strict';
 
 // This task imports scenes from Clara, merges all geometry and uses a FaceMaterial.
 // multi-id isn't supported inside clara, but it doesn't really affect performance for us since we postprocess the mesh that clara produces.
-
-var entityExporter = new EntityExporter();
 
 var fs = Npm.require('fs');
 var fse = Meteor.npmRequire('fs-extra');
@@ -84,12 +83,10 @@ var importZoneFromClara = function(scene) {
                     var zip = new AdmZip(zipFilepath);
                     zip.extractAllTo(zonePath, true);
 
-                    walk(zonePath, function(filePath, stat) {
+                    walk(zonePath, function(filePath) {
                         if (path.basename(filePath, '.json') === ibSceneId) {
-
                             var claraExportFilepath = path.dirname(filePath) + '/clara-export.json';
                             var ibWorldFilepath = path.dirname(filePath) + '/ib-world.json';
-                            var ibEntitiesFilepath = path.dirname(filePath) + '/ib-entities.json';
 
                             fs.renameSync(filePath, claraExportFilepath);
 
@@ -98,25 +95,20 @@ var importZoneFromClara = function(scene) {
                             var claraExportJson = JSON.parse(fs.readFileSync(claraExportFilepath, 'utf8'));
                             var ibWorld = postProcessWorld(claraExportJson);
 
+                            var uncompressed = 0; // 4 for stringify // TODO: pull from some config? or ENV?
+                            saveJson(ibWorld, ibWorldFilepath, uncompressed)
+                                .then(function() {
+                                    fs.unlinkSync(zipFilepath);
+                                    fs.unlinkSync(claraExportFilepath);
 
-                            // var part2 = '.meteor' + meteorBuildPublicPath.split('.meteor')[1];
-                            // console.log('part2', part2);
-
-                            Q.all([
-                                saveJson(ibWorld.worldMesh, ibWorldFilepath),
-                                saveJson(ibWorld.entities, ibEntitiesFilepath)
-                            ]).then(function() {
-                                fs.unlinkSync(zipFilepath);
-                                fs.unlinkSync(claraExportFilepath);
-
-                                // Do checks for these on production, probably not even needed
-                                // fse.copySync(path.dirname(filePath), path.dirname(filePath).replace('.meteor/local/build/programs/server/', ''));
-                            }).then(function() {
-                                deferred.resolve({
-                                    name: ibSceneId,
-                                    entities: ibWorld.entities
-                                });
-                            }, deferred.reject);
+                                    // Do checks for these on production, probably not even needed
+                                    // fse.copySync(path.dirname(filePath), path.dirname(filePath).replace('.meteor/local/build/programs/server/', ''));
+                                }).then(function() {
+                                    deferred.resolve({
+                                        name: ibSceneId,
+                                        entities: ibWorld
+                                    });
+                                }, deferred.reject);
                         }
                     });
                 }
@@ -132,7 +124,6 @@ var importZoneFromClara = function(scene) {
 
         var obj = loader.parse(json);
 
-
         // Calculate centroids (gone in three r71)
         var computeCentroidPerFace = function(face, geometry) {
             face.centroid = new THREE.Vector3(0, 0, 0);
@@ -141,6 +132,7 @@ var importZoneFromClara = function(scene) {
             face.centroid.add(geometry.vertices[face.c]);
             face.centroid.divideScalar(3);
         };
+
         var computeCentroids = function(geometry) {
             var f, fl, face;
 
@@ -150,7 +142,6 @@ var importZoneFromClara = function(scene) {
             }
         };
 
-
         var mergedMeshesGeometry = new THREE.Geometry();
         var mergedMaterialsCollection = [];
 
@@ -159,6 +150,7 @@ var importZoneFromClara = function(scene) {
         obj.traverse(function(child) {
             child.updateMatrixWorld(true);
 
+            // we basically want to pull out entities as a separate scene so they dont get merged into the world
             if (child.userData.entity || child.hasEntityAncestor) {
                 if (!child.hasEntityAncestor) { // we only want to push the first parent
                     child.traverse(function(c) {
@@ -167,8 +159,7 @@ var importZoneFromClara = function(scene) {
                             c.hasEntityAncestor = true;
                         }
                     });
-                    var parsedEntity = parseEntity(child);
-                    entitiesCollection.push(parsedEntity);
+                    entitiesCollection.push(child);
                 }
             } else {
                 if (child.geometry) {
@@ -188,7 +179,6 @@ var importZoneFromClara = function(scene) {
         });
 
         function mergeMaterials(geometry1, materials1, geometry2, materials2) {
-
             var matrix, matrixRotation,
                 vertexOffset = geometry1.vertices.length,
                 uvPosition = geometry1.faceVertexUvs[0].length,
@@ -202,18 +192,13 @@ var importZoneFromClara = function(scene) {
             var geo1MaterialsMap = {};
 
             for (var i = 0; i < materials1.length; i++) {
-
                 var id = materials1[i].id;
-
                 geo1MaterialsMap[id] = i;
-
             }
 
             // vertices
             for (var i = 0, il = vertices2.length; i < il; i++) {
-
                 var vertex = vertices2[i];
-
                 var vertexCopy = vertex.clone();
 
                 if (matrix) {
@@ -221,17 +206,14 @@ var importZoneFromClara = function(scene) {
                 }
 
                 vertices1.push(vertexCopy);
-
             }
 
             // faces
             for (i = 0, il = faces2.length; i < il; i++) {
-
                 var face = faces2[i],
                     faceCopy, normal, color,
                     faceVertexNormals = face.vertexNormals,
                     faceVertexColors = face.vertexColors;
-
 
                 faceCopy = new THREE.Face3(face.a + vertexOffset, face.b + vertexOffset, face.c + vertexOffset);
                 computeCentroidPerFace(faceCopy, geometry1);
@@ -243,90 +225,79 @@ var importZoneFromClara = function(scene) {
                 }
 
                 for (var j = 0, jl = faceVertexNormals.length; j < jl; j++) {
-
                     normal = faceVertexNormals[j].clone();
-
                     if (matrixRotation) {
                         matrixRotation.multiplyVector3(normal);
                     }
 
                     faceCopy.vertexNormals.push(normal);
-
                 }
 
                 faceCopy.color.copy(face.color);
 
                 for (var j = 0, jl = faceVertexColors.length; j < jl; j++) {
-
                     color = faceVertexColors[j];
                     faceCopy.vertexColors.push(color.clone());
-
                 }
 
                 if (face.materialIndex !== undefined) {
-
-
-
                     var material2 = materials2[face.materialIndex];
                     var materialId2 = material2.id;
-
                     var materialIndex = geo1MaterialsMap[materialId2];
 
                     if (materialIndex === undefined) {
-
                         materialIndex = materials1.length;
                         geo1MaterialsMap[materialId2] = materialIndex;
-
                         materials1.push(material2);
-
                     }
 
                     faceCopy.materialIndex = materialIndex;
-
                 }
 
                 faceCopy.centroid.copy(face.centroid);
+
                 if (matrix) {
                     matrix.multiplyVector3(faceCopy.centroid);
                 }
 
                 faces1.push(faceCopy);
-
             }
 
             // uvs
             for (i = 0, il = uvs2.length; i < il; i++) {
-
                 var uv = uvs2[i],
                     uvCopy = [];
 
                 for (var j = 0, jl = uv.length; j < jl; j++) {
-
                     uvCopy.push(new THREE.Vector2(uv[j].x, uv[j].y));
-
                 }
 
                 uvs1.push(uvCopy);
-
             }
-
         }
 
         var mergedMeshes = new THREE.Mesh(mergedMeshesGeometry, new THREE.MeshFaceMaterial(mergedMaterialsCollection));
         mergedMeshes.name = 'WorldMesh';
 
-        return {
-            worldMesh: mergedMeshes,
-            entities: entitiesCollection
-        };
+        var finalScene = new THREE.Object3D();
+        finalScene.name = obj.name || 'World';
+
+        finalScene.add(mergedMeshes);
+
+        // this will reparent them for the export
+        entitiesCollection.forEach(function(ent) {
+            finalScene.add(ent);
+        });
+
+        return finalScene;
     };
 
-    var saveJson = function(data, savePath) {
+    var saveJson = function(data, savePath, uncompressed) {
         var deferred = Q.defer();
 
         mkdirp.sync(path.dirname(savePath));
 
-        fs.writeFile(savePath, JSON.stringify(data, null, 4), function(err) {
+        fs.writeFile(savePath, JSON.stringify(data, null, uncompressed), function(err) {
             if (err) {
                 console.log(err);
                 return deferred.reject(err);
@@ -337,132 +308,6 @@ var importZoneFromClara = function(scene) {
         });
 
         return deferred.promise;
-    };
-
-    var parseEntity = function(entity) {
-        // Push straight into the Meteor entities collection!
-        // console.log(entity);
-        var parseObject = function(object) {
-
-            var data = {};
-
-            if (object.name !== '') {
-                data.name = object.name;
-            }
-
-            if (JSON.stringify(object.userData) !== '{}') {
-                data.userData = object.userData;
-            }
-
-            if (object.visible !== true) {
-                data.visible = object.visible;
-            }
-
-            if (object.hasEntityAncestor) {
-                // it's a child of a ripped entity, so use the normal matrix
-                data.matrix = object.matrix.toArray();
-            } else {
-                data.matrix = object.matrixWorld.toArray();
-            }
-
-            data.components = {};
-
-            // only IF this object has been marked as an entity, otherwise it's for the editor or something else
-            if (object.userData && object.userData.entity) {
-                if (object instanceof THREE.Scene) {
-                    // scene won't be anything in Entity-Speak
-                } else if (object instanceof THREE.PerspectiveCamera && object.userData.entity === 'camera') {
-                    data.components.camera = {
-                        projection: 'perspective',
-                        fov: object.fov,
-                        aspect: object.aspect,
-                        near: object.near,
-                        far: object.far
-                    };
-                } else if (object instanceof THREE.OrthographicCamera && object.userData.entity === 'camera') {
-                    data.components.camera = {
-                        type: 'OrthographicCamera',
-                        left: object.left,
-                        right: object.right,
-                        top: object.top,
-                        bottom: object.bottom,
-                        near: object.near,
-                        far: object.far
-                    };
-                    // clara doesn't let you add ambient lights, we hack them into the scene using directional with a specific name
-                } else if ((object instanceof THREE.AmbientLight && object.userData.entity === 'light') || (object.userData.entity === 'light' && object.name === 'AmbientLight')) {
-                    data.components.light = {
-                        type: 'AmbientLight',
-                        color: object.color.getHex()
-                    };
-                } else if (object instanceof THREE.DirectionalLight && object.userData.entity === 'light') {
-                    data.components.light = {
-                        type: 'DirectionalLight',
-                        color: object.color.getHex(),
-                        intensity: object.intensity
-                    };
-                } else if (object instanceof THREE.PointLight && object.userData.entity === 'light') {
-                    data.components.light = {
-                        type: 'PointLight',
-                        color: object.color.getHex(),
-                        intensity: object.intensity,
-                        distance: object.distance
-                    };
-                } else if (object instanceof THREE.SpotLight && object.userData.entity === 'light') {
-                    data.components.light = {
-                        type: 'SpotLight',
-                        color: object.color.getHex(),
-                        intensity: object.intensity,
-                        distance: object.distance,
-                        angle: object.angle,
-                        exponent: object.exponent
-                    };
-                } else if (object instanceof THREE.HemisphereLight && object.userData.entity === 'light') {
-                    data.components.light = {
-                        type: 'HemisphereLight',
-                        color: object.color.getHex(),
-                        groundColor: object.groundColor.getHex()
-                    };
-                } else if (object instanceof THREE.Mesh && object.userData.entity === 'model') {
-                    var modelType = object.userData.modelType || 'mesh';
-
-                    data.components.model = {
-                        type: modelType,
-                        geometry: object.geometry.toJSON(),
-                        material: object.material.toJSON()
-                    };
-                } else if (object instanceof THREE.Sprite && object.userData.entity === 'sprite') {
-                    data.components.sprite = {
-                        material: object.material.toJSON()
-                    };
-                } else if (object.userData.entity === 'achievement') {
-                    data.components.achievement = {
-                        type: object.userData['achievement-type'],
-                        radius: object.userData.radius
-                    };
-                } else if (object.userData.entity) {
-                    // this is where we are using entity templates (prefabs)
-                    // all userData is passed to the prefab, you only need something custom above IIF
-                    // you have need for properties that lie outside of userData (postion, material, etc)
-                    data.prefab = object.userData.entity;
-                }
-            }
-
-            if (object.children.length > 0) {
-                data.children = [];
-
-                for (var i = 0; i < object.children.length; i++) {
-                    data.children.push(parseObject(object.children[i]));
-                }
-            }
-
-            return data;
-        };
-
-        var parsedEntity = parseObject(entity);
-
-        return parsedEntity;
-
     };
 
     exportClaraScenes(scene);
