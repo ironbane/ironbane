@@ -31,13 +31,15 @@ angular
                 added: function(doc) {
                     $activeWorlds[doc.name] = new ThreeWorld();
                     $log.log('adding zone: ', doc.name);
+                    // load the initial zone data from the world file
+                    $activeWorlds[doc.name].load(doc.name);
                 },
                 removed: function(doc) {
                     delete $activeWorlds[doc.name];
                 }
             });
 
-            var entitiesCursor = Entities.find({});
+            /*var entitiesCursor = Entities.find({});
             entitiesCursor.observe({
                 added: function(doc) {
                     if ($activeWorlds[doc.level]) {
@@ -63,7 +65,7 @@ angular
                         });
                     }
                 }
-            });
+            });*/
         }
     ])
     .run([
