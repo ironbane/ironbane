@@ -277,7 +277,9 @@ var importZoneFromClara = function(scene) {
         }
 
         var mergedMeshes = new THREE.Mesh(mergedMeshesGeometry, new THREE.MeshFaceMaterial(mergedMaterialsCollection));
-        mergedMeshes.name = 'WorldMesh';
+        mergedMeshes.name = 'Merged Meshes';
+        mergedMeshes.userData = mergedMeshes.userData || {};
+        mergedMeshes.userData.prefab = 'WorldMesh';
 
         var finalScene = new THREE.Object3D();
         finalScene.name = obj.name || 'World';
