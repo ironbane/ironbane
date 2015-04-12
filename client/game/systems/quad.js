@@ -3,7 +3,7 @@ angular
     .module('game.systems.quad', [
         'ces',
         'three',
-        'engine.texture-loader',
+        'engine.textureLoader',
         'engine.char-builder'
     ])
     .factory('QuadSystem', [

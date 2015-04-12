@@ -2,7 +2,7 @@ angular
     .module('game.systems.sprite', [
         'ces',
         'three',
-        'engine.texture-loader'
+        'engine.textureLoader'
     ])
     .factory('SpriteSystem', [
         'System',

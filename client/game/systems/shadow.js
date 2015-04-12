@@ -3,7 +3,7 @@ angular
     .module('game.systems.shadow', [
         'ces',
         'three',
-        'engine.texture-loader'
+        'engine.textureLoader'
     ])
     .factory('ShadowSystem', [
         'System',

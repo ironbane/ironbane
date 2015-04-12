@@ -123,10 +123,10 @@ angular
 
                         // Make sure the cam doesn't go through walls here
                         // by raycasting
-                        var scenes = this.world.getEntities('scene');
+                        var entitiesWithOctree = this.world.getEntities('octree');
 
-                        if (scenes.length) {
-                            var octree = scenes[0].octreeResultsNearPlayer;
+                        if (entitiesWithOctree.length) {
+                            var octree = entitiesWithOctree[0].getComponent('octree').octreeResultsNearPlayer;
 
                             if (octree) {
                                 var rotatedOriginalThirdPersonPosition = originalThirdPersonPosition.clone();

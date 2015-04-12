@@ -1,8 +1,7 @@
 angular
     .module('game.systems.nameMesh', [
         'ces',
-        'three',
-        'engine.texture-loader'
+        'three'
     ])
     .factory('NameMeshSystem', [
         'System',

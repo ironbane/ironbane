@@ -1,14 +1,12 @@
 angular
     .module('game.systems.helper', [
         'ces',
-        'three',
-        'engine.texture-loader'
+        'three'
     ])
     .factory('HelperSystem', [
         'System',
         'THREE',
-        'TextureLoader',
-        function(System, THREE, TextureLoader) {
+        function(System, THREE) {
             'use strict';
 
             var HelperSystem = System.extend({

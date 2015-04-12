@@ -9,7 +9,7 @@ angular
         'game.systems.proctree',
         'game.systems.quad',
         'game.systems.rigidBody',
-        'game.systems.scene',
+        'game.systems.octree',
         'game.systems.script',
         'game.systems.shadow',
         'game.systems.sprite',

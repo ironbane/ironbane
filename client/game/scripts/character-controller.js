@@ -85,17 +85,16 @@ angular
                     rigidBodyComponent.rigidBody.setFriction(0.7);
                 }
 
-                var scenes = this.world.getEntities('scene');
-
-
+                var entitiesWithOctree = this.world.getEntities('octree');
                 // TODO cache raycasts, this needs to raycast again which could actually use the one
                 // used from the shadow. Perhaps a raycastmanager of some sort is needed.
 
                 // Reset just to be sure
                 this.canJump = false;
 
-                if (scenes.length) {
-                    var octree = scenes[0].octreeResultsNearPlayer;
+                if (entitiesWithOctree.length) {
+                    // assuming only one? technically there could be many...
+                    var octree = entitiesWithOctree[0].getComponent('octree').octreeResultsNearPlayer;
 
                     if (octree) {
                         var ray = new THREE.Raycaster(this.entity.position, new THREE.Vector3(0, -1, 0));

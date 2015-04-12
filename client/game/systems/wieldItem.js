@@ -2,7 +2,7 @@ angular
     .module('game.systems.wieldItem', [
         'ces',
         'three',
-        'engine.texture-loader',
+        'engine.textureLoader',
         'engine.util'
     ])
     .factory('WieldItemSystem', [
