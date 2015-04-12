@@ -6,7 +6,6 @@ angular
         'game.ui.directives',
         'game.ui.states.three-root.play',
         'game.ui.states.three-root.main-menu',
-        'engine.level-loader',
         'game.constants',
         'game.world-root'
     ])
@@ -29,10 +28,9 @@ angular
                 '$scope',
                 '$log',
                 'IB_CONSTANTS',
-                'LevelLoader',
                 '$rootWorld',
                 '$state',
-                function($meteor, $scope, $log, IB_CONSTANTS, LevelLoader, $rootWorld, $state) {
+                function($meteor, $scope, $log, IB_CONSTANTS, $rootWorld, $state) {
                     $scope.IB_CONSTANTS = IB_CONSTANTS;
                     $scope.logout = function() {
                         return $meteor.logout()
@@ -45,6 +43,7 @@ angular
                             });
                     };
 
+                    // TODO: we should really reset rootWorld instead
                     function clearOldLevel(level) {
                         var nodesToBeRemoved = [];
 
@@ -70,7 +69,7 @@ angular
 
                         clearOldLevel(level);
 
-                        LevelLoader.load(level)
+                        $rootWorld.load(level)
                             .catch(function(err) {
                                 $log.debug('error loading level ', level, err);
                             });
