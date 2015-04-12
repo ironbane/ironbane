@@ -151,7 +151,7 @@ var importZoneFromClara = function(scene) {
             child.updateMatrixWorld(true);
 
             // we basically want to pull out entities as a separate scene so they dont get merged into the world
-            if (child.userData.entity || child.hasEntityAncestor) {
+            if (child.userData.entity || child.userData.prefab || child.hasEntityAncestor) {
                 if (!child.hasEntityAncestor) { // we only want to push the first parent
                     child.traverse(function(c) {
                         // traverse also calls on itself...
