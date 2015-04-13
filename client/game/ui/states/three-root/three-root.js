@@ -69,6 +69,8 @@ angular
 
                         clearOldLevel(level);
 
+                        $rootWorld.name = level; // need this for pathing
+
                         $rootWorld.load(level)
                             .catch(function(err) {
                                 $log.debug('error loading level ', level, err);
