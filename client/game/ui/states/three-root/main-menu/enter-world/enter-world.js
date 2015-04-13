@@ -8,8 +8,7 @@ angular
         'engine.util',
         'game.constants',
         'game.ui.dialog',
-        'util.name-gen',
-        'game.ui.chat.chatService'
+        'util.name-gen'
     ])
     .config(['$stateProvider', function($stateProvider) {
         'use strict';
@@ -24,9 +23,8 @@ angular
                 'dialogService',
                 'FantasyNameGenerator',
                 'IB_CONSTANTS',
-                'ChatService',
                 function($scope, $state, $meteor, CharBuilder, dialogService,
-                    FantasyNameGenerator, IB_CONSTANTS, ChatService) {
+                    FantasyNameGenerator, IB_CONSTANTS) {
 
                     $scope.currentCharacterIndex = 0;
 
@@ -62,26 +60,26 @@ angular
 
                     var enterGame = function(charId) {
 
-                    	// We need to first change to playmode so network.js can test whether
-                    	// we are already playing, and add the player as a normal entity instead
-                    	// of one with special player components. Should this fail (e.g. we are already logged in)
-                    	// we'll just go back to our lastState.
-                    	var lastState = $state.current.name;
-                    	$state.go('three-root.play');
+                        // We need to first change to playmode so network.js can test whether
+                        // we are already playing, and add the player as a normal entity instead
+                        // of one with special player components. Should this fail (e.g. we are already logged in)
+                        // we'll just go back to our lastState.
+                        var lastState = $state.current.name;
+                        $state.go('three-root.play');
 
                         $meteor.call('enterGame', charId)
-                        .then(function () {
-	                        var activeChar = Entities.findOne({
-	                            _id: charId
-	                        });
+                            .then(function() {
+                                var activeChar = Entities.findOne({
+                                    _id: charId
+                                });
 
-	                        Session.set('activeLevel', activeChar.level);
-                        }, function(err) {
-                            if (err) {
-                            	$state.go(lastState);
-                                dialogService.alert(err.reason);
-                            }
-                        });
+                                Session.set('activeLevel', activeChar.level);
+                            }, function(err) {
+                                if (err) {
+                                    $state.go(lastState);
+                                    dialogService.alert(err.reason);
+                                }
+                            });
 
                     };
 

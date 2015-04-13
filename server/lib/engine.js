@@ -9,7 +9,9 @@ angular
         'prefabs',
         'engine.entity-cache',
         'engine.entity-builder',
-        'server.characterService'
+        'server.characterService',
+        'server.gameService',
+        'systems.network'
     ])
     .value('$activeWorlds', {})
     .run([
@@ -19,7 +21,8 @@ angular
         'EntityBuilder',
         '$activeWorlds',
         'ThreeWorld',
-        function($log, $rootWorld, AutoAnnounceSystem, EntityBuilder, $activeWorlds, ThreeWorld) {
+        'NetworkSystem',
+        function($log, $rootWorld, AutoAnnounceSystem, EntityBuilder, $activeWorlds, ThreeWorld, NetworkSystem) {
             'use strict';
 
             // on the server the rootWorld isn't actually tied to any scene
@@ -29,12 +32,17 @@ angular
             var zonesCursor = Collections.Zones.find({});
             zonesCursor.observe({
                 added: function(doc) {
-                    $activeWorlds[doc.name] = new ThreeWorld();
-                    $log.log('adding zone: ', doc.name);
+                    var world = $activeWorlds[doc.name] = new ThreeWorld(doc.name);
+                    $log.log('adding zone: ', world.name);
+
+                    // setup the systems this world will use
+                    world.addSystem(new NetworkSystem());
+
                     // load the initial zone data from the world file
-                    $activeWorlds[doc.name].load(doc.name);
+                    world.load(doc.name);
                 },
                 removed: function(doc) {
+                    // TODO: add some shutdown code for the zone (persist to db, etc)
                     delete $activeWorlds[doc.name];
                 }
             });
