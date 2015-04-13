@@ -17,7 +17,6 @@ angular
     .service('GameService', [
         '$rootWorld',
         'CameraSystem',
-        'ModelSystem',
         'LightSystem',
         'SpriteSystem',
         'QuadSystem',
@@ -38,8 +37,7 @@ angular
         'Network',
         'TriggerSystem',
         'MeshSystem',
-        function($rootWorld, CameraSystem, ModelSystem,
-            LightSystem, SpriteSystem, QuadSystem, HelperSystem, OctreeSystem, ScriptSystem,
+        function($rootWorld, CameraSystem, LightSystem, SpriteSystem, QuadSystem, HelperSystem, OctreeSystem, ScriptSystem,
             SoundSystem, InputSystem, RigidBodySystem, CollisionReporterSystem, WieldItemSystem,
             EntityBuilder, $log, ProcTreeSystem, ShadowSystem,
             FantasyNameGenerator, NameMeshSystem, Network, TriggerSystem, MeshSystem) {
@@ -56,7 +54,6 @@ angular
                 $rootWorld.addSystem(new ScriptSystem(), 'scripts');
                 $rootWorld.addSystem(new ProcTreeSystem(), 'proctree');
                 $rootWorld.addSystem(new SpriteSystem());
-                $rootWorld.addSystem(new ModelSystem());
                 $rootWorld.addSystem(new LightSystem());
                 $rootWorld.addSystem(new QuadSystem());
                 $rootWorld.addSystem(new RigidBodySystem(), 'rigidbody');

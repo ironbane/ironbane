@@ -4,7 +4,6 @@ angular
         'game.systems.collisionReporter',
         'game.systems.helper',
         'game.systems.light',
-        'game.systems.model',
         'game.systems.nameMesh',
         'game.systems.proctree',
         'game.systems.quad',
