@@ -12,7 +12,8 @@ angular
         'Ammo',
         '$q',
         'PhysicsWorld',
-        function(System, THREE, Ammo, $q, PhysicsWorld) {
+        '$log',
+        function(System, THREE, Ammo, $q, PhysicsWorld, $log) {
             'use strict';
 
             // A lot of code here is based on Chandler Prall's Physijs
@@ -293,14 +294,15 @@ angular
 
                         // Preprocess triangles if we are dealing with a concave mesh
                         if (rigidBodyData.shape.type === 'concave') {
-                            var sceneComponent = entity.getComponent('scene');
-                            if (sceneComponent) {
+                            var meshComponent = entity.getComponent('mesh');
+                            if (meshComponent) {
+                                //$log.debug('rigidBody meshComponent', meshComponent);
                                 // Wait for the triangles to load first
-                                promise = sceneComponent.meshTask.then(function() {
-                                    return calculateMeshTriangles(sceneComponent.scene);
-                                }).then(function(triangles) {
-                                    rigidBodyData.shape.triangles = triangles;
-                                });
+                                promise = meshComponent._meshLoadTask
+                                    .then(calculateMeshTriangles)
+                                    .then(function(triangles) {
+                                        rigidBodyData.shape.triangles = triangles;
+                                    });
                             }
                         }
 
@@ -309,8 +311,6 @@ angular
 
                             var rigidBodyInfo;
                             var rigidBody;
-
-
 
                             // TODO watch memory usage here! potential memory leak
                             // Ammo stuff must be cleaned up after use

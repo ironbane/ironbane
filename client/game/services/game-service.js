@@ -34,13 +34,13 @@ angular
         'ShadowSystem',
         'FantasyNameGenerator',
         'NameMeshSystem',
-        'Network',
+        'NetworkSystem',
         'TriggerSystem',
         'MeshSystem',
         function($rootWorld, CameraSystem, LightSystem, SpriteSystem, QuadSystem, HelperSystem, OctreeSystem, ScriptSystem,
             SoundSystem, InputSystem, RigidBodySystem, CollisionReporterSystem, WieldItemSystem,
             EntityBuilder, $log, ProcTreeSystem, ShadowSystem,
-            FantasyNameGenerator, NameMeshSystem, Network, TriggerSystem, MeshSystem) {
+            FantasyNameGenerator, NameMeshSystem, NetworkSystem, TriggerSystem, MeshSystem) {
             'use strict';
 
             this.start = function() {
@@ -49,6 +49,7 @@ angular
                 // TODO: fix that
                 $rootWorld.addSystem(new OctreeSystem(), 'octree');
                 $rootWorld.addSystem(new NameMeshSystem());
+                $rootWorld.addSystem(new MeshSystem(), 'meshes'); // meshes need high priority, at least before rigidbody
                 $rootWorld.addSystem(new InputSystem(), 'input');
                 $rootWorld.addSystem(new SoundSystem(), 'sound');
                 $rootWorld.addSystem(new ScriptSystem(), 'scripts');
@@ -62,13 +63,13 @@ angular
                 $rootWorld.addSystem(new WieldItemSystem());
                 $rootWorld.addSystem(new ShadowSystem());
                 $rootWorld.addSystem(new TriggerSystem(), 'triggers');
-                $rootWorld.addSystem(new MeshSystem(), 'meshes');
+                $rootWorld.addSystem(new NetworkSystem(), 'net');
 
                 // NOTE: this should be the LAST system as it does rendering!!
                 $rootWorld.addSystem(new CameraSystem(), 'camera');
 
                 // Initialize Meteor's entities collection
-                Network.init();
+                //Network.init();
             };
         }
     ]);

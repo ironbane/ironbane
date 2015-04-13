@@ -1,6 +1,7 @@
 angular
     .module('game.ui.states.three-root.main-menu', [
         'ui.router',
+        'angular-meteor',
         'game.ui.states.three-root.main-menu.enter-world',
         'game.ui.states.three-root.main-menu.create-char',
         'game.ui.states.three-root.main-menu.login',
@@ -16,6 +17,12 @@ angular
             templateUrl: 'client/game/ui/states/three-root/main-menu/main-menu.ng.html',
             abstract: true,
             resolve: {
+                entitiesSubscription: [
+                    '$meteor',
+                    function($meteor) {
+                        return $meteor.subscribe('entities');
+                    }
+                ],
                 MainMenuPanningCamera: [
                     '$rootWorld',
                     'EntityBuilder',
@@ -43,7 +50,9 @@ angular
                 '$rootWorld',
                 'MainMenuPanningCamera',
                 'IB_CONSTANTS',
-                function($rootWorld, MainMenuPanningCamera, IB_CONSTANTS) {
+                '$log',
+                function($rootWorld, MainMenuPanningCamera, IB_CONSTANTS, $log) {
+                    $log.debug('enter main menu state');
                     Session.set('activeLevel', IB_CONSTANTS.world.mainMenuLevel);
 
                     $rootWorld.addEntity(MainMenuPanningCamera);

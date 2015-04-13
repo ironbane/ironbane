@@ -106,8 +106,8 @@ angular
                     rotation: initialRotation,
                     level: startLevel,
                     cheats: cheats,
-                    prefab: 'Character',
                     userData: {
+                        prefab: 'Character',
                         skin: options.skin,
                         eyes: options.eyes,
                         hair: options.hair,

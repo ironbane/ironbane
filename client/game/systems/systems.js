@@ -5,6 +5,7 @@ angular
         'game.systems.helper',
         'game.systems.light',
         'game.systems.nameMesh',
+        'game.systems.network',
         'game.systems.proctree',
         'game.systems.quad',
         'game.systems.rigidBody',

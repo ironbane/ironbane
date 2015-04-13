@@ -2,6 +2,7 @@
 angular
     .module('IronbaneServer', [
         'ng',
+        'ces',
         'game.world-root',
         'game.threeWorld',
         'systems.autoAnnounceSystem',
@@ -22,7 +23,8 @@ angular
         '$activeWorlds',
         'ThreeWorld',
         'NetworkSystem',
-        function($log, $rootWorld, AutoAnnounceSystem, EntityBuilder, $activeWorlds, ThreeWorld, NetworkSystem) {
+        '$components',
+        function($log, $rootWorld, AutoAnnounceSystem, EntityBuilder, $activeWorlds, ThreeWorld, NetworkSystem, $components) {
             'use strict';
 
             // on the server the rootWorld isn't actually tied to any scene
@@ -47,12 +49,18 @@ angular
                 }
             });
 
-            /*var entitiesCursor = Entities.find({});
+            var entitiesCursor = Entities.find({
+                active: true
+            });
             entitiesCursor.observe({
                 added: function(doc) {
                     if ($activeWorlds[doc.level]) {
-                        var ent = EntityBuilder.load(doc);
+                        var ent = EntityBuilder.build(doc);
                         if (ent) {
+                            ent.addComponent($components.get('networked', {
+                                send: true,
+                                recieve: true
+                            }));
                             $activeWorlds[doc.level].addEntity(ent);
                         } else {
                             $log.log('error building entity for: ', doc);
@@ -73,7 +81,7 @@ angular
                         });
                     }
                 }
-            });*/
+            });
         }
     ])
     .run([

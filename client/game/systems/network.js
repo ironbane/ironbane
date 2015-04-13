@@ -21,11 +21,24 @@ angular
                     this._super();
 
                     this.updateFrequency = updateFrequency || 0.2;
-
-                    this._stream = new Meteor.Stream('entities');
                 },
                 addedToWorld: function(world) {
                     this._super(world);
+
+                    this._stream = new Meteor.Stream(world.name + '_entities');
+
+                    // this to just update transforms
+                    this._stream.on('transforms', function() {
+                        $log.debug('recieve transforms event', arguments);
+                    });
+                    // this for any adds (even first boot)
+                    this._stream.on('add', function() {
+                        $log.debug('recieve add event', arguments);
+                    });
+                    // this for any removes
+                    this._stream.on('remove', function() {
+                        $log.debug('recieve remove event', arguments);
+                    });
 
                     world.entityAdded('networked').add(onEntityAdded.bind(this));
                 },
