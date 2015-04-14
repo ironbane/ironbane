@@ -71,8 +71,6 @@ angular
                             scriptComponent.scripts = scriptComponent.scripts.concat([
                                 '/scripts/built-in/character-controller.js',
                                 '/scripts/built-in/character-multicam.js',
-                                '/scripts/built-in/admin-controls.js',
-                                '/scripts/built-in/network-send.js',
                             ]);
                         }
 

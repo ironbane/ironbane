@@ -55,7 +55,6 @@ angular
                     function($entityCache, $log, ChatService, $meteor, dialogService) {
                         var mainPlayer = $entityCache.get('mainPlayer');
                         if (mainPlayer) {
-                            var activeChar = mainPlayer.doc;
                             $log.debug('mainPlayer', mainPlayer);
 
                             // the cursor in network should be watching this to remove it from the world

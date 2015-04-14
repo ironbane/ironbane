@@ -36,6 +36,8 @@ angular
                 added: function(doc) {
                     var world = $activeWorlds[doc.name] = new ThreeWorld(doc.name);
                     $log.log('adding zone: ', world.name);
+                    // TODO: prolly track this elsewhere
+                    world._ownerCache = {};
 
                     // setup the systems this world will use
                     world.addSystem(new NetworkSystem());
@@ -61,6 +63,7 @@ angular
                                 send: true,
                                 recieve: true
                             }));
+                            $activeWorlds[doc.level]._ownerCache[doc.owner] = ent.uuid;
                             $activeWorlds[doc.level].addEntity(ent);
                         } else {
                             $log.log('error building entity for: ', doc);
@@ -69,16 +72,15 @@ angular
                     }
                 },
                 removed: function(doc) {
-                    var toBeRemoved = [];
                     if ($activeWorlds[doc.level]) {
-                        $activeWorlds[doc.level].traverse(function(node) {
-                            if (node.doc && node.doc._id === doc._id) {
-                                toBeRemoved.push(node);
-                            }
-                        });
-                        angular.forEach(toBeRemoved, function(removed) {
-                            $activeWorlds[doc.level].removeEntity(removed);
-                        });
+                        var worldId = $activeWorlds[doc.level]._ownerCache[doc.owner],
+                            entity = $activeWorlds[doc.level].getObjectByProperty('uuid', worldId);
+
+                        if (entity) {
+                            $activeWorlds[doc.level].removeEntity(entity);
+                        } else {
+                            $log.debug('id not found', worldId, doc);
+                        }
                     }
                 }
             });
