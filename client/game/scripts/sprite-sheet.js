@@ -57,7 +57,7 @@ angular
                 var index = 0;
 
                 if (entitiesWithCamera.length) {
-                    var activeCamera = entitiesWithCamera[0].getComponent('camera').camera;
+                    var activeCamera = entitiesWithCamera[0].getComponent('camera')._camera;
 
                     var camWorldPos = new THREE.Vector3();
                     camWorldPos.setFromMatrixPosition(activeCamera.matrixWorld);

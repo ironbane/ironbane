@@ -79,7 +79,7 @@ angular
 
                     if (entitiesWithCamera.length) {
                         // HACK: this might not be the active camera someday...
-                        activeCamera = entitiesWithCamera[0].getComponent('camera').camera;
+                        activeCamera = entitiesWithCamera[0].getComponent('camera')._camera;
                     }
 
                     if (!activeCamera) {

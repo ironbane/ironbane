@@ -149,7 +149,7 @@ angular
                             var entitiesWithCamera = world.getEntities('camera');
 
                             if (entitiesWithCamera.length) {
-                                var activeCamera = entitiesWithCamera[0].getComponent('camera').camera;
+                                var activeCamera = entitiesWithCamera[0].getComponent('camera')._camera;
 
                                 wo.position.copy(entity.position);
 

@@ -63,10 +63,10 @@ angular
                 var cameraComponent = this.entity.getComponent('camera');
 
                 if (cameraComponent) {
-                    cameraComponent.camera.rotation.set(0, 0, 0);
+                    cameraComponent._camera.rotation.set(0, 0, 0);
                 }
 
-                detachedCam = cameraComponent.camera.clone();
+                detachedCam = cameraComponent._camera.clone();
 
                 // TODO: move this event listener some place else
                 // maybe to constructor of Camera somehow?
@@ -78,8 +78,8 @@ angular
 
                 entity.parent.add(detachedCam);
 
-                localCam = cameraComponent.camera;
-                cameraComponent.camera = detachedCam;
+                localCam = cameraComponent._camera;
+                cameraComponent._camera = detachedCam;
 
                 IbConfig.get('domElement').addEventListener('mousemove', bind(this, this.onMouseMove), false);
             };

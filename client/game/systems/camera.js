@@ -29,12 +29,12 @@ angular
                         }
 
                         // track reference
-                        camData.camera = cam;
+                        camData._camera = cam;
                         entity.add(cam);
                     });
 
                     world.entityRemoved('camera').add(function(entity) {
-                        entity.remove(entity.getComponent('camera').camera);
+                        entity.remove(entity.getComponent('camera')._camera);
                     });
                 },
                 update: function() {
@@ -58,7 +58,7 @@ angular
                     });
 
                     cameras.forEach(function(camera) {
-                        world.renderer.render(world.scene, camera.getComponent('camera').camera);
+                        world.renderer.render(world.scene, camera.getComponent('camera')._camera);
                     });
                 }
             });
