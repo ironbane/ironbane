@@ -63,24 +63,23 @@ angular
                 update: function() {
                     var world = this.world,
                         shadows = world.getEntities('shadow'),
-                        scenes = this.world.getEntities('scene');
+                        octreeEnts = this.world.getEntities('octree');
 
                     shadows.forEach(function(shadowEnt) {
                         var shadow = shadowEnt.getComponent('shadow').shadow;
+                        octreeEnts.forEach(function(entity) {
+                            var octreeComponent = entity.getComponent('octree');
 
-                        if (scenes.length) {
-                            var octree = scenes[0].octreeResultsNearPlayer;
-
-                            if (octree) {
+                            if (octreeComponent.octreeResultsNearPlayer) {
                                 var ray = new THREE.Raycaster(shadowEnt.position, new THREE.Vector3(0, -1, 0));
 
-                                var intersections = ray.intersectOctreeObjects(octree);
+                                var intersections = ray.intersectOctreeObjects(octreeComponent.octreeResultsNearPlayer);
 
                                 if (intersections.length) {
                                     shadow.position.copy(intersections[0].point.add(new THREE.Vector3(0, 0.01, 0)));
                                 }
                             }
-                        }
+                        });
                     });
                 }
             });

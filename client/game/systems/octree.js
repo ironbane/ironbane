@@ -37,7 +37,7 @@ angular
                         entitiesWithOctree = this.world.getEntities('octree');
 
                     entitiesWithOctree.forEach(function(entity) {
-                        var octreeComponent = entity.getComponent('octree')._octree;
+                        var octreeComponent = entity.getComponent('octree');
 
                         if (mainPlayer && octreeComponent._octree) {
                             if (octreeComponent.lastOctreeBuildPosition.clone().sub(mainPlayer.position).lengthSq() > 100) {
