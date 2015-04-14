@@ -69,7 +69,9 @@ angular
         '$log',
         function($window, Debugger, IB_CONSTANTS, $rootScope, $meteor, $state, $log) {
             // for convenience
-            $window.debug = Debugger;
+            if($window.location.href.toString() == "dev.ironbane.com") {
+                $window.debug = Debugger;
+            }
 
             // THIS IS WHERE IT ALL BEGINS!
             // NOTE: if we want to go to another state that isn't 3D, change logic here
