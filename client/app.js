@@ -69,7 +69,7 @@ angular
         '$log',
         function($window, Debugger, IB_CONSTANTS, $rootScope, $meteor, $state, $log) {
             // for convenience
-            if(ironbaneConstants.isDev == true) {
+            if(IB_CONSTANTS.isDev) {
                 $window.debug = Debugger;
             }
 
