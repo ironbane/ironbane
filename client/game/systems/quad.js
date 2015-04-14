@@ -56,7 +56,7 @@ angular
                             });
                         }
 
-                        quadData.quad = quad;
+                        quadData._quad = quad;
                         // It's not worth it to keep the quad as a child of the original entity,
                         // because the only thing that needs to be sync'd is the position.
                         // It's hard to get the rotations and scaling right in terms of math (atleast for me)
@@ -67,7 +67,7 @@ angular
 
                     world.entityRemoved('quad').add(function(entity) {
                         // because it was above added to the scene, now we have to manually remove it
-                        var quad = entity.getComponent('quad').quad;
+                        var quad = entity.getComponent('quad')._quad;
                         world.scene.remove(quad);
                     });
                 },
@@ -88,7 +88,7 @@ angular
                     }
 
                     quads.forEach(function(quadEnt) {
-                        var quad = quadEnt.getComponent('quad').quad;
+                        var quad = quadEnt.getComponent('quad')._quad;
                         if (!quad) {
                             //$log.warn('quad not loaded for entity', quadEnt);
                             return;

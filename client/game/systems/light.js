@@ -51,7 +51,7 @@ angular
                                 break;
                         }
 
-                        lightData.light = light;
+                        lightData._light = light;
                         entity.add(light);
                     });
                 },

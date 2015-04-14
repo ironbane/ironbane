@@ -423,7 +423,7 @@ angular
                             if (quadComponent) {
                                 var lookAtCameraScript = entity.getScript('/scripts/built-in/look-at-camera.js');
                                 if (lookAtCameraScript) {
-                                    quadComponent.quad.position.copy(entity.position);
+                                    quadComponent._quad.position.copy(entity.position);
                                 }
                             }
                         }

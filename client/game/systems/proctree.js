@@ -9,8 +9,7 @@ angular
         'System',
         'ProcTree',
         '$log',
-        'TextureLoader',
-        function(THREE, System, ProcTree, $log, TextureLoader) {
+        function(THREE, System, ProcTree, $log) {
             'use strict';
             var ProcTreeSystem = System.extend({
                 addedToWorld: function(world) {
@@ -96,7 +95,7 @@ angular
                         treeModel.add(trunkMesh);
                         treeModel.add(twigMesh);
 
-                        component.tree = treeModel; // store reference in the component
+                        component._treeModel = treeModel; // store reference in the component
                         entity.add(treeModel);
 
                     });

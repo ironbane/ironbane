@@ -33,7 +33,7 @@ angular
                             helper = new THREE.Line(lineGeo, lineMat);
                             helper.type = THREE.Lines;
 
-                            helperData.helper = helper;
+                            helperData._helper = helper;
                             entity.add(helper);
                         }
 

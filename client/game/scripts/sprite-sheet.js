@@ -128,7 +128,7 @@ angular
                 var quadComponent = this.entity.getComponent('quad');
 
                 if (quadComponent) {
-                    var quad = quadComponent.quad;
+                    var quad = quadComponent._quad;
 
                     var dirIndex = getDirectionSpriteIndex(this.entity, this.world);
 
