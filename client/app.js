@@ -69,7 +69,7 @@ angular
         '$log',
         function($window, Debugger, IB_CONSTANTS, $rootScope, $meteor, $state, $log) {
             // for convenience
-            if($window.location.href.toString() == "dev.ironbane.com") {
+            if($window.location.href.toString() == "http://dev.ironbane.com/") {
                 $window.debug = Debugger;
             }
 
