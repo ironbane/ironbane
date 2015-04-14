@@ -24,11 +24,16 @@ angular
             function onEntityAdded(entity) {
                 // not sure why but the stream isn't calling the same toJSON...
                 var serialized = JSON.parse(JSON.stringify(entity));
-                $log.debug('netAdd', serialized);
+                //$log.debug('netAdd', serialized);
                 // when a networked entity is added to the world
                 // then we should send that to the clients
 
                 this._stream.emit('add', serialized);
+            }
+
+            function onEntityRemoved(entity) {
+                // since we're syncing up the server's uuid, just send that
+                this._stream.emit('remove', entity.uuid);
             }
 
             var NetworkSystem = System.extend({
@@ -53,6 +58,7 @@ angular
                     this._stream.on('transforms', onRecieveTransforms.bind(this));
 
                     world.entityAdded('networked').add(onEntityAdded.bind(this));
+                    world.entityRemoved('networked').add(onEntityRemoved.bind(this));
                 },
                 update: function() {
 

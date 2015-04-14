@@ -1,11 +1,19 @@
 angular
     .module('game.systems.network', [
-        'ces'
+        'ces',
+        'engine.entity-builder',
+        'game.world-root',
+        'engine.entity-cache'
     ])
     .factory('NetworkSystem', [
         'System',
+        'EntityBuilder',
         '$log',
-        function(System, $log) {
+        '$rootScope',
+        '$components',
+        '$rootWorld',
+        '$entityCache',
+        function(System, EntityBuilder, $log, $rootScope, $components, $rootWorld, $entityCache) {
             'use strict';
 
             function onEntityAdded(entity) {
@@ -30,16 +38,64 @@ angular
                     this._stream = new Meteor.Stream(Session.get('activeLevel') + '_entities');
 
                     // this to just update transforms
-                    this._stream.on('transforms', function() {
-                        $log.debug('recieve transforms event', arguments);
+                    this._stream.on('transforms', function(packet) {
+                        $log.debug('[NetworkSystem : transforms]', packet);
+                        // prolly need to throttle
+                        $rootScope.$apply();
                     });
+
                     // this for any adds (even first boot)
                     this._stream.on('add', function(entity) {
-                        $log.debug('[NetworkSystem : add]', entity);
+                        // ok let's see what happens when we build it
+                        var builtEntity = EntityBuilder.build(entity);
+
+                        // test if this is the "main" player so we can enhance
+                        var scriptComponent = builtEntity.getComponent('script');
+                        // Add all the stuff to make us a real player
+                        builtEntity.addComponent($components.get('player'));
+                        builtEntity.addComponent($components.get('collisionReporter'));
+                        builtEntity.addComponent($components.get('light', {
+                            type: 'PointLight',
+                            color: 0x60511b,
+                            distance: 3.5
+                        }));
+                        builtEntity.addComponent($components.get('health', {
+                            max: 5,
+                            value: 5
+                        }));
+                        builtEntity.addComponent($components.get('camera', {
+                            aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
+                        }));
+
+                        if (scriptComponent) {
+                            scriptComponent.scripts = scriptComponent.scripts.concat([
+                                '/scripts/built-in/character-controller.js',
+                                '/scripts/built-in/character-multicam.js',
+                                '/scripts/built-in/admin-controls.js',
+                                '/scripts/built-in/network-send.js',
+                            ]);
+                        }
+
+                        $entityCache.put('mainPlayer', builtEntity);
+
+                        world.addEntity(builtEntity);
+
+                        $log.debug('[NetworkSystem : add]', entity, builtEntity);
+
+                        $rootScope.$apply();
                     });
-                    // this for any removes
-                    this._stream.on('remove', function() {
-                        $log.debug('recieve remove event', arguments);
+
+                    this._stream.on('remove', function(entityId) {
+                        $log.debug('[NetworkSystem : remove]', entityId);
+                        var obj = world.scene.getObjectByProperty('uuid', entityId);
+                        // test if instanceof Entity?
+                        if (obj) {
+                            world.removeEntity(obj);
+                        } else {
+                            $log.debug('not found to remove...');
+                        }
+
+                        $rootScope.$apply();
                     });
 
                     world.entityAdded('networked').add(onEntityAdded.bind(this));

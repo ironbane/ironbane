@@ -78,21 +78,21 @@ angular
             // maybe a router?
             $state.go('three-root.main-menu.enter-world');
 
-            $rootScope.$on('$stateChangeStart', function() {
+            /*$rootScope.$on('$stateChangeStart', function() {
                 $log.debug('$stateChangeStart', arguments);
-            });
+            });*/
 
             $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
                 $log.debug('$stateChangeError', event, toState, toParams, fromState, fromParams, error.message);
             });
 
-            $rootScope.$on('$stateChangeSuccess', function() {
+            /*$rootScope.$on('$stateChangeSuccess', function() {
                 $log.debug('$stateChangeSuccess', arguments);
-            });
+            });*/
 
-            $rootScope.$on('$stateNotFound', function() {
+            /*$rootScope.$on('$stateNotFound', function() {
                 $log.debug('$stateNotFound', arguments);
-            });
+            });*/
         }
     ]);
 
