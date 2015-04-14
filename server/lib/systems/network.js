@@ -2,7 +2,8 @@ angular
     .module('systems.network', ['ces'])
     .factory('NetworkSystem', [
         'System',
-        function(System) {
+        '$log',
+        function(System, $log) {
             'use strict';
 
             function onRecieveTransforms(packet) {
@@ -21,33 +22,37 @@ angular
             }
 
             function onEntityAdded(entity) {
+                // not sure why but the stream isn't calling the same toJSON...
+                var serialized = JSON.parse(JSON.stringify(entity));
+                $log.debug('netAdd', serialized);
                 // when a networked entity is added to the world
                 // then we should send that to the clients
 
-                // we just want to send enough of the info so that the client can build it
-                // (EntityBuilder.build)
-                var entityData = {
-                    components: {
-                        networked: {
-                            recieve: true,
-                            netId: entity.uuid // need the server's uuid (memory) so we know what to update later
-                        }
-                    }
-                };
-
-                this._stream.emit('add', entityData);
+                this._stream.emit('add', serialized);
             }
 
             var NetworkSystem = System.extend({
                 addedToWorld: function(world) {
                     this._super(world);
 
-                    world.entityAdded('networked').add(onEntityAdded.bind(this));
-
                     // each world should have its own network stream
                     this._stream = new Meteor.Stream(world.name + '_entities');
 
+                    this._stream.permissions.write(function(eventName) {
+                        if (eventName === 'add') {
+                            return false;
+                        }
+
+                        return true;
+                    });
+
+                    this._stream.permissions.read(function(eventName) {
+                        return true;
+                    });
+
                     this._stream.on('transforms', onRecieveTransforms.bind(this));
+
+                    world.entityAdded('networked').add(onEntityAdded.bind(this));
                 },
                 update: function() {
 

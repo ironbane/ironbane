@@ -25,15 +25,17 @@ angular
                 addedToWorld: function(world) {
                     this._super(world);
 
-                    this._stream = new Meteor.Stream(world.name + '_entities');
+                    $log.debug('[NetworkSystem addedToWorld]', world.name, Session.get('activeLevel'));
+
+                    this._stream = new Meteor.Stream(Session.get('activeLevel') + '_entities');
 
                     // this to just update transforms
                     this._stream.on('transforms', function() {
                         $log.debug('recieve transforms event', arguments);
                     });
                     // this for any adds (even first boot)
-                    this._stream.on('add', function() {
-                        $log.debug('recieve add event', arguments);
+                    this._stream.on('add', function(entity) {
+                        $log.debug('[NetworkSystem : add]', entity);
                     });
                     // this for any removes
                     this._stream.on('remove', function() {
