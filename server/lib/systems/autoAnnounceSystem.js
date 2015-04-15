@@ -1,8 +1,12 @@
 angular
-    .module('systems.autoAnnounceSystem', ['ces.system'])
+    .module('systems.autoAnnounceSystem', [
+        'ces.system',
+        'engine.util'
+    ])
     .factory('AutoAnnounceSystem', [
         'System',
-        function(System) {
+        'ibUtils',
+        function(System, ibUtils) {
             'use strict';
 
             var AutoAnnounceSystem = System.extend({
@@ -22,7 +26,7 @@ angular
                                 }
                             }).count() > 0) {
 
-                            var messages = sharedIbUtil.chooseFromSequence([
+                            var messages = ibUtils.chooseFromSequence([
 
                                 // Actually these shouldn't be done using arrays, I just don't know how to insert raw html (<br>)
                                 // and have angular not filter these out.
@@ -30,7 +34,7 @@ angular
 
                                 [
                                     'Welcome to Ironbane ' + ironbaneConstants.GAME_VERSION + '!',
-                                    'Server uptime: ' + sharedIbUtil.timeSince(this.startTime)
+                                    'Server uptime: ' + ibUtils.timeSince(this.startTime)
                                 ],
 
                                 [
