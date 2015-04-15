@@ -39,9 +39,9 @@ angular
 
                     // this to just update transforms
                     this._stream.on('transforms', function(packet) {
-                        $log.debug('[NetworkSystem : transforms]', packet);
+                        //$log.debug('[NetworkSystem : transforms]', packet);
                         // prolly need to throttle
-                        $rootScope.$apply();
+                        //$rootScope.$apply();
                     });
 
                     // this for any adds (even first boot)
