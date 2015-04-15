@@ -13,14 +13,17 @@ angular
             'use strict';
 
             function onEntityAdded(entity) {
-                var octreeComponent = entity.getComponent('octree');
+                var octreeComponent = entity.getComponent('octree'),
+                    meshComponent = entity.getComponent('mesh');
 
                 octreeComponent._octree = new THREE.Octree({
                     undeferred: octreeComponent.undeferred,
                     useFaces: octreeComponent.useFaces
                 });
 
-                octreeComponent._octree.add(entity);
+                meshComponent._meshLoadTask.then(function(mesh) {
+                    octreeComponent._octree.add(mesh);
+                });
 
                 octreeComponent.lastOctreeBuildPosition = new THREE.Vector3(0, 1000000, 0);
                 octreeComponent.octreeResultsNearPlayer = null;
@@ -30,7 +33,7 @@ angular
                 addedToWorld: function(world) {
                     this._super(world);
 
-                    world.entityAdded('octree').add(onEntityAdded.bind(this));
+                    world.entityAdded('octree', 'mesh').add(onEntityAdded.bind(this));
                 },
                 update: function() {
                     var mainPlayer = $entityCache.get('mainPlayer'),

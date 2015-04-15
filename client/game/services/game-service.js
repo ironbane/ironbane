@@ -47,9 +47,10 @@ angular
                 // ALL these systems have to load before other entities
                 // they don't load stuff after the fact...
                 // TODO: fix that
-                $rootWorld.addSystem(new OctreeSystem(), 'octree');
+
                 $rootWorld.addSystem(new NameMeshSystem());
                 $rootWorld.addSystem(new MeshSystem(), 'meshes'); // meshes need high priority, at least before rigidbody
+                $rootWorld.addSystem(new OctreeSystem(), 'octree'); // needs a mesh, gotta go after that
                 $rootWorld.addSystem(new InputSystem(), 'input');
                 $rootWorld.addSystem(new SoundSystem(), 'sound');
                 $rootWorld.addSystem(new ScriptSystem(), 'scripts');

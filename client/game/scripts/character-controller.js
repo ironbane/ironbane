@@ -114,7 +114,7 @@ angular
                     }
                 }
 
-                if (this.entity.doc.cheats.jump) {
+                if (this.entity.doc && this.entity.doc.cheats.jump) {
                     this.canJump = true;
                     this.jumpTimer = minimumJumpDelay * 2;
                 }

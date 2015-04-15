@@ -106,6 +106,8 @@ angular
                         document.body.appendChild($rootWorld.stats.domElement);
                     }
 
+                    Session.set('activeLevel', IB_CONSTANTS.world.mainMenuLevel);
+
                     GameService.start();
                 }
             ]
