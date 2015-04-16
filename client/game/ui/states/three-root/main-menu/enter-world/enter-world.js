@@ -23,12 +23,13 @@ angular
                 'dialogService',
                 'FantasyNameGenerator',
                 'IB_CONSTANTS',
+                '$log',
                 function($scope, $state, $meteor, CharBuilder, dialogService,
-                    FantasyNameGenerator, IB_CONSTANTS) {
+                    FantasyNameGenerator, IB_CONSTANTS, $log) {
 
                     $scope.currentCharacterIndex = 0;
 
-                    $scope.entities = $meteor.collection(function() {
+                    $scope.characters = $meteor.collection(function() {
                         var user = $scope.currentUser;
                         return $meteor.getCollectionByName('entities').find({
                             owner: user._id
@@ -36,8 +37,8 @@ angular
                     }, false);
 
                     var updateCharacterPreview = function() {
-                        if ($scope.entities.length && $scope.currentCharacterIndex < $scope.entities.length) {
-                            var currentChar = $scope.entities[$scope.currentCharacterIndex],
+                        if ($scope.characters.length && $scope.currentCharacterIndex < $scope.characters.length) {
+                            var currentChar = $scope.characters[$scope.currentCharacterIndex],
                                 // testing here because of legacy db items TODO: update db?
                                 skin = currentChar.components ? currentChar.components.quad.charBuildData.skin : currentChar.userData.skin,
                                 hair = currentChar.components ? currentChar.components.quad.charBuildData.hair : currentChar.userData.hair,
@@ -52,14 +53,13 @@ angular
                         }
                     };
 
-                    $scope.$watch('entities.length', function() {
+                    $scope.$watch('characters.length', function() {
                         updateCharacterPreview();
 
-                        $scope.freeSlots = IB_CONSTANTS.rules.maxCharactersAllowed - $scope.entities.length;
+                        $scope.freeSlots = IB_CONSTANTS.rules.maxCharactersAllowed - $scope.characters.length;
                     });
 
                     var enterGame = function(charId) {
-
                         // We need to first change to playmode so network.js can test whether
                         // we are already playing, and add the player as a normal entity instead
                         // of one with special player components. Should this fail (e.g. we are already logged in)
@@ -69,11 +69,18 @@ angular
 
                         $meteor.call('enterGame', charId)
                             .then(function() {
-                                var activeChar = Entities.findOne({
-                                    _id: charId
+                                // TODO: set last used charId in local storage
+                                var activeChar = $scope.characters.reduce(function(prev, current) {
+                                    if (current._id === charId) {
+                                        return current;
+                                    }
                                 });
 
-                                Session.set('activeLevel', activeChar.level);
+                                if (activeChar) {
+                                    Session.set('activeLevel', activeChar.level);
+                                } else {
+                                    $log.error('unable to locate character, not updated yet?');
+                                }
                             }, function(err) {
                                 if (err) {
                                     $state.go(lastState);
@@ -98,7 +105,7 @@ angular
                                     }
                                 });
                         } else {
-                            var charId = $scope.entities[$scope.currentCharacterIndex]._id;
+                            var charId = $scope.characters[$scope.currentCharacterIndex]._id;
                             enterGame(charId);
                         }
 
@@ -121,24 +128,25 @@ angular
                         if ($scope.currentCharacterIndex < 0) {
                             // Set it to the array length so we can use one extra step
                             // to show the user an option to make a character
-                            $scope.currentCharacterIndex = $scope.entities.length;
+                            $scope.currentCharacterIndex = $scope.characters.length;
                         }
                         updateCharacterPreview();
                     };
 
                     $scope.nextChar = function() {
                         $scope.currentCharacterIndex++;
-                        if ($scope.currentCharacterIndex > $scope.entities.length) {
+                        if ($scope.currentCharacterIndex > $scope.characters.length) {
                             $scope.currentCharacterIndex = 0;
                         }
                         updateCharacterPreview();
                     };
 
                     $scope.deleteChar = function() {
+                        // TODO: type the full name type confimation? and/or soft delete
                         dialogService.confirm('Delete character?', 'Delete')
                             .then(function() {
-                                Entities.remove({
-                                    _id: $scope.entities[$scope.currentCharacterIndex]._id
+                                $meteor.getCollectionByName('entities').remove({
+                                    _id: $scope.characters[$scope.currentCharacterIndex]._id
                                 });
                             });
                     };
