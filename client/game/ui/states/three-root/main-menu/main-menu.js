@@ -8,7 +8,7 @@ angular
         'game.ui.states.three-root.main-menu.register',
         'game.world-root',
         'engine.entity-builder',
-        'game.constants'
+        'global.constants'
     ])
     .config(['$stateProvider', function($stateProvider) {
         'use strict';
