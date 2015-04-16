@@ -2,11 +2,10 @@ angular
     .module('game.ui.states.three-root', [
         'ui.router',
         'angular-meteor',
-        'game.constants',
+        'global.constants',
         'game.ui.directives',
         'game.ui.states.three-root.play',
         'game.ui.states.three-root.main-menu',
-        'game.constants',
         'game.world-root'
     ])
     .config(['$stateProvider', function($stateProvider) {

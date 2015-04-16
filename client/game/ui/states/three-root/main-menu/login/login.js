@@ -17,12 +17,12 @@ angular
                 function($scope, $state, $meteor, dialogService) {
                     $scope.login = function() {
                         $meteor.loginWithPassword($scope.username, $scope.password)
-                        	.then(function () {
-								$state.go('^.enter-world');
-                        	}, function(err) {
-                            	if (err) {
-                            		dialogService.alert(err.reason);
-                            	}
+                            .then(function() {
+                                $state.go('^.enter-world');
+                            }, function(err) {
+                                if (err) {
+                                    dialogService.alert(err.reason);
+                                }
                             });
                     };
 

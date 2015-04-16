@@ -1,9 +1,9 @@
-/*global Accounts*/
 angular
     .module('game.ui.states.three-root.main-menu.register', [
         'engine.util.browserUtil',
         'game.ui.dialog',
-        'ui.router'
+        'ui.router',
+        'models.accounts'
     ])
     .config(['$stateProvider', function($stateProvider) {
         'use strict';
@@ -15,10 +15,11 @@ angular
                 '$state',
                 'BrowserUtil',
                 'dialogService',
-                function($scope, $state, BrowserUtil, dialogService) {
+                'AccountsCollection',
+                function($scope, $state, BrowserUtil, dialogService, AccountsCollection) {
 
                     $scope.register = function() {
-                        Accounts.createUser({
+                        AccountsCollection.createUser({
                             username: $scope.username,
                             password: $scope.password,
                             email: $scope.email

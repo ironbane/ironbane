@@ -4,7 +4,7 @@ angular
         'engine.game-service',
         'engine.char-builder',
         'engine.util',
-        'game.constants',
+        'global.constants',
         'game.ui.dialog',
         'underscore',
         'ui.router'
