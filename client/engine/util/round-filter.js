@@ -1,4 +1,5 @@
-angular.module('engine.util.roundFilter', [])
+angular
+    .module('engine.util.roundFilter', [])
     .filter('round', function() {
         'use strict';
 

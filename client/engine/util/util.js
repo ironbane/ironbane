@@ -1,4 +1,5 @@
-angular.module('engine.util', [])
+angular
+    .module('engine.util', [])
     .service('Util', [function() {
         'use strict';
 

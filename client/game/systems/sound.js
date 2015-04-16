@@ -1,44 +1,48 @@
-angular.module('engine.sound-system', ['howler', 'ces'])
-    .provider('SoundSystem', function () {
+angular
+    .module('game.systems.sound', [
+        'howler',
+        'ces'
+    ])
+    .provider('SoundSystem', function() {
         'use strict';
 
         var audioLibraryData = {};
 
-        this.setAudioLibraryData = function (data) {
+        this.setAudioLibraryData = function(data) {
             audioLibraryData = data;
         };
 
-        this.addAudioLibraryData = function (name, data) {
+        this.addAudioLibraryData = function(name, data) {
             audioLibraryData[name] = data;
         };
 
-        this.$get = ['Howler', 'Howl', '$cacheFactory', '$log', 'System', function (Howler, Howl, $cacheFactory, $log, System) {
+        this.$get = ['Howler', 'Howl', '$cacheFactory', '$log', 'System', function(Howler, Howl, $cacheFactory, $log, System) {
             var cache = $cacheFactory('soundCache'),
                 cacheKeys = [],
                 soundVolume = 1,
                 musicVolume = 1;
 
-            var _getAudioConfig = function (name) {
+            var _getAudioConfig = function(name) {
                 return audioLibraryData[name] ? audioLibraryData[name] : ($log.warn('[SoundSystem _getAudioConfig] No audio library data: ', name), null);
             };
 
-            var _getVolume = function (name) {
+            var _getVolume = function(name) {
                 var config = _getAudioConfig(name),
                     masterVolume;
                 if (!config) {
                     return 1;
                 }
                 switch (config.type) {
-                case 'music':
-                    masterVolume = musicVolume;
-                    break;
-                default:
-                    masterVolume = soundVolume;
+                    case 'music':
+                        masterVolume = musicVolume;
+                        break;
+                    default:
+                        masterVolume = soundVolume;
                 }
                 return config.volume !== undefined && (masterVolume *= config.volume);
             };
 
-            var _load = function (name) {
+            var _load = function(name) {
                 $log.debug('[SoundSystem _load] called', name);
 
                 if (cache.get(name)) {
@@ -56,10 +60,10 @@ angular.module('engine.sound-system', ['howler', 'ces'])
                         urls: files,
                         loop: config.loop,
                         buffer: config.type === 'music',
-                        onload: function () {
+                        onload: function() {
                             this.volume(volume);
                         },
-                        onloaderror: function () {
+                        onloaderror: function() {
                             $log.warn('[SoundSystem _load] Failed to load: ', name);
                         }
                     });
@@ -70,7 +74,7 @@ angular.module('engine.sound-system', ['howler', 'ces'])
                 return sound;
             };
 
-            var _updateVolume = function () {
+            var _updateVolume = function() {
                 var i, len, name, snd, vol;
                 for (i = 0, len = cacheKeys.length; i < len; i++) {
                     name = cacheKeys[i];
@@ -83,7 +87,7 @@ angular.module('engine.sound-system', ['howler', 'ces'])
                 }
             };
 
-            var _getSound = function (name, tryLoad) {
+            var _getSound = function(name, tryLoad) {
                 if (cache.get(name)) {
                     return cache.get(name);
                 }
@@ -97,16 +101,16 @@ angular.module('engine.sound-system', ['howler', 'ces'])
             };
 
             var SoundSystem = System.extend({
-                init: function () {
+                init: function() {
                     this.multishotThreshold = 100;
                     this._playTimes = {};
                 },
-                addedToWorld: function (world) {
+                addedToWorld: function(world) {
                     var sys = this;
 
                     sys._super(world);
 
-                    world.entityAdded('sound').add(function (entity) {
+                    world.entityAdded('sound').add(function(entity) {
                         var component = entity.getComponent('sound');
 
                         component.sound = _load(component.asset);
@@ -117,17 +121,17 @@ angular.module('engine.sound-system', ['howler', 'ces'])
                             component.sound.pos3d(entity.position.x, entity.position.y, entity.position.z);
                         }
 
-                        if(component.autoPlay) {
+                        if (component.autoPlay) {
                             sys.play(component.asset);
                         }
                     });
                 },
-                update: function () {
+                update: function() {
                     var system = this,
                         world = system.world,
                         entities = world.getEntities('sound');
 
-                    entities.forEach(function (entity) {
+                    entities.forEach(function(entity) {
                         var component = entity.getComponent('sound'),
                             sound = component ? component.sound : null;
 
@@ -136,21 +140,21 @@ angular.module('engine.sound-system', ['howler', 'ces'])
                         }
                     });
                 },
-                setSoundVolume: function (level) {
+                setSoundVolume: function(level) {
                     soundVolume = level;
                     _updateVolume();
                 },
-                setMusicVolume: function (level) {
+                setMusicVolume: function(level) {
                     musicVolume = level;
                     _updateVolume();
                 },
-                mute: function () {
+                mute: function() {
                     Howler.mute();
                 },
-                unmute: function () {
+                unmute: function() {
                     Howler.unmute();
                 },
-                toggleMute: function () {
+                toggleMute: function() {
                     this.muted = !this.muted;
                     if (this.muted) {
                         this.mute();
@@ -158,10 +162,10 @@ angular.module('engine.sound-system', ['howler', 'ces'])
                         this.unmute();
                     }
                 },
-                load: function (name) {
+                load: function(name) {
                     return _load(name);
                 },
-                play: function (name, time) {
+                play: function(name, time) {
                     var sound = _getSound(name, true);
 
                     if (!sound) {
@@ -184,7 +188,7 @@ angular.module('engine.sound-system', ['howler', 'ces'])
                     sound.play();
                     sound.volume(_getVolume(name));
                 },
-                pause: function (name) {
+                pause: function(name) {
                     var sound = _getSound(name);
 
                     if (!sound) {
@@ -192,7 +196,7 @@ angular.module('engine.sound-system', ['howler', 'ces'])
                     }
                     sound.pause();
                 },
-                stop: function (name) {
+                stop: function(name) {
                     var sound = _getSound(name);
 
                     if (!sound) {
@@ -200,7 +204,7 @@ angular.module('engine.sound-system', ['howler', 'ces'])
                     }
                     sound.stop();
                 },
-                fadeIn: function (name, time) {
+                fadeIn: function(name, time) {
                     var sound = _getSound(name, true);
 
                     if (!sound) {
@@ -210,14 +214,14 @@ angular.module('engine.sound-system', ['howler', 'ces'])
                     var volume = _getVolume(name);
                     sound.play().fade(0, volume, time);
                 },
-                fadeOut: function (name, time) {
+                fadeOut: function(name, time) {
                     var sound = _getSound(name);
 
                     if (!sound) {
                         return;
                     }
 
-                    sound.fade(sound.volume(), 0, time, function () {
+                    sound.fade(sound.volume(), 0, time, function() {
                         sound.stop();
                     });
                 }

@@ -1,7 +1,7 @@
 angular
     .module('game.game-loop', [
         'game.world-root',
-        'game.constants'
+        'global.constants'
     ])
     .run([
         '$rootWorld',

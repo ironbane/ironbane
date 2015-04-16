@@ -3,8 +3,8 @@
 angular
     .module('Ironbane', [
         'angular-meteor',
+        'global.constants',
         'game.ui.states',
-        'game.constants',
         'game.game-loop',
         'game.network',
         'game.world-root',
@@ -21,7 +21,6 @@ angular
         'engine.input.input-system',
         'engine.util',
         'engine.debugger',
-        'util.deepExtend',
         'util.name-gen'
     ])
     .config([

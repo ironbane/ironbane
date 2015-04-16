@@ -10,13 +10,7 @@ angular
         'engine.entity-cache',
         'engine.entity-builder',
         'models',
-        'server.accountsService',
-        'server.characterService',
-        'server.gameService',
-        'server.chatService',
-        'server.achievementsService',
-        'server.entitiesService',
-        'server.zonesService',
+        'server.services',
         'systems.network'
     ])
     .value('$activeWorlds', {})

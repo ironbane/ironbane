@@ -1,4 +1,5 @@
-angular.module('engine.util.browserUtil', [])
+angular
+    .module('engine.util.browserUtil', [])
     .service('BrowserUtil', [
         '$window',
         function($window) {
