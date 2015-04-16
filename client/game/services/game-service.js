@@ -2,13 +2,11 @@ angular
     .module('engine.game-service', [
         'game.game-loop',
         'game.world-root',
-        'game.network',
         'components',
         'game.systems',
         'game.scripts',
         'prefabs',
         'engine.entity-builder',
-        'engine.sound-system',
         'engine.input.input-system',
         'util.name-gen',
         // shared systems

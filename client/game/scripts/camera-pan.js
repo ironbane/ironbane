@@ -1,12 +1,10 @@
 angular
     .module('game.scripts.camera-pan', [
-        'engine.scriptBank',
-        'three'
+        'engine.scriptBank'
     ])
     .run([
         'ScriptBank',
-        'THREE',
-        function(ScriptBank, THREE) {
+        function(ScriptBank) {
             'use strict';
 
             var PanScript = function(entity) {

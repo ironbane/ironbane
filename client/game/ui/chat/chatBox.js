@@ -1,11 +1,14 @@
-/*global Collections:true, Entities: true*/
 angular.module('game.ui.chat.chatBoxDirective', [
         'angular-meteor',
         'luegg.directives',
-        'game.ui.directives'
+        'game.ui.directives',
+        'models.entities',
+        'models.chatMessages'
     ])
     .directive('chatBox', [
-        function() {
+        'EntitiesCollection',
+        'ChatMessagesCollection',
+        function(EntitiesCollection, ChatMessagesCollection) {
             'use strict';
 
             return {
@@ -29,7 +32,7 @@ angular.module('game.ui.chat.chatBoxDirective', [
 
                                 if (event.keyCode === 13) {
 
-		                            var currentCharacter = Entities.findOne({
+		                            var currentCharacter = EntitiesCollection.findOne({
 		                                owner: Meteor.userId(),
 		                                active: true
 		                            });
@@ -53,7 +56,7 @@ angular.module('game.ui.chat.chatBoxDirective', [
 
                         $meteor.subscribe('chatMessages');
 
-                        ctrl.messages = $meteor.collection(Collections.ChatMessages);
+                        ctrl.messages = $meteor.collection(ChatMessagesCollection);
 
                         ctrl.trapKeys = function() {
                             $window.addEventListener('keydown', keyTrapHandler, true);

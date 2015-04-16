@@ -1,5 +1,8 @@
 angular
-    .module('game.systems.camera', ['ces', 'three'])
+    .module('game.systems.camera', [
+        'ces',
+        'three'
+    ])
     .factory('CameraSystem', [
         'System',
         'THREE',
