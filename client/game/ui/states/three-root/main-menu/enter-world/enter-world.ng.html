@@ -1,24 +1,24 @@
 <div class="ib-ui-window ib-ui-login-box">
-	<div ng-if="$root.currentUser.profile.guest">
-		<button class="ibutton attention playasguest" ng-click="play()">Play as Guest</button>
+    <div ng-if="$root.currentUser.profile.guest">
+        <button class="ibutton attention playasguest" ng-click="play()">Play as Guest</button>
 
-		<button class="ibutton" ng-click="login()" style="width:145px;float:left;margin-right:10px">Log in</button>
-		<button class="ibutton" ng-click="register()" style="width:145px">Register</button>
-	</div>
-	<div ng-if="!$root.currentUser.profile.guest">
-		<button ng-hide="currentCharacterIndex === entities.length" class="ibutton del-btn" ng-click="deleteChar()" style="width:40px">&#10006;</button>
-		<button ng-hide="entities.length === 0" class="ibutton" ng-click="prevChar()" style="width:40px;float:left">←</button>
-		<div ng-show="currentCharacterIndex !== entities.length" class="char-title" style="width:220px;float:left">{{ entities[currentCharacterIndex].name }}</div>
-		<div ng-show="entities.length === 0" class="char-title" style="width:300px;text-align: center">No characters yet</div>
-		<div ng-show="entities.length > 0 && currentCharacterIndex === entities.length" class="char-title" style="width:220px;float:left">{{ freeSlots }} slot{{ freeSlots === 1 ? '' : 's' }} left</div>
-		<button ng-hide="entities.length === 0" class="ibutton" ng-click="nextChar()" style="width:40px">→</button>
+        <button class="ibutton" ng-click="login()" style="width:145px;float:left;margin-right:10px">Log in</button>
+        <button class="ibutton" ng-click="register()" style="width:145px">Register</button>
+    </div>
+    <div ng-if="!$root.currentUser.profile.guest">
+        <button ng-hide="currentCharIndex === characters.length" class="ibutton del-btn" ng-click="deleteChar()" style="width:40px">&#10006;</button>
+        <button ng-hide="characters.length === 0" class="ibutton" ng-click="prevChar()" style="width:40px;float:left">←</button>
+        <div ng-show="currentCharIndex !== characters.length" class="char-title" style="width:220px;float:left">{{ characters[currentCharIndex].name }}</div>
+        <div ng-show="characters.length === 0" class="char-title" style="width:300px;text-align: center">No characters yet</div>
+        <div ng-show="characters.length > 0 && currentCharIndex === characters.length" class="char-title" style="width:220px;float:left">{{ freeSlots }} slot{{ freeSlots === 1 ? '' : 's' }} left</div>
+        <button ng-hide="characters.length === 0" class="ibutton" ng-click="nextChar()" style="width:40px">→</button>
 
-		<div ng-if="currentCharacterIndex !== entities.length">
-			<div class="char-preview" ng-style="{ 'background-image': 'url(' + charPrevImg + ')' }"></div>
-			<button class="ibutton attention" ng-click="play()">Enter Ironbane</button>
-		</div>
-		<div ng-if="currentCharacterIndex === entities.length">
-			<button class="ibutton attention" ng-click="createChar()" ng-disabled="freeSlots <= 0" style="margin-top: 10px">Create Character</button>
-		</div>
-	</div>
+        <div ng-if="currentCharIndex !== characters.length">
+            <div class="char-preview" ng-style="{ 'background-image': 'url(' + charPrevImg + ')' }"></div>
+            <button class="ibutton attention" ng-click="play()">Enter Ironbane</button>
+        </div>
+        <div ng-if="currentCharIndex === characters.length">
+            <button class="ibutton attention" ng-click="createChar()" ng-disabled="freeSlots <= 0" style="margin-top: 10px">Create Character</button>
+        </div>
+    </div>
 </div>

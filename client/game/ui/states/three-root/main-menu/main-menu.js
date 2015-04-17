@@ -17,12 +17,6 @@ angular
             templateUrl: 'client/game/ui/states/three-root/main-menu/main-menu.ng.html',
             abstract: true,
             resolve: {
-                entitiesSubscription: [
-                    '$meteor',
-                    function($meteor) {
-                        return $meteor.subscribe('entities');
-                    }
-                ],
                 MainMenuPanningCamera: [
                     '$rootWorld',
                     'EntityBuilder',
@@ -44,17 +38,55 @@ angular
 
                         return camera;
                     }
+                ],
+                characterList: [
+                    '$meteor',
+                    '$log',
+                    function($meteor, $log) {
+                        return $meteor.waitForUser().then(function(user) {
+                            var list;
+                            try {
+                                list = $meteor.collection(function() {
+                                    return $meteor.getCollectionByName('entities').find({
+                                        owner: user._id
+                                    });
+                                }, false);
+                            } catch (ex) {
+                                $log.debug('caught: ex ', ex);
+                            }
+
+                            return list;
+                        });
+                    }
                 ]
             },
+            controllerAs: 'mainMenu',
+            controller: [
+                '$log',
+                '$scope',
+                'characterList',
+                'IB_CONSTANTS',
+                function($log, $scope, characterList, IB_CONSTANTS) {
+                    $scope.characters = characterList;
+
+                    $scope.currentCharIndex = 0;
+                    angular.forEach($scope.characters, function(char, index) {
+                        if (char._id === $scope.currentChar.id) {
+                            $scope.currentCharIndex = index;
+                        }
+                    });
+
+                    $scope.activeLevel = IB_CONSTANTS.world.mainMenuLevel;
+
+                    $log.debug('mainMenu Controller: ', this, $scope);
+                }
+            ],
             onEnter: [
                 '$rootWorld',
                 'MainMenuPanningCamera',
-                'IB_CONSTANTS',
                 '$log',
-                function($rootWorld, MainMenuPanningCamera, IB_CONSTANTS, $log) {
-                    $log.debug('enter main menu state');
-                    Session.set('activeLevel', IB_CONSTANTS.world.mainMenuLevel);
-
+                function($rootWorld, MainMenuPanningCamera, $log) {
+                    $log.debug('mainMenu onEnter: ', this);
                     $rootWorld.addEntity(MainMenuPanningCamera);
                 }
             ],

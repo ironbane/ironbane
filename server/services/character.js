@@ -87,7 +87,7 @@ angular
 
                 if ($activeWorlds[startLevel]) {
                     // if not we have a problem!
-                    var spawns = $activeWorlds[startLevel].getEntitiesCollection('spawnPoint');
+                    var spawns = $activeWorlds[startLevel].getEntities('spawnPoint');
                     if (spawns.length === 0) {
                         $log.log(startLevel, ' has no spawn points defined!');
                     }

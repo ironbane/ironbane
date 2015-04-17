@@ -15,6 +15,12 @@ angular
             abstract: true,
             templateUrl: 'client/game/ui/states/three-root/three-root.ng.html',
             resolve: {
+                entitiesSubscription: [
+                    '$meteor',
+                    function($meteor) {
+                        return $meteor.subscribe('entities');
+                    }
+                ],
                 'currentUser': [
                     '$meteor',
                     function($meteor) {
@@ -22,6 +28,7 @@ angular
                     }
                 ]
             },
+            controllerAs: 'threeRoot',
             controller: [
                 '$meteor',
                 '$scope',
@@ -30,6 +37,18 @@ angular
                 '$rootWorld',
                 '$state',
                 function($meteor, $scope, $log, IB_CONSTANTS, $rootWorld, $state) {
+                    this.IB_CONSTANTS = IB_CONSTANTS;
+
+                    // make this an object so we keep the reference
+                    $scope.currentChar = {
+                        id: localStorage.getItem('lastCharId')
+                    }; // TODO: wrap local storage, perhaps user profile instead
+
+                    $scope.$watch('currentChar.id', function(id) {
+                        $log.debug('currentChar id changed');
+                        localStorage.setItem('lastCharId', id);
+                    });
+
                     $scope.IB_CONSTANTS = IB_CONSTANTS;
                     $scope.logout = function() {
                         return $meteor.logout()

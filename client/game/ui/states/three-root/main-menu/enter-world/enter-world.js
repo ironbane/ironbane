@@ -15,6 +15,7 @@ angular
 
         $stateProvider.state('three-root.main-menu.enter-world', {
             templateUrl: 'client/game/ui/states/three-root/main-menu/enter-world/enter-world.ng.html',
+            controllerAs: 'enterWorld',
             controller: [
                 '$scope',
                 '$state',
@@ -27,18 +28,9 @@ angular
                 function($scope, $state, $meteor, CharBuilder, dialogService,
                     FantasyNameGenerator, IB_CONSTANTS, $log) {
 
-                    $scope.currentCharacterIndex = 0;
-
-                    $scope.characters = $meteor.collection(function() {
-                        var user = $scope.currentUser;
-                        return $meteor.getCollectionByName('entities').find({
-                            owner: user._id
-                        });
-                    }, false);
-
                     var updateCharacterPreview = function() {
-                        if ($scope.characters.length && $scope.currentCharacterIndex < $scope.characters.length) {
-                            var currentChar = $scope.characters[$scope.currentCharacterIndex],
+                        if ($scope.characters.length && $scope.currentCharIndex < $scope.characters.length) {
+                            var currentChar = $scope.characters[$scope.currentCharIndex],
                                 // testing here because of legacy db items TODO: update db?
                                 skin = currentChar.components ? currentChar.components.quad.charBuildData.skin : currentChar.userData.skin,
                                 hair = currentChar.components ? currentChar.components.quad.charBuildData.hair : currentChar.userData.hair,
@@ -69,15 +61,16 @@ angular
 
                         $meteor.call('enterGame', charId)
                             .then(function() {
-                                // TODO: set last used charId in local storage
-                                var activeChar = $scope.characters.reduce(function(prev, current) {
+                                var activeChar = $scope.characters.reduce(function(prev, current, index) {
                                     if (current._id === charId) {
+                                        //$scope.currentCharIndex = index;
                                         return current;
                                     }
                                 });
 
                                 if (activeChar) {
-                                    Session.set('activeLevel', activeChar.level);
+                                    $scope.currentChar.id = charId;
+                                    $scope.activeLevel = activeChar.level;
                                 } else {
                                     $log.error('unable to locate character, not updated yet?');
                                 }
@@ -105,7 +98,7 @@ angular
                                     }
                                 });
                         } else {
-                            var charId = $scope.characters[$scope.currentCharacterIndex]._id;
+                            var charId = $scope.characters[$scope.currentCharIndex]._id;
                             enterGame(charId);
                         }
 
@@ -124,19 +117,19 @@ angular
                     };
 
                     $scope.prevChar = function() {
-                        $scope.currentCharacterIndex--;
-                        if ($scope.currentCharacterIndex < 0) {
+                        $scope.currentCharIndex--;
+                        if ($scope.currentCharIndex < 0) {
                             // Set it to the array length so we can use one extra step
                             // to show the user an option to make a character
-                            $scope.currentCharacterIndex = $scope.characters.length;
+                            $scope.currentCharIndex = $scope.characters.length;
                         }
                         updateCharacterPreview();
                     };
 
                     $scope.nextChar = function() {
-                        $scope.currentCharacterIndex++;
-                        if ($scope.currentCharacterIndex > $scope.characters.length) {
-                            $scope.currentCharacterIndex = 0;
+                        $scope.currentCharIndex++;
+                        if ($scope.currentCharIndex > $scope.characters.length) {
+                            $scope.currentCharIndex = 0;
                         }
                         updateCharacterPreview();
                     };
@@ -146,7 +139,7 @@ angular
                         dialogService.confirm('Delete character?', 'Delete')
                             .then(function() {
                                 $meteor.getCollectionByName('entities').remove({
-                                    _id: $scope.characters[$scope.currentCharacterIndex]._id
+                                    _id: $scope.characters[$scope.currentCharIndex]._id
                                 });
                             });
                     };

@@ -16,6 +16,7 @@ angular
 
             $stateProvider.state('three-root.main-menu.create-char', {
                 templateUrl: 'client/game/ui/states/three-root/main-menu/create-char/create-char.ng.html',
+                controllerAs: 'createChar',
                 controller: [
                     '$scope',
                     '$state',
@@ -46,6 +47,7 @@ angular
                             $meteor.call('createChar', options)
                                 .then(function(result) {
                                     $log.debug('createChar result: ', result);
+                                    $scope.currentCharId = result;
                                     $state.go('^.enter-world');
                                 }, function(err) {
                                     if (err) {
