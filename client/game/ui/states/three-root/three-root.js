@@ -44,10 +44,10 @@ angular
                         id: localStorage.getItem('lastCharId')
                     }; // TODO: wrap local storage, perhaps user profile instead
 
-                    $scope.$watch('currentChar.id', function(id) {
-                        $log.debug('currentChar id changed');
-                        localStorage.setItem('lastCharId', id);
-                    });
+                    $scope.$watch('currentChar', function(char) {
+                        $log.debug('currentChar changed', char);
+                        localStorage.setItem('lastCharId', char.id);
+                    }, true);
 
                     $scope.IB_CONSTANTS = IB_CONSTANTS;
                     $scope.logout = function() {

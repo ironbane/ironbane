@@ -75,7 +75,7 @@ angular
                 removed: function(doc) {
                     if ($activeWorlds[doc.level]) {
                         var worldId = $activeWorlds[doc.level]._ownerCache[doc.owner],
-                            entity = $activeWorlds[doc.level].getObjectByProperty('uuid', worldId);
+                            entity = $activeWorlds[doc.level].scene.getObjectByProperty('uuid', worldId);
 
                         if (entity) {
                             $activeWorlds[doc.level].removeEntity(entity);
