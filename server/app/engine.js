@@ -44,7 +44,7 @@ angular
                     world.addSystem(new NetworkSystem());
 
                     // load the initial zone data from the world file
-                    world.load(doc.name);
+                    Meteor.setTimeout(function() { world.load(doc.name); }, 10);
                 },
                 removed: function(doc) {
                     // TODO: add some shutdown code for the zone (persist to db, etc)
