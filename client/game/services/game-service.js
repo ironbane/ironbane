@@ -47,17 +47,20 @@ angular
                 // TODO: fix that
 
                 $rootWorld.addSystem(new NameMeshSystem());
+
+                $rootWorld.addSystem(new QuadSystem());
                 $rootWorld.addSystem(new MeshSystem(), 'meshes'); // meshes need high priority, at least before rigidbody
                 $rootWorld.addSystem(new OctreeSystem(), 'octree'); // needs a mesh, gotta go after that
+                $rootWorld.addSystem(new CollisionReporterSystem(), 'collisions');
+                $rootWorld.addSystem(new RigidBodySystem(), 'rigidbody');
+
                 $rootWorld.addSystem(new InputSystem(), 'input');
                 $rootWorld.addSystem(new SoundSystem(), 'sound');
                 $rootWorld.addSystem(new ScriptSystem(), 'scripts');
                 $rootWorld.addSystem(new ProcTreeSystem(), 'proctree');
                 $rootWorld.addSystem(new SpriteSystem());
                 $rootWorld.addSystem(new LightSystem());
-                $rootWorld.addSystem(new QuadSystem());
-                $rootWorld.addSystem(new RigidBodySystem(), 'rigidbody');
-                $rootWorld.addSystem(new CollisionReporterSystem());
+
                 $rootWorld.addSystem(new HelperSystem());
                 $rootWorld.addSystem(new WieldItemSystem());
                 $rootWorld.addSystem(new ShadowSystem());

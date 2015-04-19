@@ -47,7 +47,7 @@ angular
                                 octreeComponent.lastOctreeBuildPosition.copy(mainPlayer.position);
                                 octreeComponent.octreeResultsNearPlayer = octreeComponent._octree
                                     .search(octreeComponent.lastOctreeBuildPosition, 15, true);
-                                $log.log('rebuilt octree results');
+                                $log.debug('rebuilt octree results');
                             }
                         }
                     });

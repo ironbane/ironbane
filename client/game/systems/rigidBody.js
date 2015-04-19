@@ -299,7 +299,9 @@ angular
                                 //$log.debug('rigidBody meshComponent', meshComponent);
                                 // Wait for the triangles to load first
                                 promise = meshComponent._meshLoadTask
-                                    .then(calculateMeshTriangles)
+                                    .then(function(mesh) {
+                                        return calculateMeshTriangles(mesh);
+                                    })
                                     .then(function(triangles) {
                                         rigidBodyData.shape.triangles = triangles;
                                     });
@@ -414,18 +416,6 @@ angular
                             entity.position.setX(origin.x());
                             entity.position.setY(origin.y());
                             entity.position.setZ(origin.z());
-
-                            // Fix for Quads to update their position
-                            // as the attached entity now moved, causing
-                            // a delay in the quad's position update
-                            // Is there another way to solve this?
-                            var quadComponent = entity.getComponent('quad');
-                            if (quadComponent) {
-                                var lookAtCameraScript = entity.getScript('/scripts/built-in/look-at-camera.js');
-                                if (lookAtCameraScript) {
-                                    quadComponent._quad.position.copy(entity.position);
-                                }
-                            }
                         }
                     });
                 },
