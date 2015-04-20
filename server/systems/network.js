@@ -81,7 +81,7 @@ angular
                         // TODO: later only send "interesting" entities to each client
                         var sendComponent = entity.getComponent('netSend');
                         if (sendComponent._last) {
-                            var pos = entity.postion.serialize(),
+                            var pos = entity.position.serialize(),
                                 rot = entity.rotation.serialize(),
                                 lastPos = sendComponent._last.pos,
                                 lastRot = sendComponent._last.rot;

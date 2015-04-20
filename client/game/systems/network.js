@@ -16,12 +16,13 @@ angular
         function(System, EntityBuilder, $log, $rootScope, $components, $rootWorld, $entityCache) {
             'use strict';
 
-            function onEntityAdded(entity) {
-                var netComponent = entity.getComponent('networked');
+            function arraysAreEqual(a1, a2) {
+                // TODO make more robust? this is just for transforms right now
+                return (a1[0] === a2[0]) && (a1[1] === a2[1]) && (a1[2] === a2[2]);
+            }
 
-                if (netComponent.recieve) {
+            function onReceiveTransforms(packet) {
 
-                }
             }
 
             var NetworkSystem = System.extend({
@@ -37,12 +38,7 @@ angular
 
                     this._stream = new Meteor.Stream(Session.get('activeLevel') + '_entities');
 
-                    // this to just update transforms
-                    this._stream.on('transforms', function(packet) {
-                        //$log.debug('[NetworkSystem : transforms]', packet);
-                        // prolly need to throttle
-                        //$rootScope.$apply();
-                    });
+                    this._stream.on('transforms', onReceiveTransforms.bind(this));
 
                     // this for any adds (even first boot)
                     this._stream.on('add', function(entity) {
@@ -95,24 +91,40 @@ angular
 
                         $rootScope.$apply();
                     });
-
-                    world.entityAdded('networked').add(onEntityAdded.bind(this));
                 },
                 update: function() {
-                    var networkedEntities = this.world.getEntities('networked'),
+                    // for now just send transform
+                    var entities = this.world.getEntities('netSend'),
                         packet = {};
 
-                    networkedEntities.forEach(function(netEntity) {
-                        var netComponent = netEntity.getComponent('networked');
-                        if (netComponent.send) {
-                            packet[netEntity.uuid] = {
-                                pos: netEntity.position.serialize(),
-                                rot: netEntity.position.serialize()
+                    // on the client, this will be low, like the main player mostly?
+                    entities.forEach(function(entity) {
+                        // we only want to send changed
+                        var sendComponent = entity.getComponent('netSend');
+                        if (sendComponent._last) {
+                            var pos = entity.position.serialize(),
+                                rot = entity.rotation.serialize(),
+                                lastPos = sendComponent._last.pos,
+                                lastRot = sendComponent._last.rot;
+
+                            if (!arraysAreEqual(pos, lastPos) || !arraysAreEqual(rot, lastRot)) {
+                                sendComponent._last.pos = pos;
+                                sendComponent._last.rot = rot;
+
+                                packet[entity.uuid] = sendComponent._last;
+                            }
+                        } else {
+                            sendComponent._last = {
+                                pos: entity.position.serialize(),
+                                rot: entity.rotation.serialize()
                             };
+                            packet[entity.uuid] = sendComponent._last;
                         }
                     });
 
-                    this._stream.emit('transforms', packet);
+                    if (Object.keys(packet).length > 0) {
+                        this._stream.emit('transforms', packet);
+                    }
                 }
             });
 
