@@ -60,10 +60,9 @@ angular
                     if ($activeWorlds[doc.level]) {
                         var ent = EntityBuilder.build(doc);
                         if (ent) {
-                            ent.addComponent($components.get('networked', {
-                                send: true,
-                                recieve: true
-                            }));
+                            // it's unlikely that the server will not want to send an entity
+                            ent.addComponent($components.get('netSend'));
+                            // TODO: decorate entity with other components, such as "player", etc. like the client does
                             $activeWorlds[doc.level]._ownerCache[doc.owner] = ent.uuid;
                             $activeWorlds[doc.level].addEntity(ent);
                         } else {

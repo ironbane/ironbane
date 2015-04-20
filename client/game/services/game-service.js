@@ -48,11 +48,12 @@ angular
 
                 $rootWorld.addSystem(new NameMeshSystem());
 
-                $rootWorld.addSystem(new QuadSystem());
+                $rootWorld.addSystem(new QuadSystem(), 'quads');
                 $rootWorld.addSystem(new MeshSystem(), 'meshes'); // meshes need high priority, at least before rigidbody
                 $rootWorld.addSystem(new OctreeSystem(), 'octree'); // needs a mesh, gotta go after that
-                $rootWorld.addSystem(new CollisionReporterSystem(), 'collisions');
+
                 $rootWorld.addSystem(new RigidBodySystem(), 'rigidbody');
+                $rootWorld.addSystem(new CollisionReporterSystem(), 'collisions');
 
                 $rootWorld.addSystem(new InputSystem(), 'input');
                 $rootWorld.addSystem(new SoundSystem(), 'sound');
