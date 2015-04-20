@@ -62,6 +62,8 @@ angular
                         if (ent) {
                             // it's unlikely that the server will not want to send an entity
                             ent.addComponent($components.get('netSend'));
+                            ent.addComponent($components.get('netRecv'));
+                            ent.owner = doc.owner;
                             // TODO: decorate entity with other components, such as "player", etc. like the client does
                             $activeWorlds[doc.level]._ownerCache[doc.owner] = ent.uuid;
                             $activeWorlds[doc.level].addEntity(ent);

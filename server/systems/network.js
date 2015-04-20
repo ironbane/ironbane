@@ -23,7 +23,7 @@ angular
 
                     // most likely this should be one per client, however perhaps other player owned things
                     // may come
-                    if (packet[entity.uuid] && netComponent.owner === sender) {
+                    if (packet[entity.uuid]) {// && entity.owner === sender) {
                         entity.position.deserialize(packet[entity.uuid].pos);
                         entity.rotation.deserialize(packet[entity.uuid].rot);
                     }
@@ -36,6 +36,10 @@ angular
                 //$log.debug('netAdd', serialized);
                 // when a networked entity is added to the world
                 // then we should send that to the clients
+
+                // we should remove the networking components, and let the client decide
+                delete serialized.components.netSend;
+                delete serialized.components.netRecv;
 
                 this._stream.emit('add', serialized);
             }

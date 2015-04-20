@@ -22,7 +22,64 @@ angular
             }
 
             function onReceiveTransforms(packet) {
+                var netEntities = this.world.getEntities('netRecv');
 
+                // TODO: might be better instead to just find them by ID? not sure which search is faster
+                // (and then test they have the netRecv component)
+                netEntities.forEach(function(entity) {
+                    if (packet[entity.uuid]) {
+                        entity.position.deserialize(packet[entity.uuid].pos);
+                        entity.rotation.deserialize(packet[entity.uuid].rot);
+                    }
+                });
+
+                // TODO: stuff with rigidBody from script
+            }
+
+            function onStreamAdd(entity) {
+                // ok let's see what happens when we build it
+                var builtEntity = EntityBuilder.build(entity);
+
+                // test if this is the "main" player so we can enhance
+                if ($rootScope.currentUser._id === entity.owner) {
+                    var scriptComponent = builtEntity.getComponent('script');
+                    // Add all the stuff to make us a real player
+                    builtEntity.addComponent($components.get('player'));
+                    builtEntity.addComponent($components.get('collisionReporter'));
+                    builtEntity.addComponent($components.get('light', {
+                        type: 'PointLight',
+                        color: 0x60511b,
+                        distance: 3.5
+                    }));
+                    builtEntity.addComponent($components.get('health', {
+                        max: 5,
+                        value: 5
+                    }));
+                    builtEntity.addComponent($components.get('camera', {
+                        aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
+                    }));
+
+                    if (scriptComponent) {
+                        scriptComponent.scripts = scriptComponent.scripts.concat([
+                            '/scripts/built-in/character-controller.js',
+                            '/scripts/built-in/character-multicam.js',
+                        ]);
+                    }
+
+                    // this is pretty much the only one we want to netSend
+                    builtEntity.addComponent($components.get('netSend'));
+
+                    $entityCache.put('mainPlayer', builtEntity);
+                } else {
+                    // other stuff we should recv
+                    builtEntity.addComponent($components.get('netRecv'));
+                }
+
+                this.world.addEntity(builtEntity);
+
+                $log.debug('[NetworkSystem : add]', entity, builtEntity);
+
+                $rootScope.$apply();
             }
 
             var NetworkSystem = System.extend({
@@ -41,43 +98,7 @@ angular
                     this._stream.on('transforms', onReceiveTransforms.bind(this));
 
                     // this for any adds (even first boot)
-                    this._stream.on('add', function(entity) {
-                        // ok let's see what happens when we build it
-                        var builtEntity = EntityBuilder.build(entity);
-
-                        // test if this is the "main" player so we can enhance
-                        var scriptComponent = builtEntity.getComponent('script');
-                        // Add all the stuff to make us a real player
-                        builtEntity.addComponent($components.get('player'));
-                        builtEntity.addComponent($components.get('collisionReporter'));
-                        builtEntity.addComponent($components.get('light', {
-                            type: 'PointLight',
-                            color: 0x60511b,
-                            distance: 3.5
-                        }));
-                        builtEntity.addComponent($components.get('health', {
-                            max: 5,
-                            value: 5
-                        }));
-                        builtEntity.addComponent($components.get('camera', {
-                            aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
-                        }));
-
-                        if (scriptComponent) {
-                            scriptComponent.scripts = scriptComponent.scripts.concat([
-                                '/scripts/built-in/character-controller.js',
-                                '/scripts/built-in/character-multicam.js',
-                            ]);
-                        }
-
-                        $entityCache.put('mainPlayer', builtEntity);
-
-                        world.addEntity(builtEntity);
-
-                        $log.debug('[NetworkSystem : add]', entity, builtEntity);
-
-                        $rootScope.$apply();
-                    });
+                    this._stream.on('add', onStreamAdd.bind(this));
 
                     this._stream.on('remove', function(entityId) {
                         $log.debug('[NetworkSystem : remove]', entityId);
