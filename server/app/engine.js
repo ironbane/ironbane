@@ -13,7 +13,6 @@ angular
         'server.services',
         'systems.network'
     ])
-    .value('$activeWorlds', {})
     .run([
         '$log',
         '$rootWorld',
@@ -41,7 +40,7 @@ angular
                     world._ownerCache = {};
 
                     // setup the systems this world will use
-                    world.addSystem(new NetworkSystem());
+                    world.addSystem(new NetworkSystem(), 'network');
 
                     // load the initial zone data from the world file
                     Meteor.setTimeout(function() { world.load(doc.name); }, 10);

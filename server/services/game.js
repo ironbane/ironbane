@@ -4,7 +4,8 @@ angular
     ])
     .service('GameService', [
         'EntitiesCollection',
-        function(EntitiesCollection) {
+        '$activeWorlds',
+        function(EntitiesCollection, $activeWorlds) {
             'use strict';
 
             this.enterGame = function(charId) {
@@ -38,6 +39,15 @@ angular
                         active: true
                     }
                 });
+
+                // first time login, we need to send all the networked entities over
+                var enteringWorld = $activeWorlds[characterToEnter.level];
+                if (enteringWorld) {
+                    var networkSystem = enteringWorld.getSystem('network');
+                    networkSystem.sendNetState(user._id);
+                } else {
+                    // move them somewhere valid? we have an issue...
+                }
             };
 
             this.leaveGame = function() {

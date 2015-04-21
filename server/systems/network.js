@@ -23,7 +23,7 @@ angular
 
                     // most likely this should be one per client, however perhaps other player owned things
                     // may come
-                    if (packet[entity.uuid]) {// && entity.owner === sender) {
+                    if (packet[entity.uuid]) { // && entity.owner === sender) {
                         entity.position.deserialize(packet[entity.uuid].pos);
                         entity.rotation.deserialize(packet[entity.uuid].rot);
                     }
@@ -31,17 +31,7 @@ angular
             }
 
             function onNetSendEntityAdded(entity) {
-                // not sure why but the stream isn't calling the same toJSON...
-                var serialized = JSON.parse(JSON.stringify(entity));
-                //$log.debug('netAdd', serialized);
-                // when a networked entity is added to the world
-                // then we should send that to the clients
-
-                // we should remove the networking components, and let the client decide
-                delete serialized.components.netSend;
-                delete serialized.components.netRecv;
-
-                this._stream.emit('add', serialized);
+                this.sendNetState(null, entity);
             }
 
             function onNetSendEntityRemoved(entity) {
@@ -72,6 +62,52 @@ angular
 
                     world.entityAdded('netSend').add(onNetSendEntityAdded.bind(this));
                     world.entityRemoved('netSend').add(onNetSendEntityRemoved.bind(this));
+
+                    // cache streams for direct user communication
+                    this._userStreams = {};
+                },
+                sendNetState: function(userId, entities) {
+                    if (!entities || (entities.length && entities.length === 0)) {
+                        return;
+                    }
+
+                    if (!angular.isArray(entities)) {
+                        entities = [entities];
+                    }
+
+                    var stream, packet = {};
+                    if (!userId) {
+                        // then send it to everyone
+                        stream = this._stream;
+                    } else {
+                        // get user stream
+                        stream = this._userStreams[userId];
+                        if (!stream) {
+                            this._userStreams[userId] = new Meteor.Stream([userId, this.world.name, 'entities'].join('_'));
+                            stream = this._userStreams[userId];
+                            stream.permissions.write(function() {
+                                return this.userId === userId;
+                            });
+                            // can read anything the server sends
+                            stream.permissions.read(function() {
+                                return this.userId === userId;
+                            });
+                        }
+                    }
+
+                    // pack them up in a single update
+                    entities.forEach(function(entity) {
+                        // TODO: specific network serialization
+                        var serialized = JSON.parse(JSON.stringify(entity));
+                        // we should remove the networking components, and let the client decide
+                        delete serialized.components.netSend;
+                        delete serialized.components.netRecv;
+                        packet[entity.uuid] = serialized;
+                    });
+
+                    if (Object.keys(packet).length > 0) {
+                        stream.emit('add', packet);
+                    }
                 },
                 update: function() {
                     // TODO: need to send information about add/remove components as well

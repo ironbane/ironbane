@@ -36,48 +36,51 @@ angular
                 // TODO: stuff with rigidBody from script
             }
 
-            function onStreamAdd(entity) {
-                // ok let's see what happens when we build it
-                var builtEntity = EntityBuilder.build(entity);
+            function onStreamAdd(packet) {
+                var world = this.world;
 
-                // test if this is the "main" player so we can enhance
-                if ($rootScope.currentUser._id === entity.owner) {
-                    var scriptComponent = builtEntity.getComponent('script');
-                    // Add all the stuff to make us a real player
-                    builtEntity.addComponent($components.get('player'));
-                    builtEntity.addComponent($components.get('collisionReporter'));
-                    builtEntity.addComponent($components.get('light', {
-                        type: 'PointLight',
-                        color: 0x60511b,
-                        distance: 3.5
-                    }));
-                    builtEntity.addComponent($components.get('health', {
-                        max: 5,
-                        value: 5
-                    }));
-                    builtEntity.addComponent($components.get('camera', {
-                        aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
-                    }));
+                angular.forEach(packet, function(entity, uuid) {
+                    // TODO: should check that the uuid does not already exist
+                    // actually not sure what will happen if THREE has 2 of them
 
-                    if (scriptComponent) {
-                        scriptComponent.scripts = scriptComponent.scripts.concat([
-                            '/scripts/built-in/character-controller.js',
-                            '/scripts/built-in/character-multicam.js',
-                        ]);
+                    // ok let's see what happens when we build it
+                    var builtEntity = EntityBuilder.build(entity);
+
+                    // test if this is the "main" player so we can enhance
+                    if ($rootScope.currentUser._id === entity.owner) {
+                        var scriptComponent = builtEntity.getComponent('script');
+                        // Add all the stuff to make us a real player
+                        builtEntity.addComponent($components.get('player'));
+                        builtEntity.addComponent($components.get('collisionReporter'));
+                        builtEntity.addComponent($components.get('light', {
+                            type: 'PointLight',
+                            color: 0x60511b,
+                            distance: 3.5
+                        }));
+                        builtEntity.addComponent($components.get('camera', {
+                            aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
+                        }));
+
+                        if (scriptComponent) {
+                            scriptComponent.scripts = scriptComponent.scripts.concat([
+                                '/scripts/built-in/character-controller.js',
+                                '/scripts/built-in/character-multicam.js',
+                            ]);
+                        }
+
+                        // this is pretty much the only one we want to netSend
+                        builtEntity.addComponent($components.get('netSend'));
+
+                        $entityCache.put('mainPlayer', builtEntity);
+                    } else {
+                        // other stuff we should recv
+                        builtEntity.addComponent($components.get('netRecv'));
                     }
 
-                    // this is pretty much the only one we want to netSend
-                    builtEntity.addComponent($components.get('netSend'));
+                    world.addEntity(builtEntity);
 
-                    $entityCache.put('mainPlayer', builtEntity);
-                } else {
-                    // other stuff we should recv
-                    builtEntity.addComponent($components.get('netRecv'));
-                }
-
-                this.world.addEntity(builtEntity);
-
-                $log.debug('[NetworkSystem : add]', entity, builtEntity);
+                    $log.debug('[NetworkSystem : add]', entity, builtEntity);
+                });
 
                 $rootScope.$apply();
             }
@@ -91,9 +94,11 @@ angular
                 addedToWorld: function(world) {
                     this._super(world);
 
-                    $log.debug('[NetworkSystem addedToWorld]', world.name, Session.get('activeLevel'));
+                    var activeLevel = Session.get('activeLevel');
 
-                    this._stream = new Meteor.Stream(Session.get('activeLevel') + '_entities');
+                    $log.debug('[NetworkSystem addedToWorld]', world.name, activeLevel);
+
+                    this._stream = new Meteor.Stream(activeLevel + '_entities');
 
                     this._stream.on('transforms', onReceiveTransforms.bind(this));
 
@@ -112,6 +117,10 @@ angular
 
                         $rootScope.$apply();
                     });
+
+                    // we also get a private user stream
+                    this._userStream = new Meteor.Stream([Meteor.userId(), activeLevel, 'entities'].join('_'));
+                    this._userStream.on('add', onStreamAdd.bind(this));
                 },
                 update: function() {
                     // for now just send transform

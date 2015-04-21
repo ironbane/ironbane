@@ -52,6 +52,8 @@ angular
                 $rootWorld.addSystem(new MeshSystem(), 'meshes'); // meshes need high priority, at least before rigidbody
                 $rootWorld.addSystem(new OctreeSystem(), 'octree'); // needs a mesh, gotta go after that
 
+                $rootWorld.addSystem(new NetworkSystem(), 'net');
+
                 $rootWorld.addSystem(new RigidBodySystem(), 'rigidbody');
                 $rootWorld.addSystem(new CollisionReporterSystem(), 'collisions');
 
@@ -66,7 +68,6 @@ angular
                 $rootWorld.addSystem(new WieldItemSystem());
                 $rootWorld.addSystem(new ShadowSystem());
                 $rootWorld.addSystem(new TriggerSystem(), 'triggers');
-                $rootWorld.addSystem(new NetworkSystem(), 'net');
 
                 // NOTE: this should be the LAST system as it does rendering!!
                 $rootWorld.addSystem(new CameraSystem(), 'camera');

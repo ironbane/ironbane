@@ -2,6 +2,7 @@ angular
     .module('server.services', [
         'server.services.accounts',
         'server.services.achievements',
+        'server.services.activeWorlds',
         'server.services.character',
         'server.services.chat',
         'server.services.entities',
