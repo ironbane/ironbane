@@ -14,10 +14,6 @@ angular
         function($log, ScriptBank, THREE, Ammo, Debugger) {
             'use strict';
 
-            var acceleration = 0.7;
-            var rotateSpeed = 2;
-            var maxspeed = 4;
-
             // The amount of time that must pass before you can jump again
             var minimumJumpDelay = 0.4;
 
@@ -62,8 +58,6 @@ angular
                     leftStick = input.virtualGamepad.leftThumbstick,
                     rightStick = input.virtualGamepad.rightThumbstick;
 
-                var me = this;
-
                 // reset these every frame
                 this.moveForward = false;
                 this.moveBackward = false;
@@ -76,7 +70,14 @@ angular
 
                 this.jumpTimer += dt;
 
-                var rigidBodyComponent = me.entity.getComponent('rigidBody');
+                var rigidBodyComponent = this.entity.getComponent('rigidBody'),
+                    speedComponent = this.entity.getComponent('speed');
+
+                if (!speedComponent) {
+                    // TODO: perhaps defaults, or something else, or perhaps this is good
+                    $log.warn('Entity has no speed component, cant move!');
+                    return;
+                }
 
                 if (rigidBodyComponent) {
                     // We only set a friction when the character is on the ground, to prevent
@@ -193,7 +194,7 @@ angular
                     // We need to rotate the vector ourselves
                     var v1 = new THREE.Vector3();
                     v1.copy(inputVector).applyQuaternion(this.entity.quaternion);
-                    v1.multiplyScalar(acceleration);
+                    v1.multiplyScalar(speedComponent.acceleration);
 
                     var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity();
                     currentVel = currentVel.toTHREEVector3();
@@ -205,7 +206,7 @@ angular
                     }
 
                     currentVel.y = 0;
-                    if (currentVel.lengthSq() < maxspeed * maxspeed) {
+                    if (currentVel.lengthSq() < speedComponent.maxSpeed * speedComponent.maxSpeed) {
                         btVec3.setValue(v1.x, 0, v1.z);
                         rigidBodyComponent.rigidBody.applyCentralImpulse(btVec3);
                     }
@@ -219,14 +220,14 @@ angular
                     // rigidBodyComponent.rigidBody.applyCentralForce(btVec3);
                     // rigidBodyComponent.rigidBody.setLinearVelocity(btVec3);
                 } else {
-                    this.entity.translateOnAxis(inputVector, acceleration * dt);
+                    this.entity.translateOnAxis(inputVector, speedComponent.acceleration * dt);
                 }
 
                 if (this.rotateLeft) {
-                    this.entity.rotateY(rotateSpeed * dt);
+                    this.entity.rotateY(speedComponent.rotateSpeed * dt);
                 }
                 if (this.rotateRight) {
-                    this.entity.rotateY(-rotateSpeed * dt);
+                    this.entity.rotateY(-speedComponent.rotateSpeed * dt);
                 }
 
             };
