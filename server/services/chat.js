@@ -84,5 +84,14 @@ angular
                     return (userId !== null);
                 }
             });
+
+            Meteor.publish('chatMessages', function() {
+                return ChatMessagesCollection.find({}, {
+                    sort: {
+                        ts: -1
+                    },
+                    limit: 50
+                });
+            });
         }
     ]);
