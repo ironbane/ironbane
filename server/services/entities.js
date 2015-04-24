@@ -13,16 +13,7 @@ angular
                     return false;
                 },
                 update: function(userId, entity, fields, modifier) {
-                    var allowedFields = ['position', 'rotation'];
-
-                    var containsInvalidFields = false;
-                    fields.forEach(function(field) {
-                        if (!_.contains(allowedFields, field)) {
-                            containsInvalidFields = true;
-                        }
-                    });
-
-                    return entity.active && entity.owner === userId && !containsInvalidFields;
+                    return false;
                 },
                 remove: function(userId, entity) {
                     return entity.owner === userId;
