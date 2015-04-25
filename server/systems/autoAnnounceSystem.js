@@ -3,25 +3,26 @@ angular
         'ces.system',
         'engine.util',
         'global.constants',
-        'models'
+        'models',
+        'engine.timing'
     ])
     .factory('AutoAnnounceSystem', [
         'System',
         'ibUtils',
         'IB_CONSTANTS',
         'EntitiesCollection',
-        function(System, ibUtils, IB_CONSTANTS, EntitiesCollection) {
+        'Timer',
+        '$timing',
+        function(System, ibUtils, IB_CONSTANTS, EntitiesCollection, Timer, $timing) {
             'use strict';
 
             var AutoAnnounceSystem = System.extend({
                 init: function() {
-                    this.timeUntilAnnouncement = IB_CONSTANTS.serverAnnouncementsTimeout;
-                    this.startTime = (new Date()).getTime();
+                    this.announceTimer = new Timer(IB_CONSTANTS.serverAnnouncementsTimeout);
                 },
-                update: function(dTime) {
-                    this.timeUntilAnnouncement -= dTime;
-                    if (this.timeUntilAnnouncement <= 0) {
-
+                update: function() {
+                    if (this.announceTimer.isExpired) {
+                        console.log('announceTimer isExpired: ', this.announceTimer.delta);
                         // Make sure there are players online so we don't talk to a wall
                         if (EntitiesCollection.find({
                                 active: true,
@@ -38,7 +39,7 @@ angular
 
                                 [
                                     'Welcome to Ironbane ' + IB_CONSTANTS.GAME_VERSION + '!',
-                                    'Server uptime: ' + ibUtils.timeSince(this.startTime)
+                                    'Server uptime: ' + ibUtils.timeSince($timing.startTime)
                                 ],
 
                                 [
@@ -71,7 +72,7 @@ angular
 
                         }
 
-                        this.timeUntilAnnouncement = IB_CONSTANTS.serverAnnouncementsTimeout;
+                        this.announceTimer.reset();
                     }
                 }
             });

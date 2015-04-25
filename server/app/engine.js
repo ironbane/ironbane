@@ -2,6 +2,7 @@ angular
     .module('IronbaneServer', [
         'ng',
         'ces',
+        'engine.timing',
         'game.world-root',
         'game.threeWorld',
         'systems.autoAnnounceSystem',
@@ -92,37 +93,24 @@ angular
         '$window',
         '$rootWorld',
         '$activeWorlds',
-        function($log, $window, $rootWorld, $activeWorlds) {
+        '$timing',
+        function($log, $window, $rootWorld, $activeWorlds, $timing) {
             'use strict';
 
-            var startTime = (new Date().getTime()) / 1000.0;
-            var lastTimestamp = startTime;
-            var _timing = {};
-
             function onRequestedFrame() {
-                var timestamp = (new Date().getTime()) / 1000.0;
+                $timing.step();
 
-                Meteor.setTimeout(onRequestedFrame, 200);
-
-                _timing.timestamp = timestamp;
-                _timing.elapsed = timestamp - startTime;
-                _timing.frameTime = timestamp - lastTimestamp;
-
-                _timing.frameTime = Math.min(_timing.frameTime, 0.3);
-
-                $rootWorld._timing = _timing;
-                $rootWorld.update(_timing.frameTime, _timing.elapsed, _timing.timestamp);
+                $rootWorld.update($timing.frameTime, $timing.elapsed, $timing.timestamp);
 
                 // ideally this would be clustered perhaps?
                 angular.forEach($activeWorlds, function(world) {
-                    world._timing = _timing;
-                    world.update(_timing.frameTime, _timing.elapsed, _timing.timestamp);
+                    world.update($timing.frameTime, $timing.elapsed, $timing.timestamp);
                 });
 
-                lastTimestamp = timestamp;
+                $window.requestAnimationFrame(onRequestedFrame);
             }
 
             $log.log('Ironbane booting up game world...');
-            Meteor.setTimeout(onRequestedFrame, 200);
+            $window.requestAnimationFrame(onRequestedFrame);
         }
     ]);

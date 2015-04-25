@@ -25,8 +25,8 @@ angular
                 //var magic = 35;
                 var magic = 2;
 
-                cameraComponent._camera.position.set(Math.sin(timestamp * multiplier / 20) * -18, (magic + 2) + Math.cos(timestamp * multiplier / 20) * magic, Math.cos(timestamp * multiplier / 20) * 18);
-                cameraComponent._camera.rotation.set(0, -timestamp * multiplier / 20, 0);
+                cameraComponent._camera.position.set(Math.sin(elapsed * multiplier / 20) * -18, (magic + 2) + Math.cos(elapsed * multiplier / 20) * magic, Math.cos(elapsed * multiplier / 20) * 18);
+                cameraComponent._camera.rotation.set(0, -elapsed * multiplier / 20, 0);
             };
 
             ScriptBank.add('/scripts/built-in/camera-pan.js', PanScript);
