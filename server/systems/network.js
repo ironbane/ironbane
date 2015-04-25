@@ -1,5 +1,5 @@
 angular
-    .module('systems.network', ['ces'])
+    .module('server.systems.network', ['ces'])
     .factory('NetworkSystem', [
         'System',
         '$log',

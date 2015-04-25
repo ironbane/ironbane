@@ -5,14 +5,15 @@ angular
         'engine.timing',
         'game.world-root',
         'game.threeWorld',
-        'systems.autoAnnounceSystem',
+        'server.systems.autoAnnounceSystem',
         'components',
         'prefabs',
         'engine.entity-cache',
         'engine.entity-builder',
         'models',
         'server.services',
-        'systems.network'
+        'server.systems.network',
+        'server.systems.persistence'
     ])
     .run([
         '$log',
@@ -25,7 +26,9 @@ angular
         '$components',
         'ZonesCollection',
         'EntitiesCollection',
-        function($log, $rootWorld, AutoAnnounceSystem, EntityBuilder, $activeWorlds, ThreeWorld, NetworkSystem, $components, ZonesCollection, EntitiesCollection) {
+        'PersistenceSystem',
+        function($log, $rootWorld, AutoAnnounceSystem, EntityBuilder, $activeWorlds,
+            ThreeWorld, NetworkSystem, $components, ZonesCollection, EntitiesCollection, PersistenceSystem) {
             'use strict';
 
             // on the server the rootWorld isn't actually tied to any scene
@@ -42,6 +45,7 @@ angular
 
                     // setup the systems this world will use
                     world.addSystem(new NetworkSystem(), 'network');
+                    world.addSystem(new PersistenceSystem(), 'persistence');
 
                     // load the initial zone data from the world file
                     Meteor.setTimeout(function() { world.load(doc.name); }, 10);
@@ -63,6 +67,7 @@ angular
                             // it's unlikely that the server will not want to send an entity
                             ent.addComponent($components.get('netSend'));
                             ent.addComponent($components.get('netRecv'));
+                            ent.addComponent($components.get('persisted', {_id: doc._id}));
                             ent.owner = doc.owner;
                             // TODO: decorate entity with other components, such as "player", etc. like the client does
                             $activeWorlds[doc.level]._ownerCache[doc.owner] = ent.uuid;

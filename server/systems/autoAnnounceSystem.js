@@ -1,5 +1,5 @@
 angular
-    .module('systems.autoAnnounceSystem', [
+    .module('server.systems.autoAnnounceSystem', [
         'ces.system',
         'engine.util',
         'global.constants',
@@ -22,7 +22,6 @@ angular
                 },
                 update: function() {
                     if (this.announceTimer.isExpired) {
-                        console.log('announceTimer isExpired: ', this.announceTimer.delta);
                         // Make sure there are players online so we don't talk to a wall
                         if (EntitiesCollection.find({
                                 active: true,
