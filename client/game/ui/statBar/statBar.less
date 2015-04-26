@@ -1,0 +1,67 @@
+.stats-container {display: inline-block; margin: 8px 0 0 8px;}
+
+.statBar {
+    margin: 0;
+    padding: 0;
+    li {list-style: none;display: inline-block; margin: 2px;}
+}
+
+.stat-sprite(@x: 0, @y: 0, @width: 0, @height: 0) {
+    background-position: @x @y;
+    width: @width;
+    height: @height;
+}
+
+.statBar-sprite {
+    background-image: url(images/ui/stats.png);
+    background-repeat: no-repeat;
+    display: block;
+
+    &.sprite-armor_empty {
+        .stat-sprite(-5px, -5px, 24px, 24px);
+    }
+
+    &.sprite-armor_flash_empty {
+        .stat-sprite(-39px, -5px, 24px, 24px);
+    }
+
+    &.sprite-armor_flash_full {
+        .stat-sprite(-73px, -5px, 24px, 24px);
+    }
+
+    &.sprite-armor_flash_half {
+        .stat-sprite(-5px, -39px, 24px, 24px);
+    }
+
+    &.sprite-armor_full {
+        .stat-sprite(-39px, -39px, 24px, 24px);
+    }
+
+    &.sprite-armor_half {
+        .stat-sprite(-73px, -39px, 24px, 24px);
+    }
+
+    &.sprite-health_empty {
+        .stat-sprite(-5px, -73px, 24px, 24px);
+    }
+
+    &.sprite-health_flash_empty {
+        .stat-sprite(-39px, -73px, 24px, 24px);
+    }
+
+    &.sprite-health_flash_full {
+        .stat-sprite(-73px, -73px, 24px, 24px);
+    }
+
+    &.sprite-health_flash_half {
+        .stat-sprite(-107px, -5px, 24px, 24px);
+    }
+
+    &.sprite-health_full {
+        .stat-sprite(-107px, -39px, 24px, 24px);
+    }
+
+    &.sprite-health_half {
+        .stat-sprite(-107px, -73px, 24px, 24px);
+    }
+}

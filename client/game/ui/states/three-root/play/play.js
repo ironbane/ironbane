@@ -6,7 +6,8 @@ angular
         'game.ui.chat.chatBoxDirective',
         'game.ui.chat.chatService',
         'game.ui.dialog',
-        'engine.entity-cache'
+        'engine.entity-cache',
+        'game.ui.statBar'
     ])
     .config([
         '$stateProvider',

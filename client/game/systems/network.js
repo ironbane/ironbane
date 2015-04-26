@@ -72,6 +72,7 @@ angular
                         builtEntity.addComponent($components.get('netSend'));
 
                         $entityCache.put('mainPlayer', builtEntity);
+                        $rootScope.mainPlayer = builtEntity;
                     } else {
                         // other stuff we should recv
                         builtEntity.addComponent($components.get('netRecv'));
