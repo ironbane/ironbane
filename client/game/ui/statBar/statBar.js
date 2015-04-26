@@ -22,13 +22,12 @@ angular
                         return ctrl.statComponent;
                     }, function(component, old) {
                         $log.debug('statComponent changed: ', component, old);
+                        ctrl.icons = [];
                         if (!component) {
                             return;
                         }
 
                         var totalFull = Math.floor(component.max / 2);
-
-                        ctrl.icons = [];
                         for (var i = totalFull; i >= 1; i--) {
                             var value = i * 2;
                             if (component.value >= value) {
