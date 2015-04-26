@@ -48,6 +48,7 @@ angular
                                     .then(function(loadedTexture) {
                                         // loadedTexture.needsUpdate = true;
                                         quad.material.map = loadedTexture;
+                                        quad.material.emissive.set('#999'); // char is always lit to some degree
                                         quad.material.needsUpdate = true;
                                         quad.geometry.buffersNeedUpdate = true;
                                         quad.geometry.uvsNeedUpdate = true;

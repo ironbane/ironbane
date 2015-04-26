@@ -72,6 +72,7 @@ angular
                         builtEntity.addComponent($components.get('netSend'));
 
                         $entityCache.put('mainPlayer', builtEntity);
+                        // needed somewhere on the scope for the UI, prolly doesn't *need* to be root
                         $rootScope.mainPlayer = builtEntity;
                     } else {
                         // other stuff we should recv
