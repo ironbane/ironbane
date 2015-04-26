@@ -99,6 +99,10 @@ angular
                     entities.forEach(function(entity) {
                         // TODO: specific network serialization
                         var serialized = JSON.parse(JSON.stringify(entity));
+                        // TODO: something is wrong with the serializer...
+                        delete serialized.matrix;
+                        serialized.position = entity.position.serialize();
+                        serialized.rotation = entity.rotation.serialize();
                         // we should remove the networking components, and let the client decide
                         delete serialized.components.netSend;
                         delete serialized.components.netRecv;
