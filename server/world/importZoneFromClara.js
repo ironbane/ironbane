@@ -1,7 +1,8 @@
 angular
     .module('util.claraImporter', [
         'ng',
-        'three'
+        'three',
+        'geometry.toJSON'
     ])
     .service('ClaraImportTool', [
         'THREE',
