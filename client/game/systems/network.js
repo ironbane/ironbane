@@ -1,9 +1,12 @@
 angular
     .module('game.systems.network', [
         'ces',
+        'three',
         'engine.entity-builder',
         'game.world-root',
-        'engine.entity-cache'
+        'engine.entity-cache',
+        'ammo',
+        'engine.timing'
     ])
     .factory('NetworkSystem', [
         'System',
@@ -13,13 +16,29 @@ angular
         '$components',
         '$rootWorld',
         '$entityCache',
-        function(System, EntityBuilder, $log, $rootScope, $components, $rootWorld, $entityCache) {
+        'THREE',
+        'Ammo',
+        '$timing',
+        function(System, EntityBuilder, $log, $rootScope, $components, $rootWorld, $entityCache, THREE, Ammo, $timing) {
             'use strict';
 
             function arraysAreEqual(a1, a2) {
                 // TODO make more robust? this is just for transforms right now
                 return (a1[0] === a2[0]) && (a1[1] === a2[1]) && (a1[2] === a2[2]);
             }
+
+            var toSimpleRotationY = function(rotation) {
+                var rotVec = new THREE.Vector3(0, 0, 1);
+                rotVec.applyEuler(rotation);
+
+                var simpleRotationY = (Math.atan2(rotVec.z, rotVec.x));
+                if (simpleRotationY < 0) {
+                    simpleRotationY += (Math.PI * 2);
+                }
+                simpleRotationY = (Math.PI * 2) - simpleRotationY;
+
+                return simpleRotationY;
+            };
 
             function onReceiveTransforms(packet) {
                 var netEntities = this.world.getEntities('netRecv');
@@ -31,9 +50,52 @@ angular
                         entity.position.deserialize(packet[entity.uuid].pos);
                         entity.rotation.deserialize(packet[entity.uuid].rot);
                     }
-                });
 
-                // TODO: stuff with rigidBody from script
+                    // stuff with rigidBody from network-receive script
+                    var btVec3 = new Ammo.btVector3();
+                    var btQuat = new Ammo.btQuaternion(0, 0, 0, 1);
+                    var desiredPosition = new THREE.Vector3();
+                    var desiredRotation = new THREE.Euler();
+
+                    var rigidBodyComponent = entity.getComponent('rigidBody');
+
+                    if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
+                        var toVec = desiredPosition.clone().sub(entity.position);
+                        var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity();
+                        currentVel = currentVel.toTHREEVector3();
+                        btVec3.setValue(toVec.x, currentVel.y, toVec.z);
+                        rigidBodyComponent.rigidBody.setLinearVelocity(btVec3);
+                        // rigidBodyComponent.rigidBody.applyCentralImpulse(btVec3);
+
+                        if (toVec.lengthSq() > 16) {
+                            btVec3.setValue(desiredPosition.x, desiredPosition.y, desiredPosition.z);
+                            var btTransform = new Ammo.btTransform(btQuat, btVec3);
+                            rigidBodyComponent.rigidBody.setWorldTransform(btTransform);
+                        }
+                    }
+
+                    var entityRotationY = toSimpleRotationY(entity.rotation);
+                    var desiredRotationY = toSimpleRotationY(desiredRotation);
+
+                    var side = true;
+                    if (desiredRotationY < entityRotationY) {
+                        side = Math.abs(desiredRotationY - entityRotationY) < (Math.PI);
+                    } else {
+                        side = ((desiredRotationY - entityRotationY) > (Math.PI));
+                    }
+
+                    var distance = Math.abs(desiredRotationY - entityRotationY);
+
+                    var speed = 2.0;
+
+                    if (distance > 0.03) {
+                        if (side) {
+                            entity.rotateY(-speed * $timing.frameTime);
+                        } else if (!side) {
+                            entity.rotateY(speed * $timing.frameTime);
+                        }
+                    }
+                });
             }
 
             function onStreamAdd(packet) {
