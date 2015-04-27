@@ -52,14 +52,13 @@ angular
                     }
 
                     // stuff with rigidBody from network-receive script
-                    var btVec3 = new Ammo.btVector3();
-                    var btQuat = new Ammo.btQuaternion(0, 0, 0, 1);
-                    var desiredPosition = new THREE.Vector3();
-                    var desiredRotation = new THREE.Euler();
-
                     var rigidBodyComponent = entity.getComponent('rigidBody');
-
                     if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
+                        var btVec3 = new Ammo.btVector3();
+                        var btQuat = new Ammo.btQuaternion(0, 0, 0, 1);
+                        var desiredPosition = new THREE.Vector3();
+                        var desiredRotation = new THREE.Euler();
+
                         var toVec = desiredPosition.clone().sub(entity.position);
                         var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity();
                         currentVel = currentVel.toTHREEVector3();
@@ -72,27 +71,27 @@ angular
                             var btTransform = new Ammo.btTransform(btQuat, btVec3);
                             rigidBodyComponent.rigidBody.setWorldTransform(btTransform);
                         }
-                    }
 
-                    var entityRotationY = toSimpleRotationY(entity.rotation);
-                    var desiredRotationY = toSimpleRotationY(desiredRotation);
+                        var entityRotationY = toSimpleRotationY(entity.rotation);
+                        var desiredRotationY = toSimpleRotationY(desiredRotation);
 
-                    var side = true;
-                    if (desiredRotationY < entityRotationY) {
-                        side = Math.abs(desiredRotationY - entityRotationY) < (Math.PI);
-                    } else {
-                        side = ((desiredRotationY - entityRotationY) > (Math.PI));
-                    }
+                        var side = true;
+                        if (desiredRotationY < entityRotationY) {
+                            side = Math.abs(desiredRotationY - entityRotationY) < (Math.PI);
+                        } else {
+                            side = ((desiredRotationY - entityRotationY) > (Math.PI));
+                        }
 
-                    var distance = Math.abs(desiredRotationY - entityRotationY);
+                        var distance = Math.abs(desiredRotationY - entityRotationY);
 
-                    var speed = 2.0;
+                        var speed = 2.0;
 
-                    if (distance > 0.03) {
-                        if (side) {
-                            entity.rotateY(-speed * $timing.frameTime);
-                        } else if (!side) {
-                            entity.rotateY(speed * $timing.frameTime);
+                        if (distance > 0.03) {
+                            if (side) {
+                                entity.rotateY(-speed * $timing.frameTime);
+                            } else if (!side) {
+                                entity.rotateY(speed * $timing.frameTime);
+                            }
                         }
                     }
                 });
@@ -121,6 +120,34 @@ angular
                         }));
                         builtEntity.addComponent($components.get('camera', {
                             aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
+                        }));
+                        builtEntity.addComponent($components.get('rigidBody', {
+                            shape: {
+                                type: 'capsule',
+                                width: 0.5,
+                                height: 1.0,
+                                depth: 0.5,
+                                radius: 0.5
+
+                                // type: 'sphere',
+                                // radius: 0.5
+                            },
+                            mass: 1,
+                            friction: 0.0,
+                            restitution: 0,
+                            allowSleep: false,
+                            lock: {
+                                position: {
+                                    x: false,
+                                    y: false,
+                                    z: false
+                                },
+                                rotation: {
+                                    x: true,
+                                    y: true,
+                                    z: true
+                                }
+                            }
                         }));
 
                         if (scriptComponent) {
