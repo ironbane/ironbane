@@ -1,0 +1,1 @@
+FROM danieldent/meteor:onbuild
