@@ -8,7 +8,8 @@ angular
         'engine.util',
         'global.constants',
         'game.ui.dialog',
-        'util.name-gen'
+        'util.name-gen',
+        'game.world-root'
     ])
     .config(['$stateProvider', function($stateProvider) {
         'use strict';
@@ -25,8 +26,9 @@ angular
                 'FantasyNameGenerator',
                 'IB_CONSTANTS',
                 '$log',
+                '$rootWorld',
                 function($scope, $state, $meteor, CharBuilder, dialogService,
-                    FantasyNameGenerator, IB_CONSTANTS, $log) {
+                    FantasyNameGenerator, IB_CONSTANTS, $log, $rootWorld) {
 
                     var updateCharacterPreview = function() {
                         if ($scope.characters.length && $scope.currentCharIndex < $scope.characters.length) {
@@ -70,7 +72,9 @@ angular
 
                                 if (activeChar) {
                                     $scope.currentChar.id = charId;
-                                    $scope.activeLevel = activeChar.level;
+                                    // TODO: test in ZonesCollection that level still exists
+                                    $rootWorld.activeLevel = activeChar.level;
+                                    $log.debug('enterGame: ', activeChar, $scope);
                                 } else {
                                     $log.error('unable to locate character, not updated yet?');
                                 }
