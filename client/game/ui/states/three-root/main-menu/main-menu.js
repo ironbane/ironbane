@@ -66,8 +66,7 @@ angular
                 '$scope',
                 'characterList',
                 'IB_CONSTANTS',
-                '$rootWorld',
-                function($log, $scope, characterList, IB_CONSTANTS, $rootWorld) {
+                function($log, $scope, characterList, IB_CONSTANTS) {
                     $scope.characters = characterList;
 
                     $scope.currentCharIndex = 0;
@@ -77,7 +76,7 @@ angular
                         }
                     });
 
-                    $rootWorld.activeLevel = IB_CONSTANTS.world.mainMenuLevel;
+                    $scope.activeLevel = IB_CONSTANTS.world.mainMenuLevel;
 
                     $log.debug('mainMenu Controller: ', this, $scope);
                 }

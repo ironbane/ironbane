@@ -185,7 +185,7 @@ angular
                 addedToWorld: function(world) {
                     this._super(world);
 
-                    var activeLevel = $rootWorld.activeLevel;
+                    var activeLevel = Session.get('activeLevel');
 
                     $log.debug('[NetworkSystem addedToWorld]', world.name, activeLevel);
 

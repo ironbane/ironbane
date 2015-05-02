@@ -76,9 +76,9 @@ angular
                         });
                     }
 
-                    $scope.$watch(function() {
-                        return $rootWorld.activeLevel;
-                    }, function(level) {
+                    $meteor.session('activeLevel').bind($scope, 'activeLevel');
+
+                    $scope.$watch('activeLevel', function(level) {
                         $log.debug('activeLevel changed: ', level);
 
                         if (!angular.isString(level)) {
@@ -124,7 +124,7 @@ angular
                         document.body.appendChild($rootWorld.stats.domElement);
                     }
 
-                    $rootWorld.activeLevel = IB_CONSTANTS.world.mainMenuLevel;
+                    Session.set('activeLevel', IB_CONSTANTS.world.mainMenuLevel);
 
                     GameService.start();
                 }
