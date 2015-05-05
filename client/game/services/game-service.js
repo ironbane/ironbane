@@ -1,79 +1,53 @@
 angular
     .module('engine.game-service', [
-        'game.game-loop',
         'game.world-root',
-        'components',
         'game.systems',
-        'game.scripts',
-        'prefabs',
-        'engine.entity-builder',
         'engine.input.input-system',
-        'util.name-gen',
         // shared systems
         'systems.mesh'
     ])
     .service('GameService', [
+        '$injector',
         '$rootWorld',
-        'CameraSystem',
-        'LightSystem',
-        'SpriteSystem',
-        'QuadSystem',
-        'HelperSystem',
-        'OctreeSystem',
-        'ScriptSystem',
-        'SoundSystem',
-        'InputSystem',
-        'RigidBodySystem',
-        'CollisionReporterSystem',
-        'WieldItemSystem',
-        'EntityBuilder',
         '$log',
-        'ProcTreeSystem',
-        'ShadowSystem',
-        'FantasyNameGenerator',
-        'NameMeshSystem',
-        'NetworkSystem',
-        'TriggerSystem',
-        'MeshSystem',
-        function($rootWorld, CameraSystem, LightSystem, SpriteSystem, QuadSystem, HelperSystem, OctreeSystem, ScriptSystem,
-            SoundSystem, InputSystem, RigidBodySystem, CollisionReporterSystem, WieldItemSystem,
-            EntityBuilder, $log, ProcTreeSystem, ShadowSystem,
-            FantasyNameGenerator, NameMeshSystem, NetworkSystem, TriggerSystem, MeshSystem) {
+        function($injector, $rootWorld, $log) {
             'use strict';
+
+            var _defaultSystems = [ // order matters
+                'NameMesh',
+                'Quad',
+                'Mesh',
+                'Octree',
+                'Network',
+                'RigidBody',
+                'CollisionReporter',
+                'Input',
+                'Sound',
+                'Script',
+                'ProcTree',
+                'Sprite',
+                'Light',
+                'Helper',
+                'WieldItem',
+                'Shadow',
+                'Trigger',
+                'Camera'
+            ];
 
             this.start = function() {
                 // ALL these systems have to load before other entities
                 // they don't load stuff after the fact...
                 // TODO: fix that
-
-                $rootWorld.addSystem(new NameMeshSystem());
-
-                $rootWorld.addSystem(new QuadSystem(), 'quads');
-                $rootWorld.addSystem(new MeshSystem(), 'meshes'); // meshes need high priority, at least before rigidbody
-                $rootWorld.addSystem(new OctreeSystem(), 'octree'); // needs a mesh, gotta go after that
-
-                $rootWorld.addSystem(new NetworkSystem(), 'net');
-
-                $rootWorld.addSystem(new RigidBodySystem(), 'rigidbody');
-                $rootWorld.addSystem(new CollisionReporterSystem(), 'collisions');
-
-                $rootWorld.addSystem(new InputSystem(), 'input');
-                $rootWorld.addSystem(new SoundSystem(), 'sound');
-                $rootWorld.addSystem(new ScriptSystem(), 'scripts');
-                $rootWorld.addSystem(new ProcTreeSystem(), 'proctree');
-                $rootWorld.addSystem(new SpriteSystem());
-                $rootWorld.addSystem(new LightSystem());
-
-                $rootWorld.addSystem(new HelperSystem());
-                $rootWorld.addSystem(new WieldItemSystem());
-                $rootWorld.addSystem(new ShadowSystem());
-                $rootWorld.addSystem(new TriggerSystem(), 'triggers');
-
-                // NOTE: this should be the LAST system as it does rendering!!
-                $rootWorld.addSystem(new CameraSystem(), 'camera');
-
-                // Initialize Meteor's entities collection
-                //Network.init();
+                $log.debug('Adding game systems...');
+                angular.forEach(_defaultSystems, function(system) {
+                    var registeredSystemName = system + 'System';
+                    if ($injector.has(registeredSystemName)) {
+                        var Sys = $injector.get(registeredSystemName);
+                        $rootWorld.addSystem(new Sys(), angular.lowercase(system));
+                    } else {
+                        $log.debug(registeredSystemName + ' was not found!');
+                    }
+                });
             };
         }
     ]);
