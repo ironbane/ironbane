@@ -64,23 +64,27 @@ angular
         '$meteor',
         '$state',
         '$log',
-        function($window, Debugger, IB_CONSTANTS, $rootScope, $meteor, $state, $log) {
+        'Util',
+        function($window, Debugger, IB_CONSTANTS, $rootScope, $meteor, $state, $log, Util) {
             // for convenience
             if(IB_CONSTANTS.isDev) {
                 $window.debug = Debugger;
             }
 
-            // THIS IS WHERE IT ALL BEGINS!
-            // NOTE: if we want to go to another state that isn't 3D, change logic here
-            // maybe a router?
-            $state.go('three-root.main-menu.enter-world');
+    		// If we don't wrap this, AUTH_REQUIRED error is thrown in incognito/first timers
+            Util.waitForMeteorGuestUserLogin().then(function () {
+				// THIS IS WHERE IT ALL BEGINS!
+	            // NOTE: if we want to go to another state that isn't 3D, change logic here
+	            // maybe a router?
+            	$state.go('three-root.main-menu.enter-world');
+            });
 
             /*$rootScope.$on('$stateChangeStart', function() {
                 $log.debug('$stateChangeStart', arguments);
             });*/
 
             $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
-                $log.debug('$stateChangeError', event, toState, toParams, fromState, fromParams, error.message);
+                $log.debug('$stateChangeError', event, toState, toParams, fromState, fromParams, error);
             });
 
             /*$rootScope.$on('$stateChangeSuccess', function() {
