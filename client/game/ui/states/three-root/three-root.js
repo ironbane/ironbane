@@ -53,6 +53,7 @@ angular
                     $scope.logout = function() {
                         return $meteor.logout()
                             .then(function() {
+                            	// Might need to be changed to waitForMeteorGuestUserLogin()
                                 return $meteor.waitForUser();
                             })
                             .then(function(user) {

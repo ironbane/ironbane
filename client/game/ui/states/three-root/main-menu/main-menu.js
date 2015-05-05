@@ -8,6 +8,7 @@ angular
         'game.ui.states.three-root.main-menu.register',
         'game.world-root',
         'engine.entity-builder',
+        'engine.util',
         'global.constants'
     ])
     .config(['$stateProvider', function($stateProvider) {
@@ -42,8 +43,9 @@ angular
                 characterList: [
                     '$meteor',
                     '$log',
-                    function($meteor, $log) {
-                        return $meteor.waitForUser().then(function(user) {
+                    'Util',
+                    function($meteor, $log, Util) {
+                        return Util.waitForMeteorGuestUserLogin().then(function(user) {
                             var list;
                             try {
                                 list = $meteor.collection(function() {
