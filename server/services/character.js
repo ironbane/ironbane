@@ -91,14 +91,17 @@ angular
                     if (spawns.length === 0) {
                         $log.log(startLevel, ' has no spawn points defined!');
                     }
-                    spawns.forEach(function(spawn) {
+                    // Just pick one of them
+                    // Having multiple spawns is useful against AFK players so
+                    // we don't have players spawning in/on top of eachother too much.
+                    (function(spawn) {
                         var component = spawn.getComponent('spawnPoint');
-                        // there should only be one of these, and maybe a better way to find it?
+
                         if (component.tag === 'playerStart') {
                             initialPosition = spawn.position.toArray();
                             initialRotation = spawn.rotation.toArray();
                         }
-                    });
+                    })(_.sample(spawns));
                 } else {
                     $log.log('NO ACTIVE WORLD: ', startLevel);
                 }
