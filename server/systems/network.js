@@ -41,6 +41,8 @@ angular
 
             var NetworkSystem = System.extend({
                 addedToWorld: function(world) {
+                    var self = this;
+
                     this._super(world);
 
                     // each world should have its own network stream
@@ -59,6 +61,12 @@ angular
                     });
 
                     this._stream.on('transforms', onRecieveTransforms.bind(this));
+
+                    // a client may request a full state update (typically this should be for bootup, TODO somehow throttle this so that we don't get hammered)
+                    this._stream.on('getState', function() {
+                        $log.debug('server getState: ', this.userId, this.subscriptionId);
+                        self.sendNetState(this.userId, self.world.getEntities('netSend'));
+                    });
 
                     world.entityAdded('netSend').add(onNetSendEntityAdded.bind(this));
                     world.entityRemoved('netSend').add(onNetSendEntityRemoved.bind(this));

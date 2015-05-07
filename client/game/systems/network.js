@@ -209,8 +209,13 @@ angular
                         $rootScope.$apply();
                     });
 
+                    // as we are added to the client's world, it'll even be main menu time, we want to ask for the current state of things
+                    this._stream.emit('getState');
+
                     // we also get a private user stream
-                    this._userStream = new Meteor.Stream([Meteor.userId(), activeLevel, 'entities'].join('_'));
+                    var userStream = [Meteor.userId(), activeLevel, 'entities'].join('_');
+                    $log.debug('userStream', userStream);
+                    this._userStream = new Meteor.Stream(userStream);
                     this._userStream.on('add', onStreamAdd.bind(this));
                 },
                 update: function() {
