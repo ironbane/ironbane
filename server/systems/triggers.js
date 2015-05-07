@@ -1,5 +1,5 @@
 angular
-    .module('game.systems.trigger', [
+    .module('server.systems.trigger', [
         'ces',
         'underscore',
         'engine.scriptBank'
@@ -19,14 +19,6 @@ angular
 
                     world.entityAdded('trigger').add(function (entity) {
                         // as each entity is added to the world that contains a trigger component...
-
-                        // this might need to be a more global thing
-                        // also careful if creating entities outside of the clara workflow, this would be the sticky point
-                        Object.defineProperty(entity, 'active', {
-                            get: function() {
-                                return this.enabled || (this.doc && this.doc.active);
-                            }
-                        });
 
                         var component = entity.getComponent('trigger');
                         // let's add some volatile storage
@@ -92,10 +84,6 @@ angular
                     var triggers = world.getEntities('trigger');
 
                     triggers.forEach(function(triggerEntity) {
-                        if (!triggerEntity.active) { // TODO: revisit this about multiple levels loaded by server (zones)
-                            return;
-                        }
-
                         var triggerData = triggerEntity.getComponent('trigger'),
                             guestsToBeRemoved = [];
 

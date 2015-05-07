@@ -12,27 +12,31 @@ angular
         'engine.entity-builder',
         'models',
         'server.services',
-        'server.systems.network',
-        'server.systems.persistence'
+        'server.systems'
     ])
     .run([
         '$log',
         '$rootWorld',
+        '$injector',
         'AutoAnnounceSystem',
         'EntityBuilder',
         '$activeWorlds',
         'ThreeWorld',
-        'NetworkSystem',
         '$components',
         'ZonesCollection',
         'EntitiesCollection',
-        'PersistenceSystem',
-        function($log, $rootWorld, AutoAnnounceSystem, EntityBuilder, $activeWorlds,
-            ThreeWorld, NetworkSystem, $components, ZonesCollection, EntitiesCollection, PersistenceSystem) {
+        function($log, $rootWorld, $injector, AutoAnnounceSystem, EntityBuilder, $activeWorlds,
+            ThreeWorld, $components, ZonesCollection, EntitiesCollection) {
             'use strict';
 
             // on the server the rootWorld isn't actually tied to any scene
             $rootWorld.addSystem(new AutoAnnounceSystem());
+
+            var systemsForWorlds = [ // order matters
+                'Network',
+                'Persistence',
+                'Trigger'
+            ];
 
             // populate all the worlds (zones)
             var zonesCursor = ZonesCollection.find({});
@@ -43,9 +47,15 @@ angular
                     // TODO: prolly track this elsewhere
                     world._ownerCache = {};
 
-                    // setup the systems this world will use
-                    world.addSystem(new NetworkSystem(), 'network');
-                    world.addSystem(new PersistenceSystem(), 'persistence');
+                    angular.forEach(systemsForWorlds, function(system) {
+                        var registeredSystemName = system + 'System';
+                        if ($injector.has(registeredSystemName)) {
+                            var Sys = $injector.get(registeredSystemName);
+                            world.addSystem(new Sys(), angular.lowercase(system));
+                        } else {
+                            $log.debug(registeredSystemName + ' was not found!');
+                        }
+                    });
 
                     // load the initial zone data from the world file
                     Meteor.setTimeout(function() { world.load(doc.name); }, 10);

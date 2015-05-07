@@ -14,6 +14,5 @@ angular
         'game.systems.shadow',
         'game.systems.sound',
         'game.systems.sprite',
-        'game.systems.trigger',
         'game.systems.wieldItem',
     ]);
