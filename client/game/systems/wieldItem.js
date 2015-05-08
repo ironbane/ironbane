@@ -55,22 +55,22 @@ angular
 
 
                         // Helpers (for debugging)
-                        var geometry = new THREE.SphereGeometry(0.02, 32, 32);
-                        var material1 = new THREE.MeshBasicMaterial({
-                            color: 0xffff00
-                        });
-                        var material2 = new THREE.MeshBasicMaterial({
-                            color: 0xff0000
-                        });
-                        var material3 = new THREE.MeshBasicMaterial({
-                            color: 0x00ff00
-                        });
-                        var sphere1 = new THREE.Mesh(geometry, material1);
-                        var sphere2 = new THREE.Mesh(geometry, material2);
-                        var sphere3 = new THREE.Mesh(geometry, material3);
-                        wieldItemData.weaponOrigin.add(sphere1);
-                        wieldItemData.weaponPivot.add(sphere2);
-                        wieldItemData.wieldItem.add(sphere3);
+                        // var geometry = new THREE.SphereGeometry(0.02, 32, 32);
+                        // var material1 = new THREE.MeshBasicMaterial({
+                        //     color: 0xffff00
+                        // });
+                        // var material2 = new THREE.MeshBasicMaterial({
+                        //     color: 0xff0000
+                        // });
+                        // var material3 = new THREE.MeshBasicMaterial({
+                        //     color: 0x00ff00
+                        // });
+                        // var sphere1 = new THREE.Mesh(geometry, material1);
+                        // var sphere2 = new THREE.Mesh(geometry, material2);
+                        // var sphere3 = new THREE.Mesh(geometry, material3);
+                        // wieldItemData.weaponOrigin.add(sphere1);
+                        // wieldItemData.weaponPivot.add(sphere2);
+                        // wieldItemData.wieldItem.add(sphere3);
 
                         // TODO: the parent is still undefined
                         // because we haven't called scene.add yet when we make this
@@ -121,27 +121,181 @@ angular
                                 // wi.rotation.y += dtr(180);
                             }
 
-                            if (spriteSheetComponent.dirIndex === 0) {
-                                wi.rotation.y += dtr(180);
+							if (spriteSheetComponent.dirIndex === 0) {
+								wi.rotation.y += dtr(200);
 
-                                wp.position.setX(0.40);
-                                wp.position.setY(-0.2);
-                                wp.position.setZ(-0.1);
+								wp.position.setX(0.38);
+								wp.position.setY(-0.2);
+								wp.position.setZ(-0.4);
 
-                                wp.scale.setX(0.5);
+								wp.scale.setX(0.5);
 
-                                wi.position.setX(0.25);
-                                wi.position.setY(0.25);
-                                wi.position.setZ(0);
+								wi.position.setX(0.25);
+								wi.position.setY(0.25);
+								wi.position.setZ(0);
 
-                                var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-                                wp.rotation.z += dtr(Math.cos(entity.weaponWalkSwingTimer) * 10);
+								wp.rotation.z += dtr(Math.cos(entity.weaponWalkSwingTimer) * 10);
 
-                                // wi.rotation.y += dtr(45);
-                                // wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
-                                // wi.rotateZ(Math.PI/4);
-                            }
+								// wi.rotation.y += dtr(45);
+								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
+								// wi.rotateZ(Math.PI/4);
+							}
+
+							if (spriteSheetComponent.dirIndex === 1) {
+								wi.rotation.y += dtr(180);
+
+								wp.position.setX(0.22 + spriteSheetComponent.walkIndex * 0.04);
+								wp.position.setY(-0.25);
+								wp.position.setZ(-0.1);
+
+								wp.scale.setX(0.5);
+
+								wi.position.setX(0.25);
+								wi.position.setY(0.25);
+								wi.position.setZ(0);
+
+								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+
+								wp.rotation.z += dtr(Math.cos(entity.weaponWalkSwingTimer) * 10);
+
+								// wi.rotation.y += dtr(45);
+								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
+								// wi.rotateZ(Math.PI/4);
+							}
+
+							if (spriteSheetComponent.dirIndex === 2) {
+								wi.rotation.y += dtr(180);
+
+								wp.position.setX(-0.1 + spriteSheetComponent.walkIndex * 0.1);
+								wp.position.setY(-0.25);
+								wp.position.setZ(0.2);
+
+								wp.scale.setX(0.8);
+
+								wi.position.setX(0.25);
+								wi.position.setY(0.25);
+								wi.position.setZ(0);
+
+								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+
+								wp.rotation.z += dtr(Math.cos(entity.weaponWalkSwingTimer) * 10);
+
+								// wi.rotation.y += dtr(45);
+								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
+								// wi.rotateZ(Math.PI/4);
+							}
+
+							if (spriteSheetComponent.dirIndex === 3) {
+								wi.rotation.y += dtr(180);
+
+								wp.position.setX(-0.1 - spriteSheetComponent.walkIndex * 0.1);
+								wp.position.setY(-0.25);
+								wp.position.setZ(0.2);
+
+								wp.scale.setX(0.8);
+
+								wi.position.setX(0.25);
+								wi.position.setY(0.25);
+								wi.position.setZ(0);
+
+								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+
+								wp.rotation.z += dtr(Math.cos(entity.weaponWalkSwingTimer) * 10);
+
+								// wi.rotation.y += dtr(45);
+								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
+								// wi.rotateZ(Math.PI/4);
+							}
+
+							if (spriteSheetComponent.dirIndex === 4) {
+								wi.rotation.y += dtr(180);
+
+								wp.position.setX(-0.3);
+								wp.position.setY(-0.25);
+								wp.position.setZ(0.2);
+
+								wp.scale.setX(-0.5);
+
+								wi.position.setX(0.25);
+								wi.position.setY(0.25);
+								wi.position.setZ(0);
+
+								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+
+								wp.rotation.z += dtr(Math.cos(entity.weaponWalkSwingTimer) * 10);
+
+								// wi.rotation.y += dtr(45);
+								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
+								// wi.rotateZ(Math.PI/4);
+							}
+
+							if (spriteSheetComponent.dirIndex === 5) {
+								wi.rotation.y += dtr(180);
+
+								wp.position.setX(-0.2 - spriteSheetComponent.walkIndex * 0.05);
+								wp.position.setY(-0.25);
+								wp.position.setZ(0.2);
+
+								wp.scale.setX(-0.8);
+
+								wi.position.setX(0.25);
+								wi.position.setY(0.25);
+								wi.position.setZ(0);
+
+								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+
+								wp.rotation.z += dtr(Math.cos(entity.weaponWalkSwingTimer) * 10);
+
+								// wi.rotation.y += dtr(45);
+								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
+								// wi.rotateZ(Math.PI/4);
+							}
+
+							if (spriteSheetComponent.dirIndex === 6) {
+								wi.rotation.y += dtr(180);
+
+								wp.position.setX(-0.1 - spriteSheetComponent.walkIndex * 0.05);
+								wp.position.setY(-0.25);
+								wp.position.setZ(-0.2);
+
+								wp.scale.setX(-1);
+
+								wi.position.setX(0.25);
+								wi.position.setY(0.25);
+								wi.position.setZ(0);
+
+								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+
+								wp.rotation.z += dtr(Math.cos(entity.weaponWalkSwingTimer) * 10);
+
+								// wi.rotation.y += dtr(45);
+								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
+								// wi.rotateZ(Math.PI/4);
+							}
+
+							if (spriteSheetComponent.dirIndex === 7) {
+								wi.rotation.y += dtr(180);
+
+								wp.position.setX(0.2 - spriteSheetComponent.walkIndex * 0.05);
+								wp.position.setY(-0.25);
+								wp.position.setZ(-0.2);
+
+								wp.scale.setX(-0.8);
+
+								wi.position.setX(0.25);
+								wi.position.setY(0.25);
+								wi.position.setZ(0);
+
+								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+
+								wp.rotation.z += dtr(Math.cos(entity.weaponWalkSwingTimer) * 10);
+
+								// wi.rotation.y += dtr(45);
+								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
+								// wi.rotateZ(Math.PI/4);
+							}
 
 
                             // TODO this logic is copied from the look-at-camera script

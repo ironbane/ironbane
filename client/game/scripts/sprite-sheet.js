@@ -121,6 +121,7 @@ angular
                 this.walkTimer = 0.0;
                 this.walkIndex = 1;
                 this.walkForward = true;
+                this.dirIndex = 0;
             };
 
             SpriteSheetScript.prototype.update = function(dt, elapsed, timestamp) {
@@ -130,7 +131,7 @@ angular
                 if (quadComponent) {
                     var quad = quadComponent._quad;
 
-                    var dirIndex = getDirectionSpriteIndex(this.entity, this.world);
+                    this.dirIndex = getDirectionSpriteIndex(this.entity, this.world);
 
                     var rigidBodyComponent = this.entity.getComponent('rigidBody');
 
@@ -165,7 +166,7 @@ angular
                         }
                     }
 
-                    displayUVFrame(quad, this.walkIndex, dirIndex, 3, 8, false);
+                    displayUVFrame(quad, this.walkIndex, this.dirIndex, 3, 8, false);
                 }
 
             };
