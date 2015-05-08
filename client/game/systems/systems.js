@@ -6,6 +6,7 @@ angular
         'game.systems.light',
         'game.systems.nameMesh',
         'game.systems.network',
+        'game.systems.particles',
         'game.systems.proctree',
         'game.systems.quad',
         'game.systems.rigidBody',

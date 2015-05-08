@@ -30,6 +30,7 @@ angular
                 'Helper',
                 'WieldItem',
                 'Shadow',
+                'Particle',
                 'Trigger',
                 'Camera'
             ];

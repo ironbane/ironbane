@@ -1,12 +1,14 @@
 angular
     .module('engine.debugger', [
         'underscore',
-        'game.world-root'
+        'game.world-root',
+        'engine.entity-builder'
     ])
     .service('Debugger', [
         '_',
         '$rootWorld',
-        function(_, $rootWorld) {
+        'EntityBuilder',
+        function(_, $rootWorld, EntityBuilder) {
             'use strict';
 
             this.watched = {};
@@ -16,5 +18,7 @@ angular
             };
 
             this.$rootWorld = $rootWorld;
+
+            this.EntityBuilder = EntityBuilder;
         }
     ]);
