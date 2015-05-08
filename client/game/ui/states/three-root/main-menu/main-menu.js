@@ -21,8 +21,16 @@ angular
                 MainMenuPanningCamera: [
                     '$rootWorld',
                     'EntityBuilder',
-                    function($rootWorld, EntityBuilder) {
+                    '$window',
+                    function($rootWorld, EntityBuilder, $window) {
                         var camera;
+
+                        // Problem: aspectRatio is set to 2 at this point because
+                        // domElement is not set to the windowSize yet. Ideally, the MainMenuPanningCamera
+                        // should be constructed AFTER entering three-root OnEnter, as it only knows about
+                        // the real domElement size there.
+                        // For now we'll just set the $window size here, but it's a hack really.
+                        $rootWorld.renderer.setSize($window.innerWidth, $window.innerHeight);
 
                         camera = EntityBuilder.build('MainMenuPanningCamera', {
                             components: {
