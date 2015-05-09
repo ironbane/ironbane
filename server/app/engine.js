@@ -67,6 +67,19 @@ angular
                 }
             });
 
+
+			// Make sure players are set to inactive incase the server crashes
+			// otherwise they'll get the "already-in-game" error and can't log in.
+			// TODO move this somewhere else?
+			EntitiesCollection.update({}, {
+				$set: {
+					active: false
+				}
+			}, {
+				multi: true
+			});
+
+
             var entitiesCursor = EntitiesCollection.find({
                 active: true
             });
