@@ -15,11 +15,11 @@ angular
 
             var _defaultSystems = [ // order matters
                 'NameMesh',
-                'Quad',
                 'Mesh',
+                'RigidBody',
+                'Quad',
                 'Octree',
                 'Network',
-                'RigidBody',
                 'CollisionReporter',
                 'Input',
                 'Sound',
