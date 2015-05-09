@@ -4,9 +4,10 @@ angular
         'three'
     ])
     .factory('MoversSystem', [
+        '$log',
         'System',
         'THREE',
-        function(System, THREE) {
+        function($log, System, THREE) {
             'use strict';
 
             var MoversSystem = System.extend({
@@ -30,32 +31,23 @@ angular
                             if (!moveData._targetPos) {
                                 moveData._targetPos = new THREE.Vector3().fromArray(moveData.pos).add(moveData._originalPos);
                             }
-                            entity.position.x += (moveData.speed * moveData._currentDirection) * dt;
-                            entity.position.y += (moveData.speed * moveData._currentDirection) * dt;
-                            entity.position.z += (moveData.speed * moveData._currentDirection) * dt;
 
-                            if (entity.position.x > moveData._targetPos.x) {
-                                entity.position.x = moveData._targetPos.x;
+                            var direction;
+                            if (moveData._currentDirection === 1) {
+                                direction = moveData._targetPos.clone().sub(entity.position).normalize();
+                            } else {
+                                direction = moveData._originalPos.clone().sub(entity.position).normalize();
                             }
-                            if (entity.position.y > moveData._targetPos.y) {
-                                entity.position.y = moveData._targetPos.y;
-                            }
-                            if (entity.position.z > moveData._targetPos.z) {
-                                entity.position.z = moveData._targetPos.z;
-                            }
+                            entity.position.add(direction.multiplyScalar(moveData.speed * dt));
 
-                            // TODO: cycle, and actually do this the right way using distance and crap cuz this is shit
-                            if (entity.position.equals(moveData._targetPos)) {
-                                if (moveData.cyclic && moveData.loop) {
-                                    moveData._currentDirection *= -1;
-                                    if (moveData._currentDirection === -1) {
-                                        moveData._targetPos = moveData._originalPos.clone();
-                                    } else {
-                                        moveData._targetPos = new THREE.Vector3().fromArray(moveData.pos).add(moveData._originalPos);
-                                    }
-                                } else if (moveData.loop) {
-                                    // teleport to start
-                                    entity.position = moveData._originalPos.clone();
+                            if (moveData._currentDirection === 1) {
+                                if (entity.position.distanceTo(moveData._targetPos) < (moveData.speed * dt * 2)) {
+                                    moveData._currentDirection = -1;
+                                }
+                            } else {
+                                //$log.debug('dist to original: ', entity.position.distanceTo(moveData._originalPos), ' : ', (moveData.speed * dt * 4));
+                                if (entity.position.distanceTo(moveData._originalPos) < (moveData.speed * dt * 2)) {
+                                    moveData._currentDirection = 1;
                                 }
                             }
                         }

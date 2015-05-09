@@ -75,8 +75,8 @@ angular
                     if (exists) {
                         $log.debug('object already exists, prolly a json loaded object', exists, entity);
                         // we should update the object from the server in case of like a moving platform
-                        exists.position.deserialize(entity.pos);
-                        exists.rotation.deserialize(entity.rot);
+                        exists.position.deserialize(entity.position);
+                        exists.rotation.deserialize(entity.rotation);
                         return;
                     }
 
