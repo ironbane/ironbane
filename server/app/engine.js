@@ -35,7 +35,8 @@ angular
             var systemsForWorlds = [ // order matters
                 'Network',
                 'Persistence',
-                'Trigger'
+                'Trigger',
+                'Movers'
             ];
 
             // populate all the worlds (zones)

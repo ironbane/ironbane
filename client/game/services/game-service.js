@@ -14,13 +14,14 @@ angular
             'use strict';
 
             var _defaultSystems = [ // order matters
+
                 'NameMesh',
                 'Mesh',
                 'RigidBody',
                 'Quad',
                 'Octree',
-                'Network',
                 'CollisionReporter',
+                'Network',
                 'Input',
                 'Sound',
                 'Script',

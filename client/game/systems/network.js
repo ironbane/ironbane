@@ -41,58 +41,28 @@ angular
             };
 
             function onReceiveTransforms(packet) {
-                var netEntities = this.world.getEntities('netRecv');
+                var netEntities = this.world.getEntities('netRecv'),
+                    system = this;
 
                 // TODO: might be better instead to just find them by ID? not sure which search is faster
                 // (and then test they have the netRecv component)
                 netEntities.forEach(function(entity) {
                     if (packet[entity.uuid]) {
-                        entity.position.deserialize(packet[entity.uuid].pos);
-                        entity.rotation.deserialize(packet[entity.uuid].rot);
-                    }
+                        var updateApplicator = (function(entity, data) {
+                            return function() {
+                                //$log.debug('entity: ', entity.name, entity.uuid, ' transform update');
+                                entity.position.deserialize(data.pos);
+                                entity.rotation.deserialize(data.rot);
 
-                    // stuff with rigidBody from network-receive script
-                    var rigidBodyComponent = entity.getComponent('rigidBody');
-                    if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
-                        var btVec3 = new Ammo.btVector3();
-                        var btQuat = new Ammo.btQuaternion(0, 0, 0, 1);
-                        var desiredPosition = new THREE.Vector3();
-                        var desiredRotation = new THREE.Euler();
-
-                        var toVec = desiredPosition.clone().sub(entity.position);
-                        var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity();
-                        currentVel = currentVel.toTHREEVector3();
-                        btVec3.setValue(toVec.x, currentVel.y, toVec.z);
-                        rigidBodyComponent.rigidBody.setLinearVelocity(btVec3);
-                        // rigidBodyComponent.rigidBody.applyCentralImpulse(btVec3);
-
-                        if (toVec.lengthSq() > 16) {
-                            btVec3.setValue(desiredPosition.x, desiredPosition.y, desiredPosition.z);
-                            var btTransform = new Ammo.btTransform(btQuat, btVec3);
-                            rigidBodyComponent.rigidBody.setWorldTransform(btTransform);
-                        }
-
-                        var entityRotationY = toSimpleRotationY(entity.rotation);
-                        var desiredRotationY = toSimpleRotationY(desiredRotation);
-
-                        var side = true;
-                        if (desiredRotationY < entityRotationY) {
-                            side = Math.abs(desiredRotationY - entityRotationY) < (Math.PI);
-                        } else {
-                            side = ((desiredRotationY - entityRotationY) > (Math.PI));
-                        }
-
-                        var distance = Math.abs(desiredRotationY - entityRotationY);
-
-                        var speed = 2.0;
-
-                        if (distance > 0.03) {
-                            if (side) {
-                                entity.rotateY(-speed * $timing.frameTime);
-                            } else if (!side) {
-                                entity.rotateY(speed * $timing.frameTime);
-                            }
-                        }
+                                if (entity.hasComponent('rigidBody')) {
+                                    system.world.getSystem('rigidbody').syncBody(entity);
+                                }
+                            };
+                        })(entity, packet[entity.uuid]);
+                        system._updates.push(updateApplicator);
+                        //$log.debug('entity: ', entity.name, entity.uuid, ' tranform update');
+                        //entity.position.deserialize(packet[entity.uuid].pos);
+                        //entity.rotation.deserialize(packet[entity.uuid].rot);
                     }
                 });
             }
@@ -101,8 +71,14 @@ angular
                 var world = this.world;
 
                 angular.forEach(packet, function(entity, uuid) {
-                    // TODO: should check that the uuid does not already exist
-                    // actually not sure what will happen if THREE has 2 of them
+                    var exists = world.scene.getObjectByProperty('uuid', uuid);
+                    if (exists) {
+                        $log.debug('object already exists, prolly a json loaded object', exists, entity);
+                        // we should update the object from the server in case of like a moving platform
+                        exists.position.deserialize(entity.pos);
+                        exists.rotation.deserialize(entity.rot);
+                        return;
+                    }
 
                     // ok let's see what happens when we build it
                     var builtEntity = EntityBuilder.build(entity);
@@ -181,6 +157,9 @@ angular
                     this._super();
 
                     this.updateFrequency = updateFrequency || 0.2;
+
+                    // instead of reacting on every event, queue up the updates for the update loop
+                    this._updates = [];
                 },
                 addedToWorld: function(world) {
                     this._super(world);
@@ -222,6 +201,11 @@ angular
                     // for now just send transform
                     var entities = this.world.getEntities('netSend'),
                         packet = {};
+
+                    while (this._updates.length) {
+                        var apply = this._updates.pop();
+                        apply();
+                    }
 
                     // on the client, this will be low, like the main player mostly?
                     entities.forEach(function(entity) {

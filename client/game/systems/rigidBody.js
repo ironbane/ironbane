@@ -322,7 +322,12 @@ angular
                             var state = new Ammo.btDefaultMotionState(btTransform);
 
                             btVec3a.setValue(0, 0, 0);
-                            shape.calculateLocalInertia(mass, btVec3a);
+                            if (mass !== 0) { // STATIC
+                                shape.calculateLocalInertia(mass, btVec3a);
+                            }
+                            if (mass === 0) {
+                                $log.debug('static shape:', entity.name);
+                            }
                             rigidBodyInfo = new Ammo.btRigidBodyConstructionInfo(mass, state, shape, btVec3a);
 
                             rigidBody = new Ammo.btRigidBody(rigidBodyInfo);
@@ -406,18 +411,36 @@ angular
                         var rigidBodyComponent = entity.getComponent('rigidBody');
 
                         if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
-                            var trans = new Ammo.btTransform();
-                            rigidBodyComponent.rigidBody.getMotionState().getWorldTransform(trans);
-                            // console.log(trans.getOrigin().x());
-                            // console.log(trans.getOrigin().y());
-                            // console.log(trans.getOrigin().z());
-                            var origin = trans.getOrigin();
+                            var body = rigidBodyComponent.rigidBody;
+                            var motionState = body.getMotionState();
+                            if (motionState && rigidBodyComponent.mass !== 0) { // STATIC (or mass === 0) should not have this! but it does...
+                                var trans = new Ammo.btTransform();
+                                motionState.getWorldTransform(trans);
 
-                            entity.position.setX(origin.x());
-                            entity.position.setY(origin.y());
-                            entity.position.setZ(origin.z());
+                                var pos = trans.getOrigin();
+                                var rot = trans.getRotation();
+
+                                entity.position.set(pos.x(), pos.y(), pos.z());
+                                if (!rigidBodyComponent.lock.rotation.x && !rigidBodyComponent.lock.rotation.y && !rigidBodyComponent.lock.rotation.z) {
+                                    entity.quaternion.set(rot.x(), rot.y(), rot.z(), rot.w());
+                                }
+                            }
                         }
                     });
+                },
+                syncBody: function(entity) { // this will move the rigidbody based on a set value like from network
+                    var rigidBodyComponent = entity.getComponent('rigidBody');
+
+                    if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
+                        var body = rigidBodyComponent.rigidBody;
+                        var transform = body.getWorldTransform();
+
+                        transform.getOrigin().setValue(entity.position.x, entity.position.y, entity.position.z);
+                        btQuat.setValue(entity.quaternion.x, entity.quaternion.y, entity.quaternion.z, entity.quaternion.w);
+                        transform.setRotation(btQuat);
+
+                        body.activate();
+                    }
                 },
                 update: function(dt) {
                     PhysicsWorld.stepSimulation(dt);
