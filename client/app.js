@@ -64,15 +64,15 @@ angular
         '$meteor',
         '$state',
         '$log',
-        'Util',
-        function($window, Debugger, IB_CONSTANTS, $rootScope, $meteor, $state, $log, Util) {
+        'IbUtils',
+        function($window, Debugger, IB_CONSTANTS, $rootScope, $meteor, $state, $log, IbUtils) {
             // for convenience
             if(IB_CONSTANTS.isDev) {
                 $window.debug = Debugger;
             }
 
     		// If we don't wrap this, AUTH_REQUIRED error is thrown in incognito/first timers
-            Util.waitForMeteorGuestUserLogin().then(function () {
+            IbUtils.waitForMeteorGuestUserLogin().then(function () {
 				// THIS IS WHERE IT ALL BEGINS!
 	            // NOTE: if we want to go to another state that isn't 3D, change logic here
 	            // maybe a router?

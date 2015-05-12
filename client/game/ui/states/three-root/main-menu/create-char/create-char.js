@@ -22,13 +22,13 @@ angular
                     '$state',
                     'GameService',
                     'CharBuilder',
-                    'Util',
+                    'IbUtils',
                     '_',
                     'IB_CONSTANTS',
                     '$meteor',
                     'dialogService',
                     '$log',
-                    function($scope, $state, GameService, CharBuilder, Util, _, IB_CONSTANTS, $meteor, dialogService, $log) {
+                    function($scope, $state, GameService, CharBuilder, IbUtils, _, IB_CONSTANTS, $meteor, dialogService, $log) {
 
                         $scope.back = function() {
                             $state.go('^.enter-world');
@@ -88,11 +88,11 @@ angular
                             });
                         };
 
-                        $scope.boy = Util.getRandomInt(0, 1) ? true : false;
+                        $scope.boy = IbUtils.getRandomInt(0, 1) ? true : false;
                         var gender = $scope.boy ? 'male' : 'female';
-                        $scope.skinIndex = Util.getRandomInt(0, IB_CONSTANTS.characterParts[gender].skin.length - 1);
-                        $scope.eyesIndex = Util.getRandomInt(0, IB_CONSTANTS.characterParts[gender].eyes.length - 1);
-                        $scope.hairIndex = Util.getRandomInt(0, IB_CONSTANTS.characterParts[gender].hair.length - 1);
+                        $scope.skinIndex = IbUtils.getRandomInt(0, IB_CONSTANTS.characterParts[gender].skin.length - 1);
+                        $scope.eyesIndex = IbUtils.getRandomInt(0, IB_CONSTANTS.characterParts[gender].eyes.length - 1);
+                        $scope.hairIndex = IbUtils.getRandomInt(0, IB_CONSTANTS.characterParts[gender].hair.length - 1);
 
                         $scope.nextSkin = function() {
                             $scope.skinIndex++;

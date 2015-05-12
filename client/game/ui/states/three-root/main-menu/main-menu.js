@@ -51,9 +51,9 @@ angular
                 characterList: [
                     '$meteor',
                     '$log',
-                    'Util',
-                    function($meteor, $log, Util) {
-                        return Util.waitForMeteorGuestUserLogin().then(function(user) {
+                    'IbUtils',
+                    function($meteor, $log, IbUtils) {
+                        return IbUtils.waitForMeteorGuestUserLogin().then(function(user) {
                             var list;
                             try {
                                 list = $meteor.collection(function() {

@@ -8,12 +8,12 @@ angular
     ])
     .factory('AutoAnnounceSystem', [
         'System',
-        'ibUtils',
+        'IbUtils',
         'IB_CONSTANTS',
         'EntitiesCollection',
         'Timer',
         '$timing',
-        function(System, ibUtils, IB_CONSTANTS, EntitiesCollection, Timer, $timing) {
+        function(System, IbUtils, IB_CONSTANTS, EntitiesCollection, Timer, $timing) {
             'use strict';
 
             var AutoAnnounceSystem = System.extend({
@@ -30,7 +30,7 @@ angular
                                 }
                             }).count() > 0) {
 
-                            var messages = ibUtils.chooseFromSequence([
+                            var messages = IbUtils.chooseFromSequence([
 
                                 // Actually these shouldn't be done using arrays, I just don't know how to insert raw html (<br>)
                                 // and have angular not filter these out.
@@ -38,7 +38,7 @@ angular
 
                                 [
                                     'Welcome to Ironbane ' + IB_CONSTANTS.GAME_VERSION + '!',
-                                    'Server uptime: ' + ibUtils.timeSince($timing.startTime)
+                                    'Server uptime: ' + IbUtils.timeSince($timing.startTime)
                                 ],
 
                                 [

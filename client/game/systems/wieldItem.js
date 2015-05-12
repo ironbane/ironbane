@@ -10,8 +10,8 @@ angular
         'THREE',
         'TextureLoader',
         '$timeout',
-        'Util',
-        function(System, THREE, TextureLoader, $timeout, Util) {
+        'IbUtils',
+        function(System, THREE, TextureLoader, $timeout, IbUtils) {
             'use strict';
 
             var WieldItemSystem = System.extend({
@@ -99,7 +99,7 @@ angular
 
                             var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity();
                             currentVel = currentVel.toTHREEVector3();
-                            var perceivedSpeed = Util.roundNumber(currentVel.lengthSq(), 2);
+                            var perceivedSpeed = IbUtils.roundNumber(currentVel.lengthSq(), 2);
                             perceivedSpeed = Math.min(perceivedSpeed, 20);
                             // console.log(perceivedSpeed);
 

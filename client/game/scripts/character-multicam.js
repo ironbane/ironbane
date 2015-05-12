@@ -2,14 +2,16 @@ angular
     .module('game.scripts.character-multicam', [
         'engine.scriptBank',
         'three',
-        'engine.ib-config'
+        'engine.ib-config',
+        'engine.util'
     ])
     .run([
         '$log',
         'ScriptBank',
         'IbConfig',
         'THREE',
-        function($log, ScriptBank, IbConfig, THREE) {
+        'IbUtils',
+        function($log, ScriptBank, IbConfig, THREE, IbUtils) {
             'use strict';
 
             // The multicam gives you first and third person in one script
@@ -60,6 +62,8 @@ angular
                 this.entity = entity;
                 this.world = world;
 
+                this.thirdPersonPosition = originalThirdPersonPosition.clone();
+
                 var cameraComponent = this.entity.getComponent('camera');
 
                 if (cameraComponent) {
@@ -100,8 +104,6 @@ angular
                 targetPosition.x = position.x + 100 * Math.sin(phi) * Math.cos(theta);
                 targetPosition.y = position.y + 100 * Math.cos(phi);
                 targetPosition.z = position.z + 100 * Math.sin(phi) * Math.sin(theta);
-
-
             };
 
             MultiCamScript.prototype.update = function(dt, elapsed, timestamp) {
@@ -116,7 +118,7 @@ angular
                     }
                     if (camMode === camModeEnum.ThirdPerson) {
 
-                        localCam.position.copy(originalThirdPersonPosition);
+                        localCam.position.copy(this.thirdPersonPosition);
 
                         cameraThirdPersonLookAtTargetOffset.copy(originalCameraThirdPersonLookAtTargetOffset, dt * 5);
 
@@ -129,7 +131,7 @@ angular
                             var octree = entitiesWithOctree[0].getComponent('octree').octreeResultsNearPlayer;
 
                             if (octree) {
-                                var rotatedOriginalThirdPersonPosition = originalThirdPersonPosition.clone();
+                                var rotatedOriginalThirdPersonPosition = this.thirdPersonPosition.clone();
                                 rotatedOriginalThirdPersonPosition.applyQuaternion(this.entity.quaternion);
                                 rotatedOriginalThirdPersonPosition.normalize();
 
@@ -157,7 +159,7 @@ angular
                                         originalThirdPersonPositionLength : dist);
                                     localCam.position.y = Math.max(localCam.position.y, 0.5);
                                 } else {
-                                    localCam.position.copy(originalThirdPersonPosition);
+                                    localCam.position.copy(this.thirdPersonPosition);
                                     // cameraThirdPersonLookAtTargetOffset.copy(originalCameraThirdPersonLookAtTargetOffset, dt*4);
                                 }
                             }
@@ -165,10 +167,10 @@ angular
 
                         var worldPos = new THREE.Vector3();
                         worldPos.setFromMatrixPosition(localCam.matrixWorld);
-                        detachedCam.position.lerp(worldPos, dt * 4);
+                        detachedCam.position.lerp(this.entity.position.clone().add(this.thirdPersonPosition), dt * 4);
 
-
-                        cameraThirdPersonLookAtTargetOffset.applyQuaternion(this.entity.quaternion);
+                        // cameraThirdPersonLookAtTargetOffset.applyQuaternion(this.entity.quaternion);
+                        cameraThirdPersonLookAtTargetOffset.applyEuler(new THREE.Euler(0, IbUtils.vecToEuler(this.thirdPersonPosition) + Math.PI/2, 0));
                         cameraThirdPersonLookAtTarget.lerp(this.entity.position.clone().add(cameraThirdPersonLookAtTargetOffset), dt * 4);
                         detachedCam.lookAt(cameraThirdPersonLookAtTarget);
                     }

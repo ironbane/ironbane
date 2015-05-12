@@ -3,7 +3,8 @@ angular
         'engine.scriptBank',
         'three',
         'ammo',
-        'engine.debugger'
+        'engine.debugger',
+        'engine.util'
     ])
     .run([
         '$log',
@@ -11,7 +12,8 @@ angular
         'THREE',
         'Ammo',
         'Debugger',
-        function($log, ScriptBank, THREE, Ammo, Debugger) {
+        'IbUtils',
+        function($log, ScriptBank, THREE, Ammo, Debugger, IbUtils) {
             'use strict';
 
             // The amount of time that must pass before you can jump again
@@ -151,19 +153,19 @@ angular
                 }
 
                 if (input.keyboard.getKey(input.KEYS.A) || input.keyboard.getKey(input.KEYS.LEFT)) {
-                    this.rotateLeft = true;
-                }
-
-                if (input.keyboard.getKey(input.KEYS.D) || input.keyboard.getKey(input.KEYS.RIGHT)) {
-                    this.rotateRight = true;
-                }
-
-                if (input.keyboard.getKey(input.KEYS.Q)) {
                     this.moveLeft = true;
                 }
 
-                if (input.keyboard.getKey(input.KEYS.E)) {
+                if (input.keyboard.getKey(input.KEYS.D) || input.keyboard.getKey(input.KEYS.RIGHT)) {
                     this.moveRight = true;
+                }
+
+                if (input.keyboard.getKey(input.KEYS.Q)) {
+                    this.rotateLeft = true;
+                }
+
+                if (input.keyboard.getKey(input.KEYS.E)) {
+                    this.rotateRight = true;
                 }
 
                 if (input.keyboard.getKey(input.KEYS.SPACE)) {
@@ -186,6 +188,8 @@ angular
                     inputVector.x += 1;
                 }
 
+                var multiCamComponent = this.entity.getScript('/scripts/built-in/character-multicam.js');
+
                 // Make sure they can't gain extra speed if moving diagonally
                 inputVector.normalize();
 
@@ -193,7 +197,8 @@ angular
 
                     // We need to rotate the vector ourselves
                     var v1 = new THREE.Vector3();
-                    v1.copy(inputVector).applyQuaternion(this.entity.quaternion);
+                    v1.copy(inputVector)
+                    .applyEuler(new THREE.Euler(0, IbUtils.vecToEuler(multiCamComponent.thirdPersonPosition) + Math.PI/2, 0));
                     v1.multiplyScalar(speedComponent.acceleration);
 
                     var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity();
@@ -216,6 +221,13 @@ angular
                     btVec3.setValue(invertedVelocity.x, 0, invertedVelocity.z);
                     rigidBodyComponent.rigidBody.applyCentralImpulse(btVec3);
 
+
+
+
+		            if (inputVector.lengthSq() > 0.01) {
+		            	this.entity.rotation.y = IbUtils.vecToEuler(currentVel) - Math.PI/2;
+		            }
+
                     // Experimental...
                     // rigidBodyComponent.rigidBody.applyCentralForce(btVec3);
                     // rigidBodyComponent.rigidBody.setLinearVelocity(btVec3);
@@ -223,12 +235,17 @@ angular
                     this.entity.translateOnAxis(inputVector, speedComponent.acceleration * dt);
                 }
 
-                if (this.rotateLeft) {
-                    this.entity.rotateY(speedComponent.rotateSpeed * dt);
-                }
-                if (this.rotateRight) {
-                    this.entity.rotateY(-speedComponent.rotateSpeed * dt);
-                }
+
+				if (multiCamComponent) {
+	                if (this.rotateLeft) {
+	                    multiCamComponent.thirdPersonPosition.applyEuler(new THREE.Euler(0, speedComponent.rotateSpeed * dt, 0));
+	                }
+	                if (this.rotateRight) {
+	                    multiCamComponent.thirdPersonPosition.applyEuler(new THREE.Euler(0, -speedComponent.rotateSpeed * dt, 0));
+	                }
+				}
+
+
 
             };
 
