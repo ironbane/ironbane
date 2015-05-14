@@ -21,7 +21,7 @@ angular
                     $scope.$watchCollection(function() {
                         return ctrl.statComponent;
                     }, function(component, old) {
-                        $log.debug('statComponent changed: ', component, old);
+                        //$log.debug('statComponent changed: ', component, old);
                         ctrl.icons = [];
                         if (!component) {
                             return;

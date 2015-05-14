@@ -26,7 +26,7 @@ angular
 
                     var inventorySystem = world.getSystem('inventory');
 
-                    inventorySystem.onEquipmentChanged.add(function(entity) {
+                    inventorySystem.onEquipItem.add(function(entity, item) {
                         // this only works for quads (TODO: change to something different?)
                         if (!entity.hasComponent('quad')) {
                             return;

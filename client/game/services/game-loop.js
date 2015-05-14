@@ -9,8 +9,12 @@ angular
         '$rootWorld',
         '$window',
         'IB_CONSTANTS',
-        function($timing, $rootWorld, $window, IB_CONSTANTS) {
+        'Timer',
+        '$rootScope',
+        function($timing, $rootWorld, $window, IB_CONSTANTS, Timer, $rootScope) {
             'use strict';
+
+            var uiTimer = new Timer(0.5);
 
             function onRequestedFrame() {
                 $timing.step();
@@ -23,6 +27,11 @@ angular
 
                 if (IB_CONSTANTS.isDev) {
                     $rootWorld.stats.end();
+                }
+
+                if (uiTimer.isExpired) {
+                    $rootScope.$apply();
+                    uiTimer.reset();
                 }
 
                 $window.requestAnimationFrame(onRequestedFrame);
