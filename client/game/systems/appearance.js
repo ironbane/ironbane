@@ -11,15 +11,6 @@ angular
         function(System, CharBuilder, TextureLoader) {
             'use strict';
 
-            var buildOrder = [
-                'skin',
-                'hair',
-                'eyes',
-                'feet',
-                'body',
-                'head'
-            ];
-
             var AppearanceSystem = System.extend({
                 addedToWorld: function(world) {
                     this._super(world);

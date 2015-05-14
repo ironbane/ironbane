@@ -7,5 +7,6 @@ angular
         'server.services.chat',
         'server.services.entities',
         'server.services.game',
+        'server.services.items',
         'server.services.zones'
     ]);
