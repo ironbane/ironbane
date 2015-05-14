@@ -4,7 +4,8 @@ angular
         'game.systems',
         'engine.input.input-system',
         // shared systems
-        'systems.mesh'
+        'systems.mesh',
+        'systems.inventory'
     ])
     .service('GameService', [
         '$injector',
@@ -14,7 +15,6 @@ angular
             'use strict';
 
             var _defaultSystems = [ // order matters
-
                 'NameMesh',
                 'Mesh',
                 'RigidBody',
@@ -22,6 +22,8 @@ angular
                 'Octree',
                 'CollisionReporter',
                 'Network',
+                'Inventory',
+                'Appearance',
                 'Input',
                 'Sound',
                 'Script',

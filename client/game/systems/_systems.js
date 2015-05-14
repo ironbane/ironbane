@@ -1,5 +1,6 @@
 angular
     .module('game.systems', [
+        'game.systems.appearance',
         'game.systems.camera',
         'game.systems.collisionReporter',
         'game.systems.helper',
