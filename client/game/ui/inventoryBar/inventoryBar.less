@@ -1,0 +1,83 @@
+.inv-sprite(@x: 0, @y: 0, @width: 0, @height: 0) {
+    background-position: @x @y;
+    width: @width;
+    height: @height;
+}
+
+inventory-bar {
+      position: fixed;
+      height: 36px;
+      display: block;
+      bottom: 16px;
+      background-color: rgb(20, 105, 76);
+      left: 35%;
+    .inventoryBar {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        li {display: inline-block; margin: 2px;}
+    }
+}
+
+.inventoryBar-sprite {
+    background-image: url(images/ui/inventory.png);
+    background-repeat: no-repeat;
+    display: block;
+
+    &.sprite-Armor_Inventory_Icon {
+        .inv-sprite(0, 0, 32px, 32px);
+    }
+
+    &.slot-feet {
+        .inv-sprite(-32px, 0, 32px, 32px);
+    }
+
+    &.slot-body {
+        .inv-sprite(-64px, 0, 32px, 32px);
+    }
+
+    &.slot-empty {
+        .inv-sprite(0, -32px, 32px, 32px);
+    }
+
+    &.slot-empty-light {
+        .inv-sprite(-32px, -32px, 32px, 32px);
+    }
+
+    &.slot-head {
+        .inv-sprite(-64px, -32px, 32px, 32px);
+    }
+
+    &.sprite-Leggings_Inventory_Icon {
+        .inv-sprite(0, -64px, 32px, 32px);
+    }
+
+    &.sprite-Money_Inventory_Icon {
+        .inv-sprite(-32px, -64px, 32px, 32px);
+    }
+
+    &.sprite-Quiver_Inventory_Icon {
+        .inv-sprite(-64px, -64px, 32px, 32px);
+    }
+
+    &.sprite-Shield_Inventory_Icon {
+        .inv-sprite(-96px, 0, 32px, 32px);
+    }
+
+    &.slot-sword {
+        .inv-sprite(-96px, -32px, 32px, 32px);
+    }
+
+    &.sprite-Sword_Sheild_Icon_1 {
+        .inv-sprite(-96px, -64px, 32px, 32px);
+    }
+
+    &.sprite-Sword_Sheild_Icon_2 {
+        .inv-sprite(0, -96px, 32px, 32px);
+    }
+
+    &.slot-tome {
+        .inv-sprite(-32px, -96px, 32px, 32px);
+    }
+}
+
