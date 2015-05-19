@@ -16,7 +16,7 @@ angular
                 },
                 bindToController: true,
                 controllerAs: 'inventoryBar',
-                controller: ['$scope', '$element', function($scope, $element) {
+                controller: ['$scope', function($scope) {
                     var ctrl = this;
                     ctrl.slots = [];
 
@@ -64,17 +64,17 @@ angular
                             ];
 
                             if (inventory[slot] !== null) {
-                                // TODO: armor
-                                images.unshift('url(images/items/' + inventory[slot].image + '.png) center no-repeat');
+                                images.unshift('url(images/items/' + inventory[slot].invImage + '.png) center no-repeat');
                             }
 
-                            $log.debug('invbar: images: ', images);
+                            //$log.debug('invbar: images: ', images);
 
                             return {
                                 klass: slot,
                                 css: {
                                     background: images.join(',')
-                                }
+                                },
+                                contents: inventory[slot]
                             };
                         });
                     };
@@ -83,6 +83,16 @@ angular
                     inventorySystem.onUnEquipItem.add(changeHandler);
                     inventorySystem.onItemAdded.add(changeHandler);
                     inventorySystem.onItemRemoved.add(changeHandler);
+
+                    this.useSlot = function(slot) {
+                        $log.debug('use slot: ', slot, 'this: ', this);
+                        if (slot.klass.search(/slot/) === 0 && slot.contents) {
+                            inventorySystem.equipItem(this.forEntity, slot.klass);
+                        } else {
+                            // for now this is all we will do, later other usage
+                            inventorySystem.unequipItem(this.forEntity, slot.klass);
+                        }
+                    };
 
                     $scope.$watch(function() {
                         return ctrl.forEntity;
