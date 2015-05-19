@@ -16,7 +16,7 @@ angular
                 },
                 bindToController: true,
                 controllerAs: 'inventoryBar',
-                controller: ['$scope', function($scope) {
+                controller: ['$scope', '$element', function($scope, $element) {
                     var ctrl = this;
                     ctrl.slots = [];
 
@@ -33,18 +33,48 @@ angular
                         $log.debug('inventoryBar: ', slots, inventory);
 
                         ctrl.slots = _.map(slots, function(slot) {
-                            var spriteName = slot;
-                            if (spriteName.search(/slot/) === 0) {
-                                spriteName = 'empty';
+                            var bg = ['0px', '0px'];
+                            if (slot.search(/slot/) === 0) {
+                                bg[0] = '0px';
+                                bg[1] = '-32px';
                             }
-                            if (spriteName.search(/relic/) === 0) {
-                                spriteName = 'tome';
+                            if (slot.search(/relic/) === 0) {
+                                bg[0] = '-32px';
+                                bg[1] = '-96px';
                             }
-                            if (spriteName.search(/hand/ig) >= 0) {
-                                spriteName = 'sword';
+                            if (slot.search(/hand/ig) >= 0) {
+                                bg[0] = '-96px';
+                                bg[1] = '-32px';
                             }
+                            if (slot === 'head') {
+                                bg[0] = '-64px';
+                                bg[1] = '-32px';
+                            }
+                            if (slot === 'feet') {
+                                bg[0] = '-32px';
+                                bg[1] = '0px';
+                            }
+                            if (slot === 'body') {
+                                bg[0] = '-64px';
+                                bg[1] = '0px';
+                            }
+
+                            var images = [
+                                'url(images/ui/inventory.png) ' + bg.join(' ') + ' no-repeat' // background LAST
+                            ];
+
+                            if (inventory[slot] !== null) {
+                                // TODO: armor
+                                images.unshift('url(images/items/' + inventory[slot].image + '.png) center no-repeat');
+                            }
+
+                            $log.debug('invbar: images: ', images);
+
                             return {
-                                css: 'slot-' + spriteName
+                                klass: slot,
+                                css: {
+                                    background: images.join(',')
+                                }
                             };
                         });
                     };

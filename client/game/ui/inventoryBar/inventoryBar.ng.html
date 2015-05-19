@@ -1,5 +1,5 @@
 <ul class="inventoryBar">
     <li ng-repeat="slot in inventoryBar.slots">
-        <i class="inventoryBar-sprite {{ slot.css }}"></i>
+        <i class="inventoryBar-sprite {{ slot.klass }}" ng-style="slot.css"></i>
     </li>
 </ul>
