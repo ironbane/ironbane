@@ -2,13 +2,15 @@ angular
     .module('util.claraImporter', [
         'ng',
         'three',
-        'geometry.toJSON'
+        'geometry.toJSON',
+        'util.objexporter'
     ])
     .service('ClaraImportTool', [
         'THREE',
         '$q',
         '$log',
-        function(THREE, $q, $log) {
+        'ObjExporter',
+        function(THREE, $q, $log, ObjExporter) {
             'use strict';
 
             var fs = Meteor.npmRequire('fs');
@@ -100,6 +102,7 @@ angular
                             if (path.basename(filePath, '.json') === ibSceneId) {
                                 var claraExportFilepath = path.dirname(filePath) + '/clara-export.json';
                                 var ibWorldFilepath = path.dirname(filePath) + '/ib-world.json';
+                                var ibWorldFilepathObj = path.dirname(filePath) + '/ib-world.obj';
 
                                 fs.renameSync(filePath, claraExportFilepath);
 
@@ -108,8 +111,11 @@ angular
                                 var claraExportJson = JSON.parse(fs.readFileSync(claraExportFilepath, 'utf8'));
                                 var ibWorld = importer.postProcessWorld(claraExportJson);
 
-                                var uncompressed = 0; // 4 for stringify // TODO: pull from some config? or ENV?
+                                var uncompressed = typeof claraUser.compressed === 'undefined' ? 0 : (claraUser.compressed ? 0 : 4);
                                 importer.saveJson(ibWorld, ibWorldFilepath, uncompressed)
+                                	.then(function () {
+                                		return importer.saveFile(ObjExporter.parse(ibWorld), ibWorldFilepathObj);
+                                	})
                                     .then(function() {
                                         fs.unlinkSync(zipFilepath);
                                         fs.unlinkSync(claraExportFilepath);
@@ -305,12 +311,12 @@ angular
                 return finalScene;
             };
 
-            this.saveJson = function(data, savePath, uncompressed) {
+            this.saveFile = function(data, savePath) {
                 var deferred = $q.defer();
 
                 mkdirp.sync(path.dirname(savePath));
 
-                fs.writeFile(savePath, JSON.stringify(data, null, uncompressed), function(err) {
+                fs.writeFile(savePath, data, function(err) {
                     if (err) {
                         $log.log(err);
                         return deferred.reject(err);
@@ -321,6 +327,10 @@ angular
                 });
 
                 return deferred.promise;
+            };
+
+            this.saveJson = function(data, savePath, uncompressed) {
+                return this.saveFile(JSON.stringify(data, null, uncompressed), savePath);
             };
         }
     ]);
