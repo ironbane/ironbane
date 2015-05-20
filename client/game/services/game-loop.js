@@ -27,6 +27,7 @@ angular
 
                 if (IB_CONSTANTS.isDev) {
                     $rootWorld.stats.end();
+                    debug.clear();
                 }
 
                 if (uiTimer.isExpired) {
