@@ -4,7 +4,8 @@ angular
         'ces',
         'three',
         'engine.textureLoader',
-        'engine.char-builder'
+        'engine.char-builder',
+        'engine.entity-cache'
     ])
     .factory('QuadSystem', [
         'System',
@@ -13,7 +14,8 @@ angular
         '$log',
         '$q',
         'CharBuilder',
-        function(System, THREE, TextureLoader, $log, $q, CharBuilder) {
+        '$entityCache',
+        function(System, THREE, TextureLoader, $log, $q, CharBuilder, $entityCache) {
             'use strict';
 
             var QuadSystem = System.extend({
@@ -88,6 +90,8 @@ angular
                         return;
                     }
 
+					var mainPlayer = $entityCache.get('mainPlayer');
+
                     quads.forEach(function(quadEnt) {
                         var quad = quadEnt.getComponent('quad')._quad;
                         if (!quad) {
@@ -102,6 +106,17 @@ angular
                         camWorldPos.y = quad.position.y;
 
                         quad.lookAt(camWorldPos, quad.position, quad.up);
+
+	                    if (mainPlayer && quadEnt === mainPlayer) {
+	                    	var multiCamComponent = quadEnt.getScript('/scripts/built-in/character-multicam.js');
+	                    	if (multiCamComponent) {
+		                    	var opac = multiCamComponent.camDistanceLimit / 2;
+		                    	opac = Math.max(opac, 0.0);
+		                    	opac = Math.min(opac, 1.0);
+	                        	quad.material.opacity = opac;
+                        	}
+	                    }
+
                     });
                 }
             });
