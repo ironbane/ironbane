@@ -88,6 +88,10 @@ angular
                         var scriptComponent = builtEntity.getComponent('script');
                         // Add all the stuff to make us a real player
                         builtEntity.addComponent($components.get('player'));
+                        builtEntity.addComponent($components.get('wieldItem', {
+
+                        }));
+                        builtEntity.addComponent($components.get('mouseHelper'));
                         builtEntity.addComponent($components.get('collisionReporter'));
                         builtEntity.addComponent($components.get('light', {
                             type: 'PointLight',
