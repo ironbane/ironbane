@@ -26,7 +26,7 @@ angular
 		        color = color || 0x0000FF;
 		        origin = origin || new THREE.Vector3(0,0,0);
 
-		        var aH = new THREE.ArrowHelper(vector, origin, vector.length(), color);
+		        var aH = new THREE.ArrowHelper(vector.clone().normalize(), origin, vector.length(), color);
 		        this.arrowHelpers.push(aH);
 		        $rootWorld.scene.add(aH);
 		    };
