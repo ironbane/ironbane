@@ -143,6 +143,10 @@ angular
                     this.jump = true;
                 }
 
+                if (input.mouse.getButton(0)) {
+                	this.jump = true;
+                }
+
                 // keyboard controls
                 if (input.keyboard.getKey(input.KEYS.W) || input.keyboard.getKey(input.KEYS.UP)) {
                     this.moveForward = true;
@@ -193,6 +197,10 @@ angular
                 // Make sure they can't gain extra speed if moving diagonally
                 inputVector.normalize();
 
+                if (inputVector.lengthSq() > 0.01) {
+                	multiCamComponent.temporarilyDisableAutoCameraCorrection = false;
+                }
+
                 if (rigidBodyComponent) {
 
                     // We need to rotate the vector ourselves
@@ -237,6 +245,10 @@ angular
 
 
 				if (multiCamComponent) {
+					if (this.rotateLeft || this.rotateRight) {
+						multiCamComponent.temporarilyDisableAutoCameraCorrection = true;
+					}
+
 	                if (this.rotateLeft) {
 	                    multiCamComponent.thirdPersonPosition.applyEuler(new THREE.Euler(0, speedComponent.rotateSpeed * dt, 0));
 	                }

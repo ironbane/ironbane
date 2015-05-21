@@ -65,6 +65,7 @@ angular
 
                 this.thirdPersonPosition = originalThirdPersonPosition.clone();
                 this.camDistanceLimit = 0;
+                this.temporarilyDisableAutoCameraCorrection = false;
 
                 var cameraComponent = this.entity.getComponent('camera');
 
@@ -175,7 +176,9 @@ angular
                         vectorThatIsAlwaysBehindThePlayer.applyQuaternion(this.entity.quaternion);
                         // debug.drawVector(vectorThatIsAlwaysBehindThePlayer, this.entity.position);
 
-						this.thirdPersonPosition.lerp(vectorThatIsAlwaysBehindThePlayer, dt * 1.5);
+						if (!this.temporarilyDisableAutoCameraCorrection) {
+							this.thirdPersonPosition.lerp(vectorThatIsAlwaysBehindThePlayer, dt * 1.5);
+						}
 
                         // debug.watch('cameraThirdPersonLookAtTarget', cameraThirdPersonLookAtTarget);
                         // debug.watch('detachedCam.position', detachedCam.position);
