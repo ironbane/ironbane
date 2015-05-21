@@ -38,7 +38,8 @@ angular
                                 light = new THREE.DirectionalLight(lightData.color, lightData.intensity);
                                 break;
                             case 'PointLight':
-                                light = new THREE.PointLight(lightData.color, lightData.intensity, lightData.distance);
+                                light = new THREE.PointLight(lightData.color, lightData.intensity / 20, lightData.distance);
+                                entity.add(light);
                                 break;
                             case 'SpotLight':
                                 light = new THREE.SpotLight(lightData.color, lightData.intensity, lightData.distance, lightData.angle, lightData.exponent);
