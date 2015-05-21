@@ -7,6 +7,7 @@ angular
         'game.systems.light',
         'game.systems.nameMesh',
         'game.systems.network',
+        'game.systems.mouseHelper',
         'game.systems.particles',
         'game.systems.proctree',
         'game.systems.quad',

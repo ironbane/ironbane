@@ -34,6 +34,7 @@ angular
                 'Light',
                 'Helper',
                 'WieldItem',
+                'MouseHelper',
                 'Shadow',
                 'Particle',
                 'Trigger',
