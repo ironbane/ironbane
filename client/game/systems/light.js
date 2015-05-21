@@ -52,6 +52,14 @@ angular
                                 break;
                         }
 
+                        if (angular.isDefined(lightData.visible)) {
+                            light.visible = lightData.visible;
+                        }
+
+                        if (!entity.visible) {
+                            light.visible = false;
+                        }
+
                         lightData._light = light;
                         entity.add(light);
                     });

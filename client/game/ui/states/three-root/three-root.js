@@ -37,8 +37,7 @@ angular
                 'IB_CONSTANTS',
                 '$rootWorld',
                 '$state',
-                'Entity',
-                function($meteor, $scope, $log, IB_CONSTANTS, $rootWorld, $state, Entity) {
+                function($meteor, $scope, $log, IB_CONSTANTS, $rootWorld, $state) {
                     this.IB_CONSTANTS = IB_CONSTANTS;
 
                     // make this an object so we keep the reference
@@ -93,12 +92,6 @@ angular
                         $rootWorld.name = level; // need this for pathing
 
                         $rootWorld.load(level)
-                            .then(function() {
-                                // TODO: use zone settings in db for ambient light
-                                var zoneData = new Entity();
-                                zoneData.addComponent('light', {type: 'AmbientLight', color: '#333333'});
-                                $rootWorld.addEntity(zoneData);
-                            })
                             .catch(function(err) {
                                 $log.debug('error loading level ', level, err);
                             });

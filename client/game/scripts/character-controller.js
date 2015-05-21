@@ -144,7 +144,7 @@ angular
                 }
 
                 if (input.mouse.getButton(0)) {
-                	this.jump = true;
+                    //this.jump = true;
                 }
 
                 // keyboard controls
@@ -198,7 +198,7 @@ angular
                 inputVector.normalize();
 
                 if (inputVector.lengthSq() > 0.01) {
-                	multiCamComponent.temporarilyDisableAutoCameraCorrection = false;
+                    multiCamComponent.temporarilyDisableAutoCameraCorrection = false;
                 }
 
                 if (rigidBodyComponent) {
@@ -206,7 +206,7 @@ angular
                     // We need to rotate the vector ourselves
                     var v1 = new THREE.Vector3();
                     v1.copy(inputVector)
-                    .applyEuler(new THREE.Euler(0, IbUtils.vecToEuler(multiCamComponent.thirdPersonPosition) + Math.PI/2, 0));
+                        .applyEuler(new THREE.Euler(0, IbUtils.vecToEuler(multiCamComponent.thirdPersonPosition) + Math.PI / 2, 0));
                     v1.multiplyScalar(speedComponent.acceleration);
 
                     var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity();
@@ -231,10 +231,9 @@ angular
 
 
 
-
-		            if (inputVector.lengthSq() > 0.01) {
-		            	this.entity.rotation.y = IbUtils.vecToEuler(currentVel) - Math.PI/2;
-		            }
+                    if (inputVector.lengthSq() > 0.01) {
+                        this.entity.rotation.y = IbUtils.vecToEuler(currentVel) - Math.PI / 2;
+                    }
 
                     // Experimental...
                     // rigidBodyComponent.rigidBody.applyCentralForce(btVec3);
@@ -244,18 +243,18 @@ angular
                 }
 
 
-				if (multiCamComponent) {
-					if (this.rotateLeft || this.rotateRight) {
-						multiCamComponent.temporarilyDisableAutoCameraCorrection = true;
-					}
+                if (multiCamComponent) {
+                    if (this.rotateLeft || this.rotateRight) {
+                        multiCamComponent.temporarilyDisableAutoCameraCorrection = true;
+                    }
 
-	                if (this.rotateLeft) {
-	                    multiCamComponent.thirdPersonPosition.applyEuler(new THREE.Euler(0, speedComponent.rotateSpeed * dt, 0));
-	                }
-	                if (this.rotateRight) {
-	                    multiCamComponent.thirdPersonPosition.applyEuler(new THREE.Euler(0, -speedComponent.rotateSpeed * dt, 0));
-	                }
-				}
+                    if (this.rotateLeft) {
+                        multiCamComponent.thirdPersonPosition.applyEuler(new THREE.Euler(0, speedComponent.rotateSpeed * dt, 0));
+                    }
+                    if (this.rotateRight) {
+                        multiCamComponent.thirdPersonPosition.applyEuler(new THREE.Euler(0, -speedComponent.rotateSpeed * dt, 0));
+                    }
+                }
 
 
 
