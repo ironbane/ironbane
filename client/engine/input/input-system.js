@@ -3,6 +3,7 @@ angular
         'ces',
         'ces.signal',
         'engine.input.keyboard',
+        'engine.input.mouse',
         'engine.input.keys',
         'engine.input.virtual-gamepad'
     ])
@@ -22,15 +23,18 @@ angular
         this.$get = [
             'System',
             'Keyboard',
+            'Mouse',
             'VirtualGamepad',
             'KEYS',
             'Signal',
-            function(System, Keyboard, VirtualGamepad, KEYS, Signal) {
+            function(System, Keyboard, Mouse, VirtualGamepad, KEYS, Signal) {
                 var InputSystem = System.extend({
                     init: function() {
                         var sys = this;
 
                         this.keyboard = new Keyboard();
+
+                        this.mouse = new Mouse();
 
                         // TODO: enable / disable this based on settings / need
                         this.virtualGamepad = new VirtualGamepad();
