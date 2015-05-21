@@ -122,10 +122,14 @@ angular.module('engine.input.virtual-gamepad', [])
 
             document.body.appendChild(gamepad.canvas);
 
-            gamepad.canvas.addEventListener('pointerdown', onPointerDown.bind(gamepad), false);
-            gamepad.canvas.addEventListener('pointermove', onPointerMove.bind(gamepad), false);
-            gamepad.canvas.addEventListener('pointerup', onPointerUp.bind(gamepad), false);
-            gamepad.canvas.addEventListener('pointerout', onPointerUp.bind(gamepad), false);
+            // gamepad.canvas.addEventListener('pointerdown', onPointerDown.bind(gamepad), false);
+            // gamepad.canvas.addEventListener('pointermove', onPointerMove.bind(gamepad), false);
+            // gamepad.canvas.addEventListener('pointerup', onPointerUp.bind(gamepad), false);
+            // gamepad.canvas.addEventListener('pointerout', onPointerUp.bind(gamepad), false);
+            gamepad.canvas.addEventListener('touchstart', onPointerDown.bind(gamepad), false);
+            gamepad.canvas.addEventListener('touchmove', onPointerMove.bind(gamepad), false);
+            gamepad.canvas.addEventListener('touchend', onPointerUp.bind(gamepad), false);
+            gamepad.canvas.addEventListener('touchleave', onPointerUp.bind(gamepad), false);
 
             gamepad.canvas.addEventListener('contextmenu', function (e) {
                 e.preventDefault(); // Disables system menu
