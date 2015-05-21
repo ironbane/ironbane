@@ -42,9 +42,15 @@ angular
                                 });
                         }
 
-                        entity.renderOffset = new THREE.Vector3();
+                        wieldItemData.weaponWalkSwingTimer = 0.0;
+                        wieldItemData.weaponAttackSwingTimer = 0.0;
+                        wieldItemData.weaponAttackSwingingForward = false;
 
-                        entity.weaponWalkSwingTimer = 0.0;
+
+                        wieldItemData.doAttackAnimation = function () {
+                        	wieldItemData.weaponAttackSwingTimer = 1.0;
+                        	wieldItemData.weaponAttackSwingingForward = true;
+                        };
 
 
                         wieldItemData.wieldItem = wieldItem;
@@ -103,7 +109,7 @@ angular
                             perceivedSpeed = Math.min(perceivedSpeed, 20);
                             // console.log(perceivedSpeed);
 
-                            entity.weaponWalkSwingTimer += perceivedSpeed * 0.02;
+                            wieldItemComponent.weaponWalkSwingTimer += perceivedSpeed * 0.02;
 
                             // Reset everything first
                             var wo = wieldItemComponent.weaponOrigin;
@@ -136,7 +142,7 @@ angular
 
 								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-								wp.rotation.z += dtr(Math.cos(entity.weaponWalkSwingTimer) * 10);
+								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
 								// wi.rotation.y += dtr(45);
 								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
@@ -158,7 +164,7 @@ angular
 
 								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-								wp.rotation.z += dtr(Math.cos(entity.weaponWalkSwingTimer) * 10);
+								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
 								// wi.rotation.y += dtr(45);
 								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
@@ -180,7 +186,7 @@ angular
 
 								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-								wp.rotation.z += dtr(Math.cos(entity.weaponWalkSwingTimer) * 10);
+								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
 								// wi.rotation.y += dtr(45);
 								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
@@ -202,7 +208,7 @@ angular
 
 								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-								wp.rotation.z += dtr(Math.cos(entity.weaponWalkSwingTimer) * 10);
+								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
 								// wi.rotation.y += dtr(45);
 								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
@@ -224,7 +230,7 @@ angular
 
 								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-								wp.rotation.z += dtr(Math.cos(entity.weaponWalkSwingTimer) * 10);
+								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
 								// wi.rotation.y += dtr(45);
 								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
@@ -246,7 +252,7 @@ angular
 
 								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-								wp.rotation.z += dtr(Math.cos(entity.weaponWalkSwingTimer) * 10);
+								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
 								// wi.rotation.y += dtr(45);
 								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
@@ -258,7 +264,7 @@ angular
 
 								wp.position.setX(-0.1 - spriteSheetComponent.walkIndex * 0.05);
 								wp.position.setY(-0.25);
-								wp.position.setZ(-0.2);
+								wp.position.setZ(-0.5);
 
 								wp.scale.setX(-1);
 
@@ -268,7 +274,7 @@ angular
 
 								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-								wp.rotation.z += dtr(Math.cos(entity.weaponWalkSwingTimer) * 10);
+								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
 								// wi.rotation.y += dtr(45);
 								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
@@ -280,7 +286,7 @@ angular
 
 								wp.position.setX(0.2 - spriteSheetComponent.walkIndex * 0.05);
 								wp.position.setY(-0.25);
-								wp.position.setZ(-0.2);
+								wp.position.setZ(-0.5);
 
 								wp.scale.setX(-0.8);
 
@@ -290,12 +296,32 @@ angular
 
 								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-								wp.rotation.z += dtr(Math.cos(entity.weaponWalkSwingTimer) * 10);
+								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
 								// wi.rotation.y += dtr(45);
 								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
 								// wi.rotateZ(Math.PI/4);
 							}
+
+							if (wieldItemComponent.weaponAttackSwingTimer > 0) {
+								wieldItemComponent.weaponAttackSwingTimer -= dt;
+							}
+							if (wieldItemComponent.weaponAttackSwingTimer <= 0 &&
+								wieldItemComponent.weaponAttackSwingingForward) {
+								wieldItemComponent.weaponAttackSwingingForward = false;
+								wieldItemComponent.weaponAttackSwingTimer = 1.0;
+							}
+
+							if (wieldItemComponent.weaponAttackSwingingForward) {
+								// wp.rotation.x = (wieldItemComponent.weaponAttackSwingTimer / 1.0) * Math.PI / 2;
+							}
+							else {
+								// wp.rotation.x = (1.0 - (wieldItemComponent.weaponAttackSwingTimer / 1.0)) * Math.PI / 2;
+							}
+
+							wp.rotation.x += Math.PI / 4;
+
+							debug.watch('weaponAttackSwingTimer', wieldItemComponent.weaponAttackSwingTimer);
 
 
                             // TODO this logic is copied from the look-at-camera script
