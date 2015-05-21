@@ -166,8 +166,16 @@ angular
                         detachedCam.position.lerp(this.entity.position.clone().add(this.thirdPersonPosition), dt * 4);
 
                         cameraThirdPersonLookAtTargetOffset.applyEuler(new THREE.Euler(0, IbUtils.vecToEuler(this.thirdPersonPosition) + Math.PI/2, 0));
-                        cameraThirdPersonLookAtTarget.lerp(this.entity.position.clone().add(cameraThirdPersonLookAtTargetOffset), dt * 4);
+						cameraThirdPersonLookAtTarget.lerp(this.entity.position.clone().add(cameraThirdPersonLookAtTargetOffset), dt * 4);
+
                         detachedCam.lookAt(cameraThirdPersonLookAtTarget);
+
+                        var vectorThatIsAlwaysBehindThePlayer = originalThirdPersonPosition.clone();
+
+                        vectorThatIsAlwaysBehindThePlayer.applyQuaternion(this.entity.quaternion);
+                        // debug.drawVector(vectorThatIsAlwaysBehindThePlayer, this.entity.position);
+
+						this.thirdPersonPosition.lerp(vectorThatIsAlwaysBehindThePlayer, dt * 1.5);
 
                         // debug.watch('cameraThirdPersonLookAtTarget', cameraThirdPersonLookAtTarget);
                         // debug.watch('detachedCam.position', detachedCam.position);
