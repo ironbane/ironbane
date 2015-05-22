@@ -37,6 +37,15 @@ angular
                         switch (lightData.type) {
                             case 'DirectionalLight':
                                 light = new THREE.DirectionalLight(lightData.color, lightData.intensity);
+
+                                if (entity.name === 'ShadowLight') {
+                                	light.intensity = 0;
+									light.castShadow = true;
+									light.onlyShadow = true;
+									light.shadowDarkness = 0.2;
+									light.shadowMapWidth = 2048;
+									light.shadowMapHeight = 2048;
+								}
                                 break;
                             case 'PointLight':
                                 light = new THREE.PointLight(lightData.color, lightData.intensity / 20, lightData.distance);

@@ -4,7 +4,8 @@ angular
         'ces.system',
         'three',
         'ammo',
-        'ammo.physics-world'
+        'ammo.physics-world',
+        'game.world-root'
     ])
     .factory('RigidBodySystem', [
         'System',
@@ -13,7 +14,8 @@ angular
         '$q',
         'PhysicsWorld',
         '$log',
-        function(System, THREE, Ammo, $q, PhysicsWorld, $log) {
+        '$rootWorld',
+        function(System, THREE, Ammo, $q, PhysicsWorld, $log, $rootWorld) {
             'use strict';
 
             // A lot of code here is based on Chandler Prall's Physijs
@@ -304,6 +306,10 @@ angular
                                     })
                                     .then(function(triangles) {
                                         rigidBodyData.shape.triangles = triangles;
+
+                                        setTimeout(function () {
+					                    	$rootWorld.renderer.shadowMapAutoUpdate = false;
+					                    }, 100);
                                     });
                             }
                         }
