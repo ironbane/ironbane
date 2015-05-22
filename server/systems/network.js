@@ -31,15 +31,26 @@ angular
             }
 
             function onNetSendEntityAdded(entity) {
+                // hook into the entity's events for component mgmt
+                entity.onComponentAdded.add(this.entityComponentAddedHandler);
+
                 this.sendNetState(null, entity);
             }
 
             function onNetSendEntityRemoved(entity) {
+                entity.onComponentAdded.remove(entityComponentAddedHandler);
+
                 // since we're syncing up the server's uuid, just send that
                 this._stream.emit('remove', entity.uuid);
             }
 
             var NetworkSystem = System.extend({
+                init: function() {
+                    this._super();
+
+                    // we want to get a bound ref so that it can be removed
+                    this.entityComponentAddedHandler = this._entityCAH.bind(this);
+                },
                 addedToWorld: function(world) {
                     var self = this;
 
@@ -156,6 +167,15 @@ angular
                     if (Object.keys(packet).length > 0) {
                         this._stream.emit('transforms', packet);
                     }
+                },
+                _entityCAH: function(entity, componentName) {
+                    // when a component is added to an entity, we need to update all the clients
+                    // TODO: net specific components? are there some that clients don't need to know about?
+                    var component = entity.getComponent(componentName);
+
+                    $log.debug('cadd: ', entity.uuid, component.serializeNet());
+
+                    this._stream.emit('cadd', entity.uuid, component.serializeNet());
                 }
             });
 
