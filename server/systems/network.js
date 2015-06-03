@@ -76,7 +76,8 @@ angular
                     // a client may request a full state update (typically this should be for bootup, TODO somehow throttle this so that we don't get hammered)
                     this._stream.on('getState', function() {
                         $log.debug('server getState: ', this.userId, this.subscriptionId);
-                        self.sendNetState(this.userId, self.world.getEntities('netSend'));
+                        var netEnts = _.filter(self.world.getEntities('netSend'), function(ent) { return !ent.__fromClara; });
+                        self.sendNetState(this.userId, netEnts);
                     });
 
                     world.entityAdded('netSend').add(onNetSendEntityAdded.bind(this));
