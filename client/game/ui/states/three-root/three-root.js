@@ -7,7 +7,11 @@ angular
         'game.ui.directives',
         'game.ui.states.three-root.play',
         'game.ui.states.three-root.main-menu',
-        'game.world-root'
+        'game.world-root',
+        'engine.util.debugging.rStats',
+        'engine.util.debugging.rStats.threeStatsPlugin',
+        'engine.util.debugging.rStats.glStatsPlugin',
+        'engine.util.debugging.rStats.browserStatsPlugin'
     ])
     .config(['$stateProvider', function($stateProvider) {
         'use strict';
@@ -54,7 +58,7 @@ angular
                     $scope.logout = function() {
                         return $meteor.logout()
                             .then(function() {
-                            	// Might need to be changed to waitForMeteorGuestUserLogin()
+                                // Might need to be changed to waitForMeteorGuestUserLogin()
                                 return $meteor.waitForUser();
                             })
                             .then(function(user) {
@@ -104,7 +108,11 @@ angular
                 '$state',
                 '$window',
                 'GameService',
-                function($rootWorld, IB_CONSTANTS, $state, $window, GameService) {
+                'rStats',
+                'threeStats',
+                'browserStats',
+                'glStats',
+                function($rootWorld, IB_CONSTANTS, $state, $window, GameService, rStats, threeStats, browserStats, glStats) {
                     $rootWorld.renderer.setSize($window.innerWidth, $window.innerHeight);
                     document.body.appendChild($rootWorld.renderer.domElement);
                     $rootWorld.renderer.setClearColor(0xd3fff8);
@@ -124,6 +132,47 @@ angular
                         $rootWorld.stats.domElement.style.zIndex = 100;
 
                         document.body.appendChild($rootWorld.stats.domElement);
+
+                        // setup rStats
+                        $rootWorld.__glStats = new glStats();
+                        $rootWorld.__stats = new rStats({
+                            values: {
+                                frame: {
+                                    caption: 'Total frame time (ms)',
+                                    over: 16
+                                },
+                                fps: {
+                                    caption: 'Framerate (FPS)',
+                                    below: 30
+                                },
+                                calls: {
+                                    caption: 'Calls (three.js)',
+                                    over: 3000
+                                },
+                                raf: {
+                                    caption: 'Time since last rAF (ms)'
+                                },
+                                rstats: {
+                                    caption: 'rStats update (ms)'
+                                }
+                            },
+                            groups: [{
+                                caption: 'Framerate',
+                                values: ['fps', 'raf']
+                            }, {
+                                caption: 'Frame Budget',
+                                values: ['frame', 'texture', 'setup', 'render']
+                            }],
+                            fractions: [{
+                                base: 'frame',
+                                steps: ['action1', 'render']
+                            }],
+                            plugins: [
+                                new threeStats($rootWorld.renderer),
+                                $rootWorld.__glStats,
+                                new browserStats()
+                            ]
+                        });
                     }
 
                     Session.set('activeLevel', IB_CONSTANTS.world.mainMenuLevel);
