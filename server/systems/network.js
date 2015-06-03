@@ -38,7 +38,7 @@ angular
             }
 
             function onNetSendEntityRemoved(entity) {
-                entity.onComponentAdded.remove(entityComponentAddedHandler);
+                entity.onComponentAdded.remove(this.entityComponentAddedHandler);
 
                 // since we're syncing up the server's uuid, just send that
                 this._stream.emit('remove', entity.uuid);
