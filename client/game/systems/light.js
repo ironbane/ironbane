@@ -6,7 +6,8 @@ angular
     .factory('LightSystem', [
         'System',
         'THREE',
-        function(System, THREE) {
+        '$log',
+        function(System, THREE, $log) {
             'use strict';
 
             var LIGHTS = ['PointLight', 'DirectionalLight', 'SpotLight', 'AmbientLight', 'HemisphereLight'];
@@ -39,7 +40,6 @@ angular
                                 break;
                             case 'PointLight':
                                 light = new THREE.PointLight(lightData.color, lightData.intensity / 20, lightData.distance);
-                                entity.add(light);
                                 break;
                             case 'SpotLight':
                                 light = new THREE.SpotLight(lightData.color, lightData.intensity, lightData.distance, lightData.angle, lightData.exponent);
@@ -61,6 +61,7 @@ angular
                         }
 
                         lightData._light = light;
+                        //$log.debug('building light: ', lightData, light);
                         entity.add(light);
                     });
                 },
