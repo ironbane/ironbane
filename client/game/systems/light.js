@@ -26,13 +26,8 @@ angular
                             throw new TypeError('Invalid light type!');
                         }
 
-                        // Hack for Clara's inability to export Hemisphere or
-                        // ambient lights (TODO make a bug report)
-                        // When the name is an "AmbientLight" we simply change the
-                        // light component to be an AmbientLight as well
-                        if (entity.name === 'AmbientLight') {
-                            lightData.type = 'AmbientLight';
-                        }
+                        // General hack for lights from Clara
+                        lightData.intensity *= 2;
 
                         switch (lightData.type) {
                             case 'DirectionalLight':
@@ -42,13 +37,13 @@ angular
                                 	light.intensity = 0;
 									light.castShadow = true;
 									light.onlyShadow = true;
-									light.shadowDarkness = 0.2;
+									light.shadowDarkness = 0.4;
 									light.shadowMapWidth = 2048;
 									light.shadowMapHeight = 2048;
 								}
                                 break;
                             case 'PointLight':
-                                light = new THREE.PointLight(lightData.color, lightData.intensity / 20, lightData.distance);
+                                light = new THREE.PointLight(lightData.color, lightData.intensity, lightData.distance);
                                 break;
                             case 'SpotLight':
                                 light = new THREE.SpotLight(lightData.color, lightData.intensity, lightData.distance, lightData.angle, lightData.exponent);
