@@ -41,7 +41,8 @@ angular
                 'IB_CONSTANTS',
                 '$rootWorld',
                 '$state',
-                function($meteor, $scope, $log, IB_CONSTANTS, $rootWorld, $state) {
+                '$timeout',
+                function($meteor, $scope, $log, IB_CONSTANTS, $rootWorld, $state, $timeout) {
                     this.IB_CONSTANTS = IB_CONSTANTS;
 
                     // make this an object so we keep the reference
@@ -53,6 +54,8 @@ angular
                         $log.debug('currentChar changed', char);
                         localStorage.setItem('lastCharId', char.id);
                     }, true);
+
+                    $scope.levelLoaded = false;
 
                     $scope.IB_CONSTANTS = IB_CONSTANTS;
                     $scope.logout = function() {
@@ -94,8 +97,14 @@ angular
                         clearOldLevel(level);
 
                         $rootWorld.name = level; // need this for pathing
+                        $scope.levelLoaded = false;
 
                         $rootWorld.load(level)
+                            .then(function () {
+                                $timeout(function () {
+                                    $scope.levelLoaded = true;    
+                                });                                
+                            })
                             .catch(function(err) {
                                 $log.debug('error loading level ', level, err);
                             });

@@ -180,6 +180,37 @@ a {
     }
 }
 
+.ui-mask {
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	background: black;
+	opacity: 1.0;
+	z-index: 100;
+	transition: opacity 1.0s ease-in-out;
+	-moz-transition: opacity 1.0s ease-in-out;
+	-webkit-transition: opacity 1.0s ease-in-out;
+
+	&.hidden {
+		opacity: 0.0;
+		pointer-events: none;
+	}
+
+	.message {
+	    width: 64px;
+	    height: 72px;
+	    // background-color: red;
+
+	    position: absolute;
+	    top:0;
+	    bottom: 0;
+	    left: 0;
+	    right: 0;
+
+	    margin: auto;
+	    text-align: center;	
+	}
+}
 
 .ui-overlay {
 	position: absolute;
@@ -301,6 +332,7 @@ chat-box {
     left: 0;
     top: 0;
     overflow: hidden;
+    display: none !important;
 }
 
 .rs-base h1{
