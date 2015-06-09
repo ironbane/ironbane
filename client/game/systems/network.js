@@ -19,7 +19,8 @@ angular
         'THREE',
         'Ammo',
         '$timing',
-        function(System, EntityBuilder, $log, $rootScope, $components, $rootWorld, $entityCache, THREE, Ammo, $timing) {
+        '$timeout',
+        function(System, EntityBuilder, $log, $rootScope, $components, $rootWorld, $entityCache, THREE, Ammo, $timing, $timeout) {
             'use strict';
 
             function arraysAreEqual(a1, a2) {
@@ -68,6 +69,15 @@ angular
             }
 
             function onStreamAdd(packet) {
+                var me = this;
+                $rootWorld.getLoadPromise().then(function () {
+                    $timeout(function () {
+                        handlePacket.bind(me)(packet);    
+                    });                    
+                });
+            };
+
+            function handlePacket(packet) {
                 var world = this.world;
 
                 angular.forEach(packet, function(entity, uuid) {
@@ -152,8 +162,6 @@ angular
 
                     $log.debug('[NetworkSystem : add]', entity, builtEntity);
                 });
-
-                $rootScope.$apply();
             }
 
             var NetworkSystem = System.extend({
