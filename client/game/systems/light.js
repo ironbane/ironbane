@@ -26,9 +26,6 @@ angular
                             throw new TypeError('Invalid light type!');
                         }
 
-                        // General hack for lights from Clara
-                        lightData.intensity *= 2;
-
                         switch (lightData.type) {
                             case 'DirectionalLight':
                                 light = new THREE.DirectionalLight(lightData.color, lightData.intensity);
