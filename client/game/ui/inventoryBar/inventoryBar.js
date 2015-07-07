@@ -34,30 +34,30 @@ angular
 
                         ctrl.slots = _.map(slots, function(slot) {
                             var bg = ['0px', '0px'];
-                            if (slot.search(/slot/) === 0) {
-                                bg[0] = '0px';
-                                bg[1] = '-32px';
-                            }
-                            if (slot.search(/relic/) === 0) {
-                                bg[0] = '-32px';
-                                bg[1] = '-96px';
-                            }
-                            if (slot.search(/hand/ig) >= 0) {
-                                bg[0] = '-96px';
-                                bg[1] = '-32px';
-                            }
-                            if (slot === 'head') {
-                                bg[0] = '-64px';
-                                bg[1] = '-32px';
-                            }
-                            if (slot === 'feet') {
-                                bg[0] = '-32px';
-                                bg[1] = '0px';
-                            }
-                            if (slot === 'body') {
-                                bg[0] = '-64px';
-                                bg[1] = '0px';
-                            }
+                            // if (slot.search(/slot/) === 0) {
+                            //     bg[0] = '0px';
+                            //     bg[1] = '-16px';
+                            // }
+                            // if (slot.search(/relic/) === 0) {
+                            //     bg[0] = '-16px';
+                            //     bg[1] = '-48px';
+                            // }
+                            // if (slot.search(/hand/ig) >= 0) {
+                            //     bg[0] = '-48px';
+                            //     bg[1] = '-16px';
+                            // }
+                            // if (slot === 'head') {
+                            //     bg[0] = '-32px';
+                            //     bg[1] = '-16px';
+                            // }
+                            // if (slot === 'feet') {
+                            //     bg[0] = '-16px';
+                            //     bg[1] = '0px';
+                            // }
+                            // if (slot === 'body') {
+                            //     bg[0] = '-32px';
+                            //     bg[1] = '0px';
+                            // }
 
                             var images = [
                                 'url(images/ui/inventory.png) ' + bg.join(' ') + ' no-repeat' // background LAST
@@ -72,7 +72,8 @@ angular
                             return {
                                 klass: slot,
                                 css: {
-                                    background: images.join(',')
+                                    background: images.join(','),
+                                    'image-rendering': 'pixelated'
                                 },
                                 contents: inventory[slot]
                             };

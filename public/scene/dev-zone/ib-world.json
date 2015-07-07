@@ -6,7 +6,7 @@
     },
     "geometries": [
         {
-            "uuid": "752FE4B5-F5DE-43A8-88B3-551FD32AAC28",
+            "uuid": "3156BDED-4811-4D36-9BDC-E80FEC633CDF",
             "type": "Geometry",
             "data": {
                 "vertices": [
@@ -2575,7 +2575,7 @@
     ],
     "materials": [
         {
-            "uuid": "88306269-FC6B-4E4F-AD0D-779B32CDF3BE",
+            "uuid": "B6597713-BC99-4C42-98E0-DC86E5056D9E",
             "type": "MeshFaceMaterial",
             "materials": [
                 {
@@ -2626,18 +2626,18 @@
             ]
         },
         {
-            "uuid": "557F7843-D0DD-4A17-86E6-327651140DD7",
+            "uuid": "493609CB-901B-4099-9A04-A83CF69E71A1",
             "type": "MeshBasicMaterial",
-            "color": 12677567
+            "color": 7087942
         },
         {
-            "uuid": "C4CD7117-7E3F-4834-80F7-3D3624522C39",
+            "uuid": "87503F00-78D9-4369-B8DE-6E9F48D0C0C0",
             "type": "MeshBasicMaterial",
-            "color": 12762749
+            "color": 12920627
         }
     ],
     "object": {
-        "uuid": "E6548CD3-CA69-4D30-84D8-61D2C51D0262",
+        "uuid": "B036B097-4DB5-4C39-9177-E5EC168319FD",
         "type": "Object3D",
         "name": "World",
         "matrix": [
@@ -2660,14 +2660,14 @@
         ],
         "children": [
             {
-                "uuid": "09C40BCE-1125-45B8-A3EA-F301136FB60F",
+                "uuid": "00C82A0B-C511-4330-A912-3A84CA711901",
                 "type": "Mesh",
                 "name": "Merged Meshes",
                 "userData": {
                     "prefab": "WorldMesh"
                 },
-                "geometry": "752FE4B5-F5DE-43A8-88B3-551FD32AAC28",
-                "material": "88306269-FC6B-4E4F-AD0D-779B32CDF3BE",
+                "geometry": "3156BDED-4811-4D36-9BDC-E80FEC633CDF",
+                "material": "B6597713-BC99-4C42-98E0-DC86E5056D9E",
                 "matrix": [
                     1,
                     0,
@@ -2696,7 +2696,7 @@
                     "tag": "playerStart"
                 },
                 "geometry": "09430ba4-3c1d-4dde-bcf4-c4de792982dd",
-                "material": "557F7843-D0DD-4A17-86E6-327651140DD7",
+                "material": "493609CB-901B-4099-9A04-A83CF69E71A1",
                 "matrix": [
                     1,
                     0,
@@ -2724,7 +2724,7 @@
                     "prefab": "SwordBunny"
                 },
                 "geometry": "12668e89-634f-43d2-a55a-26ab66a46860",
-                "material": "C4CD7117-7E3F-4834-80F7-3D3624522C39",
+                "material": "87503F00-78D9-4369-B8DE-6E9F48D0C0C0",
                 "matrix": [
                     1,
                     0,
