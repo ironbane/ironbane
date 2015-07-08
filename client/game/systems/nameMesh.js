@@ -38,6 +38,8 @@ angular
 
                         // canvas contents will be used for a texture
                         var texture = new THREE.Texture(canvas);
+                        texture.minFilter = texture.magFilter = THREE.NearestFilter;
+                        texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
                         texture.needsUpdate = true;
                         var spriteMaterial = new THREE.SpriteMaterial({
                             map: texture
