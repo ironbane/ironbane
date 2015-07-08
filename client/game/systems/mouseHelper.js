@@ -48,24 +48,35 @@ angular
 
                     mouseHelpers.forEach(function(mouseHelperEnt) {
                         var mouseHelperData = mouseHelperEnt.getComponent('mouseHelper');
-                        var mesh = mouseHelperData.mesh;
+                        var mesh = mouseHelperData.mesh;                    
 
                         if (entitiesWithOctree.length && entitiesWithCamera.length) {
-                            var activeCamera = entitiesWithCamera[0].getComponent('camera')._camera;
-                            var octree = entitiesWithOctree[0].getComponent('octree').octreeResultsNearPlayer;
+                            var foundHitPoint = null;
 
-                            if (activeCamera && octree) {
-                                var mouse = input.mouse.getPosition();
-                                var vector = new THREE.Vector3(mouse.x, mouse.y, 1);
-                                projector.unprojectVector(vector, activeCamera);
+                            entitiesWithOctree.forEach(function(octreeEntity) {
+                                var activeCamera = entitiesWithCamera[0].getComponent('camera')._camera;
+                                var octree = octreeEntity.getComponent('octree').octreeResultsNearPlayer;
 
-                                ray.set(activeCamera.position, vector.sub(activeCamera.position).normalize());
+                                if (activeCamera && octree) {
+                                    var mouse = input.mouse.getPosition();
+                                    var vector = new THREE.Vector3(mouse.x, mouse.y, 1);
+                                    vector.unproject( activeCamera );
 
-                                var intersections = ray.intersectOctreeObjects(octree);
+                                    ray.set(activeCamera.position, vector.sub(activeCamera.position).normalize());
 
-                                if (intersections.length) {
-                                    mouseHelperData.target.copy(intersections[0].point);
+                                    var intersections = ray.intersectOctreeObjects(octree);
+
+                                    if (intersections.length) {
+                                        if (!foundHitPoint ||
+                                            activeCamera.position.distanceToSquared(intersections[0].point) < activeCamera.position.distanceToSquared(foundHitPoint)) {
+                                            foundHitPoint = intersections[0].point;                                        
+                                        }
+                                    }
                                 }
+                            });
+
+                            if (foundHitPoint) {
+                                mouseHelperData.target.copy(foundHitPoint);
                             }
                         }
 

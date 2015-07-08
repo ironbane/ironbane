@@ -130,36 +130,40 @@ angular
                         // by raycasting
                         var entitiesWithOctree = this.world.getEntities('octree');
 
+                        var me = this;
+
                         if (entitiesWithOctree.length) {
-                            var octree = entitiesWithOctree[0].getComponent('octree').octreeResultsNearPlayer;
+                            entitiesWithOctree.forEach(function(octreeEntity) {
+                                var octree = octreeEntity.getComponent('octree').octreeResultsNearPlayer;
 
-                            if (octree) {
-                                var normalizedThirdPersonPosition = this.thirdPersonPosition.clone();
-                                normalizedThirdPersonPosition.normalize();
+                                if (octree) {
+                                    var normalizedThirdPersonPosition = me.thirdPersonPosition.clone();
+                                    normalizedThirdPersonPosition.normalize();
 
-                                var ray = new THREE.Raycaster(this.entity.position, normalizedThirdPersonPosition);
+                                    var ray = new THREE.Raycaster(me.entity.position, normalizedThirdPersonPosition);
 
-                                // debug.drawVector(normalizedThirdPersonPosition, this.entity.position);
+                                    // debug.drawVector(normalizedThirdPersonPosition, me.entity.position);
 
-                                var intersections = ray.intersectOctreeObjects(octree);
+                                    var intersections = ray.intersectOctreeObjects(octree);
 
-                                this.camDistanceLimit = originalThirdPersonPositionLength;
+                                    me.camDistanceLimit = originalThirdPersonPositionLength;
 
-                                if (intersections.length) {
-                                    var dist = intersections[0].distance;
-                                    // debug.watch('cam ray distance', dist);
+                                    if (intersections.length) {
+                                        var dist = intersections[0].distance;
+                                        // debug.watch('cam ray distance', dist);
 
-                                    if (dist < originalThirdPersonPositionLength) {
-                                    	this.camDistanceLimit = dist;
+                                        if (dist < originalThirdPersonPositionLength) {
+                                        	me.camDistanceLimit = dist;
+                                        }
                                     }
+
+                                    me.thirdPersonPosition.normalize();
+                                    me.thirdPersonPosition.y = originalThirdPersonPositionNormalizedYCoordinate;
+                                    me.thirdPersonPosition.multiplyScalar(me.camDistanceLimit);
+
+                                    // debug.watch('camDistanceLimit', me.camDistanceLimit);
                                 }
-
-                                this.thirdPersonPosition.normalize();
-                                this.thirdPersonPosition.y = originalThirdPersonPositionNormalizedYCoordinate;
-                                this.thirdPersonPosition.multiplyScalar(this.camDistanceLimit);
-
-                                // debug.watch('camDistanceLimit', this.camDistanceLimit);
-                            }
+                            });
                         }
 
                         var worldPos = new THREE.Vector3();

@@ -30,7 +30,7 @@ angular
 
                         var planeGeo = new THREE.PlaneGeometry(1.0, 1.0, 1, 1);
 
-                        quad = new THREE.Mesh(planeGeo, new THREE.MeshLambertMaterial());
+                        quad = new THREE.Mesh(planeGeo, new THREE.MeshBasicMaterial());
                         quad.material.side = THREE.DoubleSide;
                         quad.geometry.dynamic = true;
 
@@ -48,13 +48,16 @@ angular
                             promise.then(function(texture) {
                                 return TextureLoader.load(texture)
                                     .then(function(loadedTexture) {
+                                        loadedTexture.minFilter = loadedTexture.magFilter = THREE.NearestFilter;
+                                        loadedTexture.wrapS = loadedTexture.wrapT = THREE.ClampToEdgeWrapping;                                        
                                         // loadedTexture.needsUpdate = true;
                                         quad.material.map = loadedTexture;
-                                        quad.material.emissive.set('#999'); // char is always lit to some degree
+                                        // quad.material.emissive.set('#999'); // char is always lit to some degree
                                         quad.material.needsUpdate = true;
                                         quad.geometry.buffersNeedUpdate = true;
                                         quad.geometry.uvsNeedUpdate = true;
                                         quad.material.transparent = quadData.transparent;
+                                        // quad.material.transparent = false;
                                     });
                             });
                         }

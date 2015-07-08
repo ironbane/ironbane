@@ -38,6 +38,8 @@ angular
                 CharBuilder.makeChar(options).then(function(image) {
                     return TextureLoader.load(image)
                         .then(function(texture) {
+                            texture.minFilter = texture.magFilter = THREE.NearestFilter;
+                            texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
                             // TODO: check _quad still exists as this is outside of the first thread so might have changed since we asked
                             quad._quad.material.map = texture;
                             quad._quad.material.emissive.set('#999'); // char is always lit to some degree

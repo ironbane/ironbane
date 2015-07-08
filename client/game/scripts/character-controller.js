@@ -95,26 +95,30 @@ angular
                 // Reset just to be sure
                 this.canJump = false;
 
+                var me = this;
+
                 if (entitiesWithOctree.length) {
                     // assuming only one? technically there could be many...
-                    var octree = entitiesWithOctree[0].getComponent('octree').octreeResultsNearPlayer;
+                    entitiesWithOctree.forEach(function(octreeEntity) {
+                        var octree = octreeEntity.getComponent('octree').octreeResultsNearPlayer;
 
-                    if (octree) {
-                        var ray = new THREE.Raycaster(this.entity.position, new THREE.Vector3(0, -1, 0));
+                        if (octree) {
+                            var ray = new THREE.Raycaster(me.entity.position, new THREE.Vector3(0, -1, 0));
 
-                        var intersections = ray.intersectOctreeObjects(octree);
+                            var intersections = ray.intersectOctreeObjects(octree);
 
-                        if (intersections.length) {
-                            if (intersections[0].distance <= 0.55) {
-                                // We can jump when the ray distance is less than 0.5, since the player pos is at 0.5 and is 1 in height.
-                                // Add 0.05 to take into account slopes, which have a small offset when casting rays downwards = 0.55
-                                this.canJump = true;
-                            } else {
-                                // Get rid of friction so we don't slow down on the walls while falling
-                                rigidBodyComponent.rigidBody.setFriction(0.0);
+                            if (intersections.length) {
+                                if (intersections[0].distance <= 0.55) {
+                                    // We can jump when the ray distance is less than 0.5, since the player pos is at 0.5 and is 1 in height.
+                                    // Add 0.05 to take into account slopes, which have a small offset when casting rays downwards = 0.55
+                                    me.canJump = true;
+                                } else {
+                                    // Get rid of friction so we don't slow down on the walls while falling
+                                    rigidBodyComponent.rigidBody.setFriction(0.0);
+                                }
                             }
                         }
-                    }
+                    })
                 }
 
                 if (this.entity.doc && this.entity.doc.cheats.jump) {
