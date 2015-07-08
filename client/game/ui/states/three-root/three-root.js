@@ -51,7 +51,7 @@ angular
                     }; // TODO: wrap local storage, perhaps user profile instead
 
                     $scope.$watch('currentChar', function(char) {
-                        $log.debug('currentChar changed', char);
+                        // $log.debug('currentChar changed', char);
                         localStorage.setItem('lastCharId', char.id);
                     }, true);
 
@@ -88,7 +88,7 @@ angular
                     $meteor.session('activeLevel').bind($scope, 'activeLevel');
 
                     $scope.$watch('activeLevel', function(level) {
-                        $log.debug('activeLevel changed: ', level);
+                        // $log.debug('activeLevel changed: ', level);
 
                         if (!angular.isString(level)) {
                             return;

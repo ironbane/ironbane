@@ -45,7 +45,6 @@ angular
                 // ALL these systems have to load before other entities
                 // they don't load stuff after the fact...
                 // TODO: fix that
-                $log.debug('Adding game systems...');
                 angular.forEach(_defaultSystems, function(system) {
                     var registeredSystemName = system + 'System';
                     if ($injector.has(registeredSystemName)) {

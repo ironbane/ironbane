@@ -83,7 +83,6 @@ angular
                 angular.forEach(packet, function(entity, uuid) {
                     var exists = world.scene.getObjectByProperty('uuid', uuid);
                     if (exists) {
-                        $log.debug('object already exists, prolly a json loaded object', exists, entity);
                         // we should update the object from the server in case of like a moving platform
                         exists.position.deserialize(entity.position);
                         exists.rotation.deserialize(entity.rotation);
@@ -160,7 +159,7 @@ angular
 
                     world.addEntity(builtEntity);
 
-                    $log.debug('[NetworkSystem : add]', entity, builtEntity);
+                    // $log.debug('[NetworkSystem : add]', entity, builtEntity);
                 });
             }
 
@@ -178,7 +177,7 @@ angular
 
                     var activeLevel = Session.get('activeLevel');
 
-                    $log.debug('[NetworkSystem addedToWorld]', world.name, activeLevel);
+                    // $log.debug('[NetworkSystem addedToWorld]', world.name, activeLevel);
 
                     this._stream = new Meteor.Stream(activeLevel + '_entities');
 
@@ -188,7 +187,7 @@ angular
                     this._stream.on('add', onStreamAdd.bind(this));
 
                     this._stream.on('remove', function(entityId) {
-                        $log.debug('[NetworkSystem : remove]', entityId);
+                        // $log.debug('[NetworkSystem : remove]', entityId);
                         var obj = world.scene.getObjectByProperty('uuid', entityId);
                         // test if instanceof Entity?
                         if (obj) {

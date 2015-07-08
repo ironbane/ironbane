@@ -88,7 +88,7 @@ angular
 
                     $scope.activeLevel = IB_CONSTANTS.world.mainMenuLevel;
 
-                    $log.debug('mainMenu Controller: ', this, $scope);
+                    // $log.debug('mainMenu Controller: ', this, $scope);
                 }
             ],
             onEnter: [

@@ -332,7 +332,7 @@ angular
                                 shape.calculateLocalInertia(mass, btVec3a);
                             }
                             if (mass === 0) {
-                                $log.debug('static shape:', entity.name);
+                                // $log.debug('static shape:', entity.name);
                             }
                             rigidBodyInfo = new Ammo.btRigidBodyConstructionInfo(mass, state, shape, btVec3a);
 

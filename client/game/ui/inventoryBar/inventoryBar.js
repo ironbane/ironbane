@@ -23,14 +23,14 @@ angular
                     var inventorySystem = $rootWorld.getSystem('inventory');
 
                     var changeHandler = function(entity) {
-                        $log.debug('inventoryBar changeHandler: ', entity);
+                        // $log.debug('inventoryBar changeHandler: ', entity);
                         if (entity.id !== ctrl.forEntity.id) {
                             return;
                         }
                         var inventory = entity.getComponent('inventory'),
                             slots = Object.keys(inventory);
 
-                        $log.debug('inventoryBar: ', slots, inventory);
+                        // $log.debug('inventoryBar: ', slots, inventory);
 
                         ctrl.slots = _.map(slots, function(slot) {
                             var bg = ['0px', '0px'];
