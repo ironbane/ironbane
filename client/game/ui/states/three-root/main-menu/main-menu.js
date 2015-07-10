@@ -47,37 +47,29 @@ angular
 
                         return camera;
                     }
-                ],
-                characterList: [
-                    '$meteor',
-                    '$log',
-                    'IbUtils',
-                    function($meteor, $log, IbUtils) {
-                        return IbUtils.waitForMeteorGuestUserLogin().then(function(user) {
-                            var list;
-                            try {
-                                list = $meteor.collection(function() {
-                                    return $meteor.getCollectionByName('entities').find({
-                                        owner: user._id
-                                    });
-                                }, false);
-                            } catch (ex) {
-                                $log.debug('caught: ex ', ex);
-                            }
-
-                            return list;
-                        });
-                    }
                 ]
             },
             controllerAs: 'mainMenu',
             controller: [
                 '$log',
                 '$scope',
-                'characterList',
                 'IB_CONSTANTS',
-                function($log, $scope, characterList, IB_CONSTANTS) {
-                    $scope.characters = characterList;
+                'IbUtils',
+                '$meteor',
+                function($log, $scope, IB_CONSTANTS, IbUtils, $meteor) {
+
+                    $scope.characters = [];
+
+                    $meteor.autorun($scope, function() {
+                        var user = Meteor.user();
+                        IbUtils.waitForMeteorGuestUserLogin().then(function(user) {
+                            $scope.characters = $meteor.collection(function() {
+                                return $meteor.getCollectionByName('entities').find({
+                                    owner: user._id
+                                });
+                            }, false);
+                        });
+                    });
 
                     $scope.currentCharIndex = 0;
                     angular.forEach($scope.characters, function(character, index) {
