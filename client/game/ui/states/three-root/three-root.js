@@ -71,11 +71,11 @@ angular
                     };
 
                     // TODO: we should really reset rootWorld instead
-                    function clearOldLevel(level) {
+                    function clearOldLevel() {
                         var nodesToBeRemoved = [];
 
                         $rootWorld.traverse(function(node) {
-                            if (node.doc && node.doc.level !== level) {
+                            if (node.isLoadedFromJsonFile) {
                                 nodesToBeRemoved.push(node);
                             }
                         });
@@ -87,26 +87,26 @@ angular
 
                     $meteor.session('activeLevel').bind($scope, 'activeLevel');
 
-                    $scope.$watch('activeLevel', function(level) {
+                    $scope.$watch('activeLevel', function(newLevel, oldLevel) {
                         // $log.debug('activeLevel changed: ', level);
 
-                        if (!angular.isString(level)) {
+                        if (!angular.isString(newLevel)) {
                             return;
                         }
 
-                        clearOldLevel(level);
+                        clearOldLevel();
 
-                        $rootWorld.name = level; // need this for pathing
+                        $rootWorld.name = newLevel; // need this for pathing
                         $scope.levelLoaded = false;
 
-                        $rootWorld.load(level)
+                        $rootWorld.load(newLevel)
                             .then(function () {
                                 $timeout(function () {
                                     $scope.levelLoaded = true;    
                                 });                                
                             })
                             .catch(function(err) {
-                                $log.debug('error loading level ', level, err);
+                                $log.debug('error loading level ', newLevel, err);
                             });
                     });
                 }

@@ -76,7 +76,7 @@ angular
                     // a client may request a full state update (typically this should be for bootup, TODO somehow throttle this so that we don't get hammered)
                     this._stream.on('getState', function() {
                         $log.debug('server getState: ', this.userId, this.subscriptionId);
-                        var netEnts = _.filter(self.world.getEntities('netSend'), function(ent) { return !ent.__fromClara; });
+                        var netEnts = _.filter(self.world.getEntities('netSend'), function(ent) { return !ent.isLoadedFromJsonFile; });
                         self.sendNetState(this.userId, netEnts);
                     });
 

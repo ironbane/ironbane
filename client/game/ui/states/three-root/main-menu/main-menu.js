@@ -80,13 +80,11 @@ angular
                     $scope.characters = characterList;
 
                     $scope.currentCharIndex = 0;
-                    angular.forEach($scope.characters, function(char, index) {
-                        if (char._id === $scope.currentChar.id) {
+                    angular.forEach($scope.characters, function(character, index) {
+                        if (character._id === $scope.currentChar.id) {
                             $scope.currentCharIndex = index;
                         }
                     });
-
-                    $scope.activeLevel = IB_CONSTANTS.world.mainMenuLevel;
 
                     // $log.debug('mainMenu Controller: ', this, $scope);
                 }

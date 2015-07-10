@@ -61,16 +61,16 @@ angular
 
                         $meteor.call('enterGame', charId)
                             .then(function() {
-                                var activeChar = $scope.characters.reduce(function(prev, current, index) {
-                                    if (current._id === charId) {
+                                var activeChar = _.find($scope.characters, function(character) {
+                                    if (character._id === charId) {
                                         //$scope.currentCharIndex = index;
-                                        return current;
+                                        return character;
                                     }
                                 });
 
                                 if (activeChar) {
                                     $scope.currentChar.id = charId;
-                                    $scope.activeLevel = activeChar.level;
+                                    Session.set('activeLevel', activeChar.level)
                                 } else {
                                     $log.error('unable to locate character, not updated yet?');
                                 }
