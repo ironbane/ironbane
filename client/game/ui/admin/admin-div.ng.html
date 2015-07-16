@@ -1,0 +1,14 @@
+<div ng-init="mode = ''">
+	<div ng-if="!mode">
+		<h1>Admin panel</h1>	
+		<button class="ibutton" ng-click="$parent.mode = 'itemids'" style="width:145px;">Item IDs</button>	
+	</div>
+	<div ng-if="mode">
+		<button class="ibutton" ng-click="$parent.mode = ''" style="width:145px;">Back</button>	
+	</div>
+	<div ng-if="mode == 'itemids'">
+		<h1>Item IDs</h1>		
+		<p>This page allows you to get ID's from the items spritesheet. Simply hover over items to view their corresponding ID.</p>
+		<img src="images/spritesheets/items.png">
+	</div>	
+</div>

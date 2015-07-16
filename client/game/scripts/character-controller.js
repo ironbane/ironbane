@@ -4,7 +4,8 @@ angular
         'three',
         'ammo',
         'engine.debugger',
-        'engine.util'
+        'engine.util',
+        'game.clientSettings'
     ])
     .run([
         '$log',
@@ -13,7 +14,8 @@ angular
         'Ammo',
         'Debugger',
         'IbUtils',
-        function($log, ScriptBank, THREE, Ammo, Debugger, IbUtils) {
+        '$clientSettings',
+        function($log, ScriptBank, THREE, Ammo, Debugger, IbUtils, $clientSettings) {
             'use strict';
 
             // The amount of time that must pass before you can jump again
@@ -56,6 +58,11 @@ angular
             };
 
             CharacterControllerScript.prototype.update = function(dt, elapsed, timestamp) {
+
+                if ($clientSettings.get('isAdminPanelOpen')) {
+                    return;
+                }
+
                 var input = this.world.getSystem('input'), // should cache this during init?
                     leftStick = input.virtualGamepad.leftThumbstick,
                     rightStick = input.virtualGamepad.rightThumbstick;

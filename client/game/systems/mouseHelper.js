@@ -2,12 +2,14 @@ angular
     .module('game.systems.mouseHelper', [
         'ces',
         'three',
-        'engine.textureLoader'
+        'engine.textureLoader',
+        'game.clientSettings'
     ])
     .factory('MouseHelperSystem', [
         'System',
         'THREE',
-        function(System, THREE) {
+        '$clientSettings',
+        function(System, THREE, $clientSettings) {
             'use strict';
 
             var geometry = new THREE.SphereGeometry(0.1, 4, 4);
@@ -40,6 +42,10 @@ angular
                     });
                 },
                 update: function(dt) {
+                    if ($clientSettings.get('isAdminPanelOpen')) {
+                        return;
+                    }
+
                     var input = this.world.getSystem('input');
 
                     var mouseHelpers = this.world.getEntities('mouseHelper');

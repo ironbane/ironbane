@@ -2,6 +2,7 @@ angular
     .module('game.ui.states.three-root.play', [
         'ui.router',
         'angular-meteor',
+        'game.ui.admin.adminDiv',
         'game.ui.debug.debugDiv',
         'game.ui.chat.chatBoxDirective',
         'game.ui.chat.chatService',
@@ -27,6 +28,8 @@ angular
                         $scope.gui = {
                             showChatInput: false
                         };
+
+                        $scope.canOpenAdminPanel = Roles.userIsInRole(Meteor.user(), ['game-master'])
 
                         // player commands that aren't tied to an entity
                         var inputSystem = $rootWorld.getSystem('input'),

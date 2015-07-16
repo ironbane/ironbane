@@ -1,4 +1,5 @@
 <debug-div ng-if="IB_CONSTANTS.isDev"></debug-div>
+<admin-div ng-if="canOpenAdminPanel"></admin-div>
 <chat-box show-input="gui.showChatInput"></chat-box>
 <div class="stats-container">
     <stat-bar id="healthBar" stat-component="mainPlayer.getComponent('health')"></stat-bar>
