@@ -1,108 +1,120 @@
 angular
     .module('game.ui.inventoryBar', [
-        'game.world-root'
+        'models.inventory',
+        'angular-meteor'
     ])
     .directive('inventoryBar', [
         '$log',
-        '$rootWorld',
-        function($log, $rootWorld) {
+        '$sce',
+        function($log, $sce) {
             'use strict';
 
             var config = {
                 restrict: 'E',
                 templateUrl: 'client/game/ui/inventoryBar/inventoryBar.ng.html',
                 scope: {
-                    forEntity: '='
+
                 },
                 bindToController: true,
                 controllerAs: 'inventoryBar',
-                controller: ['$scope', function($scope) {
-                    var ctrl = this;
-                    ctrl.slots = [];
+                controller: ['$scope', '$meteor', 'InventoryCollection', 'EntitiesCollection', function($scope, $meteor, InventoryCollection, EntitiesCollection) {
 
-                    var inventorySystem = $rootWorld.getSystem('inventory');
+                    // Passing an empty object to $meteorObject as the selector
+                    // appears to use findOne, which works better for our case as
+                    // we only want a single result instead of having to loop over an
+                    // array with ng-repeat which we know has only 1 element.
+                    $scope.inventory = $scope.$meteorObject(InventoryCollection, {});
 
-                    var changeHandler = function(entity) {
-                        // $log.debug('inventoryBar changeHandler: ', entity);
-                        if (entity.id !== ctrl.forEntity.id) {
-                            return;
-                        }
-                        var inventory = entity.getComponent('inventory'),
-                            slots = Object.keys(inventory);
+                    $scope.slots = [
+                        {
+                            name: 'head',
+                            backgrounds: [[0,2],[0,0]]
+                        },
+                        {
+                            name: 'body',
+                            backgrounds: [[2,2],[0,0]]
+                        },
+                        {
+                            name: 'feet',
+                            backgrounds: [[1,2],[0,0]]
+                        },
+                        {
+                            name: 'rhand',
+                            backgrounds: [[0,1],[0,0]]
+                        },
+                        {
+                            name: 'lhand',
+                            backgrounds: [[0,1],[0,0]]
+                        },
+                        {
+                            name: 'relic1',
+                            backgrounds: [[1,1],[1,0]]
+                        },
+                        {
+                            name: 'relic2',
+                            backgrounds: [[1,1],[1,0]]
+                        },
+                        {
+                            name: 'relic3',
+                            backgrounds: [[1,1],[1,0]]
+                        },
+                        {
+                            name: 'slot0',
+                            backgrounds: [[2,0]]
+                        },
+                        {
+                            name: 'slot1',
+                            backgrounds: [[2,0]]
+                        },
+                        {
+                            name: 'slot2',
+                            backgrounds: [[2,0]]
+                        },
+                        {
+                            name: 'slot3',
+                            backgrounds: [[2,0]]
+                        },
+                        {
+                            name: 'slot4',
+                            backgrounds: [[2,0]]
+                        },
+                        {
+                            name: 'slot5',
+                            backgrounds: [[2,0]]
+                        },
+                        {
+                            name: 'slot6',
+                            backgrounds: [[2,0]]
+                        },
+                        {
+                            name: 'slot7',                      
+                            backgrounds: [[2,0]]
+                        },
+                    ];
 
-                        // $log.debug('inventoryBar: ', slots, inventory);
-
-                        ctrl.slots = _.map(slots, function(slot) {
-                            var bg = ['0px', '0px'];
-                            // if (slot.search(/slot/) === 0) {
-                            //     bg[0] = '0px';
-                            //     bg[1] = '-16px';
-                            // }
-                            // if (slot.search(/relic/) === 0) {
-                            //     bg[0] = '-16px';
-                            //     bg[1] = '-48px';
-                            // }
-                            // if (slot.search(/hand/ig) >= 0) {
-                            //     bg[0] = '-48px';
-                            //     bg[1] = '-16px';
-                            // }
-                            // if (slot === 'head') {
-                            //     bg[0] = '-32px';
-                            //     bg[1] = '-16px';
-                            // }
-                            // if (slot === 'feet') {
-                            //     bg[0] = '-16px';
-                            //     bg[1] = '0px';
-                            // }
-                            // if (slot === 'body') {
-                            //     bg[0] = '-32px';
-                            //     bg[1] = '0px';
-                            // }
-
-                            var images = [
-                                'url(images/ui/inventory.png) ' + bg.join(' ') + ' no-repeat' // background LAST
-                            ];
-
-                            if (inventory[slot] !== null) {
-                                images.unshift('url(images/items/' + inventory[slot].invImage + '.png) center no-repeat');
-                            }
-
-                            //$log.debug('invbar: images: ', images);
-
-                            return {
-                                klass: slot,
-                                css: {
-                                    background: images.join(','),
-                                    'image-rendering': 'pixelated'
-                                },
-                                contents: inventory[slot]
-                            };
+                    $scope.slots = _.map($scope.slots, function(slot) {
+                        var cssBackgrounds = [];
+                        slot.backgrounds.forEach(function (bg) {
+                            bg[0] *= -32;
+                            bg[1] *= -32;
+                            cssBackgrounds.push(bg.join('px ') + 'px');
                         });
-                    };
-
-                    inventorySystem.onEquipItem.add(changeHandler);
-                    inventorySystem.onUnEquipItem.add(changeHandler);
-                    inventorySystem.onItemAdded.add(changeHandler);
-                    inventorySystem.onItemRemoved.add(changeHandler);
-
-                    this.useSlot = function(slot) {
-                        $log.debug('use slot: ', slot, 'this: ', this);
-                        if (slot.klass.search(/slot/) === 0 && slot.contents) {
-                            inventorySystem.equipItem(this.forEntity, slot.klass);
-                        } else {
-                            // for now this is all we will do, later other usage
-                            inventorySystem.unequipItem(this.forEntity, slot.klass);
-                        }
-                    };
-
-                    $scope.$watch(function() {
-                        return ctrl.forEntity;
-                    }, function(entity) {
-                        if (!entity) {
-                            return;
-                        }
-                        changeHandler(entity);
+                        slot.cssStyle = {
+                            'background-position': cssBackgrounds.join(',')
+                        };
+                        return slot;
                     });
+                    
+                    $meteor.autorun($scope, function () {
+                        var currentCharacter = EntitiesCollection.findOne({
+                            owner: Meteor.userId(),
+                            active: true
+                        });                    
+                        if (currentCharacter) {
+                            $meteor.subscribe('inventory', currentCharacter._id);                        
+                        }
+                    })
+
                 }]
             };
 

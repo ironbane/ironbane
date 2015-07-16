@@ -8,7 +8,8 @@ angular
         'game.ui.dialog',
         'engine.entity-cache',
         'game.ui.statBar',
-        'game.ui.inventoryBar'
+        'game.ui.inventoryBar',
+        'game.ui.inventoryItem'
     ])
     .config([
         '$stateProvider',
