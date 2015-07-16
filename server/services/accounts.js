@@ -1,13 +1,10 @@
 angular
     .module('server.services.accounts', [
-        'models',
-        'global.constants'
+        'models'
     ])
     .run([
-        'IB_CONSTANTS',
         'AccountsCollection',
-        'RolesCollection',
-        function(IB_CONSTANTS, AccountsCollection, RolesCollection) {
+        function(AccountsCollection) {
             'use strict';
 
             Meteor.setInterval(function() {
@@ -17,15 +14,5 @@ angular
                 AccountsCollection.removeOldGuests(before);
             }, 3600 * 1000);
 
-            if (IB_CONSTANTS.isDev) {
-                if (Meteor.users.find({}).count() === 0) {
-                    var userId = AccountsCollection.createUser({
-                        username: 'admin',
-                        password: 'admin'
-                    });
-
-                    RolesCollection.addUsersToRoles(userId, ['game-master']);
-                }
-            }
         }
     ]);

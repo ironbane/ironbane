@@ -13,8 +13,8 @@ angular
         function(_, $activeWorlds, $log, IB_CONSTANTS, EntitiesCollection) {
             'use strict';
 
-            this.create = function(options) {
-                var user = Meteor.user();
+            this.create = function(options, pUser) {
+                var user = pUser || Meteor.user();
                 var validator = Meteor.npmRequire('validator');
 
                 var charCount = EntitiesCollection.find({
