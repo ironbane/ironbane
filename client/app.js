@@ -54,6 +54,12 @@ angular
                 keys: ['ESC'],
                 check: 'pressed'
             }]);
+
+            InputSystemProvider.setActionMapping('admin-panel', [{
+                type: 'keyboard',
+                keys: ['GRAVE_ACCENT'],
+                check: 'pressed'
+            }]);
         }
     ])
     .run([

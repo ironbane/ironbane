@@ -10,7 +10,8 @@ angular
         'engine.entity-cache',
         'game.ui.statBar',
         'game.ui.inventoryBar',
-        'game.ui.inventoryItem'
+        'game.ui.inventoryItem',
+        'game.clientSettings'
     ])
     .config([
         '$stateProvider',
@@ -24,12 +25,12 @@ angular
                     '$rootWorld',
                     '$log',
                     '$state',
-                    function($scope, $rootWorld, $log, $state) {
+                    '$clientSettings',
+                    function($scope, $rootWorld, $log, $state, $clientSettings) {
                         $scope.gui = {
-                            showChatInput: false
+                            showChatInput: false,
+                            showAdminPanel: false
                         };
-
-                        $scope.canOpenAdminPanel = Roles.userIsInRole(Meteor.user(), ['game-master'])
 
                         // player commands that aren't tied to an entity
                         var inputSystem = $rootWorld.getSystem('input'),
@@ -41,14 +42,23 @@ angular
                             escapeHandler = function() {
                                 $log.debug('escape pressed');
                                 $state.go('^.main-menu.enter-world');
+                            },
+                            adminHandler = function() {
+                                $scope.gui.showAdminPanel = !$scope.gui.showAdminPanel;
+                                $clientSettings.put('isAdminPanelOpen', $scope.gui.showAdminPanel);
                             };
 
                         inputSystem.register('open-chat', openChatHandler);
                         inputSystem.register('escape', escapeHandler);
 
+                        if(Roles.userIsInRole(Meteor.user(), ['game-master'])) {
+                            inputSystem.register('admin-panel', adminHandler);
+                        }
+
                         $scope.$on('$destroy', function() {
                             inputSystem.unregister('open-chat', openChatHandler);
                             inputSystem.unregister('escape', escapeHandler);
+                            inputSystem.unregister('admin-panel', adminHandler);
                         });
                     }
                 ],

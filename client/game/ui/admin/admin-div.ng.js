@@ -2,7 +2,7 @@ angular.module('game.ui.admin.adminDiv', [
         'game.clientSettings'
     ])
     .directive('adminDiv', [
-        
+
         function() {
             'use strict';
 
@@ -10,14 +10,9 @@ angular.module('game.ui.admin.adminDiv', [
                 restrict: 'EA',
                 templateUrl: 'client/game/ui/admin/admin-div.ng.html',
                 controllerAs: 'adminDiv',
-                controller: function($scope, $clientSettings) {
-                    $clientSettings.put('isAdminPanelOpen', true);
+                controller: ['$scope', '$clientSettings', function($scope, $clientSettings) {
 
-
-                    $scope.close = function () {
-                        $clientSettings.put('isAdminPanelOpen', false);
-                    }                    
-                }
+                }]
             };
         }
     ]);
