@@ -26,7 +26,7 @@ angular
 
                         var planeGeo = new THREE.PlaneGeometry(1.0, 1.0, 1, 1);
 
-                        wieldItem = new THREE.Mesh(planeGeo, new THREE.MeshLambertMaterial());
+                        wieldItem = new THREE.Mesh(planeGeo, new THREE.MeshBasicMaterial());
                         wieldItem.material.side = THREE.DoubleSide;
                         wieldItem.geometry.dynamic = true;
 
