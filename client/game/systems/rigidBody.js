@@ -320,9 +320,11 @@ angular
                             var rigidBodyInfo;
                             var rigidBody;
 
+                            var offset = rigidBodyData.offset;
+
                             // TODO watch memory usage here! potential memory leak
                             // Ammo stuff must be cleaned up after use
-                            btVec3a.setValue(entity.position.x, entity.position.y, entity.position.z);
+                            btVec3a.setValue(entity.position.x + offset.x, entity.position.y + offset.y, entity.position.z + offset.z);
                             btQuat.setValue(entity.quaternion.x, entity.quaternion.y, entity.quaternion.z, entity.quaternion.w);
                             var btTransform = new Ammo.btTransform(btQuat, btVec3a);
                             var state = new Ammo.btDefaultMotionState(btTransform);
