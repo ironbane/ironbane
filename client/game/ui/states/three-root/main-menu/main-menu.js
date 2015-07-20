@@ -6,6 +6,7 @@ angular
         'game.ui.states.three-root.main-menu.create-char',
         'game.ui.states.three-root.main-menu.login',
         'game.ui.states.three-root.main-menu.register',
+        'game.services.globalsound',
         'game.world-root',
         'engine.entity-builder',
         'engine.util',
@@ -60,6 +61,8 @@ angular
 
                     $scope.characters = [];
 
+
+
                     $meteor.autorun($scope, function() {
                         var user = Meteor.user();
                         IbUtils.waitForMeteorGuestUserLogin().then(function(user) {
@@ -85,16 +88,28 @@ angular
                 '$rootWorld',
                 'MainMenuPanningCamera',
                 '$log',
-                function($rootWorld, MainMenuPanningCamera, $log) {
+                'GlobalSound',
+                '$timeout',
+                function($rootWorld, MainMenuPanningCamera, $log, GlobalSound, $timeout) {
                     $log.debug('mainMenu onEnter: ', this);
                     $rootWorld.addEntity(MainMenuPanningCamera);
+
+                    $timeout(function () {
+                        GlobalSound.play('theme', 5);                    
+                    }, 1000);
                 }
             ],
             onExit: [
                 '$rootWorld',
                 'MainMenuPanningCamera',
-                function($rootWorld, MainMenuPanningCamera) {
+                'GlobalSound',
+                '$timeout',
+                function($rootWorld, MainMenuPanningCamera, GlobalSound, $timeout) {
                     $rootWorld.removeEntity(MainMenuPanningCamera);
+
+                    $timeout(function () {
+                        GlobalSound.stop('theme');
+                    }, 1000);
                 }
             ]
         });

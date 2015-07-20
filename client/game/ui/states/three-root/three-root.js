@@ -8,6 +8,7 @@ angular
         'game.ui.states.three-root.play',
         'game.ui.states.three-root.main-menu',
         'game.world-root',
+        'game.services.globalsound',
         'engine.util.debugging.rStats',
         'engine.util.debugging.rStats.threeStatsPlugin',
         'engine.util.debugging.rStats.glStatsPlugin',
@@ -42,7 +43,8 @@ angular
                 '$rootWorld',
                 '$state',
                 '$timeout',
-                function($meteor, $scope, $log, IB_CONSTANTS, $rootWorld, $state, $timeout) {
+                'GlobalSound',
+                function($meteor, $scope, $log, IB_CONSTANTS, $rootWorld, $state, $timeout, GlobalSound) {
                     this.IB_CONSTANTS = IB_CONSTANTS;
 
                     // make this an object so we keep the reference
@@ -69,6 +71,29 @@ angular
                                 $state.go('three-root.main-menu.enter-world');
                             });
                     };
+
+                    
+                    $meteor.autorun($scope, function() {
+                        var user = Meteor.user();     
+                        
+                        if (user.profile.enableSound) {
+                            GlobalSound.setMusicVolume(1);
+                            GlobalSound.setSoundVolume(1);                      
+                            // GlobalSound.unmute();      
+                        }
+                        else {
+                            GlobalSound.setMusicVolume(0);
+                            GlobalSound.setSoundVolume(0);                      
+                            // GlobalSound.mute();      
+                        }
+                    });     
+            
+
+                    $scope.toggleSound = function () {
+                        var user = Meteor.user();     
+                        
+                        $meteor.call('updateProfile', 'enableSound', !user.profile.enableSound);                     
+                    }
 
                     // TODO: we should really reset rootWorld instead
                     function clearOldLevel() {

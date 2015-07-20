@@ -9,3 +9,4 @@
     <button class="ibutton" ng-click="logout()" style="width:100px">Log out</button>
 </div>
 <div ui-view class="sub-menu"></div>
+<button class="ibutton sound-toggle" ng-class="{disabled: !currentUser.profile.enableSound}" ng-click="toggleSound()">♫</button>
