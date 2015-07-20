@@ -4,36 +4,36 @@
 	<div class="char-cust gender">
 		<div class="char-cust-label">Gender</div>
 		<div>
-			<button ng-if="boy" ng-click="toggleGender()" class="ibutton">Boy</button>
-			<button ng-if="!boy" ng-click="toggleGender()" class="ibutton">Girl</button>
+			<button ng-if="boy" click-sound ng-click="toggleGender()" class="ibutton">Boy</button>
+			<button ng-if="!boy" click-sound ng-click="toggleGender()" class="ibutton">Girl</button>
 		</div>
 	</div>
 
 	<div class="char-cust skin">
 		<div class="char-cust-label">Skin</div>
 		<div>
-			<button ng-click="prevSkin()" class="ibutton btn-left">←</button>
-			<button ng-click="nextSkin()" class="ibutton btn-right">→</button>
+			<button click-sound ng-click="prevSkin()" class="ibutton btn-left">←</button>
+			<button click-sound ng-click="nextSkin()" class="ibutton btn-right">→</button>
 		</div>
 	</div>
 
 	<div class="char-cust hair">
 		<div class="char-cust-label">Hair</div>
 		<div>
-			<button ng-click="prevHair()" class="ibutton btn-left">←</button>
-			<button ng-click="nextHair()" class="ibutton btn-right">→</button>
+			<button click-sound ng-click="prevHair()" class="ibutton btn-left">←</button>
+			<button click-sound ng-click="nextHair()" class="ibutton btn-right">→</button>
 		</div>
 	</div>
 
 	<div class="char-cust eyes">
 		<div class="char-cust-label">Eyes</div>
 		<div>
-			<button ng-click="prevEyes()" class="ibutton btn-left">←</button>
-			<button ng-click="nextEyes()" class="ibutton btn-right">→</button>
+			<button click-sound ng-click="prevEyes()" class="ibutton btn-left">←</button>
+			<button click-sound ng-click="nextEyes()" class="ibutton btn-right">→</button>
 		</div>
 	</div>
 
 	<div class="char-preview" ng-style="{ 'background-image': 'url(' + charPrevImg + ')' }"></div>
-	<button class="ibutton attention" ng-click="makeChar()" style="width:205px;float:left;margin-right:10px">Create Character</button>
-	<button class="ibutton" ng-click="back()" style="width:85px">Back</button>
+	<button class="ibutton attention" click-sound ng-click="makeChar()" style="width:205px;float:left;margin-right:10px">Create Character</button>
+	<button class="ibutton" click-sound ng-click="back()" style="width:85px">Back</button>
 </div>

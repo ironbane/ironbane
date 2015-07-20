@@ -19,7 +19,8 @@ angular
         'engine.input.input-system',
         'engine.util',
         'engine.debugger',
-        'util.name-gen'
+        'util.name-gen',
+        'game.services.globalsound'
     ])
     .config([
         '$locationProvider',
@@ -39,7 +40,14 @@ angular
                     volume: 0.55,
                     loop: true,
                     type: 'music'
-                }
+                },
+
+                click: {
+                    path: 'sound/click',
+                    volume: 1,
+                    loop: false,
+                    type: 'sound'
+                }                
             });
 
             // setup all input actions TODO: pull from config / local storage
@@ -71,7 +79,8 @@ angular
         '$state',
         '$log',
         'IbUtils',
-        function($window, Debugger, IB_CONSTANTS, $rootScope, $meteor, $state, $log, IbUtils) {
+        'GlobalSound',
+        function($window, Debugger, IB_CONSTANTS, $rootScope, $meteor, $state, $log, IbUtils, GlobalSound) {
             // for convenience
             if(IB_CONSTANTS.isDev) {
                 $window.debug = Debugger;

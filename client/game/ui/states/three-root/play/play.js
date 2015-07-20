@@ -7,6 +7,7 @@ angular
         'game.ui.chat.chatBoxDirective',
         'game.ui.chat.chatService',
         'game.ui.dialog',
+        'game.ui.clickSound',
         'engine.entity-cache',
         'game.ui.statBar',
         'game.ui.inventoryBar',
