@@ -36,7 +36,8 @@ angular
                 'Network',
                 'Persistence',
                 'Trigger',
-                'Movers'
+                'Movers',
+                'Actor'
             ];
 
             // populate all the worlds (zones)

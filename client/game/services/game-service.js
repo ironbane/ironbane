@@ -4,6 +4,7 @@ angular
         'game.systems',
         'engine.input.input-system',
         // shared systems
+        'systems.actor',
         'systems.armor',
         'systems.mesh',
         'systems.inventory'
@@ -24,6 +25,7 @@ angular
                 'CollisionReporter',
                 'Network',
                 'Inventory',
+                'Actor',
                 'Appearance',
                 'Armor',
                 'Input',

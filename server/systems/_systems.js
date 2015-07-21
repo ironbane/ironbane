@@ -4,5 +4,7 @@ angular
         'server.systems.movers',
         'server.systems.network',
         'server.systems.persistence',
-        'server.systems.trigger'
+        'server.systems.trigger',
+
+        'systems.actor'
     ]);
