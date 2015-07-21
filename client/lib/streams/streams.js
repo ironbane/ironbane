@@ -1,9 +1,15 @@
 Meteor.Stream = function Stream(name, callback) {
   EV.call(this);
-  
+
   var self = this;
   var streamName = 'stream-' + name;
-  var collection = new Meteor.Collection(streamName);
+
+  var mongoCollections = Mongo.Collection.getAll();
+  var foundCollection = _.find(mongoCollections, function (col) {
+    return col.name === streamName;
+  });
+
+  var collection = foundCollection ? foundCollection.instance : new Meteor.Collection(streamName);
   var subscription;
   var subscriptionId;
 
@@ -25,7 +31,7 @@ Meteor.Stream = function Stream(name, callback) {
         var context = {};
         context.subscriptionId = item.subscriptionId;
         context.userId = item.userId;
-        self._emit.apply(context, item.args);    
+        self._emit.apply(context, item.args);
       }
     }
   });

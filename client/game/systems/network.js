@@ -5,6 +5,7 @@ angular
         'engine.entity-builder',
         'game.world-root',
         'engine.entity-cache',
+        'engine.util',
         'ammo',
         'engine.timing'
     ])
@@ -20,7 +21,8 @@ angular
         'Ammo',
         '$timing',
         '$timeout',
-        function(System, EntityBuilder, $log, $rootScope, $components, $rootWorld, $entityCache, THREE, Ammo, $timing, $timeout) {
+        'IbUtils',
+        function(System, EntityBuilder, $log, $rootScope, $components, $rootWorld, $entityCache, THREE, Ammo, $timing, $timeout, IbUtils) {
             'use strict';
 
             function arraysAreEqual(a1, a2) {
@@ -72,8 +74,8 @@ angular
                 var me = this;
                 $rootWorld.getLoadPromise().then(function () {
                     $timeout(function () {
-                        handlePacket.bind(me)(packet);    
-                    });                    
+                        handlePacket.bind(me)(packet);
+                    });
                 });
             };
 
@@ -175,38 +177,68 @@ angular
                 addedToWorld: function(world) {
                     this._super(world);
 
-                    var activeLevel = Session.get('activeLevel');
 
-                    // $log.debug('[NetworkSystem addedToWorld]', world.name, activeLevel);
 
-                    this._stream = new Meteor.Stream(activeLevel + '_entities');
+                    var me = this;
 
-                    this._stream.on('transforms', onReceiveTransforms.bind(this));
-
-                    // this for any adds (even first boot)
-                    this._stream.on('add', onStreamAdd.bind(this));
-
-                    this._stream.on('remove', function(entityId) {
-                        // $log.debug('[NetworkSystem : remove]', entityId);
-                        var obj = world.scene.getObjectByProperty('uuid', entityId);
-                        // test if instanceof Entity?
-                        if (obj) {
-                            world.removeEntity(obj);
-                        } else {
-                            $log.debug('not found to remove...');
+                    // Set up streams and make sure it reruns everytime we change levels or change user
+                    // $meteor.autorun is linked to $scope which we don't have here,
+                    // so Meteor.autorun is the only way AFAIK
+                    Meteor.autorun(function () {
+                        if (me._stream) {
+                            me._stream.removeAllListeners();
+                            me._stream.close();
+                        }
+                        if (me._userStream) {
+                            me._userStream.removeAllListeners();
+                            me._userStream.close();
                         }
 
-                        $rootScope.$apply();
-                    });
+                        if (!Meteor.user()) {
+                            return;
+                        }
 
-                    // as we are added to the client's world, it'll even be main menu time, we want to ask for the current state of things
-                    this._stream.emit('getState');
+                        // Remove all existing entities that were sent using streams
+                        var entities = me.world.getEntities('netRecv').concat(me.world.getEntities('netSend'));
+                        entities.forEach(function (entity) {
+                            me.world.removeEntity(entity);
+                        })
 
-                    // we also get a private user stream
-                    var userStream = [Meteor.userId(), activeLevel, 'entities'].join('_');
-                    $log.debug('userStream', userStream);
-                    this._userStream = new Meteor.Stream(userStream);
-                    this._userStream.on('add', onStreamAdd.bind(this));
+                        // TOOD don't link activeLevel to the session as clients can abuse it
+                        var activeLevel = Session.get('activeLevel');
+
+                        // $log.debug('[NetworkSystem addedToWorld]', world.name, activeLevel);
+
+                        me._stream = new Meteor.Stream(activeLevel + '_entities');
+
+                        me._stream.on('transforms', onReceiveTransforms.bind(me));
+
+                        // this for any adds (even first boot)
+                        me._stream.on('add', onStreamAdd.bind(me));
+
+                        me._stream.on('remove', function(entityId) {
+                            // $log.debug('[NetworkSystem : remove]', entityId);
+                            var obj = world.scene.getObjectByProperty('uuid', entityId);
+                            // test if instanceof Entity?
+                            if (obj) {
+                                world.removeEntity(obj);
+                            } else {
+                                $log.debug('not found to remove...');
+                            }
+
+                            $rootScope.$apply();
+                        });
+
+                        // as we are added to the client's world, it'll even be main menu time, we want to ask for the current state of things
+                        me._stream.emit('getState');
+
+                        // we also get a private user stream
+                        var userStream = [Meteor.userId(), activeLevel, 'entities'].join('_');
+                        $log.debug('userStream', userStream);
+                        me._userStream = new Meteor.Stream(userStream);
+                        me._userStream.on('add', onStreamAdd.bind(me));
+
+                    })
                 },
                 update: function() {
                     // for now just send transform
