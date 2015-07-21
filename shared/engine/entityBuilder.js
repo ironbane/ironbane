@@ -50,7 +50,7 @@ angular
                             var component = $components.get(componentName, cData);
                             // might not find, could be bad/old db data
                             if (component) {
-                                // console.log('add component:', component)
+                                console.log('add component:', component)
                                 entity.addComponent(component);
                             }
                         });
@@ -81,12 +81,12 @@ angular
                 if (Meteor.isClient) {
                     images = objectLoader.parseImages(json.images, function () {
                         deferred.resolve(entity);
-                    });                
+                    });
                     textures  = objectLoader.parseTextures( json.textures, images );
                     materials = objectLoader.parseMaterials(json.materials, textures);
                 }
                 else {
-                    materials = objectLoader.parseMaterials(json.materials);   
+                    materials = objectLoader.parseMaterials(json.materials);
                     setTimeout(function () {
                         deferred.resolve(entity);
                     }, 0);
@@ -203,7 +203,7 @@ angular
                 };
             })();
 
-            
+
             this.postProcessEntity = function(entity, geometries, materials) {
 
                 var data = entity.data;
@@ -309,7 +309,7 @@ angular
                         entity.parent.children.forEach(function(child) {
                             if (child.data.userData.type && child.data.userData.type.indexOf('Collider') !== -1) {
                                 entity.addComponent($components.get('octree', {
-                                }));                                
+                                }));
                             }
                         })
 
@@ -328,7 +328,7 @@ angular
                         break;
                 }
 
-                switch (data.userData.type) {                
+                switch (data.userData.type) {
                     case 'BoxCollider':
 
                         entity.parent.addComponent($components.get('rigidBody', {
@@ -339,13 +339,16 @@ angular
                                 depth: data.userData.size[2]
                             },
                             offset: (new THREE.Vector3()).fromArray(data.userData.center),
-                            mass: 0                                
+                            mass: 0
                         }));
 
-                        break;                            
+                        break;
+                    case 'Script':
+                        addPrefabToEntity((data.userData.entity || data.userData.prefab), entity.parent, data);
+                        break;
                 }
 
-                addPrefabToEntity((data.userData.entity || data.userData.prefab), entity, data);
+
 
                 // for items loaded from the json file, the server should control
                 if (Meteor.isServer) {
@@ -359,8 +362,8 @@ angular
                 entity.children.forEach(function(child) {
                     me.postProcessEntity(child, geometries, materials);
                 });
-                
+
                 return entity;
-            };            
+            };
         }
     ]);

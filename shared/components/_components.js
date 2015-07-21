@@ -1,11 +1,13 @@
-angular.module('components', [
+angular.module('components', [    
     'components.armor',
     'components.armorRegen',
     'components.camera',
     'components.collisionReporter',
+    'components.globalState',    
     'components.health',
     'components.helper',
     'components.inventory',
+    'components.localState',    
     'components.light',
     'components.mesh',
     'components.model',
@@ -25,11 +27,11 @@ angular.module('components', [
     'components.scene',
     'components.script',
     'components.shadow',
-    'components.sound',
+    'components.sound',    
     'components.spawner',
     'components.spawnPoint',
     'components.speed',
-    'components.sprite',
+    'components.sprite',    
     'components.trigger',
     'components.wieldItem'
 ]);
