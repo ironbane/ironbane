@@ -348,15 +348,6 @@ angular
                         break;
                 }
 
-
-
-                // for items loaded from the json file, the server should control
-                if (Meteor.isServer) {
-                    entity.addComponent($components.get('netSend'));
-                } else {
-                    entity.addComponent($components.get('netRecv'));
-                }
-
                 var me = this;
 
                 entity.children.forEach(function(child) {
