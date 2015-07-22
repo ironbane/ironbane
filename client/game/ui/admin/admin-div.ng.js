@@ -12,6 +12,9 @@ angular.module('game.ui.admin.adminDiv', [
                 controllerAs: 'adminDiv',
                 controller: ['$scope', '$clientSettings', function($scope, $clientSettings) {
 
+                    $scope.getImageID = function (e) {
+                        $scope.imageId = (1+Math.floor(e.offsetY / 32)) * (1+Math.floor(e.offsetX / 32))
+                    };
                 }]
             };
         }
