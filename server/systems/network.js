@@ -85,6 +85,32 @@ angular
 
                     // cache streams for direct user communication
                     this._userStreams = {};
+
+                    Accounts.onLogin(function (info) {
+                        var userId = info.user._id;
+
+                        // TODO clear when user logs out
+                        if (!self._userStreams[userId]) {
+                            var userStream = [userId, self.world.name, 'entities'].join('_');
+                            console.log('stream: ' + userStream);
+                            self._userStreams[userId] = new Meteor.Stream(userStream);
+                            var stream = self._userStreams[userId];
+
+                            stream.permissions.write(function() {
+                                return this.userId === userId;
+                            });
+
+                            // can read anything the server sends
+                            stream.permissions.read(function() {
+                                return this.userId === userId;
+                            });
+
+                            stream.on('ping', function() {
+                                console.log('ping received');
+                                stream.emit('pong');
+                            });
+                        }
+                    });
                 },
                 sendNetState: function(userId, entities) {
                     if (!entities || (entities.length && entities.length === 0)) {
@@ -102,17 +128,6 @@ angular
                     } else {
                         // get user stream
                         stream = this._userStreams[userId];
-                        if (!stream) {
-                            this._userStreams[userId] = new Meteor.Stream([userId, this.world.name, 'entities'].join('_'));
-                            stream = this._userStreams[userId];
-                            stream.permissions.write(function() {
-                                return this.userId === userId;
-                            });
-                            // can read anything the server sends
-                            stream.permissions.read(function() {
-                                return this.userId === userId;
-                            });
-                        }
                     }
 
                     // pack them up in a single update

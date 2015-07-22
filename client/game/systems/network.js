@@ -160,8 +160,6 @@ angular
                     }
 
                     world.addEntity(builtEntity);
-
-                    // $log.debug('[NetworkSystem : add]', entity, builtEntity);
                 });
             }
 
@@ -176,8 +174,6 @@ angular
                 },
                 addedToWorld: function(world) {
                     this._super(world);
-
-
 
                     var me = this;
 
@@ -228,14 +224,14 @@ angular
                         });
 
                         // as we are added to the client's world, it'll even be main menu time, we want to ask for the current state of things
-                        me._stream.emit('getState');
+                        Meteor.setTimeout(function () {
+                            me._stream.emit('getState');
+                        }, 1000);
 
                         // we also get a private user stream
                         var userStream = [Meteor.userId(), activeLevel, 'entities'].join('_');
-                        $log.debug('userStream', userStream);
                         me._userStream = new Meteor.Stream(userStream);
                         me._userStream.on('add', onStreamAdd.bind(me));
-
                     })
                 },
                 update: function() {
