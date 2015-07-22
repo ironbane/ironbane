@@ -47,6 +47,7 @@ Meteor.Stream = function Stream(name, callback) {
   };
 
   self.close = function close() {
+    self.removeAllListeners();
     subscription.stop();
   };
 }

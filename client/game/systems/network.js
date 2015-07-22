@@ -186,11 +186,9 @@ angular
                     // so Meteor.autorun is the only way AFAIK
                     Meteor.autorun(function () {
                         if (me._stream) {
-                            me._stream.removeAllListeners();
                             me._stream.close();
                         }
                         if (me._userStream) {
-                            me._userStream.removeAllListeners();
                             me._userStream.close();
                         }
 
