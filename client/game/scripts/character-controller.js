@@ -155,6 +155,10 @@ angular
                 }
 
                 if (input.mouse.getButton(0)) {
+                    var wieldItem = this.entity.getComponent('wieldItem');
+                    if (wieldItem) {
+                        wieldItem.doAttackAnimation();
+                    }
                     //this.jump = true;
                 }
 

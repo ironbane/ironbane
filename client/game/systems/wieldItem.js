@@ -14,6 +14,8 @@ angular
         function(System, THREE, TextureLoader, $timeout, IbUtils) {
             'use strict';
 
+            var weaponAttackSwingTime = 0.2;
+
             var WieldItemSystem = System.extend({
                 addedToWorld: function(world) {
                     var sys = this;
@@ -48,7 +50,7 @@ angular
 
 
                         wieldItemData.doAttackAnimation = function () {
-                        	wieldItemData.weaponAttackSwingTimer = 1.0;
+                        	wieldItemData.weaponAttackSwingTimer = weaponAttackSwingTime;
                         	wieldItemData.weaponAttackSwingingForward = true;
                         };
 
@@ -127,14 +129,17 @@ angular
                                 // wi.rotation.y += dtr(180);
                             }
 
+                            var weaponSwingAxis = 'x';
+                            var weaponSwingAmount = Math.PI / 2;
+
 							if (spriteSheetComponent.dirIndex === 0) {
 								wi.rotation.y += dtr(200);
 
 								wp.position.setX(0.38);
 								wp.position.setY(-0.2);
-								wp.position.setZ(-0.4);
+								wp.position.setZ(-0.75);
 
-								wp.scale.setX(0.5);
+								wp.scale.setX(1.0);
 
 								wi.position.setX(0.25);
 								wi.position.setY(0.25);
@@ -142,6 +147,7 @@ angular
 
 								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
+								wp.rotation.z += dtr(30);
 								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
 								// wi.rotation.y += dtr(45);
@@ -158,7 +164,7 @@ angular
 
 								wp.scale.setX(0.5);
 
-								wi.position.setX(0.25);
+								wi.position.setX(0.35);
 								wi.position.setY(0.25);
 								wi.position.setZ(0);
 
@@ -166,9 +172,8 @@ angular
 
 								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
-								// wi.rotation.y += dtr(45);
-								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
-								// wi.rotateZ(Math.PI/4);
+								weaponSwingAxis = 'z';
+								weaponSwingAmount *= -1;
 							}
 
 							if (spriteSheetComponent.dirIndex === 2) {
@@ -188,9 +193,8 @@ angular
 
 								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
-								// wi.rotation.y += dtr(45);
-								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
-								// wi.rotateZ(Math.PI/4);
+								weaponSwingAxis = 'z';
+								weaponSwingAmount *= -1;
 							}
 
 							if (spriteSheetComponent.dirIndex === 3) {
@@ -210,9 +214,8 @@ angular
 
 								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
-								// wi.rotation.y += dtr(45);
-								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
-								// wi.rotateZ(Math.PI/4);
+								weaponSwingAxis = 'z';
+								weaponSwingAmount *= -1;
 							}
 
 							if (spriteSheetComponent.dirIndex === 4) {
@@ -254,9 +257,8 @@ angular
 
 								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
-								// wi.rotation.y += dtr(45);
-								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
-								// wi.rotateZ(Math.PI/4);
+								weaponSwingAxis = 'z';
+								weaponSwingAmount *= 1;
 							}
 
 							if (spriteSheetComponent.dirIndex === 6) {
@@ -274,11 +276,11 @@ angular
 
 								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
+								wp.rotation.x -= dtr(30);
+								wp.rotation.x += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
-								// wi.rotation.y += dtr(45);
-								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
-								// wi.rotateZ(Math.PI/4);
+								weaponSwingAxis = 'z';
+								weaponSwingAmount *= 1;
 							}
 
 							if (spriteSheetComponent.dirIndex === 7) {
@@ -298,9 +300,8 @@ angular
 
 								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
-								// wi.rotation.y += dtr(45);
-								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
-								// wi.rotateZ(Math.PI/4);
+								weaponSwingAxis = 'z';
+								weaponSwingAmount *= 1;
 							}
 
 							if (wieldItemComponent.weaponAttackSwingTimer > 0) {
@@ -309,14 +310,14 @@ angular
 							if (wieldItemComponent.weaponAttackSwingTimer <= 0 &&
 								wieldItemComponent.weaponAttackSwingingForward) {
 								wieldItemComponent.weaponAttackSwingingForward = false;
-								wieldItemComponent.weaponAttackSwingTimer = 1.0;
+								wieldItemComponent.weaponAttackSwingTimer = weaponAttackSwingTime;
 							}
 
 							if (wieldItemComponent.weaponAttackSwingingForward) {
-								// wp.rotation.x = (wieldItemComponent.weaponAttackSwingTimer / 1.0) * Math.PI / 2;
+								wp.rotation[weaponSwingAxis] = (1.0 - (wieldItemComponent.weaponAttackSwingTimer / weaponAttackSwingTime)) * weaponSwingAmount;
 							}
 							else {
-								// wp.rotation.x = (1.0 - (wieldItemComponent.weaponAttackSwingTimer / 1.0)) * Math.PI / 2;
+								wp.rotation[weaponSwingAxis] = (wieldItemComponent.weaponAttackSwingTimer / weaponAttackSwingTime) * weaponSwingAmount;
 							}
 
 							wp.rotation.x += Math.PI / 4;
