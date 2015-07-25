@@ -155,11 +155,15 @@ angular
                 }
 
                 if (input.mouse.getButton(0)) {
-                    var wieldItem = this.entity.getComponent('wieldItem');
-                    if (wieldItem) {
-                        wieldItem.doAttackAnimation();
+                    var mouseHelper = this.entity.getComponent('mouseHelper');
+                    if (mouseHelper) {
+                        if (mouseHelper.inRange) {
+                            var fighter = this.entity.getComponent('fighter');
+                            if (fighter) {
+                                fighter.attack(mouseHelper.target);
+                            }
+                        }
                     }
-                    //this.jump = true;
                 }
 
                 // keyboard controls
