@@ -95,8 +95,6 @@ angular
                     // test if this is the "main" player so we can enhance
                     if ($rootScope.currentUser._id === entity.owner) {
                         var scriptComponent = builtEntity.getComponent('script');
-                        // Add all the stuff to make us a real player
-                        builtEntity.addComponent($components.get('player'));
                         builtEntity.addComponent($components.get('wieldItem', {
 
                         }));
