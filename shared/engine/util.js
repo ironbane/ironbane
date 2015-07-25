@@ -97,4 +97,11 @@ angular
             return simpleRotationY;
         };
 
+        this.spriteSheetIdToXY = function (id, size) {
+            size = size || 16;
+            return {
+                h: (id%size) - 1,
+                v: (Math.ceil(id/size)) - 1
+            }
+        };
     }]);
