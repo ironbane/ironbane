@@ -72,27 +72,27 @@ angular
                             });
                     };
 
-                    
+
                     $meteor.autorun($scope, function() {
-                        var user = Meteor.user();     
-                        
-                        if (user.profile.enableSound) {
+                        var user = Meteor.user();
+
+                        if (!user || user.profile.enableSound) {
                             GlobalSound.setMusicVolume(1);
-                            GlobalSound.setSoundVolume(1);                      
-                            // GlobalSound.unmute();      
+                            GlobalSound.setSoundVolume(1);
+                            // GlobalSound.unmute();
                         }
                         else {
                             GlobalSound.setMusicVolume(0);
-                            GlobalSound.setSoundVolume(0);                      
-                            // GlobalSound.mute();      
+                            GlobalSound.setSoundVolume(0);
+                            // GlobalSound.mute();
                         }
-                    });     
-            
+                    });
+
 
                     $scope.toggleSound = function () {
-                        var user = Meteor.user();     
-                        
-                        $meteor.call('updateProfile', 'enableSound', !user.profile.enableSound);                     
+                        var user = Meteor.user();
+
+                        $meteor.call('updateProfile', 'enableSound', !user.profile.enableSound);
                     }
 
                     // TODO: we should really reset rootWorld instead
@@ -127,8 +127,8 @@ angular
                         $rootWorld.load(newLevel)
                             .then(function () {
                                 $timeout(function () {
-                                    $scope.levelLoaded = true;    
-                                });                                
+                                    $scope.levelLoaded = true;
+                                });
                             })
                             .catch(function(err) {
                                 $log.debug('error loading level ', newLevel, err);
