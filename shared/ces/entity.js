@@ -155,7 +155,18 @@ angular.module('ces.entity', [
                     }
                 }
 
+                function serializeMetadata(data, entity) {
+                    if (!data.metadata) {
+                        data.metadata = {};
+                    }
+
+                    if (entity.metadata) {
+                        data.metadata.cheats = entity.metadata.cheats;
+                    }
+                };
+
                 serializeComponents(json.object, this);
+                serializeMetadata(json.object, this);
 
                 // I don't like exposing this, however for the moment it's easiest
                 json.object.owner = this.owner;

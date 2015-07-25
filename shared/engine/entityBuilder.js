@@ -120,6 +120,10 @@ angular
 
                 entity.name = name;
 
+                if (data.metadata) {
+                    entity.metadata = data.metadata;
+                }
+
                 if (data.uuid) {
                     entity.uuid = data.uuid;
                 }

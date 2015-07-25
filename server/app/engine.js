@@ -94,6 +94,12 @@ angular
                             ent.addComponent($components.get('netRecv'));
                             ent.addComponent($components.get('persisted', {_id: doc._id}));
                             ent.owner = doc.owner;
+
+                            // Used to access metadata like cheats later on
+                            ent.metadata = {
+                                cheats: doc.cheats
+                            };
+
                             // TODO: decorate entity with other components, such as "player", etc. like the client does
                             $activeWorlds[doc.level]._ownerCache[doc.owner] = ent.uuid;
                             $activeWorlds[doc.level].addEntity(ent);
