@@ -92,6 +92,7 @@ angular
                             // it's unlikely that the server will not want to send an entity
                             ent.addComponent($components.get('netSend'));
                             ent.addComponent($components.get('netRecv'));
+                            ent.addComponent($components.get('player'));
                             ent.addComponent($components.get('persisted', {_id: doc._id}));
                             ent.owner = doc.owner;
 
