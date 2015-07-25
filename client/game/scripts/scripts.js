@@ -4,5 +4,5 @@ angular
         'game.scripts.camera-pan',
         'game.scripts.character-controller',
         'game.scripts.character-multicam',
-        'game.scripts.sprite-sheet'
+        'game.scripts.walk-animation'
     ]);

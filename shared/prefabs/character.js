@@ -45,7 +45,7 @@ angular
                             },
                             script: {
                                 scripts: [
-                                    '/scripts/built-in/sprite-sheet.js',
+                                    '/scripts/built-in/walk-animation.js',
                                 ]
                             },
                             shadow: {}

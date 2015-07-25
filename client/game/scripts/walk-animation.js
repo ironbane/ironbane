@@ -1,5 +1,5 @@
 angular
-    .module('game.scripts.sprite-sheet', [
+    .module('game.scripts.walk-animation', [
         'engine.scriptBank',
         'three'
     ])
@@ -72,7 +72,7 @@ angular
             };
 
 
-            var SpriteSheetScript = function(entity, world) {
+            var WalkAnimationScript = function(entity, world) {
                 this.entity = entity;
                 this.world = world;
 
@@ -82,7 +82,7 @@ angular
                 this.dirIndex = 0;
             };
 
-            SpriteSheetScript.prototype.update = function(dt, elapsed, timestamp) {
+            WalkAnimationScript.prototype.update = function(dt, elapsed, timestamp) {
                 // this script should be attached to an entity with a camera component....
                 var quadComponent = this.entity.getComponent('quad');
 
@@ -132,6 +132,6 @@ angular
 
             };
 
-            ScriptBank.add('/scripts/built-in/sprite-sheet.js', SpriteSheetScript);
+            ScriptBank.add('/scripts/built-in/walk-animation.js', WalkAnimationScript);
         }
     ]);

@@ -98,10 +98,10 @@ angular
 
                     rigidBodies.forEach(function(entity) {
                         var wieldItemComponent = entity.getComponent('wieldItem');
-                        var spriteSheetComponent = entity.getScript('/scripts/built-in/sprite-sheet.js');
+                        var walkAnimationComponent = entity.getScript('/scripts/built-in/walk-animation.js');
                         var rigidBodyComponent = entity.getComponent('rigidBody');
 
-                        if (spriteSheetComponent && rigidBodyComponent) {
+                        if (walkAnimationComponent && rigidBodyComponent) {
 
                             var dtr = THREE.Math.degToRad;
 
@@ -125,14 +125,14 @@ angular
                             wi.rotation.set(0, 0, 0);
                             wi.scale.set(0.7, 0.7, 0.7);
 
-                            if (_.contains([0], spriteSheetComponent.dirIndex)) {
+                            if (_.contains([0], walkAnimationComponent.dirIndex)) {
                                 // wi.rotation.y += dtr(180);
                             }
 
                             var weaponSwingAxis = 'x';
                             var weaponSwingAmount = Math.PI / 2;
 
-							if (spriteSheetComponent.dirIndex === 0) {
+							if (walkAnimationComponent.dirIndex === 0) {
 								wi.rotation.y += dtr(200);
 
 								wp.position.setX(0.38);
@@ -155,10 +155,10 @@ angular
 								// wi.rotateZ(Math.PI/4);
 							}
 
-							if (spriteSheetComponent.dirIndex === 1) {
+							if (walkAnimationComponent.dirIndex === 1) {
 								wi.rotation.y += dtr(180);
 
-								wp.position.setX(0.22 + spriteSheetComponent.walkIndex * 0.04);
+								wp.position.setX(0.22 + walkAnimationComponent.walkIndex * 0.04);
 								wp.position.setY(-0.25);
 								wp.position.setZ(-0.1);
 
@@ -176,10 +176,10 @@ angular
 								weaponSwingAmount *= -1;
 							}
 
-							if (spriteSheetComponent.dirIndex === 2) {
+							if (walkAnimationComponent.dirIndex === 2) {
 								wi.rotation.y += dtr(180);
 
-								wp.position.setX(-0.1 + spriteSheetComponent.walkIndex * 0.1);
+								wp.position.setX(-0.1 + walkAnimationComponent.walkIndex * 0.1);
 								wp.position.setY(-0.25);
 								wp.position.setZ(0.2);
 
@@ -197,10 +197,10 @@ angular
 								weaponSwingAmount *= -1;
 							}
 
-							if (spriteSheetComponent.dirIndex === 3) {
+							if (walkAnimationComponent.dirIndex === 3) {
 								wi.rotation.y += dtr(180);
 
-								wp.position.setX(-0.1 - spriteSheetComponent.walkIndex * 0.1);
+								wp.position.setX(-0.1 - walkAnimationComponent.walkIndex * 0.1);
 								wp.position.setY(-0.25);
 								wp.position.setZ(0.2);
 
@@ -218,7 +218,7 @@ angular
 								weaponSwingAmount *= -1;
 							}
 
-							if (spriteSheetComponent.dirIndex === 4) {
+							if (walkAnimationComponent.dirIndex === 4) {
 								wi.rotation.y += dtr(180);
 
 								wp.position.setX(-0.3);
@@ -240,10 +240,10 @@ angular
 								// wi.rotateZ(Math.PI/4);
 							}
 
-							if (spriteSheetComponent.dirIndex === 5) {
+							if (walkAnimationComponent.dirIndex === 5) {
 								wi.rotation.y += dtr(180);
 
-								wp.position.setX(-0.2 - spriteSheetComponent.walkIndex * 0.05);
+								wp.position.setX(-0.2 - walkAnimationComponent.walkIndex * 0.05);
 								wp.position.setY(-0.25);
 								wp.position.setZ(0.2);
 
@@ -261,10 +261,10 @@ angular
 								weaponSwingAmount *= 1;
 							}
 
-							if (spriteSheetComponent.dirIndex === 6) {
+							if (walkAnimationComponent.dirIndex === 6) {
 								wi.rotation.y += dtr(180);
 
-								wp.position.setX(-0.1 - spriteSheetComponent.walkIndex * 0.05);
+								wp.position.setX(-0.1 - walkAnimationComponent.walkIndex * 0.05);
 								wp.position.setY(-0.25);
 								wp.position.setZ(-0.5);
 
@@ -283,10 +283,10 @@ angular
 								weaponSwingAmount *= 1;
 							}
 
-							if (spriteSheetComponent.dirIndex === 7) {
+							if (walkAnimationComponent.dirIndex === 7) {
 								wi.rotation.y += dtr(180);
 
-								wp.position.setX(0.2 - spriteSheetComponent.walkIndex * 0.05);
+								wp.position.setX(0.2 - walkAnimationComponent.walkIndex * 0.05);
 								wp.position.setY(-0.25);
 								wp.position.setZ(-0.5);
 
