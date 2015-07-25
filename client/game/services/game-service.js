@@ -6,8 +6,9 @@ angular
         // shared systems
         'systems.actor',
         'systems.armor',
+        'systems.inventory',
         'systems.mesh',
-        'systems.inventory'
+        'systems.steering'
     ])
     .service('GameService', [
         '$injector',
@@ -23,9 +24,10 @@ angular
                 'Quad',
                 'Octree',
                 'CollisionReporter',
+                'Steering',
+                'Actor',
                 'Network',
                 'Inventory',
-                'Actor',
                 'Appearance',
                 'Armor',
                 'Input',

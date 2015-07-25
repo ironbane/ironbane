@@ -15,11 +15,11 @@ angular
                     stateNames.forEach(function (stateName) {
                         world.entityAdded(stateName).add(function(entity) {
                             var stateComponent = entity.getComponent(stateName);
-                            stateComponent.state = new States.get(stateComponent.stateName, entity);
+                            stateComponent._state = new States.get(stateComponent.state, entity, stateComponent.config);
                         });
                         world.entityRemoved(stateName).add(function(entity) {
                             var stateComponent = entity.getComponent(stateName);
-                            stateComponent.state.destroy();
+                            stateComponent._state.destroy();
                         });
                     })
                 },
@@ -33,7 +33,7 @@ angular
                             var stateComponent = entity.getComponent(stateName);
 
                             if (stateComponent) {
-                                stateComponent.state.update(dTime);
+                                stateComponent._state.update(dTime);
                             }
                         });
                     })

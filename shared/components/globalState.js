@@ -7,7 +7,8 @@ angular
 
             $componentsProvider.register({
                 'globalState': {
-                    stateName: 'monster'
+                    state: 'empty',
+                    config: {}
                 }
             });
         }

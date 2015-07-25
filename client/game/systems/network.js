@@ -53,13 +53,23 @@ angular
                     if (packet[entity.uuid]) {
                         var updateApplicator = (function(entity, data) {
                             return function() {
-                                //$log.debug('entity: ', entity.name, entity.uuid, ' transform update');
-                                entity.position.deserialize(data.pos);
-                                entity.rotation.deserialize(data.rot);
+                                if (entity.hasComponent('player')) {
 
-                                if (entity.hasComponent('rigidBody')) {
-                                    system.world.getSystem('rigidbody').syncBody(entity);
                                 }
+                                else {
+                                    // We're dealing with an NPC, so check for state changes
+                                }
+
+                                if (entity.hasComponent('localState')) {
+                                    entity.removeComponent('localState');
+                                }
+
+                                entity.addComponent($components.get('localState', {
+                                    state: 'goToPosition',
+                                    config: {
+                                        targetPosition: (new THREE.Vector3()).fromArray(data.pos)
+                                    }
+                                }));
                             };
                         })(entity, packet[entity.uuid]);
                         system._updates.push(updateApplicator);
@@ -108,6 +118,27 @@ angular
                         builtEntity.addComponent($components.get('camera', {
                             aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
                         }));
+
+                        if (scriptComponent) {
+                            scriptComponent.scripts = scriptComponent.scripts.concat([
+                                '/scripts/built-in/character-controller.js',
+                                '/scripts/built-in/character-multicam.js',
+                            ]);
+                        }
+
+                        // this is pretty much the only one we want to netSend
+                        builtEntity.addComponent($components.get('netSend'));
+
+                        $entityCache.put('mainPlayer', builtEntity);
+                        // needed somewhere on the scope for the UI, prolly doesn't *need* to be root
+                        $rootScope.mainPlayer = builtEntity;
+                    }
+                    else {
+                        // other stuff we should recv
+                        builtEntity.addComponent($components.get('netRecv'));
+                    }
+
+                    if (builtEntity.hasComponent('player')) {
                         builtEntity.addComponent($components.get('rigidBody', {
                             shape: {
                                 type: 'capsule',
@@ -136,23 +167,7 @@ angular
                                 }
                             }
                         }));
-
-                        if (scriptComponent) {
-                            scriptComponent.scripts = scriptComponent.scripts.concat([
-                                '/scripts/built-in/character-controller.js',
-                                '/scripts/built-in/character-multicam.js',
-                            ]);
-                        }
-
-                        // this is pretty much the only one we want to netSend
-                        builtEntity.addComponent($components.get('netSend'));
-
-                        $entityCache.put('mainPlayer', builtEntity);
-                        // needed somewhere on the scope for the UI, prolly doesn't *need* to be root
-                        $rootScope.mainPlayer = builtEntity;
-                    } else {
-                        // other stuff we should recv
-                        builtEntity.addComponent($components.get('netRecv'));
+                        builtEntity.addComponent($components.get('steeringBehaviour'));
                     }
 
                     world.addEntity(builtEntity);

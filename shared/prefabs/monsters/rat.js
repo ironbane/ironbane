@@ -44,7 +44,8 @@ angular
                 value: 5
             },
             globalState: {
-                stateName: 'monster'
-            }
+                state: 'monster'
+            },
+            steeringBehaviour: {}
         }
     });

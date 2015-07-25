@@ -1,14 +1,13 @@
 angular
-    .module('components.localState', ['ces'])
+    .module('components.steeringBehaviour', ['ces'])
     .config([
         '$componentsProvider',
         function ($componentsProvider) {
             'use strict';
 
             $componentsProvider.register({
-                'localState': {
-                    state: 'empty',
-                    config: {}
+                'steeringBehaviour': {
+
                 }
             });
         }
