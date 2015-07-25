@@ -104,11 +104,6 @@ angular
                             stream.permissions.read(function() {
                                 return this.userId === userId;
                             });
-
-                            stream.on('ping', function() {
-                                console.log('ping received');
-                                stream.emit('pong');
-                            });
                         }
                     });
                 },
