@@ -4,7 +4,6 @@ angular
         'server.services.achievements',
         'server.services.activeWorlds',
         'server.services.character',
-        'server.services.createDefaultChar',
         'server.services.chat',
         'server.services.entities',
         'server.services.game',

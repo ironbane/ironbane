@@ -11,6 +11,7 @@ angular
         'engine.entity-cache',
         'engine.entity-builder',
         'models',
+        'server.boot',
         'server.services',
         'server.systems'
     ])

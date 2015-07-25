@@ -1,5 +1,5 @@
 angular
-    .module('server.services.createDefaultChar', [
+    .module('server.boot.createDefaultChar', [
         'models',
         'global.constants',
         'server.services.character'
@@ -32,12 +32,12 @@ angular
                                         hair: IB_CONSTANTS.characterParts[gender].hair[0]
                                     };
 
-                                    var charId = CharacterService.create(options, Meteor.users.findOne(userId));                  
+                                    var charId = CharacterService.create(options, Meteor.users.findOne(userId));
 
                                     var inventory = {
                                         userId: userId,
                                         charId: charId,
-                                        bar: {                                        
+                                        bar: {
                                             'lhand': {
                                                 name: 'Dull Sword',
                                                 value: 1,
@@ -81,9 +81,9 @@ angular
                                         }
                                     };
 
-                                    InventoryCollection.insert(inventory);                                                                        
+                                    InventoryCollection.insert(inventory);
 
-                                    observer.stop();                            
+                                    observer.stop();
                                 }
                             }, 1000);
                         }
