@@ -168,6 +168,7 @@ angular
                             }
                         }));
                         builtEntity.addComponent($components.get('steeringBehaviour'));
+                        builtEntity.addComponent($components.get('fighter'));
                     }
 
                     world.addEntity(builtEntity);

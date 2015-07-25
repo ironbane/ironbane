@@ -6,6 +6,7 @@ angular
         // shared systems
         'systems.actor',
         'systems.armor',
+        'systems.fighter',
         'systems.inventory',
         'systems.mesh',
         'systems.steering'
@@ -26,6 +27,7 @@ angular
                 'CollisionReporter',
                 'Steering',
                 'Actor',
+                'Fighter',
                 'Network',
                 'Inventory',
                 'Appearance',
