@@ -33,6 +33,7 @@ angular
                         var mouseHelperData = entity.getComponent('mouseHelper');
                         mouseHelperData.mesh = new THREE.Mesh(geometry, material);
                         mouseHelperData.target = new THREE.Vector3();
+                        mouseHelperData.inRange = false;
                         world.scene.add(mouseHelperData.mesh);
                     });
 
@@ -54,7 +55,7 @@ angular
 
                     mouseHelpers.forEach(function(mouseHelperEnt) {
                         var mouseHelperData = mouseHelperEnt.getComponent('mouseHelper');
-                        var mesh = mouseHelperData.mesh;                    
+                        var mesh = mouseHelperData.mesh;
 
                         if (entitiesWithOctree.length && entitiesWithCamera.length) {
                             var foundHitPoint = null;
@@ -75,7 +76,7 @@ angular
                                     if (intersections.length) {
                                         if (!foundHitPoint ||
                                             activeCamera.position.distanceToSquared(intersections[0].point) < activeCamera.position.distanceToSquared(foundHitPoint)) {
-                                            foundHitPoint = intersections[0].point;                                        
+                                            foundHitPoint = intersections[0].point;
                                         }
                                     }
                                 }
@@ -89,9 +90,17 @@ angular
                         mouseHelperData.mesh.position.lerp(mouseHelperData.target, dt * 20);
 
                         if (mouseHelperData.target.clone().sub(mouseHelperEnt.position).lengthSq() > 5 * 5) {
-                            material.color.setRGB(1, 0, 0);
+                            mouseHelperData.inRange = false;
                         } else {
+                            mouseHelperData.inRange = true;
+                        }
+
+
+                        if (mouseHelperData.inRange) {
                             material.color.setRGB(0, 1, 0);
+                        }
+                        else {
+                            material.color.setRGB(1, 0, 0);
                         }
                     });
                 }
