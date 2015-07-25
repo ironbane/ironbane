@@ -140,7 +140,7 @@ angular
                         currentVel = currentVel.toTHREEVector3();
 
                         var speed = currentVel.lengthSq();
-                        var stepFactor = speed / 12;
+                        var stepFactor = speed / 10;
 
                         stepFactor = Math.min(stepFactor, 1.0);
                         stepFactor = 1.0 - stepFactor;
