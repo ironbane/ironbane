@@ -10,7 +10,13 @@ angular
                     transparent: false,
                     color: 0xffffff,
                     texture: null,
-                    charBuildData: null
+                    charBuildData: null,
+                    style: 'billboard',
+                    indexH: 0,
+                    indexV: 0,
+                    numberOfSpritesH: 1,
+                    numberOfSpritesV: 1,
+                    mirror: false
                 }
             });
         }

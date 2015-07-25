@@ -18,6 +18,48 @@ angular
         function(System, THREE, TextureLoader, $log, $q, CharBuilder, $entityCache) {
             'use strict';
 
+            var displayUVFrame = function(mesh, indexH, indexV, numberOfSpritesH, numberOfSpritesV, mirror) {
+
+                mirror = mirror || false;
+
+                var amountU = (1 / numberOfSpritesH);
+                var amountV = (1 / numberOfSpritesV);
+
+                var uvs1 = mesh.geometry.faceVertexUvs[0][0];
+                var uvs2 = mesh.geometry.faceVertexUvs[0][1];
+
+                if (!mirror) {
+                    uvs1[0].x = amountU * indexH;
+                    uvs1[0].y = 1 - (amountV * indexV);
+
+                    uvs1[1].x = uvs1[0].x;
+                    uvs1[1].y = uvs1[0].y - amountV;
+
+                    uvs1[2].x = uvs1[0].x + amountU;
+                    uvs1[2].y = uvs1[0].y;
+                } else {
+                    uvs1[0].x = amountU * (indexH + 1);
+                    uvs1[0].y = 1 - (amountV * indexV);
+
+                    uvs1[1].x = uvs1[0].x;
+                    uvs1[1].y = uvs1[0].y - amountV;
+
+                    uvs1[2].x = uvs1[0].x - amountU;
+                    uvs1[2].y = uvs1[0].y;
+                }
+
+                uvs2[0].x = uvs1[1].x;
+                uvs2[0].y = uvs1[1].y;
+
+                uvs2[1].x = uvs1[2].x;
+                uvs2[1].y = uvs1[1].y;
+
+                uvs2[2].x = uvs1[2].x;
+                uvs2[2].y = uvs1[2].y;
+
+                mesh.geometry.uvsNeedUpdate = true;
+            };
+
             var QuadSystem = System.extend({
                 addedToWorld: function(world) {
                     var sys = this;
@@ -49,7 +91,7 @@ angular
                                 return TextureLoader.load(texture)
                                     .then(function(loadedTexture) {
                                         loadedTexture.minFilter = loadedTexture.magFilter = THREE.NearestFilter;
-                                        loadedTexture.wrapS = loadedTexture.wrapT = THREE.ClampToEdgeWrapping;                                        
+                                        loadedTexture.wrapS = loadedTexture.wrapT = THREE.ClampToEdgeWrapping;
                                         // loadedTexture.needsUpdate = true;
                                         quad.material.map = loadedTexture;
                                         // quad.material.emissive.set('#999'); // char is always lit to some degree
@@ -96,7 +138,8 @@ angular
 					var mainPlayer = $entityCache.get('mainPlayer');
 
                     quads.forEach(function(quadEnt) {
-                        var quad = quadEnt.getComponent('quad')._quad;
+                        var quadComponent = quadEnt.getComponent('quad');
+                        var quad = quadComponent._quad;
                         if (!quad) {
                             //$log.warn('quad not loaded for entity', quadEnt);
                             return;
@@ -107,6 +150,13 @@ angular
                         camWorldPos.setFromMatrixPosition(activeCamera.matrixWorld);
 
                         camWorldPos.y = quad.position.y;
+
+                        displayUVFrame(quad,
+                            quadComponent.indexH,
+                            quadComponent.indexV,
+                            quadComponent.numberOfSpritesH,
+                            quadComponent.numberOfSpritesV,
+                            quadComponent.mirror);
 
                         quad.lookAt(camWorldPos, quad.position, quad.up);
 
