@@ -197,10 +197,30 @@ angular
 
 
                     if (data.children !== undefined) {
-                        for (var child in data.children) {
-                            var childEntity = this.parseEntity(data.children[child]);
-                            entity.add(childEntity);
-                        }
+                        _.each(data.children, function(child) {
+                            // On the client, only load objects that do not have a prefab associated
+                            // We only want to load static objects over JSON
+                            // Objects with Prefabs are assumed to be dynamic so we
+                            // defer loading them to the network stream
+                            var canAdd = true;
+
+                            if (Meteor.isClient) {
+                                if (child.children) {
+                                    var foundPrefab = _.some(child.children, function (child) {
+                                        return child.userData && child.userData.prefab;
+                                    });
+                                    if (foundPrefab) {
+                                        canAdd = false;
+                                    }
+                                }
+                            }
+
+                            if (canAdd) {
+                                var childEntity = this.parseEntity(child);
+                                entity.add(childEntity);
+                            }
+
+                        }, this);
                     }
 
                     return entity;
@@ -348,7 +368,14 @@ angular
 
                         break;
                     case 'Script':
-                        addPrefabToEntity((data.userData.entity || data.userData.prefab), entity.parent, data);
+                        addPrefabToEntity(data.userData.prefab, entity.parent, data);
+
+                        // Because it has a prefab attached, it's dynamic.
+                        // Make sure the server will send information to the clients
+                        // about this entity.
+                        if (Meteor.isServer) {
+                            entity.parent.addComponent($components.get('netSend'));
+                        }
                         break;
                 }
 
