@@ -9,6 +9,7 @@ angular
         'systems.fighter',
         'systems.inventory',
         'systems.mesh',
+        'systems.projectile',
         'systems.steering'
     ])
     .service('GameService', [
@@ -28,6 +29,7 @@ angular
                 'Steering',
                 'Actor',
                 'Fighter',
+                'Projectile',
                 'Network',
                 'Inventory',
                 'Appearance',

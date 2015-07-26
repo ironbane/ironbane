@@ -1,9 +1,11 @@
 angular
     .module('systems.fighter', [
         'ces',
-        'game.ai.states'
+        'engine.entity-builder',
+        'engine.util',
+        'three'
     ])
-    .factory('FighterSystem', function($log, System, States) {
+    .factory('FighterSystem', function($log, System, States, EntityBuilder, IbUtils, THREE) {
             'use strict';
 
             return System.extend({
@@ -14,13 +16,76 @@ angular
                     world.entityAdded('fighter').add(function(entity) {
                         var fighterComponent = entity.getComponent('fighter');
 
-                        fighterComponent.attack = function (target) {
+                        fighterComponent.attackCooldownTimer = 0.0;
+
+                        fighterComponent.attack = function (targetPosition) {
+
+                            if (fighterComponent.attackCooldownTimer > 0) {
+                                return;
+                            }
+
+                            fighterComponent.attackCooldownTimer = fighterComponent.attackCooldown;
+
                             var wieldItemComponent = entity.getComponent('wieldItem');
 
                             if (wieldItemComponent) {
                                 wieldItemComponent.doAttackAnimation();
 
                                 // Throw the weapon
+                                var projectile = EntityBuilder.build('projectile', {
+                                    components: {
+                                        rigidBody: {
+                                            shape: {
+                                                type: 'sphere',
+                                                radius: 0.1
+                                            },
+                                            mass: 1,
+                                            friction: 0.0,
+                                            restitution: 0,
+                                            allowSleep: false,
+                                            lock: {
+                                                position: {
+                                                    x: false,
+                                                    y: false,
+                                                    z: false
+                                                },
+                                                rotation: {
+                                                    x: true,
+                                                    y: true,
+                                                    z: true
+                                                }
+                                            },
+                                            group: 'projectiles',
+                                            collidesWith: ['level']
+                                        },
+                                        quad: {
+                                            transparent: true,
+                                            texture: 'images/spritesheets/items.png',
+                                            style: 'projectile',
+                                            numberOfSpritesH: 16,
+                                            numberOfSpritesV: 128,
+                                            width: 0.5,
+                                            height: 0.5,
+                                            indexH: IbUtils.spriteSheetIdToXY(1723).h,
+                                            indexV: IbUtils.spriteSheetIdToXY(1723).v
+                                        },
+                                        projectile: {
+                                            speed: 8,
+                                            targetPosition: targetPosition
+                                        },
+                                        collisionReporter: {
+
+                                        }
+                                    }
+                                });
+
+                                var offset = new THREE.Vector3(0.3, 0, 0.1);
+                                offset.applyQuaternion(entity.quaternion);
+
+                                projectile.position.copy(entity.position);
+                                projectile.position.add(offset);
+
+                                world.addEntity(projectile);
                             }
                             else {
                                 // Dash like before
@@ -38,7 +103,9 @@ angular
                         var fighterComponent = entity.getComponent('fighter');
 
                         if (fighterComponent) {
-
+                            if (fighterComponent.attackCooldownTimer > 0) {
+                                fighterComponent.attackCooldownTimer -= dTime;
+                            }
                         }
                     });
 

@@ -23,6 +23,7 @@ angular.module('components', [
     'components.player',
     'components.primitive',
     'components.proctree',
+    'components.projectile',
     'components.quad',
     'components.rigidBody',
     'components.scene',

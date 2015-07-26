@@ -1,13 +1,13 @@
 angular
-    .module('components.fighter', ['ces'])
+    .module('components.projectile', ['ces'])
     .config([
         '$componentsProvider',
         function ($componentsProvider) {
             'use strict';
 
             $componentsProvider.register({
-                'fighter': {
-                	attackCooldown: 0.5
+                'projectile': {
+                    speed: 10
                 }
             });
         }
