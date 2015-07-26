@@ -22,12 +22,14 @@ angular
                 this.watched[label] = variable;
             };
 
-            this.drawVector = function(vector, origin, color) {
+            this.drawVector = function(vector, origin, color, notrack) {
 		        color = color || 0x0000FF;
 		        origin = origin || new THREE.Vector3(0,0,0);
 
 		        var aH = new THREE.ArrowHelper(vector.clone().normalize(), origin, vector.length(), color);
-		        this.arrowHelpers.push(aH);
+                if (!notrack) {
+                    this.arrowHelpers.push(aH);
+                }
 		        $rootWorld.scene.add(aH);
 		    };
 
