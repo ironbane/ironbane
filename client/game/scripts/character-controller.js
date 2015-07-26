@@ -157,11 +157,16 @@ angular
                 if (input.mouse.getButton(0)) {
                     var mouseHelper = this.entity.getComponent('mouseHelper');
                     if (mouseHelper) {
-                        if (mouseHelper.inRange) {
-                            var fighter = this.entity.getComponent('fighter');
-                            if (fighter) {
-                                fighter.attack(mouseHelper.target);
+                        var fighter = this.entity.getComponent('fighter');
+                        if (fighter) {
+
+                            var toTarget = mouseHelper.target.clone().sub(this.entity.position);
+
+                            if (toTarget.lengthSq() > mouseHelper.range * mouseHelper.range) {
+                                toTarget.normalize().multiplyScalar(mouseHelper.range);
                             }
+
+                            fighter.attack(this.entity.position.clone().add(toTarget));
                         }
                     }
                 }

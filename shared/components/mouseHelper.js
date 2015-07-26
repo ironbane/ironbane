@@ -7,7 +7,7 @@ angular
 
 			$componentsProvider.register({
 				'mouseHelper': {
-
+					range: 6
 				}
 			});
 		}

@@ -89,7 +89,7 @@ angular
 
                         mouseHelperData.mesh.position.lerp(mouseHelperData.target, dt * 20);
 
-                        if (mouseHelperData.target.clone().sub(mouseHelperEnt.position).lengthSq() > 5 * 5) {
+                        if (mouseHelperData.target.clone().sub(mouseHelperEnt.position).lengthSq() > mouseHelperData.range * mouseHelperData.range) {
                             mouseHelperData.inRange = false;
                         } else {
                             mouseHelperData.inRange = true;
