@@ -3,6 +3,7 @@ angular
         'components',
         'ces.system',
         'three',
+        'global.constants',
         'ammo',
         'ammo.physics-world',
         'game.world-root'
@@ -15,7 +16,8 @@ angular
         'PhysicsWorld',
         '$log',
         '$rootWorld',
-        function(System, THREE, Ammo, $q, PhysicsWorld, $log, $rootWorld) {
+        'IB_CONSTANTS',
+        function(System, THREE, Ammo, $q, PhysicsWorld, $log, $rootWorld, IB_CONSTANTS) {
             'use strict';
 
             // A lot of code here is based on Chandler Prall's Physijs
@@ -294,6 +296,8 @@ angular
 
                         var promise = $q.when();
 
+                        rigidBodyData.loadPromise = promise;
+
                         // Preprocess triangles if we are dealing with a concave mesh
                         if (rigidBodyData.shape.type === 'concave') {
                             var meshComponent = entity.getComponent('mesh');
@@ -364,7 +368,28 @@ angular
                             btVec3a.setValue(lr.x ? 0 : 1, lr.y ? 0 : 1, lr.z ? 0 : 1);
                             rigidBody.setAngularFactor(btVec3a);
 
-                            PhysicsWorld.addRigidBody(rigidBody);
+                            if (rigidBodyData.group !== null && rigidBodyData.collidesWith !== null) {
+
+                                var mask = 0;
+
+                                rigidBodyData.collidesWith.forEach(function (maskName) {
+                                    mask |= IB_CONSTANTS.collisionMasks[maskName];
+                                })
+
+                                PhysicsWorld.addRigidBody(rigidBody,
+                                    IB_CONSTANTS.collisionMasks[rigidBodyData.group],
+                                    mask);
+                            }
+                            else {
+                                PhysicsWorld.addRigidBody(rigidBody);
+                            }
+
+                            // Add some helpers methods
+                            rigidBodyData.getBulletVec = function (vec) {
+                                btVec3a.setValue(vec.x, vec.y, vec.z);
+                                return btVec3a;
+                            };
+
                         });
 
                     });

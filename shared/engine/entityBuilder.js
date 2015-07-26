@@ -363,7 +363,9 @@ angular
                                 depth: data.userData.size[2]
                             },
                             offset: (new THREE.Vector3()).fromArray(data.userData.center),
-                            mass: 0
+                            mass: 0,
+                            group: 'level',
+                            collidesWith: ['all']
                         }));
 
                         break;

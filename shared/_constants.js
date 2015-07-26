@@ -21,6 +21,15 @@ angular
                 eyes: [1010, 1011, 1012, 1013, 1014, 1015, 1016, 1017, 1018, 1019]
             }
         },
+        collisionMasks: {
+            nothing: 0,
+            level: 1,
+            mainPlayer: 2,
+            otherPlayers: 4,
+            npcs: 8,
+            projectiles: 16,
+            all: 65535
+        },
         rules: {
             maxCharactersAllowed: 3,
             minCharNameLength: 2,

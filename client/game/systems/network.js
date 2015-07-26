@@ -165,7 +165,9 @@ angular
                                     y: true,
                                     z: true
                                 }
-                            }
+                            },
+                            group: 'otherPlayers',
+                            collidesWith: ['level']
                         }));
                         builtEntity.addComponent($components.get('steeringBehaviour'));
                         builtEntity.addComponent($components.get('fighter'));

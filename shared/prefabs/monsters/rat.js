@@ -29,7 +29,9 @@ angular
                         y: true,
                         z: true
                     }
-                }
+                },
+                group: 'npcs',
+                collidesWith: ['level']
             },
             // helper: {
             //     line: true

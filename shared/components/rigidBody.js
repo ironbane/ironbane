@@ -31,7 +31,9 @@ angular
                         z: 0
                     },
                     restitution: 0.003,
-                    friction: 0.5
+                    friction: 0.5,
+                    group: null,
+                    collidesWith: []
                 }
             });
         }
