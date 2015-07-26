@@ -11,12 +11,15 @@ angular
                     color: 0xffffff,
                     texture: null,
                     charBuildData: null,
+                    width: 1.0,
+                    height: 1.0,
                     style: 'billboard',
                     indexH: 0,
                     indexV: 0,
                     numberOfSpritesH: 1,
                     numberOfSpritesV: 1,
-                    mirror: false
+                    mirror: false,
+                    setVisibleOnLoad: true
                 }
             });
         }

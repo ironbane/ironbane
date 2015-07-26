@@ -68,13 +68,30 @@ angular
 
                     world.entityAdded('quad').add(function(entity) {
                         var quadData = entity.getComponent('quad'),
-                            quad;
+                            quadWrapper, quad1, quad2;
 
-                        var planeGeo = new THREE.PlaneGeometry(1.0, 1.0, 1, 1);
+                        var planeGeo = new THREE.PlaneGeometry(quadData.width, quadData.height, 1, 1);
 
-                        quad = new THREE.Mesh(planeGeo, new THREE.MeshBasicMaterial());
-                        quad.material.side = THREE.DoubleSide;
-                        quad.geometry.dynamic = true;
+                        quadWrapper = new THREE.Object3D();
+
+                        if (quadData.setVisibleOnLoad) {
+                            quadWrapper.visible = false;
+                        }
+
+                        quad1 = new THREE.Mesh(planeGeo, new THREE.MeshBasicMaterial());
+                        quad1.material.side = THREE.DoubleSide;
+                        quad1.geometry.dynamic = true;
+
+                        quadWrapper.add(quad1);
+
+                        if (quadData.style === 'projectile') {
+                            quad1.rotation.y = Math.PI / 2;
+                            quad1.rotation.z = Math.PI / 4;
+                            quad2 = new THREE.Mesh(quad1.geometry, quad1.material);
+                            quad2.rotation.x = Math.PI / 2;
+                            quad2.rotation.z -= Math.PI / 4;
+                            quadWrapper.add(quad2);
+                        }
 
                         var promise;
 
@@ -93,24 +110,28 @@ angular
                                         loadedTexture.minFilter = loadedTexture.magFilter = THREE.NearestFilter;
                                         loadedTexture.wrapS = loadedTexture.wrapT = THREE.ClampToEdgeWrapping;
                                         // loadedTexture.needsUpdate = true;
-                                        quad.material.map = loadedTexture;
-                                        // quad.material.emissive.set('#999'); // char is always lit to some degree
-                                        quad.material.needsUpdate = true;
-                                        quad.geometry.buffersNeedUpdate = true;
-                                        quad.geometry.uvsNeedUpdate = true;
-                                        quad.material.transparent = quadData.transparent;
-                                        // quad.material.transparent = false;
+                                        quad1.material.map = loadedTexture;
+                                        // quad1.material.emissive.set('#999'); // char is always lit to some degree
+                                        quad1.material.needsUpdate = true;
+                                        quad1.geometry.buffersNeedUpdate = true;
+                                        quad1.geometry.uvsNeedUpdate = true;
+                                        quad1.material.transparent = quadData.transparent;
+                                        // quad1.material.transparent = false;
+                                        if (quadData.setVisibleOnLoad) {
+                                            quadWrapper.visible = true;
+                                        }
                                     });
                             });
                         }
 
-                        quadData._quad = quad;
+                        quadData._quad = quadWrapper;
+
                         // It's not worth it to keep the quad as a child of the original entity,
                         // because the only thing that needs to be sync'd is the position.
                         // It's hard to get the rotations and scaling right in terms of math (atleast for me)
                         // and probably also for CPU, so we just copy the position instead
                         // and set the parent to be the same as the entity's parent (usually the scene)
-                        world.scene.add(quad);
+                        world.scene.add(quadWrapper);
                     });
 
                     world.entityRemoved('quad').add(function(entity) {
@@ -151,14 +172,20 @@ angular
 
                         camWorldPos.y = quad.position.y;
 
-                        displayUVFrame(quad,
+                        displayUVFrame(quad.children[0],
                             quadComponent.indexH,
                             quadComponent.indexV,
                             quadComponent.numberOfSpritesH,
                             quadComponent.numberOfSpritesV,
                             quadComponent.mirror);
 
-                        quad.lookAt(camWorldPos, quad.position, quad.up);
+                        if (quadComponent.style == 'billboard') {
+                            quad.lookAt(camWorldPos, quad.position, quad.up);
+                        }
+                        else {
+                            // Copy rotation
+                            quad.quaternion.copy(quadEnt.quaternion);
+                        }
 
 	                    if (mainPlayer && quadEnt === mainPlayer) {
 	                    	var multiCamComponent = quadEnt.getScript('/scripts/built-in/character-multicam.js');
@@ -166,7 +193,7 @@ angular
 		                    	var opac = multiCamComponent.camDistanceLimit / 2;
 		                    	opac = Math.max(opac, 0.0);
 		                    	opac = Math.min(opac, 1.0);
-	                        	quad.material.opacity = opac;
+	                        	quad.children[0].material.opacity = opac;
                         	}
 	                    }
 
