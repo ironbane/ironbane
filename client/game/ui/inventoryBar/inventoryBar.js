@@ -126,7 +126,10 @@ angular
                         $log.debug('entity inv: ', inventory, availableSlots)
 
                         ctrl.slots = _.map(availableSlots, function(slotName) {
-                            return _.findWhere(slotDefs, {name: slotName});
+                            var slot = _.findWhere(slotDefs, {name: slotName});
+                            slot.item = inventory[slotName];
+
+                            return slot;
                         });
 
                         $log.debug('available slots for entity: ', ctrl.slots);
