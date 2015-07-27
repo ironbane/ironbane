@@ -60,35 +60,35 @@ angular
                         },
                         {
                             name: 'slot0',
-                            backgrounds: [[2,0]]
+                            backgrounds: [[0,3], [2,0]]
                         },
                         {
                             name: 'slot1',
-                            backgrounds: [[2,0]]
+                            backgrounds: [[1,3], [2,0]]
                         },
                         {
                             name: 'slot2',
-                            backgrounds: [[2,0]]
+                            backgrounds: [[2,3], [2,0]]
                         },
                         {
                             name: 'slot3',
-                            backgrounds: [[2,0]]
+                            backgrounds: [[3,3], [2,0]]
                         },
                         {
                             name: 'slot4',
-                            backgrounds: [[2,0]]
+                            backgrounds: [[0,4], [2,0]]
                         },
                         {
                             name: 'slot5',
-                            backgrounds: [[2,0]]
+                            backgrounds: [[1,4], [2,0]]
                         },
                         {
                             name: 'slot6',
-                            backgrounds: [[2,0]]
+                            backgrounds: [[2,4], [2,0]]
                         },
                         {
-                            name: 'slot7',                      
-                            backgrounds: [[2,0]]
+                            name: 'slot7',
+                            backgrounds: [[3,4], [2,0]]
                         },
                     ];
 
@@ -104,14 +104,14 @@ angular
                         };
                         return slot;
                     });
-                    
+
                     $meteor.autorun($scope, function () {
                         var currentCharacter = EntitiesCollection.findOne({
                             owner: Meteor.userId(),
                             active: true
-                        });                    
+                        });
                         if (currentCharacter) {
-                            $meteor.subscribe('inventory', currentCharacter._id);                        
+                            $meteor.subscribe('inventory', currentCharacter._id);
                         }
                     })
 
