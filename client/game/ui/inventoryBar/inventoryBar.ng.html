@@ -1,5 +1,5 @@
-<ul class="inventoryBar">	
-    <li ng-repeat="slot in slots" ng-style="slot.cssStyle">    
-    	<inventory-item item="inventory.bar[slot.name]" ng-if="inventory.bar[slot.name]"></inventory-item>
+<ul class="inventoryBar">
+    <li ng-repeat="slot in inventoryBar.slots track by $index" ng-style="slot.cssStyle">
+        <inventory-item item="inventory.bar[slot.name]" ng-if="inventory.bar[slot.name]"></inventory-item>
     </li>
 </ul>

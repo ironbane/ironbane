@@ -1,31 +1,28 @@
 angular
     .module('game.ui.inventoryBar', [
-        'models.inventory',
-        'angular-meteor'
+        'game.world-root'
     ])
     .directive('inventoryBar', [
         '$log',
-        '$sce',
-        function($log, $sce) {
+        '$rootWorld',
+        function($log, $rootWorld) {
             'use strict';
 
             var config = {
                 restrict: 'E',
                 templateUrl: 'client/game/ui/inventoryBar/inventoryBar.ng.html',
                 scope: {
-
+                    entity: '=' // this can be anything with inventory, player, bag, mob, magic hat, etc.
                 },
                 bindToController: true,
                 controllerAs: 'inventoryBar',
-                controller: ['$scope', '$meteor', 'InventoryCollection', 'EntitiesCollection', function($scope, $meteor, InventoryCollection, EntitiesCollection) {
+                controller: ['$scope', function($scope) {
 
-                    // Passing an empty object to $meteorObject as the selector
-                    // appears to use findOne, which works better for our case as
-                    // we only want a single result instead of having to loop over an
-                    // array with ng-repeat which we know has only 1 element.
-                    $scope.inventory = $scope.$meteorObject(InventoryCollection, {});
+                    var ctrl = this,
+                        inventorySystem = $rootWorld.getSystem('inventory'),
+                        onEntityChanged;
 
-                    $scope.slots = [
+                    var slotDefs = [
                         {
                             name: 'head',
                             backgrounds: [[0,2],[0,0]]
@@ -90,9 +87,22 @@ angular
                             name: 'slot7',
                             backgrounds: [[3,4], [2,0]]
                         },
-                    ];
+                        {
+                            name: 'slot8',
+                            backgrounds: [[4,4], [2,0]]
+                        },
+                        {
+                            name: 'slot9',
+                            backgrounds: [[0,5], [2,0]]
+                        },
+                        {
+                            name: 'slot10',
+                            backgrounds: [[1,5], [2,0]]
+                        },
+                    ],
+                    validSlotNames = /head|body|feet|rhand|lhand|relic*|slot*/;
 
-                    $scope.slots = _.map($scope.slots, function(slot) {
+                    slotDefs = _.map(slotDefs, function(slot) {
                         var cssBackgrounds = [];
                         slot.backgrounds.forEach(function (bg) {
                             bg[0] *= -32;
@@ -105,16 +115,31 @@ angular
                         return slot;
                     });
 
-                    $meteor.autorun($scope, function () {
-                        var currentCharacter = EntitiesCollection.findOne({
-                            owner: Meteor.userId(),
-                            active: true
-                        });
-                        if (currentCharacter) {
-                            $meteor.subscribe('inventory', currentCharacter._id);
+                    onEntityChanged = function(entity) {
+                        if (entity.id !== ctrl.entity.id) {
+                            return;
                         }
-                    })
 
+                        var inventory = entity.getComponent('inventory'),
+                            availableSlots = _.filter(Object.keys(inventory), function(name) { return name.match(validSlotNames); });
+
+                        $log.debug('entity inv: ', inventory, availableSlots)
+
+                        ctrl.slots = _.map(availableSlots, function(slotName) {
+                            return _.findWhere(slotDefs, {name: slotName});
+                        });
+
+                        $log.debug('available slots for entity: ', ctrl.slots);
+                    };
+
+                    $scope.$watch(function() {
+                        return ctrl.entity;
+                    }, function(entity) {
+                        if(!entity) {
+                            return;
+                        }
+                        onEntityChanged(entity);
+                    });
                 }]
             };
 
