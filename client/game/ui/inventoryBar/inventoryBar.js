@@ -20,7 +20,7 @@ angular
 
                     var ctrl = this,
                         inventorySystem = $rootWorld.getSystem('inventory'),
-                        onEntityChanged;
+                        onChange;
 
                     var slotDefs = [
                         {
@@ -116,7 +116,7 @@ angular
                         return slot;
                     });
 
-                    onEntityChanged = function(entity) {
+                    onChange = function(entity) {
                         if (entity.id !== ctrl.entity.id) {
                             return;
                         }
@@ -136,13 +136,19 @@ angular
                         $log.debug('available slots for entity: ', ctrl.slots);
                     };
 
+                    // any change we need to re-assess the inventory UI
+                    inventorySystem.onEquipItem.add(onChange);
+                    inventorySystem.onUnEquipItem.add(onChange);
+                    inventorySystem.onItemAdded.add(onChange);
+                    inventorySystem.onItemRemoved.add(onChange);
+
                     $scope.$watch(function() {
                         return ctrl.entity;
                     }, function(entity) {
                         if(!entity) {
                             return;
                         }
-                        onEntityChanged(entity);
+                        onChange(entity);
                     });
 
                     ctrl.use = function(slot) {
