@@ -7,7 +7,10 @@ angular
 
             $componentsProvider.register({
                 'projectile': {
-                    speed: 10
+                    ownerUuid: null,
+                    speed: 10,
+                    attribute1: 1,
+                    type: 'damage'
                 }
             });
         }

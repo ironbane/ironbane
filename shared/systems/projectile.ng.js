@@ -51,6 +51,14 @@ angular
                     world.entityAdded('projectile').add(function(entity) {
                         var projectileComponent = entity.getComponent('projectile');
 
+                        projectileComponent._canDeliverEffect = true;
+                        projectileComponent._owner = world.scene.getObjectByProperty('uuid',
+                            projectileComponent.ownerUuid)
+
+                        if (!projectileComponent._owner) {
+                            $log.error('Error fetching projectile owner from uuid! ', projectileComponent);
+                        }
+
                         var alteredTargetPosition = projectileComponent.targetPosition.clone();
                         alteredTargetPosition.y += 0.2;
 
@@ -90,20 +98,9 @@ angular
                         var collisionReporterComponent = entity.getComponent('collisionReporter');
                         if (collisionReporterComponent) {
                             collisionReporterComponent.collisionStart.add(function (result) {
-                                console.log('collision!');
-                                // var rbc = entity.getComponent('rigidBody');
-
-                                // if (rbc && rbc.rigidBody) {
-                                //     rbc.rigidBody.setLinearVelocity(rbc.getBulletVec(0,0,0));
-                                //     rbc.rigidBody.setGravity(0);
-                                //     // rbc.rigidBody.setLinearFactor(rbc.getBulletVec(0,0,0));
-                                //     // rbc.rigidBody.setAngularFactor(rbc.getBulletVec(0,0,0));
-                                //     // rbc.rigidBody.setActivationState(5);
-                                //     // rbc.rigidBody.activate(0);
-                                // }
-
                                 entity.removeComponent('collisionReporter');
                                 entity.removeComponent('rigidBody');
+                                projectileComponent._canDeliverEffect = false;
                             });
                         }
 
@@ -121,6 +118,27 @@ angular
                             var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity().toTHREEVector3();
                             currentVel.normalize();
                             entity.lookAt(entity.position.clone().add(currentVel));
+                        }
+
+                        var projectileComponent = entity.getComponent('projectile');
+
+                        // Check for entities that can be hit with this projectile
+                        // apply the effect (e.g. damage but can also be beneficial)
+                        // and flag that we did so
+                        if (projectileComponent && projectileComponent._canDeliverEffect) {
+                            if (projectileComponent.type === 'damage') {
+                                var healthEntities = me.world.getEntities('health');
+
+                                healthEntities.forEach(function(healthEntity) {
+                                    if (healthEntity !== projectileComponent._owner &&
+                                        healthEntity.position.inRangeOf(entity.position, 0.5)) {
+
+                                        var healthComponent = healthEntity.getComponent('health');
+                                        healthComponent.damage(projectileComponent.attribute1);
+                                        projectileComponent._canDeliverEffect = false;
+                                    }
+                                });
+                            }
                         }
                     });
 

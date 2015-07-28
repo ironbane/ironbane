@@ -71,7 +71,8 @@ angular
                                         },
                                         projectile: {
                                             speed: 8,
-                                            targetPosition: targetPosition
+                                            targetPosition: targetPosition,
+                                            ownerUuid: entity.uuid
                                         },
                                         collisionReporter: {
 
