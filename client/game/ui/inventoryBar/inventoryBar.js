@@ -144,6 +144,15 @@ angular
                         }
                         onEntityChanged(entity);
                     });
+
+                    ctrl.use = function(slot) {
+                        // for now just equip/unequip
+                        if (slot.item && slot.name.match(/slot*/)) {
+                            inventorySystem.equipItem(ctrl.entity, slot.name);
+                        } else {
+                            inventorySystem.unequipItem(ctrl.entity, slot.name);
+                        }
+                    };
                 }]
             };
 

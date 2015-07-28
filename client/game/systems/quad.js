@@ -156,7 +156,7 @@ angular
                         return;
                     }
 
-					var mainPlayer = $entityCache.get('mainPlayer');
+                    var mainPlayer = $entityCache.get('mainPlayer');
 
                     quads.forEach(function(quadEnt) {
                         var quadComponent = quadEnt.getComponent('quad');
@@ -179,23 +179,22 @@ angular
                             quadComponent.numberOfSpritesV,
                             quadComponent.mirror);
 
-                        if (quadComponent.style == 'billboard') {
+                        if (quadComponent.style === 'billboard') {
                             quad.lookAt(camWorldPos, quad.position, quad.up);
-                        }
-                        else {
+                        } else {
                             // Copy rotation
                             quad.quaternion.copy(quadEnt.quaternion);
                         }
 
-	                    if (mainPlayer && quadEnt === mainPlayer) {
-	                    	var multiCamComponent = quadEnt.getScript('/scripts/built-in/character-multicam.js');
-	                    	if (multiCamComponent) {
-		                    	var opac = multiCamComponent.camDistanceLimit / 2;
-		                    	opac = Math.max(opac, 0.0);
-		                    	opac = Math.min(opac, 1.0);
-	                        	quad.children[0].material.opacity = opac;
-                        	}
-	                    }
+                        if (mainPlayer && quadEnt === mainPlayer) {
+                            var multiCamComponent = quadEnt.getScript('/scripts/built-in/character-multicam.js');
+                            if (multiCamComponent) {
+                                var opac = multiCamComponent.camDistanceLimit / 2;
+                                opac = Math.max(opac, 0.0);
+                                opac = Math.min(opac, 1.0);
+                                quad.children[0].material.opacity = opac;
+                            }
+                        }
 
                     });
                 }

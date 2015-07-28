@@ -1,14 +1,17 @@
 angular
     .module('game.systems.appearance', [
         'ces',
+        'three',
         'engine.textureLoader',
         'engine.char-builder'
     ])
     .factory('AppearanceSystem', [
+        '$log',
         'System',
         'CharBuilder',
         'TextureLoader',
-        function(System, CharBuilder, TextureLoader) {
+        'THREE',
+        function($log, System, CharBuilder, TextureLoader, THREE) {
             'use strict';
 
             var updateAppearance = function(entity) {
@@ -19,7 +22,12 @@ angular
 
                 // listen to inventory system for equipment events
                 var inventory = entity.getComponent('inventory'),
-                    quad = entity.getComponent('quad');
+                    quad = entity.getComponent('quad'),
+                    // TODO: make a plain old THREE class for Quad to hide some of this
+                    quadWrapper = quad._quad,
+                    quad1 = quadWrapper.children[0];
+
+                $log.debug('appearance quad: ', quad);
 
                 var options = {};
                 options.skin = quad.charBuildData.skin;
@@ -37,16 +45,22 @@ angular
 
                 CharBuilder.makeChar(options).then(function(image) {
                     return TextureLoader.load(image)
-                        .then(function(texture) {
-                            texture.minFilter = texture.magFilter = THREE.NearestFilter;
-                            texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
-                            // TODO: check _quad still exists as this is outside of the first thread so might have changed since we asked
-                            quad._quad.material.map = texture;
-                            quad._quad.material.emissive.set('#999'); // char is always lit to some degree
-                            quad._quad.material.needsUpdate = true;
-                            quad._quad.geometry.buffersNeedUpdate = true;
-                            quad._quad.geometry.uvsNeedUpdate = true;
-                            quad._quad.material.transparent = true;
+                        .then(function(loadedTexture) {
+                            // TODO: something like quad.updateTexture(loadedTexture);
+
+                            loadedTexture.minFilter = loadedTexture.magFilter = THREE.NearestFilter;
+                            loadedTexture.wrapS = loadedTexture.wrapT = THREE.ClampToEdgeWrapping;
+                            // loadedTexture.needsUpdate = true;
+                            quad1.material.map = loadedTexture;
+                            // quad1.material.emissive.set('#999'); // char is always lit to some degree
+                            quad1.material.needsUpdate = true;
+                            quad1.geometry.buffersNeedUpdate = true;
+                            quad1.geometry.uvsNeedUpdate = true;
+                            quad1.material.transparent = quad.transparent;
+                            // quad1.material.transparent = false;
+                            if (quad.setVisibleOnLoad) {
+                                quadWrapper.visible = true;
+                            }
                         });
                 });
             };
