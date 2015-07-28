@@ -68,5 +68,29 @@ angular
                 return me.create(16 * 3, 18 * 8, images);
             };
 
+            this.getSpriteSheetTile = function(spritesheet, indexH, indexV, numberOfSpritesH, numberOfSpritesV, mirror) {
+                var deferred = $q.defer();
+
+                loadImage(spritesheet).then(function(image) {
+
+                    var canvas = document.createElement('canvas');
+
+                    var spriteWidth = image.width / numberOfSpritesH;
+                    var spriteHeight = image.height / numberOfSpritesV;
+
+                    canvas.width = spriteWidth;
+                    canvas.height = spriteHeight;
+
+                    var ctx = canvas.getContext('2d');
+
+                    ctx.drawImage(image, spriteWidth * indexH, spriteHeight * indexV, spriteWidth, spriteHeight, 0, 0, spriteWidth, spriteHeight);
+
+                    var dataURL = canvas.toDataURL();
+                    deferred.resolve(dataURL);
+                });
+
+                return deferred.promise;
+            };
+
         }
     ]);
