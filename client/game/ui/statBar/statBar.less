@@ -6,62 +6,68 @@
     li {list-style: none;display: inline-block; margin: 2px;}
 }
 
+@stat-sprite-enlarging: 2;
+@stat-sprite-dimension: 16px;
+
+
 .stat-sprite(@x: 0, @y: 0, @width: 0, @height: 0) {
-    background-position: @x @y;
-    width: @width;
-    height: @height;
+    background-position: -@x*@stat-sprite-dimension*@stat-sprite-enlarging -@y*@stat-sprite-dimension*@stat-sprite-enlarging;
+    width: @width * @stat-sprite-enlarging;
+    height: @height * @stat-sprite-enlarging;
 }
 
 .statBar-sprite {
     background-image: url(images/ui/stats.png);
+    image-rendering: pixelated;
+    background-size: (64px * @stat-sprite-enlarging) (48px * @stat-sprite-enlarging);
     background-repeat: no-repeat;
     display: block;
 
     &.sprite-armor_empty {
-        .stat-sprite(-5px, -5px, 24px, 24px);
+        .stat-sprite(0, 0, @stat-sprite-dimension, @stat-sprite-dimension);
     }
 
     &.sprite-armor_flash_empty {
-        .stat-sprite(-39px, -5px, 24px, 24px);
+        .stat-sprite(1, 0, @stat-sprite-dimension, @stat-sprite-dimension);
     }
 
     &.sprite-armor_flash_full {
-        .stat-sprite(-73px, -5px, 24px, 24px);
+        .stat-sprite(1, 0, @stat-sprite-dimension, @stat-sprite-dimension);
     }
 
     &.sprite-armor_flash_half {
-        .stat-sprite(-5px, -39px, 24px, 24px);
+        .stat-sprite(0, 1, @stat-sprite-dimension, @stat-sprite-dimension);
     }
 
     &.sprite-armor_full {
-        .stat-sprite(-39px, -39px, 24px, 24px);
+        .stat-sprite(1, 1, @stat-sprite-dimension, @stat-sprite-dimension);
     }
 
     &.sprite-armor_half {
-        .stat-sprite(-73px, -39px, 24px, 24px);
+        .stat-sprite(2, 1, @stat-sprite-dimension, @stat-sprite-dimension);
     }
 
     &.sprite-health_empty {
-        .stat-sprite(-5px, -73px, 24px, 24px);
+        .stat-sprite(0, 2, @stat-sprite-dimension, @stat-sprite-dimension);
     }
 
     &.sprite-health_flash_empty {
-        .stat-sprite(-39px, -73px, 24px, 24px);
+        .stat-sprite(1, 2, @stat-sprite-dimension, @stat-sprite-dimension);
     }
 
     &.sprite-health_flash_full {
-        .stat-sprite(-73px, -73px, 24px, 24px);
+        .stat-sprite(2, 2, @stat-sprite-dimension, @stat-sprite-dimension);
     }
 
     &.sprite-health_flash_half {
-        .stat-sprite(-107px, -5px, 24px, 24px);
+        .stat-sprite(3, 0, @stat-sprite-dimension, @stat-sprite-dimension);
     }
 
     &.sprite-health_full {
-        .stat-sprite(-107px, -39px, 24px, 24px);
+        .stat-sprite(3, 1, @stat-sprite-dimension, @stat-sprite-dimension);
     }
 
     &.sprite-health_half {
-        .stat-sprite(-107px, -73px, 24px, 24px);
+        .stat-sprite(3, 2, @stat-sprite-dimension, @stat-sprite-dimension);
     }
 }
