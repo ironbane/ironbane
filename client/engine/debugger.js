@@ -42,5 +42,9 @@ angular
             this.$rootWorld = $rootWorld;
             this.$components = $components;
             this.EntityBuilder = EntityBuilder;
+
+            this.get = function (serviceName) {
+                return angular.element(document.body).injector().get(serviceName);
+            };
         }
     ]);
