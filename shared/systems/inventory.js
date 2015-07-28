@@ -88,13 +88,57 @@ angular
                         var itemToEquip = inventory[slot];
                         if (isEquipable(itemToEquip)) {
                             $log.debug('good to equip: ', itemToEquip, entity, slot);
-                            // TODO: handle weapons
-                            if (inventory[itemToEquip.type]) {
-                                var currentItem = inventory[itemToEquip.type];
-                                inventory[itemToEquip.type] = inventory[slot];
+                            var equipSlot;
+
+                            if(itemToEquip.type === 'weapon') {
+                                if (itemToEquip.handedness === 'r') { // specifically weapon must be right hand
+                                    equipSlot = 'rhand';
+                                } else if (itemToEquip.handedness === 'l') { // specifically weapon must be left hand
+                                    equipSlot = 'lhand';
+                                } else if (itemToEquip.handedness === '1' || !itemToEquip.handedness) { // either hand
+                                    // first check right
+                                    if (inventory['rhand']) {
+                                        if (inventory['lhand']) {
+                                            equipSlot = 'rhand'; // the idea here is that we'll always replace right (for now, later deal with shields)
+                                        } else {
+                                            equipSlot = 'lhand';
+                                        }
+                                    } else {
+                                        equipSlot = 'rhand';
+                                    }
+                                } else {
+                                    // some other kind of weapon (2hweapon)
+                                    equipSlot = '2hweapon';
+                                }
+                            } else {
+                                equipSlot = itemToEquip.type;
+                            }
+
+                            // TODO: handle 2hweapon && shields
+
+                            if (equipSlot === 'relic') {
+                                // find open relic slot (TODO: support more than 3 here)
+                                if (inventory['relic1']) {
+                                    if (inventory['relic2']) {
+                                        if (inventory['relic3']) {
+                                            equipSlot = 'relic1'; // again for now just replace 1 when they are full
+                                        } else {
+                                            equipSlot = 'relic3';
+                                        }
+                                    } else {
+                                        equipSlot = 'relic2';
+                                    }
+                                } else {
+                                    equipSlot = 'relic1';
+                                }
+                            }
+
+                            if (inventory[equipSlot]) {
+                                var currentItem = inventory[equipSlot];
+                                inventory[equipSlot] = inventory[slot];
                                 inventory[slot] = currentItem;
                             } else {
-                                inventory[itemToEquip.type] = inventory[slot];
+                                inventory[equipSlot] = inventory[slot];
                                 inventory[slot] = null;
                             }
                             this.onEquipItem.emit(entity, itemToEquip);

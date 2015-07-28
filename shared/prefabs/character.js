@@ -20,13 +20,14 @@ angular
                                 relic2: null,
                                 relic3: null,
                                 // testing...
+                                slot0: {name: 'Bread', type: 'food', image: 0, invImage: 297, health: 2},
                                 slot1: {name: 'Coin Sack', type: 'cash', image: 4, invImage: 1029, qty: 2},
-                                slot2: {name: 'Kitchen Knife', type: 'weapon', image: 14, invImage: 1551, damage: 1},
+                                slot2: {name: 'Rusty Kitchen Knife', type: 'weapon', handedness: '1', image: 14, invImage: 1551, damage: 1},
                                 slot3: {name: 'Dirty Dishcloth Bandana', type: 'head', image: 1, invImage: 426, armor: 0},
                                 slot4: {name: 'Old Shoes', type: 'feet', image: 1, invImage: 164, armor: 0},
                                 slot5: {name: 'Peasant Shirt', type: 'body', image: 1, invImage: 56, armor: 1},
-                                slot6: null,
-                                slot7: null
+                                slot6: {name: 'Ring of Elemental Power', type: 'relic', image: 0, invImage: 1033}, // TODO: properties for powers
+                                slot7: {name: 'Hammer of Testing Stuff', type: 'weapon', handedness: '2', image: 24, invImage: 1618, damage: 10}
                             },
                             health: {
                                 max: customs.health || 6,
