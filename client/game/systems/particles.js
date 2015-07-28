@@ -73,9 +73,14 @@ angular
                             particleGroup = system._groups[groupIndex];
                         } else {
                             system._groupData.push(emitterData.group); // copy instead?
-                            particleGroup = new SPE.Group({
-                                texture: THREE.ImageUtils.loadTexture(emitterData.group.texture) // ajax + cache?
+                            var groupData = emitterData.group;
+                            var texture = THREE.ImageUtils.loadTexture(emitterData.group.texture);
+                            texture.magFilter = THREE.NearestFilter;
+                            texture.minFilter = THREE.NearestMipMapLinearFilter;
+                            _.extend(groupData, {
+                                texture: texture // ajax + cache?
                             });
+                            particleGroup = new SPE.Group(groupData);
                             system._groups.push(particleGroup);
                             // since the group encompasses more than this entity, just add it to the world scene
                             system.world.scene.add(particleGroup.mesh);
