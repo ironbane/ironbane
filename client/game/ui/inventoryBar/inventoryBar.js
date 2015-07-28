@@ -55,6 +55,7 @@ angular
                             name: 'relic3',
                             backgrounds: [[1,1],[1,0]]
                         },
+                        // TODO: other than player, quickslot numbers would NOT show up!
                         {
                             name: 'slot0',
                             backgrounds: [[0,3], [2,0]]
@@ -123,7 +124,7 @@ angular
                         var inventory = entity.getComponent('inventory'),
                             availableSlots = _.filter(Object.keys(inventory), function(name) { return name.match(validSlotNames); });
 
-                        $log.debug('entity inv: ', inventory, availableSlots)
+                        $log.debug('entity inv: ', inventory, availableSlots);
 
                         ctrl.slots = _.map(availableSlots, function(slotName) {
                             var slot = _.findWhere(slotDefs, {name: slotName});

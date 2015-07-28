@@ -1,4 +1,9 @@
-<ul>
-	<li>Item name: {{ item.name }}</li>
-	<li>Item damage: {{ item.damage }}</li>
-</ul>
+
+<p>{{ item.name }}</p>
+<p ng-switch="item.type">
+    <span ng-switch-when="cash">Gold: {{ item.qty }}</span>
+    <span ng-switch-when="head">Head Armor: {{ item.armor }}</span>
+    <span ng-switch-when="body">Body Armor: {{ item.armor }}</span>
+    <span ng-switch-when="feet">Foot Armor: {{ item.armor }}</span>
+    <span ng-switch-when="weapon">Damage: {{ item.damage }}</span>
+</p>

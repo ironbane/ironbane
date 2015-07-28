@@ -2,35 +2,42 @@ angular
     .module('game.ui.inventoryItem', [
         'ui.bootstrap'
     ])
-    .directive('inventoryItem', function($log, $sce) {
+    .directive('inventoryItem', [
+        '$log',
+        function($log) {
             'use strict';
 
             var config = {
                 restrict: 'E',
                 templateUrl: 'client/game/ui/inventoryItem/inventoryItem.ng.html',
-                scope: {    
+                scope: {
                     item: '='
                 },
                 bindToController: true,
                 controllerAs: 'inventoryItem',
                 controller: function($scope) {
                     var ctrl = this;
+
                     $scope.$watch(function() {
                         return ctrl.item;
                     }, function(item) {
                         if (!item) {
                             return;
                         }
-                        $scope.item = item;
 
-                        $scope.cssStyle = { 
-                            'background-position': -item.spriteIndexX * 32 + 'px ' + 
-                                -item.spriteIndexY * 32 + 'px'
-                        }
-                    });                    
+                        $scope.item = item; // for tooltip?
+
+                        var col = item.invImage % 16,
+                            row = Math.floor(item.invImage / 16);
+
+                        ctrl.cssStyle = {
+                            'background-position': -col * 32 + 'px ' +
+                                -row * 32 + 'px'
+                        };
+                    });
                 }
             };
 
             return config;
         }
-    );
+    ]);

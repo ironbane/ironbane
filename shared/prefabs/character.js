@@ -20,11 +20,11 @@ angular
                                 relic2: null,
                                 relic3: null,
                                 // testing...
-                                slot1: {name: 'Coin Sack', type: 'cash', image: 4, invImage: 4, qty: 831},
-                                slot2: {name: 'Dull Sword', type: 'weapon', image: 14, invImage: 14, damage: 1},
-                                slot3: {name: 'Wooden Helmet', type: 'head', image: 1, invImage: 'wooden_helmet', armor: 1},
-                                slot4: {name: 'Wooden Boots', type: 'feet', image: 1, invImage: 'wooden_boots', armor: 1},
-                                slot5: {name: 'Wooden Armor', type: 'body', image: 1, invImage: 'wooden_armor', armor: 1},
+                                slot1: {name: 'Coin Sack', type: 'cash', image: 4, invImage: 1029, qty: 2},
+                                slot2: {name: 'Kitchen Knife', type: 'weapon', image: 14, invImage: 1551, damage: 1},
+                                slot3: {name: 'Dirty Dishcloth Bandana', type: 'head', image: 1, invImage: 426, armor: 0},
+                                slot4: {name: 'Old Shoes', type: 'feet', image: 1, invImage: 164, armor: 0},
+                                slot5: {name: 'Peasant Shirt', type: 'body', image: 1, invImage: 56, armor: 1},
                                 slot6: null,
                                 slot7: null
                             },
