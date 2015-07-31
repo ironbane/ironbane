@@ -18,28 +18,28 @@ angular
                 addedToWorld: function(world) {
                     this._super(world);
 
-                    var inventorySystem = world.getSystem('inventory');
-                    if (inventorySystem) {
-                        inventorySystem.onEquipItem.add(function(entity, item) {
-                            if (isArmorType(item)) {
-                                if (!entity.hasComponent('armor')) {
-                                    entity.addComponent('armor', {value: 0, max: item.armor});
-                                } else {
-                                    entity.getComponent('armor').max += item.armor;
-                                }
+                    world.subscribe('inventory:onEquipItem', function(entity, item) {
+                        if (isArmorType(item)) {
+                            if (!entity.hasComponent('armor')) {
+                                entity.addComponent('armor', {
+                                    value: 0,
+                                    max: item.armor
+                                });
+                            } else {
+                                entity.getComponent('armor').max += item.armor;
                             }
-                        });
+                        }
+                    });
 
-                        inventorySystem.onUnEquipItem.add(function(entity, item) {
-                            if (isArmorType(item) && entity.hasComponent('armor')) {
-                                var armor = entity.getComponent('armor');
-                                armor.max -= item.armor;
-                                if (armor.value > armor.max) {
-                                    armor.value = armor.max;
-                                }
+                    world.subscribe('inventory:onUnEquipItem', function(entity, item) {
+                        if (isArmorType(item) && entity.hasComponent('armor')) {
+                            var armor = entity.getComponent('armor');
+                            armor.max -= item.armor;
+                            if (armor.value > armor.max) {
+                                armor.value = armor.max;
                             }
-                        });
-                    }
+                        }
+                    });
 
                     world.entityAdded('armorRegen').add(function(entity) {
                         var regen = entity.getComponent('armorRegen');

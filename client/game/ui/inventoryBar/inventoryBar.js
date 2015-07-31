@@ -124,7 +124,7 @@ angular
                         var inventory = entity.getComponent('inventory'),
                             availableSlots = _.filter(Object.keys(inventory), function(name) { return name.match(validSlotNames); });
 
-                        $log.debug('entity inv: ', inventory, availableSlots);
+                        //$log.debug('entity inv: ', inventory, availableSlots);
 
                         ctrl.slots = _.map(availableSlots, function(slotName) {
                             var slot = _.findWhere(slotDefs, {name: slotName});
@@ -133,7 +133,7 @@ angular
                             return slot;
                         });
 
-                        $log.debug('available slots for entity: ', ctrl.slots);
+                        //$log.debug('available slots for entity: ', ctrl.slots);
                     };
 
                     // any change we need to re-assess the inventory UI

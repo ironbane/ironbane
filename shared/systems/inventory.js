@@ -64,6 +64,7 @@ angular
                     // now we can add the item to the slot
                     inventory[slot] = item;
 
+                    this.world.publish('inventory:onItemAdded', entity, item, slot);
                     this.onItemAdded.emit(entity, item, slot);
                 },
                 removeItem: function(entity, slot) {
@@ -79,15 +80,16 @@ angular
                     var item = inventory[slot];
                     inventory[slot] = null;
 
+                    this.world.publish('inventory:onItemRemoved', entity, item);
                     this.onItemRemoved.emit(entity, item);
                 },
                 equipItem: function(entity, slot) {
                     var inventory = entity.getComponent('inventory');
-                    $log.debug('equipItem: ', inventory, slot);
+                    //$log.debug('equipItem: ', inventory, slot);
                     if (inventory && inventory[slot]) {
                         var itemToEquip = inventory[slot];
                         if (isEquipable(itemToEquip)) {
-                            $log.debug('good to equip: ', itemToEquip, entity, slot);
+                            //$log.debug('good to equip: ', itemToEquip, entity, slot);
                             var equipSlot;
 
                             if(itemToEquip.type === 'weapon') {
@@ -135,12 +137,14 @@ angular
 
                             if (inventory[equipSlot]) {
                                 var currentItem = inventory[equipSlot];
-                                inventory[equipSlot] = inventory[slot];
+                                inventory[equipSlot] = itemToEquip;
                                 inventory[slot] = currentItem;
                             } else {
-                                inventory[equipSlot] = inventory[slot];
+                                inventory[equipSlot] = itemToEquip;
                                 inventory[slot] = null;
                             }
+
+                            this.world.publish('inventory:onEquipItem', entity, itemToEquip);
                             this.onEquipItem.emit(entity, itemToEquip);
                         }
                     }
@@ -156,6 +160,7 @@ angular
                             inventory[invSlot] = item;
                             inventory[slot] = null;
 
+                            this.world.publish('inventory:onUnEquipItem', entity, item, slot);
                             this.onUnEquipItem.emit(entity, item, slot);
                         } else {
                             // no free slots to unequip to, drop it or do nothing?
