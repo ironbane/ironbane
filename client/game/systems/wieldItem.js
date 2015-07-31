@@ -30,11 +30,11 @@ angular
                             if (entity.hasComponent('wieldItem')) {
                                 var wieldItemComponent = entity.getComponent('wieldItem');
                                 // update the image
-                                wieldItemComponent.item = item.image;
+                                wieldItemComponent.item = item;
                                 // TODO: call update texture method
                             } else {
                                 entity.addComponent('wieldItem', {
-                                    item: item.image
+                                    item: item
                                 });
                             }
                         }
@@ -57,7 +57,7 @@ angular
                         wieldItem.geometry.dynamic = true;
 
                         if (wieldItemData.item) {
-                            TextureLoader.load('images/items/' + wieldItemData.item + '.png')
+                            TextureLoader.load('images/items/' + wieldItemData.item.image + '.png')
                                 .then(function(texture) {
                                     // texture.needsUpdate = true;
                                     wieldItem.material.map = texture;

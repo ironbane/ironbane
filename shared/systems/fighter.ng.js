@@ -72,7 +72,8 @@ angular
                                         projectile: {
                                             speed: 8,
                                             targetPosition: targetPosition,
-                                            ownerUuid: entity.uuid
+                                            ownerUuid: entity.uuid,
+                                            attribute1: wieldItemComponent.item.damage
                                         },
                                         collisionReporter: {
 
