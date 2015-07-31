@@ -27,7 +27,7 @@ angular
                     quadWrapper = quad._quad,
                     quad1 = quadWrapper.children[0];
 
-                $log.debug('appearance quad: ', quad);
+                //$log.debug('appearance quad: ', quad);
 
                 var options = {};
                 options.skin = quad.charBuildData.skin;

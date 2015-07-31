@@ -22,6 +22,20 @@ angular
 
                     sys._super(world);
 
+                    world.subscribe('inventory:onEquipItem', function(entity, item) {
+                        if (item.type === 'weapon') {
+                            entity.addComponent('wieldItem', {
+                                item: item.image
+                            });
+                        }
+                    });
+
+                    world.subscribe('inventory:onUnEquipItem', function(entity, item) {
+                        if (item.type === 'weapon') {
+                            entity.removeComponent('wieldItem');
+                        }
+                    });
+
                     world.entityAdded('wieldItem').add(function(entity) {
                         var wieldItemData = entity.getComponent('wieldItem'),
                             wieldItem;
@@ -49,9 +63,9 @@ angular
                         wieldItemData.weaponAttackSwingingForward = false;
 
 
-                        wieldItemData.doAttackAnimation = function () {
-                        	wieldItemData.weaponAttackSwingTimer = weaponAttackSwingTime;
-                        	wieldItemData.weaponAttackSwingingForward = true;
+                        wieldItemData.doAttackAnimation = function() {
+                            wieldItemData.weaponAttackSwingTimer = weaponAttackSwingTime;
+                            wieldItemData.weaponAttackSwingingForward = true;
                         };
 
 
@@ -88,6 +102,11 @@ angular
                             entity.parent.add(wieldItemData.weaponOrigin);
                         }, 1);
 
+                    });
+
+                    world.entityRemoved('wieldItem').add(function(entity) {
+                        var component = entity.getComponent('wieldItem');
+                        world.scene.remove(component.weaponOrigin);
                     });
                 },
                 update: function(dt) {
@@ -132,205 +151,204 @@ angular
                             var weaponSwingAmount = new THREE.Vector3(Math.PI / 2, 0, 0);
 
 
-							if (walkAnimationComponent.dirIndex === 0) {
-								wi.rotation.y += dtr(200);
+                            if (walkAnimationComponent.dirIndex === 0) {
+                                wi.rotation.y += dtr(200);
 
-								wp.position.setX(0.38);
-								wp.position.setY(-0.2);
-								wp.position.setZ(-0.75);
+                                wp.position.setX(0.38);
+                                wp.position.setY(-0.2);
+                                wp.position.setZ(-0.75);
 
-								wp.scale.setX(1.0);
+                                wp.scale.setX(1.0);
 
-								wi.position.setX(0.25);
-								wi.position.setY(0.25);
-								wi.position.setZ(0);
+                                wi.position.setX(0.25);
+                                wi.position.setY(0.25);
+                                wi.position.setZ(0);
 
-								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+                                var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-								wp.rotation.z += dtr(30);
-								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
+                                wp.rotation.z += dtr(30);
+                                wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
 
-								weaponSwingAmount.x = dtr(-120);
-								// wi.rotation.y += dtr(45);
-								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
-								// wi.rotateZ(Math.PI/4);
-							}
+                                weaponSwingAmount.x = dtr(-120);
+                                // wi.rotation.y += dtr(45);
+                                // wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
+                                // wi.rotateZ(Math.PI/4);
+                            }
 
-							if (walkAnimationComponent.dirIndex === 1) {
-								wi.rotation.y += dtr(180);
+                            if (walkAnimationComponent.dirIndex === 1) {
+                                wi.rotation.y += dtr(180);
 
-								wp.position.setX(0.22 + walkAnimationComponent.walkIndex * 0.04);
-								wp.position.setY(-0.25);
-								wp.position.setZ(-0.1);
+                                wp.position.setX(0.22 + walkAnimationComponent.walkIndex * 0.04);
+                                wp.position.setY(-0.25);
+                                wp.position.setZ(-0.1);
 
-								wp.scale.setX(0.5);
+                                wp.scale.setX(0.5);
 
-								wi.position.setX(0.35);
-								wi.position.setY(0.25);
-								wi.position.setZ(0);
+                                wi.position.setX(0.35);
+                                wi.position.setY(0.25);
+                                wi.position.setZ(0);
 
-								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+                                var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
+                                wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
-								weaponSwingAmount.z = -weaponSwingAmount.x
-								weaponSwingAmount.x = 0
-							}
+                                weaponSwingAmount.z = -weaponSwingAmount.x;
+                                weaponSwingAmount.x = 0;
+                            }
 
-							if (walkAnimationComponent.dirIndex === 2) {
-								wi.rotation.y += dtr(180);
+                            if (walkAnimationComponent.dirIndex === 2) {
+                                wi.rotation.y += dtr(180);
 
-								wp.position.setX(-0.1 + walkAnimationComponent.walkIndex * 0.1);
-								wp.position.setY(-0.25);
-								wp.position.setZ(0.2);
+                                wp.position.setX(-0.1 + walkAnimationComponent.walkIndex * 0.1);
+                                wp.position.setY(-0.25);
+                                wp.position.setZ(0.2);
 
-								wp.scale.setX(0.8);
+                                wp.scale.setX(0.8);
 
-								wi.position.setX(0.25);
-								wi.position.setY(0.25);
-								wi.position.setZ(0);
+                                wi.position.setX(0.25);
+                                wi.position.setY(0.25);
+                                wi.position.setZ(0);
 
-								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+                                var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
+                                wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
-								weaponSwingAmount.z = -weaponSwingAmount.x
-								weaponSwingAmount.x = 0
-							}
+                                weaponSwingAmount.z = -weaponSwingAmount.x;
+                                weaponSwingAmount.x = 0;
+                            }
 
-							if (walkAnimationComponent.dirIndex === 3) {
-								wi.rotation.y += dtr(180);
+                            if (walkAnimationComponent.dirIndex === 3) {
+                                wi.rotation.y += dtr(180);
 
-								wp.position.setX(-0.1 - walkAnimationComponent.walkIndex * 0.1);
-								wp.position.setY(-0.25);
-								wp.position.setZ(0.2);
+                                wp.position.setX(-0.1 - walkAnimationComponent.walkIndex * 0.1);
+                                wp.position.setY(-0.25);
+                                wp.position.setZ(0.2);
 
-								wp.scale.setX(0.8);
+                                wp.scale.setX(0.8);
 
-								wi.position.setX(0.25);
-								wi.position.setY(0.25);
-								wi.position.setZ(0);
+                                wi.position.setX(0.25);
+                                wi.position.setY(0.25);
+                                wi.position.setZ(0);
 
-								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+                                var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
+                                wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
-								weaponSwingAmount.z = -weaponSwingAmount.x
-								weaponSwingAmount.x = 0
-							}
+                                weaponSwingAmount.z = -weaponSwingAmount.x;
+                                weaponSwingAmount.x = 0;
+                            }
 
-							if (walkAnimationComponent.dirIndex === 4) {
-								wi.rotation.y += dtr(180);
+                            if (walkAnimationComponent.dirIndex === 4) {
+                                wi.rotation.y += dtr(180);
 
-								wp.position.setX(-0.3);
-								wp.position.setY(-0.25);
-								wp.position.setZ(0.2);
+                                wp.position.setX(-0.3);
+                                wp.position.setY(-0.25);
+                                wp.position.setZ(0.2);
 
-								wp.scale.setX(-0.5);
+                                wp.scale.setX(-0.5);
 
-								wi.position.setX(0.25);
-								wi.position.setY(0.25);
-								wi.position.setZ(0);
+                                wi.position.setX(0.25);
+                                wi.position.setY(0.25);
+                                wi.position.setZ(0);
 
-								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+                                var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
+                                wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
-								// wi.rotation.y += dtr(45);
-								// wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
-								// wi.rotateZ(Math.PI/4);
-							}
+                                // wi.rotation.y += dtr(45);
+                                // wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
+                                // wi.rotateZ(Math.PI/4);
+                            }
 
-							if (walkAnimationComponent.dirIndex === 5) {
-								wi.rotation.y += dtr(180);
+                            if (walkAnimationComponent.dirIndex === 5) {
+                                wi.rotation.y += dtr(180);
 
-								wp.position.setX(-0.2 - walkAnimationComponent.walkIndex * 0.05);
-								wp.position.setY(-0.25);
-								wp.position.setZ(0.2);
+                                wp.position.setX(-0.2 - walkAnimationComponent.walkIndex * 0.05);
+                                wp.position.setY(-0.25);
+                                wp.position.setZ(0.2);
 
-								wp.scale.setX(-0.8);
+                                wp.scale.setX(-0.8);
 
-								wi.position.setX(0.25);
-								wi.position.setY(0.25);
-								wi.position.setZ(0);
+                                wi.position.setX(0.25);
+                                wi.position.setY(0.25);
+                                wi.position.setZ(0);
 
-								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+                                var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
+                                wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
-								weaponSwingAmount.z = weaponSwingAmount.x
-								weaponSwingAmount.x = 0
-							}
+                                weaponSwingAmount.z = weaponSwingAmount.x;
+                                weaponSwingAmount.x = 0;
+                            }
 
-							if (walkAnimationComponent.dirIndex === 6) {
-								wi.rotation.y += dtr(180);
+                            if (walkAnimationComponent.dirIndex === 6) {
+                                wi.rotation.y += dtr(180);
 
-								wp.position.setX(-0.1 - walkAnimationComponent.walkIndex * 0.05);
-								wp.position.setY(-0.25);
-								wp.position.setZ(-0.5);
+                                wp.position.setX(-0.1 - walkAnimationComponent.walkIndex * 0.05);
+                                wp.position.setY(-0.25);
+                                wp.position.setZ(-0.5);
 
-								wp.scale.setX(-1);
+                                wp.scale.setX(-1);
 
-								wi.position.setX(0.25);
-								wi.position.setY(0.25);
-								wi.position.setZ(0);
+                                wi.position.setX(0.25);
+                                wi.position.setY(0.25);
+                                wi.position.setZ(0);
 
-								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+                                var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-								wp.rotation.x -= dtr(30);
-								wp.rotation.x += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
+                                wp.rotation.x -= dtr(30);
+                                wp.rotation.x += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
-								weaponSwingAmount.z = weaponSwingAmount.x
-								weaponSwingAmount.x = 0
-							}
+                                weaponSwingAmount.z = weaponSwingAmount.x;
+                                weaponSwingAmount.x = 0;
+                            }
 
-							if (walkAnimationComponent.dirIndex === 7) {
-								wi.rotation.y += dtr(180);
+                            if (walkAnimationComponent.dirIndex === 7) {
+                                wi.rotation.y += dtr(180);
 
-								wp.position.setX(0.2 - walkAnimationComponent.walkIndex * 0.05);
-								wp.position.setY(-0.25);
-								wp.position.setZ(-0.5);
+                                wp.position.setX(0.2 - walkAnimationComponent.walkIndex * 0.05);
+                                wp.position.setY(-0.25);
+                                wp.position.setZ(-0.5);
 
-								wp.scale.setX(-0.8);
+                                wp.scale.setX(-0.8);
 
-								wi.position.setX(0.25);
-								wi.position.setY(0.25);
-								wi.position.setZ(0);
+                                wi.position.setX(0.25);
+                                wi.position.setY(0.25);
+                                wi.position.setZ(0);
 
-								var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+                                var time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
 
-								wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
+                                wp.rotation.z += dtr(Math.cos(wieldItemComponent.weaponWalkSwingTimer) * 10);
 
-								weaponSwingAmount.z = weaponSwingAmount.x
-								weaponSwingAmount.x = 0
-							}
+                                weaponSwingAmount.z = weaponSwingAmount.x;
+                                weaponSwingAmount.x = 0;
+                            }
 
-							if (wieldItemComponent.weaponAttackSwingTimer > 0) {
-								wieldItemComponent.weaponAttackSwingTimer -= dt;
-							}
-							if (wieldItemComponent.weaponAttackSwingTimer <= 0 &&
-								wieldItemComponent.weaponAttackSwingingForward) {
-								wieldItemComponent.weaponAttackSwingingForward = false;
-								wieldItemComponent.weaponAttackSwingTimer = weaponAttackSwingTime;
-							}
+                            if (wieldItemComponent.weaponAttackSwingTimer > 0) {
+                                wieldItemComponent.weaponAttackSwingTimer -= dt;
+                            }
+                            if (wieldItemComponent.weaponAttackSwingTimer <= 0 &&
+                                wieldItemComponent.weaponAttackSwingingForward) {
+                                wieldItemComponent.weaponAttackSwingingForward = false;
+                                wieldItemComponent.weaponAttackSwingTimer = weaponAttackSwingTime;
+                            }
 
-							var swingVector = new THREE.Vector3();
-							var lerpAmount = (wieldItemComponent.weaponAttackSwingTimer / weaponAttackSwingTime);
-							if (wieldItemComponent.weaponAttackSwingingForward) {
-								swingVector.lerp(weaponSwingAmount, (1.0 - lerpAmount));
-							}
-							else {
-								swingVector.lerp(weaponSwingAmount, lerpAmount);
-							}
+                            var swingVector = new THREE.Vector3();
+                            var lerpAmount = (wieldItemComponent.weaponAttackSwingTimer / weaponAttackSwingTime);
+                            if (wieldItemComponent.weaponAttackSwingingForward) {
+                                swingVector.lerp(weaponSwingAmount, (1.0 - lerpAmount));
+                            } else {
+                                swingVector.lerp(weaponSwingAmount, lerpAmount);
+                            }
 
-							wp.rotation.x += swingVector.x;
-							wp.rotation.y += swingVector.y;
-							wp.rotation.z += swingVector.z;
+                            wp.rotation.x += swingVector.x;
+                            wp.rotation.y += swingVector.y;
+                            wp.rotation.z += swingVector.z;
 
-							wp.rotation.x += Math.PI / 4;
+                            wp.rotation.x += Math.PI / 4;
 
-							debug.watch('weaponAttackSwingTimer', wieldItemComponent.weaponAttackSwingTimer);
+                            debug.watch('weaponAttackSwingTimer', wieldItemComponent.weaponAttackSwingTimer);
 
 
                             // TODO this logic is copied from the look-at-camera script
