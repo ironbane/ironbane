@@ -3,15 +3,17 @@ angular
         'ces.class',
         'ces.family',
         'ces.entity',
-        'ces.entitylist'
+        'ces.entitylist',
+        'ces.pubsub'
     ])
     .factory('World', [
         'Class',
         'Family',
         'Entity',
         'EntityList',
+        'CESPubSub',
         '$log',
-        function(Class, Family, Entity, EntityList, $log) {
+        function(Class, Family, Entity, EntityList, CESPubSub, $log) {
             'use strict';
 
             /**
@@ -39,6 +41,18 @@ angular
                      * @private
                      */
                     this._entities = new EntityList();
+
+                    // each world has a message bus
+                    this._pubsub = new CESPubSub({debug:true});
+                },
+
+                publish: function(/* args */) {
+                    var args = Array.prototype.slice.call(arguments, 0);
+                    this._pubsub.publish.apply(this._pubsub, args);
+                },
+
+                subscribe: function(eventName, callback) {
+                    this._pubsub.subscribe(eventName, callback);
                 },
 
                 /**

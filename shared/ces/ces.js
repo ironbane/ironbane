@@ -7,5 +7,6 @@ angular.module('ces', [
     'ces.signal',
     'ces.system',
     'ces.world',
-    'ces.components-registry'
+    'ces.components-registry',
+    'ces.pubsub'
 ]);
