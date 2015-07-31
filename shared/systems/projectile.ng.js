@@ -127,14 +127,18 @@ angular
                         // and flag that we did so
                         if (projectileComponent && projectileComponent._canDeliverEffect) {
                             if (projectileComponent.type === 'damage') {
-                                var healthEntities = me.world.getEntities('health');
+                                var damageableEntities = me.world.getEntities('damageable');
 
-                                healthEntities.forEach(function(healthEntity) {
-                                    if (healthEntity !== projectileComponent._owner &&
-                                        healthEntity.position.inRangeOf(entity.position, 0.5)) {
+                                damageableEntities.forEach(function(damageableEntity) {
+                                    if (damageableEntity !== projectileComponent._owner &&
+                                        damageableEntity.position.inRangeOf(entity.position, 0.5)) {
 
-                                        var healthComponent = healthEntity.getComponent('health');
-                                        healthComponent.damage(projectileComponent.attribute1);
+                                        var damageSystem = me.world.getSystem('damage');
+                                        damageSystem.damage(damageableEntity, {
+                                            type: 'damage',
+                                            damage: projectileComponent.attribute1
+                                        });
+
                                         projectileComponent._canDeliverEffect = false;
                                     }
                                 });

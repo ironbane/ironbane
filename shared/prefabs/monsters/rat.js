@@ -42,9 +42,14 @@ angular
                 ]
             },
             health: {
-                max: 5,
-                value: 5
+                max: 10,
+                value: 10
             },
+            armor: {
+                max: 10,
+                value: 10
+            },
+            damageable: {},
             globalState: {
                 state: 'monster'
             },

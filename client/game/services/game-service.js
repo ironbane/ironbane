@@ -8,7 +8,7 @@ angular
         'systems.armor',
         'systems.fighter',
         'systems.inventory',
-        'systems.health',
+        'systems.damage',
         'systems.mesh',
         'systems.projectile',
         'systems.steering'
@@ -34,7 +34,7 @@ angular
                 'Network',
                 'Inventory',
                 'Appearance',
-                'Health',
+                'Damage',
                 'Armor',
                 'Input',
                 'Sound',

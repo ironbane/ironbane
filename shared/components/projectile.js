@@ -9,7 +9,7 @@ angular
                 'projectile': {
                     ownerUuid: null,
                     speed: 10,
-                    attribute1: 1,
+                    attribute1: 3,
                     type: 'damage'
                 }
             });
