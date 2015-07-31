@@ -27,7 +27,7 @@ angular
                             return;
                         }
 
-                        var totalFull = Math.floor(component.max / 2);
+                        var totalFull = Math.ceil(component.max / 2);
                         for (var i = totalFull; i >= 1; i--) {
                             var value = i * 2;
                             if (component.value >= value) {
