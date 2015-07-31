@@ -24,9 +24,19 @@ angular
 
                     world.subscribe('inventory:onEquipItem', function(entity, item) {
                         if (item.type === 'weapon') {
-                            entity.addComponent('wieldItem', {
-                                item: item.image
-                            });
+                            // this assumes that wieldItem has been added through some legitimate inventory means
+                            // if it was just added, it will get replaced, but nothing will go into inventory
+                            // also need to test this because we can never add 2 of the same component
+                            if (entity.hasComponent('wieldItem')) {
+                                var wieldItemComponent = entity.getComponent('wieldItem');
+                                // update the image
+                                wieldItemComponent.item = item.image;
+                                // TODO: call update texture method
+                            } else {
+                                entity.addComponent('wieldItem', {
+                                    item: item.image
+                                });
+                            }
                         }
                     });
 
@@ -94,14 +104,8 @@ angular
                         // wieldItemData.weaponPivot.add(sphere2);
                         // wieldItemData.wieldItem.add(sphere3);
 
-                        // TODO: the parent is still undefined
-                        // because we haven't called scene.add yet when we make this
-                        // entity. Perhaps there should be another event for when the
-                        // entity is added to the scene instead of using a timeout.
-                        $timeout(function() {
-                            entity.parent.add(wieldItemData.weaponOrigin);
-                        }, 1);
-
+                        // add it directly to the scene because it's easier
+                        world.scene.add(wieldItemData.weaponOrigin);
                     });
 
                     world.entityRemoved('wieldItem').add(function(entity) {
