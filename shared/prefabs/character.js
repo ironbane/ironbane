@@ -27,7 +27,7 @@ angular
                                 slot4: {name: 'Old Shoes', type: 'feet', image: 1, invImage: 164, armor: 1},
                                 slot5: {name: 'Peasant Shirt', type: 'body', image: 1, invImage: 56, armor: 1},
                                 slot6: {name: 'Ring of Elemental Power', type: 'relic', image: 0, invImage: 1033}, // TODO: properties for powers
-                                slot7: {name: 'Hammer of Testing Stuff', type: 'weapon', handedness: '2', image: 24, invImage: 1618, damage: 10}
+                                slot7: {name: 'Ritual Dagger', type: 'weapon', handedness: '1', image: 64, invImage: 1583, damage: 4}
                             },
                             health: {
                                 max: customs.health || 6,
