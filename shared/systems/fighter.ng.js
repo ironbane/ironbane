@@ -66,8 +66,8 @@ angular
                                             numberOfSpritesV: 128,
                                             width: 0.5,
                                             height: 0.5,
-                                            indexH: IbUtils.spriteSheetIdToXY(1723).h,
-                                            indexV: IbUtils.spriteSheetIdToXY(1723).v
+                                            indexH: IbUtils.spriteSheetIdToXY(wieldItemComponent.rhand.image).h,
+                                            indexV: IbUtils.spriteSheetIdToXY(wieldItemComponent.rhand.image).v
                                         },
                                         projectile: {
                                             speed: 8,
