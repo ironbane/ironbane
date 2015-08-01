@@ -360,7 +360,7 @@ angular
                         }
 
                         // we could keep the component around, but removing it lowers loop checks
-                        if (!component.rhand && !component.lhand) {
+                        if (component && !component.rhand && !component.lhand) {
                             entity.removeComponent('wieldItem');
                         }
                     });
