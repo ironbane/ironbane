@@ -7,7 +7,8 @@ angular
 
             $componentsProvider.register({
                 'wieldItem': {
-                    item: 14
+                    rhand: null,
+                    lhand: null
                 }
             });
         }

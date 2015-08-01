@@ -28,8 +28,8 @@ angular
 
                             var wieldItemComponent = entity.getComponent('wieldItem');
 
-                            if (wieldItemComponent) {
-                                wieldItemComponent.doAttackAnimation();
+                            if (wieldItemComponent && wieldItemComponent._rItem) {
+                                wieldItemComponent._rItem.doAttackAnimation();
 
                                 // Throw the weapon
                                 var projectile = EntityBuilder.build('projectile', {
@@ -73,7 +73,7 @@ angular
                                             speed: 8,
                                             targetPosition: targetPosition,
                                             ownerUuid: entity.uuid,
-                                            attribute1: wieldItemComponent.item.damage
+                                            attribute1: wieldItemComponent.rhand.damage
                                         },
                                         collisionReporter: {
 

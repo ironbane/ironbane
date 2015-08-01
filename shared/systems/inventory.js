@@ -144,8 +144,8 @@ angular
                                 inventory[slot] = null;
                             }
 
-                            this.world.publish('inventory:onEquipItem', entity, itemToEquip);
-                            this.onEquipItem.emit(entity, itemToEquip);
+                            this.world.publish('inventory:onEquipItem', entity, itemToEquip, equipSlot);
+                            this.onEquipItem.emit(entity, itemToEquip, equipSlot);
                         }
                     }
 
