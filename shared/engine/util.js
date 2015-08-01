@@ -100,8 +100,8 @@ angular
         this.spriteSheetIdToXY = function (id, size) {
             size = size || 16;
             return {
-                h: (id%size) - 1,
-                v: (Math.ceil(id/size)) - 1
+                h: (id%size),
+                v: (Math.floor(id/size))
             }
         };
     }]);
