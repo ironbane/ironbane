@@ -27,8 +27,10 @@ angular
 
                         $scope.item = item; // for tooltip?
 
-                        var col = item.invImage % 16,
-                            row = Math.floor(item.invImage / 16);
+                        var image = item.invImage ? item.invImage : item.image;
+
+                        var col = image % 16,
+                            row = Math.floor(image / 16);
 
                         ctrl.cssStyle = {
                             'background-position': -col * 32 + 'px ' +
