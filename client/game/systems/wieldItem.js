@@ -3,6 +3,7 @@ angular
         'ces',
         'three',
         'engine.textureLoader',
+        'engine.char-builder',
         'engine.util'
     ])
     .factory('WieldItemSystem', [
@@ -11,7 +12,8 @@ angular
         'TextureLoader',
         '$timeout',
         'IbUtils',
-        function(System, THREE, TextureLoader, $timeout, IbUtils) {
+        'CharBuilder',
+        function(System, THREE, TextureLoader, $timeout, IbUtils, CharBuilder) {
             'use strict';
 
             var ATTACK_SWING_TIME = 0.2;
@@ -25,8 +27,15 @@ angular
                 mesh = new THREE.Mesh(planeGeo, new THREE.MeshBasicMaterial());
                 mesh.material.side = THREE.DoubleSide;
                 mesh.geometry.dynamic = true;
+                mesh.visible = false;
 
-                TextureLoader.load('images/items/' + image + '.png')
+                CharBuilder.getSpriteSheetTile('images/spritesheets/items.png',
+                    IbUtils.spriteSheetIdToXY(image).h,
+                    IbUtils.spriteSheetIdToXY(image).v,
+                    16, 128)
+                    .then(function(url) {
+                        return TextureLoader.load(url);
+                    })
                     .then(function(texture) {
                         // texture.needsUpdate = true;
                         mesh.material.map = texture;
@@ -34,6 +43,7 @@ angular
                         mesh.geometry.buffersNeedUpdate = true;
                         mesh.geometry.uvsNeedUpdate = true;
                         mesh.material.transparent = true;
+                        mesh.visible = true;
                     });
 
                 item.walkSwingTimer = 0.0;
