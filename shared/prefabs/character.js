@@ -20,7 +20,7 @@ angular
                                 relic2: null,
                                 relic3: null,
                                 // testing...
-                                slot0: {name: 'Bread', type: 'food', image: 0, invImage: 297, health: 2},
+                                slot0: {name: 'Wooden Shield', type: 'shield', image: 176, invImage: 1138, armor: 1},
                                 slot1: {name: 'Coin Sack', type: 'cash', image: 4, invImage: 1029, qty: 2},
                                 slot2: {name: 'Rusty Kitchen Knife', type: 'weapon', handedness: '1', image: 14, invImage: 1551, damage: 1},
                                 slot3: {name: 'Dirty Dishcloth Bandana', type: 'head', image: 1, invImage: 426, armor: 0},

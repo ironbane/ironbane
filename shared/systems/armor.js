@@ -11,7 +11,7 @@ angular
             'use strict';
 
             var isArmorType = function(item) {
-                return item.type === 'head' || item.type === 'body' || item.type === 'feet';
+                return item.armor;
             };
 
             var ArmorSystem = System.extend({

@@ -10,7 +10,8 @@ angular
             'use strict';
 
             var isEquipable = function(item) {
-                return item.type === 'head' || item.type === 'body' || item.type === 'feet' || item.type === 'relic' || item.type.search(/weapon/ig) >= 0;
+                return item.type === 'head' || item.type === 'body' || item.type === 'feet' || item.type === 'relic' ||
+                    item.type.search(/weapon/ig) >= 0 || item.type === 'shield';
             };
 
             var InventorySystem = System.extend({
@@ -116,7 +117,11 @@ angular
                                 equipSlot = itemToEquip.type;
                             }
 
-                            // TODO: handle 2hweapon && shields
+                            // TODO: handle 2hweapon
+
+                            if (itemToEquip.type === 'shield') {
+                                equipSlot = 'lhand';
+                            }
 
                             if (equipSlot === 'relic') {
                                 // find open relic slot (TODO: support more than 3 here)
