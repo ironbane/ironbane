@@ -49,6 +49,10 @@ angular
                 max: 10,
                 value: 10
             },
+            inventory: {
+                slot0: {name: 'Cheese', type: 'food', image: 130, invImage: 289, health: 2},
+                slot1: {name: 'Rat Skin Cap', type: 'head', image: 8, invImage: 428, armor: 1}
+            },
             damageable: {},
             globalState: {
                 state: 'monster'
