@@ -25,6 +25,18 @@ angular
                 },
                 addedToWorld: function(world) {
                     this._super(world);
+
+                    world.entityAdded('inventory').add(function(entity) {
+                        var inv = entity.getComponent('inventory');
+
+                        var equippableSlots = ['head', 'body', 'feet', 'rhand', 'lhand', 'relic1', 'relic2', 'relic3']; // TODO: shared constant
+                        // if we start with some items equipped (loaded from net, etc.) gotta equip them
+                        equippableSlots.forEach(function(slot) {
+                            if (inv[slot]) {
+                                world.publish('inventory:onEquipItem', entity, inv[slot], slot);
+                            }
+                        });
+                    });
                 },
                 findEmptySlot: function(entity) {
                     var inventory = entity.getComponent('inventory'),

@@ -69,10 +69,8 @@ angular
                 addedToWorld: function(world) {
                     this._super(world);
 
-                    var inventorySystem = world.getSystem('inventory');
-
-                    inventorySystem.onEquipItem.add(updateAppearance);
-                    inventorySystem.onUnEquipItem.add(updateAppearance);
+                    world.subscribe('inventory:onEquipItem', updateAppearance);
+                    world.subscribe('inventory:onUnEquipItem', updateAppearance);
                 },
                 update: function() {
 

@@ -11,10 +11,10 @@ angular
                             speed: {},
                             inventory: {
                                 // we define these again for hasOwnProperty, a chest would not have the equipment
-                                head: null,
+                                head: {name: 'Dirty Dishcloth Bandana', type: 'head', image: 1, invImage: 426, armor: 0},
                                 body: null,
                                 feet: null,
-                                rhand: null,
+                                rhand: {name: 'Rusty Kitchen Knife', type: 'weapon', handedness: '1', image: 1551, damage: 1},
                                 lhand: null,
                                 relic1: null,
                                 relic2: null,
@@ -22,8 +22,8 @@ angular
                                 // testing...
                                 slot0: {name: 'Wooden Shield', type: 'shield', image: 1138, armor: 1},
                                 slot1: {name: 'Coin Sack', type: 'cash', image: 1029, qty: 2},
-                                slot2: {name: 'Rusty Kitchen Knife', type: 'weapon', handedness: '1', image: 1551, damage: 1},
-                                slot3: {name: 'Dirty Dishcloth Bandana', type: 'head', image: 1, invImage: 426, armor: 0},
+                                slot2: {name: 'Stinky (Poisoned) Cheese', type: 'food', damage: 2, image: 289},
+                                slot3: null,
                                 slot4: {name: 'Old Shoes', type: 'feet', image: 164, armor: 1},
                                 slot5: {name: 'Peasant Shirt', type: 'body', image: 56, armor: 1},
                                 slot6: {name: 'Ring of Elemental Power', type: 'relic', image: 1033}, // TODO: properties for powers
@@ -33,6 +33,7 @@ angular
                                 max: customs.health || 6,
                                 value: customs.health || 6
                             },
+                            damageable: {},
                             armorRegen: {}, // we don't start with armor, but when we do it self repairs
                             quad: {
                                 transparent: true,
