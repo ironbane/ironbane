@@ -15,18 +15,7 @@ angular
 
                     world.entityAdded('damageable').add(function(entity) {
                         var damageableComponent = entity.getComponent('damageable');
-
-                        damageableComponent._sources = [];
                     });
-                },
-                damage: function (entity, damageInfo) {
-                    var damageableComponent = entity.getComponent('damageable');
-
-                    if (!damageableComponent) {
-                        console.error('No damageableComponent found for entity!')
-                    }
-
-                    damageableComponent._sources.push(damageInfo);
                 },
                 _spawnParticle: function (indexH, indexV, amount, position) {
                     var me = this;
@@ -103,7 +92,7 @@ angular
                         var armorComponent = entity.getComponent('armor');
 
                         if (damageableComponent) {
-                            damageableComponent._sources.forEach(function(source) {
+                            damageableComponent.sources.forEach(function(source) {
 
                                 switch (source.type) {
                                     case 'damage':
@@ -127,7 +116,7 @@ angular
                                     break;
                                 }
                             });
-                            damageableComponent._sources = [];
+                            damageableComponent.sources = [];
                         }
                     });
                 }

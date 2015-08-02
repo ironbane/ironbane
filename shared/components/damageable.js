@@ -7,6 +7,7 @@ angular
 
             $componentsProvider.register({
                 'damageable': {
+                    sources: []
                 }
             });
         }

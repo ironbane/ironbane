@@ -133,8 +133,8 @@ angular
                                     if (damageableEntity !== projectileComponent._owner &&
                                         damageableEntity.position.inRangeOf(entity.position, 0.5)) {
 
-                                        var damageSystem = me.world.getSystem('damage');
-                                        damageSystem.damage(damageableEntity, {
+                                        var damageableComponent = damageableEntity.getComponent('damageable');
+                                        damageableComponent.sources.push({
                                             type: 'damage',
                                             damage: projectileComponent.attribute1
                                         });
