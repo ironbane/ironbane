@@ -346,6 +346,9 @@ angular
             that.depthWrite = typeof options.depthWrite === 'boolean' ? options.depthWrite : false;
             that.depthTest = typeof options.depthTest === 'boolean' ? options.depthTest : true;
 
+            that.vertexShader = options.vertexShader || SPE.shaders.vertex;
+            that.fragmentShader = options.fragmentShader || SPE.shaders.fragment;
+
             // Create uniforms
             that.uniforms = {
                 duration: {
@@ -437,8 +440,8 @@ angular
             that.material = new THREE.ShaderMaterial({
                 uniforms: that.uniforms,
                 attributes: that.attributes,
-                vertexShader: SPE.shaders.vertex,
-                fragmentShader: SPE.shaders.fragment,
+                vertexShader: that.vertexShader,
+                fragmentShader: that.fragmentShader,
                 blending: that.blending,
                 transparent: that.transparent,
                 alphaTest: that.alphaTest,
