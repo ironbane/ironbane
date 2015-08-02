@@ -82,6 +82,19 @@ angular
             },
 
             /**
+             * Create a random integer Number value based on a min and max
+             *
+             * @private
+             *
+             * @param  {Number} min
+             * @param  {Number} max
+             * @return {Number}
+             */
+            randomInt: function(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            },
+
+            /**
              * Create a new THREE.Vector3 instance and project it onto a random point
              * on a sphere with randomized radius.
              *
@@ -381,6 +394,10 @@ angular
                     type: 'v4',
                     value: []
                 },
+                spritesheet: {
+                    type: 'v4',
+                    value: []
+                },
 
                 colorStart: {
                     type: 'c',
@@ -487,6 +504,7 @@ angular
                     age = a.age.value,
                     size = a.size.value,
                     angle = a.angle.value,
+                    spritesheet = a.spritesheet.value,
                     colorStart = a.colorStart.value,
                     colorMiddle = a.colorMiddle.value,
                     colorEnd = a.colorEnd.value,
@@ -521,6 +539,13 @@ angular
                         that._randomFloat(emitter.angleMiddle, emitter.angleMiddleSpread),
                         that._randomFloat(emitter.angleEnd, emitter.angleEndSpread),
                         emitter.angleAlignVelocity ? 1.0 : 0.0
+                    );
+
+                    spritesheet[i] = new THREE.Vector4(
+                        that._randomInt(0, emitter.numberOfSpritesH - 1),
+                        that._randomInt(0, emitter.numberOfSpritesV - 1),
+                        emitter.numberOfSpritesH,
+                        emitter.numberOfSpritesV
                     );
 
                     age[i] = 0.0;
@@ -763,10 +788,12 @@ angular
 
                 'attribute vec3 size;',
                 'attribute vec4 angle;',
+                'attribute vec4 spritesheet;',
 
                 // values to be passed to the fragment shader
                 'varying vec4 vColor;',
                 'varying float vAngle;',
+                'varying vec4 vSpritesheet;',
 
 
                 // Integrate acceleration into velocity and apply it to the particle's position
@@ -801,6 +828,8 @@ angular
                 'float pointSize = 0.0;',
 
                 'vAngle = 0.0;',
+
+                'vSpritesheet.xyzw = spritesheet.xyzw;',
 
                 'if( alive > 0.5 ) {',
 
@@ -862,6 +891,7 @@ angular
 
                 'varying vec4 vColor;',
                 'varying float vAngle;',
+                'varying vec4 vSpritesheet;',
 
                 'void main() {',
                 'float c = cos(vAngle);',
@@ -869,6 +899,12 @@ angular
 
                 'vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,',
                 'c * (gl_PointCoord.y - 0.5) - s * (gl_PointCoord.x - 0.5) + 0.5);',
+
+                'rotatedUV.x /= vSpritesheet.z;',
+                'rotatedUV.y /= vSpritesheet.w;',
+
+                'rotatedUV.x += (1.0/vSpritesheet.z) * vSpritesheet.x;',
+                'rotatedUV.y += (1.0/vSpritesheet.w) * vSpritesheet.y;',
 
                 'vec4 rotatedTexture = texture2D( texture, rotatedUV );',
 
@@ -986,6 +1022,8 @@ angular
             );
             that.opacityMiddleSpread = parseFloat(typeof options.opacityMiddleSpread === 'number' ? options.opacityMiddleSpread : 0);
 
+            that.numberOfSpritesH = parseInt(typeof options.numberOfSpritesH === 'number' ? options.numberOfSpritesH : 1, 10);
+            that.numberOfSpritesV = parseInt(typeof options.numberOfSpritesV === 'number' ? options.numberOfSpritesV : 1, 10);
 
             // Generic
             that.duration = typeof options.duration === 'number' ? options.duration : null;
