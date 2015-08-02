@@ -74,9 +74,11 @@ angular
                         } else {
                             system._groupData.push(emitterData.group); // copy instead?
                             var groupData = emitterData.group;
-                            var texture = THREE.ImageUtils.loadTexture(emitterData.group.texture);
+                            var texture = emitterData.group.texture instanceof THREE.Texture ?
+                                emitterData.group.texture :
+                                THREE.ImageUtils.loadTexture(emitterData.group.texture);
                             texture.magFilter = THREE.NearestFilter;
-                            texture.minFilter = THREE.NearestMipMapLinearFilter;
+                            texture.minFilter = THREE.NearestFilter;
                             _.extend(groupData, {
                                 texture: texture // ajax + cache?
                             });
