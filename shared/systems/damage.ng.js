@@ -81,6 +81,53 @@ angular
                     }
 
                 },
+                addDeathParticles: function (entity, position) {
+                    var texture = null;
+
+                    var quadComponent = entity.getComponent('quad');
+                    if (quadComponent) {
+                        texture = quadComponent._quad.children[0].material.map.clone();
+                        texture.needsUpdate = true;
+                    }
+
+                    if (!texture) {
+                        console.log('Cannot build deathParticle texture for entity ' + entity.name)
+                        return;
+                    };
+
+                    var particle = EntityBuilder.build('particle', {
+                        components: {
+                            particleEmitter: {
+                                group: {
+                                    blending: THREE.NormalBlending,
+                                    texture: texture
+                                },
+                                emitter: {
+                                    type: 'cube',
+                                    acceleration: [0, -5, 0],
+                                    // accelerationSpread: [0.2, 0.2, 0.2],
+                                    positionSpread: [0.2, 0.2, 0.2],
+                                    velocity: [0, 2, 0],
+                                    velocitySpread: [5, 0, 5],
+                                    duration: 0.2,
+                                    // particlesPerSecond: 1,
+                                    sizeStart: 0.5,
+                                    sizeEnd: 0.5,
+                                    angleStart: Math.PI,
+                                    angleEnd: Math.PI,
+                                    // colorStart: 'blue',
+                                    // colorEnd: 'white',
+                                    particleCount: 8 * 8,
+                                    numberOfSpritesH: 3 * 8,
+                                    numberOfSpritesV: 8 * 9
+                                }
+                            }
+                        }
+                    });
+
+                    particle.position.copy(position);
+                    this.world.addEntity(particle);
+                },
                 update: function(dTime) {
                     var me = this;
 
@@ -112,6 +159,13 @@ angular
                                             healthComponent.value -= healthDamageDone;
                                             me.addDamageParticles('health', healthDamageDone, entity.position);
                                             console.log('health', healthDamageDone, entity.position);
+
+                                            if (healthComponent.value <= 0) {
+                                                // We died, so add proper particles
+                                                // and remove ourselves from the world
+                                                me.addDeathParticles(entity, entity.position);
+                                                me.world.removeEntity(entity);
+                                            }
                                         }
                                     break;
                                 }
