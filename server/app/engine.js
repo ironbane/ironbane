@@ -93,10 +93,10 @@ angular
                         var ent = EntityBuilder.build(doc);
                         if (ent) {
                             // it's unlikely that the server will not want to send an entity
-                            ent.addComponent($components.get('netSend'));
-                            ent.addComponent($components.get('netRecv'));
-                            ent.addComponent($components.get('player'));
-                            ent.addComponent($components.get('persisted', {_id: doc._id}));
+                            ent.addComponent('netSend');
+                            ent.addComponent('netRecv');
+                            ent.addComponent('player');
+                            ent.addComponent('persisted', {_id: doc._id});
                             ent.owner = doc.owner;
 
                             // Used to access metadata like cheats later on

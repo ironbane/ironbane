@@ -8,7 +8,8 @@ angular
         'System',
         'EntitiesCollection',
         'Timer',
-        function(System, EntitiesCollection, Timer) {
+        '$log',
+        function(System, EntitiesCollection, Timer, $log) {
             'use strict';
 
             var PersistSystem = System.extend({
@@ -24,6 +25,8 @@ angular
 
                             entityState.position = entity.position.serialize();
                             entityState.rotation = entity.rotation.serialize();
+
+                            //$log.debug('persist: ', entityState);
 
                             EntitiesCollection.update({
                                 _id: persist._id

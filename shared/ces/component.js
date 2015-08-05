@@ -15,7 +15,12 @@ angular.module('ces.component', ['ces.class'])
 
                 component.__properties = {};
                 for (var field in props) {
-                    component.trackProperty(field, props[field]);
+                    // don't track any designated private variables
+                    if (field.substr(2) === '__') {
+                        component[field] = props[field];
+                    } else {
+                        component.trackProperty(field, props[field]);
+                    }
                 }
             },
 

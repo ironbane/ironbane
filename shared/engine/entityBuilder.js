@@ -111,7 +111,7 @@ angular
                 data.userData = data.userData || {};
 
                 var entity = new Entity(),
-                    transform = data.postion ? {
+                    transform = data.position ? {
                         position: data.position,
                         rotation: data.rotation,
                         scale: data.scale
