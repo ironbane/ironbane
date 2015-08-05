@@ -31,6 +31,8 @@ angular
 
                 var ctx = canvas.getContext('2d');
 
+                ctx.msImageSmoothingEnabled = false;
+
                 var loadPromises = sprites.map(function(sprite) {
                     return loadImage(sprite);
                 });
@@ -61,7 +63,11 @@ angular
 
                 list.forEach(function(part) {
                     if (options[part]) {
-                        images.push('images/characters/' + part + '/' + options[part] + '.png');
+                        if (part === 'hair' && options.head && !options.alwaysRenderHair) {
+                            // don't render hair when wearing a helmet
+                        } else {
+                            images.push('images/characters/' + part + '/' + options[part] + '.png');
+                        }
                     }
                 });
 

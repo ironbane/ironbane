@@ -31,15 +31,34 @@ angular
                     var updateCharacterPreview = function() {
                         if ($scope.characters.length && $scope.currentCharIndex < $scope.characters.length) {
                             var currentChar = $scope.characters[$scope.currentCharIndex],
-                                // testing here because of legacy db items TODO: update db?
-                                skin = currentChar.components ? currentChar.components.quad.charBuildData.skin : currentChar.userData.skin,
-                                hair = currentChar.components ? currentChar.components.quad.charBuildData.hair : currentChar.userData.hair,
-                                eyes = currentChar.components ? currentChar.components.quad.charBuildData.eyes : currentChar.userData.eyes;
-                            CharBuilder.makeChar({
-                                skin: skin,
-                                eyes: eyes,
-                                hair: hair,
-                            }).then(function(url) {
+                                charOptions = {};
+
+                            $log.debug('char preview: ', currentChar);
+
+                            if (currentChar.components && currentChar.components.quad) {
+                                charOptions.skin = currentChar.components.quad.charBuildData.skin;
+                                charOptions.hair = currentChar.components.quad.charBuildData.hair;
+                                charOptions.eyes = currentChar.components.quad.charBuildData.eyes;
+                            } else {
+                                charOptions.skin = currentChar.userData.skin;
+                                charOptions.hair = currentChar.userData.hair;
+                                charOptions.eyes = currentChar.userData.eyes;
+                            }
+
+                            if (currentChar.components && currentChar.components.inventory) {
+                                var inventory = currentChar.components.inventory;
+                                if (inventory.head) {
+                                    charOptions.head = inventory.head.image;
+                                }
+                                if (inventory.body) {
+                                    charOptions.body = inventory.body.image;
+                                }
+                                if (inventory.feet) {
+                                    charOptions.feet = inventory.feet.image;
+                                }
+                            }
+
+                            CharBuilder.makeChar(charOptions).then(function(url) {
                                 $scope.charPrevImg = url;
                             });
                         }
