@@ -86,11 +86,11 @@ angular
                 },
                 equipItem: function(entity, slot) {
                     var inventory = entity.getComponent('inventory');
-                    //$log.debug('equipItem: ', inventory, slot);
+                    //$log.debug('equipItem: ', entity.uuid, inventory, slot);
                     if (inventory && inventory[slot]) {
                         var itemToEquip = inventory[slot];
                         if (isEquipable(itemToEquip)) {
-                            //$log.debug('good to equip: ', itemToEquip, entity, slot);
+                            //$log.debug('good to equip: ', itemToEquip, entity.uuid, slot);
                             var equipSlot;
 
                             if(itemToEquip.type === 'weapon') {
@@ -149,8 +149,10 @@ angular
                                 inventory[slot] = null;
                             }
 
-                            this.world.publish('inventory:onEquipItem', entity, itemToEquip, equipSlot);
-                            this.onEquipItem.emit(entity, itemToEquip, equipSlot);
+                            //$log.debug('inventory adjusted: ', inventory);
+
+                            this.world.publish('inventory:onEquipItem', entity, itemToEquip, equipSlot, slot);
+                            this.onEquipItem.emit(entity, itemToEquip, equipSlot, slot);
                         }
                     }
 
@@ -165,8 +167,8 @@ angular
                             inventory[invSlot] = item;
                             inventory[slot] = null;
 
-                            this.world.publish('inventory:onUnEquipItem', entity, item, slot);
-                            this.onUnEquipItem.emit(entity, item, slot);
+                            this.world.publish('inventory:onUnEquipItem', entity, item, slot, invSlot);
+                            this.onUnEquipItem.emit(entity, item, slot, invSlot);
                         } else {
                             // no free slots to unequip to, drop it or do nothing?
                             return;

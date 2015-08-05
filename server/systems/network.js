@@ -85,10 +85,10 @@ angular
                             netents = world.getEntities('netRecv'),
                             entity = _.findWhere(netents, {uuid: data.entityId});
 
-                        $log.debug('inventory:onEquipItem', data);
+                        //$log.debug('inventory:onEquipItem', data, entity.uuid);
 
                         if (entity) {
-                            inv.equipItem(entity, data.slot);
+                            inv.equipItem(entity, data.fromSlot);
                         }
                     });
 
@@ -97,10 +97,24 @@ angular
                             netents = world.getEntities('netRecv'),
                             entity = _.findWhere(netents, {uuid: data.entityId});
 
-                        $log.debug('inventory:onUnEquipItem', data);
+                        //$log.debug('inventory:onUnEquipItem', data, entity.uuid);
 
                         if (entity) {
-                            inv.unequipItem(entity, data.slot);
+                            inv.unequipItem(entity, data.fromSlot);
+                        }
+                    });
+
+                    world.subscribe('inventory:onEquipItem', function(entity, item, toSlot, fromSlot) {
+                        if (entity.hasComponent('netSend') && self._stream) {
+                            // TODO: UUID for items
+                            self._stream.emit('inventory:onEquipItem', {entityId: entity.uuid, toSlot: toSlot, fromSlot: fromSlot});
+                        }
+                    });
+
+                    world.subscribe('inventory:onUnEquipItem', function(entity, item, fromSlot, toSlot) {
+                        if (entity.hasComponent('netSend') && self._stream) {
+                            // TODO: UUID for items
+                            self._stream.emit('inventory:onUnEquipItem', {entityId: entity.uuid, toSlot: toSlot, fromSlot: fromSlot});
                         }
                     });
 

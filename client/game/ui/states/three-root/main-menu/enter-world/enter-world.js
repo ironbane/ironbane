@@ -70,7 +70,7 @@ angular
 
                                 if (activeChar) {
                                     $scope.currentChar.id = charId;
-                                    Session.set('activeLevel', activeChar.level)
+                                    Session.set('activeLevel', activeChar.level);
                                 } else {
                                     $log.error('unable to locate character, not updated yet?');
                                 }

@@ -188,17 +188,17 @@ angular
 
                     var me = this;
 
-                    world.subscribe('inventory:onEquipItem', function(entity, item, slot) {
+                    world.subscribe('inventory:onEquipItem', function(entity, item, toSlot, fromSlot) {
                         if (entity.hasComponent('netSend') && me._stream) {
                             // TODO: UUID for items
-                            me._stream.emit('inventory:onEquipItem', {entityId: entity.uuid, slot: slot});
+                            me._stream.emit('inventory:onEquipItem', {entityId: entity.uuid, toSlot: toSlot, fromSlot: fromSlot});
                         }
                     });
 
-                    world.subscribe('inventory:onUnEquipItem', function(entity, item, slot) {
+                    world.subscribe('inventory:onUnEquipItem', function(entity, item, fromSlot, toSlot) {
                         if (entity.hasComponent('netSend') && me._stream) {
                             // TODO: UUID for items
-                            me._stream.emit('inventory:onUnEquipItem', {entityId: entity.uuid, slot: slot});
+                            me._stream.emit('inventory:onUnEquipItem', {entityId: entity.uuid, toSlot: toSlot, fromSlot: fromSlot});
                         }
                     });
 
@@ -248,6 +248,30 @@ angular
                             $rootScope.$apply();
                         });
 
+                        me._stream.on('inventory:onEquipItem', function(data) {
+                            var inv = world.getSystem('inventory'),
+                                netents = world.getEntities('netRecv'),
+                                entity = _.findWhere(netents, {uuid: data.entityId});
+
+                            //$log.debug('inventory:onEquipItem', data, entity.uuid);
+
+                            if (entity) {
+                                inv.equipItem(entity, data.fromSlot);
+                            }
+                        });
+
+                        me._stream.on('inventory:onUnEquipItem', function(data) {
+                            var inv = world.getSystem('inventory'),
+                                netents = world.getEntities('netRecv'),
+                                entity = _.findWhere(netents, {uuid: data.entityId});
+
+                            //$log.debug('inventory:onUnEquipItem', data, entity.uuid);
+
+                            if (entity) {
+                                inv.unequipItem(entity, data.fromSlot);
+                            }
+                        });
+
                         // as we are added to the client's world, it'll even be main menu time, we want to ask for the current state of things
                         Meteor.setTimeout(function () {
                             me._stream.emit('getState');
@@ -295,6 +319,7 @@ angular
                     });
 
                     if (Object.keys(packet).length > 0) {
+                        $log.debug('sending new transforms ', packet);
                         this._stream.emit('transforms', packet);
                     }
                 }
