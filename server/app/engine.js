@@ -13,7 +13,8 @@ angular
         'models',
         'server.boot',
         'server.services',
-        'server.systems'
+        'server.systems',
+        'systems.inventory' // shared.systems ??
     ])
     .run([
         '$log',
@@ -38,7 +39,8 @@ angular
                 'Persistence',
                 'Trigger',
                 'Movers',
-                'Actor'
+                'Actor',
+                'Inventory'
             ];
 
             // populate all the worlds (zones)
@@ -70,16 +72,16 @@ angular
             });
 
 
-			// Make sure players are set to inactive incase the server crashes
-			// otherwise they'll get the "already-in-game" error and can't log in.
-			// TODO move this somewhere else?
-			EntitiesCollection.update({}, {
-				$set: {
-					active: false
-				}
-			}, {
-				multi: true
-			});
+            // Make sure players are set to inactive incase the server crashes
+            // otherwise they'll get the "already-in-game" error and can't log in.
+            // TODO move this somewhere else?
+            EntitiesCollection.update({}, {
+                $set: {
+                    active: false
+                }
+            }, {
+                multi: true
+            });
 
 
             var entitiesCursor = EntitiesCollection.find({

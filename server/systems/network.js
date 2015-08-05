@@ -80,6 +80,30 @@ angular
                         self.sendNetState(this.userId, netEnts);
                     });
 
+                    this._stream.on('inventory:onEquipItem', function(data) {
+                        var inv = world.getSystem('inventory'),
+                            netents = world.getEntities('netRecv'),
+                            entity = _.findWhere(netents, {uuid: data.entityId});
+
+                        $log.debug('inventory:onEquipItem', data);
+
+                        if (entity) {
+                            inv.equipItem(entity, data.slot);
+                        }
+                    });
+
+                    this._stream.on('inventory:onUnEquipItem', function(data) {
+                        var inv = world.getSystem('inventory'),
+                            netents = world.getEntities('netRecv'),
+                            entity = _.findWhere(netents, {uuid: data.entityId});
+
+                        $log.debug('inventory:onUnEquipItem', data);
+
+                        if (entity) {
+                            inv.unequipItem(entity, data.slot);
+                        }
+                    });
+
                     world.entityAdded('netSend').add(onNetSendEntityAdded.bind(this));
                     world.entityRemoved('netSend').add(onNetSendEntityRemoved.bind(this));
 

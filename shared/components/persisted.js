@@ -6,7 +6,9 @@ angular
             'use strict';
 
             $componentsProvider.register({
-                persisted: {}
+                persisted: {
+                    __serialize: false // we don't want this one on the client
+                }
             });
         }
     ]);

@@ -79,15 +79,14 @@ angular
                 // Right now we're stuck with r69 which doesn't have the updated objectLoader
                 // so we have to make a distinction here
                 if (Meteor.isClient) {
-                    images = objectLoader.parseImages(json.images, function () {
+                    images = objectLoader.parseImages(json.images, function() {
                         deferred.resolve(entity);
                     });
-                    textures  = objectLoader.parseTextures( json.textures, images );
+                    textures = objectLoader.parseTextures(json.textures, images);
                     materials = objectLoader.parseMaterials(json.materials, textures);
-                }
-                else {
+                } else {
                     materials = objectLoader.parseMaterials(json.materials);
-                    setTimeout(function () {
+                    setTimeout(function() {
                         deferred.resolve(entity);
                     }, 0);
                 }
@@ -112,16 +111,20 @@ angular
                 data.userData = data.userData || {};
 
                 var entity = new Entity(),
-                    transform = data.matrix || {
+                    transform = data.postion ? {
                         position: data.position,
                         rotation: data.rotation,
                         scale: data.scale
-                    };
+                    } : data.matrix;
 
                 entity.name = name;
 
                 if (data.metadata) {
                     entity.metadata = data.metadata;
+                }
+
+                if (data.level) {
+                    entity.level = data.level;
                 }
 
                 if (data.uuid) {
@@ -206,7 +209,7 @@ angular
 
                             if (Meteor.isClient) {
                                 if (child.children) {
-                                    var foundPrefab = _.some(child.children, function (child) {
+                                    var foundPrefab = _.some(child.children, function(child) {
                                         return child.userData && child.userData.prefab;
                                     });
                                     if (foundPrefab) {
@@ -332,10 +335,9 @@ angular
                         // If the mesh contains a collider, also add an octree
                         entity.parent.children.forEach(function(child) {
                             if (child.data.userData.type && child.data.userData.type.indexOf('Collider') !== -1) {
-                                entity.addComponent($components.get('octree', {
-                                }));
+                                entity.addComponent($components.get('octree', {}));
                             }
-                        })
+                        });
 
                         break;
 

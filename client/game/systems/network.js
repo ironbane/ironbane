@@ -105,16 +105,16 @@ angular
                     // test if this is the "main" player so we can enhance
                     if ($rootScope.currentUser._id === entity.owner) {
                         var scriptComponent = builtEntity.getComponent('script');
-                        builtEntity.addComponent($components.get('mouseHelper'));
-                        builtEntity.addComponent($components.get('collisionReporter'));
-                        builtEntity.addComponent($components.get('light', {
+                        builtEntity.addComponent('mouseHelper');
+                        builtEntity.addComponent('collisionReporter');
+                        builtEntity.addComponent('light', {
                             type: 'PointLight',
                             color: 0x60511b,
                             distance: 3.5
-                        }));
-                        builtEntity.addComponent($components.get('camera', {
+                        });
+                        builtEntity.addComponent('camera', {
                             aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
-                        }));
+                        });
 
                         if (scriptComponent) {
                             scriptComponent.scripts = scriptComponent.scripts.concat([
@@ -124,7 +124,7 @@ angular
                         }
 
                         // this is pretty much the only one we want to netSend
-                        builtEntity.addComponent($components.get('netSend'));
+                        builtEntity.addComponent('netSend');
 
                         $entityCache.put('mainPlayer', builtEntity);
                         // needed somewhere on the scope for the UI, prolly doesn't *need* to be root
@@ -132,11 +132,11 @@ angular
                     }
                     else {
                         // other stuff we should recv
-                        builtEntity.addComponent($components.get('netRecv'));
+                        builtEntity.addComponent('netRecv');
                     }
 
                     if (builtEntity.hasComponent('player')) {
-                        builtEntity.addComponent($components.get('rigidBody', {
+                        builtEntity.addComponent('rigidBody', {
                             shape: {
                                 type: 'capsule',
                                 width: 0.5,
@@ -165,9 +165,9 @@ angular
                             },
                             group: 'otherPlayers',
                             collidesWith: ['level']
-                        }));
-                        builtEntity.addComponent($components.get('steeringBehaviour'));
-                        builtEntity.addComponent($components.get('fighter'));
+                        });
+                        builtEntity.addComponent('steeringBehaviour');
+                        builtEntity.addComponent('fighter');
                     }
 
                     world.addEntity(builtEntity);
@@ -188,6 +188,20 @@ angular
 
                     var me = this;
 
+                    world.subscribe('inventory:onEquipItem', function(entity, item, slot) {
+                        if (entity.hasComponent('netSend') && me._stream) {
+                            // TODO: UUID for items
+                            me._stream.emit('inventory:onEquipItem', {entityId: entity.uuid, slot: slot});
+                        }
+                    });
+
+                    world.subscribe('inventory:onUnEquipItem', function(entity, item, slot) {
+                        if (entity.hasComponent('netSend') && me._stream) {
+                            // TODO: UUID for items
+                            me._stream.emit('inventory:onUnEquipItem', {entityId: entity.uuid, slot: slot});
+                        }
+                    });
+
                     // Set up streams and make sure it reruns everytime we change levels or change user
                     // $meteor.autorun is linked to $scope which we don't have here,
                     // so Meteor.autorun is the only way AFAIK
@@ -207,7 +221,7 @@ angular
                         var entities = me.world.getEntities('netRecv').concat(me.world.getEntities('netSend'));
                         entities.forEach(function (entity) {
                             me.world.removeEntity(entity);
-                        })
+                        });
 
                         // TOOD don't link activeLevel to the session as clients can abuse it
                         var activeLevel = Session.get('activeLevel');
@@ -243,7 +257,7 @@ angular
                         var userStream = [Meteor.userId(), activeLevel, 'entities'].join('_');
                         me._userStream = new Meteor.Stream(userStream);
                         me._userStream.on('add', onStreamAdd.bind(me));
-                    })
+                    });
                 },
                 update: function() {
                     // for now just send transform

@@ -43,7 +43,7 @@ angular
                     this._entities = new EntityList();
 
                     // each world has a message bus
-                    this._pubsub = new CESPubSub({debug:true});
+                    this._pubsub = new CESPubSub({debug: false});
                 },
 
                 publish: function(/* args */) {
@@ -165,6 +165,10 @@ angular
                     this._ensureFamilyExists(arguments);
 
                     return this._families[familyId].getEntities();
+                },
+
+                getEntityById: function(id, components) {
+                    return _.findWhere(this.getEntities(components), {uuid: id});
                 },
 
                 /**

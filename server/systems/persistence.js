@@ -13,25 +13,23 @@ angular
 
             var PersistSystem = System.extend({
                 init: function() {
-                    this.timer = new Timer(60);
+                    this.timer = new Timer(20);
                 },
                 update: function() {
                     if (this.timer.isExpired) {
                         var entsToPersist = this.world.getEntities('persisted');
                         entsToPersist.forEach(function(entity) {
                             var persist = entity.getComponent('persisted'),
-                                serializedPosition = entity.position.serialize(),
-                                serializedRotation = entity.rotation.serialize();
+                                entityState = entity.toJSON();
+
+                            entityState.position = entity.position.serialize();
+                            entityState.rotation = entity.rotation.serialize();
 
                             EntitiesCollection.update({
                                 _id: persist._id
                             }, {
-                                $set: {
-                                    position: serializedPosition,
-                                    rotation: serializedRotation
-                                }
+                                $set: entityState
                             });
-                            // TODO: serialize component data
                         });
 
                         this.timer.reset();

@@ -7,7 +7,7 @@ angular
 
             $componentsProvider.register({
                 netSend: {
-
+                    __serialize: false // let the server or client decide each time
                 }
             });
         }

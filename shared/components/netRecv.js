@@ -7,7 +7,7 @@ angular
 
             $componentsProvider.register({
                 netRecv: {
-
+                    __serialize: false // we'll handle this case by case
                 }
             });
         }

@@ -69,6 +69,8 @@ angular
                 addedToWorld: function(world) {
                     this._super(world);
 
+                    world.entityAdded('inventory').add(updateAppearance);
+
                     world.subscribe('inventory:onEquipItem', updateAppearance);
                     world.subscribe('inventory:onUnEquipItem', updateAppearance);
                 },

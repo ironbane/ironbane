@@ -99,6 +99,11 @@ angular.module('ces.entity', [
                     component = $components.get(component, data);
                 }
 
+                // don't add if already has
+                if (this._components['$' + component.name]) {
+                    return;
+                }
+
                 this._components['$' + component.name] = component;
                 this.onComponentAdded.emit(this, component.name);
             };
@@ -141,9 +146,10 @@ angular.module('ces.entity', [
                     // because some children aren't entities...
                     if (entity instanceof Entity) {
                         data.components = {};
-                        _.each(entity._components, function(component, componentName) {
-                            var realName = componentName.substr(1);
-                            data.components[realName] = component;
+                        _.each(entity.getComponents(), function(component, componentName) {
+                            if (component.__serialize !== false) {
+                                data.components[componentName] = component.toJSON();
+                            }
                         });
                     }
 
@@ -163,13 +169,15 @@ angular.module('ces.entity', [
                     if (entity.metadata) {
                         data.metadata.cheats = entity.metadata.cheats;
                     }
-                };
+                }
 
                 serializeComponents(json.object, this);
                 serializeMetadata(json.object, this);
 
                 // I don't like exposing this, however for the moment it's easiest
                 json.object.owner = this.owner;
+
+                //console.log('ent: ', this);
 
                 // THREE has exporter metadata, but we don't really care...
                 return json.object;

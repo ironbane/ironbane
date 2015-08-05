@@ -328,21 +328,43 @@ angular
 
                     sys._super(world);
 
+                    function doWield(entity, slots) {
+                        var wieldItemData = entity.getComponent('wieldItem') || {};
+
+                        angular.forEach(slots, function(slot, key) {
+                            wieldItemData[key] = slot;
+                        });
+
+                        if (entity.hasComponent('wieldItem')) {
+                            updateHands(entity, world);
+                        } else {
+                            entity.addComponent('wieldItem', wieldItemData);
+                        }
+                    }
+
+                    world.entityAdded('inventory').add(function(entity) {
+                        // for pre-equipped
+                        var inv = entity.getComponent('inventory'),
+                            data = {};
+
+                        if (inv.rhand) {
+                            data.rhand = inv.rhand;
+                        }
+
+                        if (inv.lhand) {
+                            data.lhand = inv.lhand;
+                        }
+
+                        if (data.rhand || data.lhand) {
+                            doWield(entity, data);
+                        }
+                    });
+
                     world.subscribe('inventory:onEquipItem', function(entity, item, slot) {
+                        var data = {};
                         if (slot === 'rhand' || slot === 'lhand') {
-                            // this assumes that wieldItem has been added through some legitimate inventory means
-                            // if it was just added, it will get replaced, but nothing will go into inventory
-                            // also need to test this because we can never add 2 of the same component
-                            if (entity.hasComponent('wieldItem')) {
-                                var wieldItemComponent = entity.getComponent('wieldItem');
-                                wieldItemComponent[slot] = item;
-                                updateHands(entity, world);
-                            } else {
-                                var config = {};
-                                config[slot] = item;
-                                entity.addComponent('wieldItem', config);
-                                // update for this will be handled by the entityAdded event
-                            }
+                            data[slot] = item;
+                            doWield(entity, data);
                         }
                     });
 
