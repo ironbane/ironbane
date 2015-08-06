@@ -61,8 +61,6 @@ angular
 
                     $scope.characters = [];
 
-
-
                     $meteor.autorun($scope, function() {
                         var user = Meteor.user();
                         IbUtils.waitForMeteorGuestUserLogin().then(function(user) {
@@ -95,7 +93,7 @@ angular
                     $rootWorld.addEntity(MainMenuPanningCamera);
 
                     $timeout(function () {
-                        GlobalSound.play('theme', 5);                    
+                        GlobalSound.play('theme', 5);
                     }, 1000);
                 }
             ],

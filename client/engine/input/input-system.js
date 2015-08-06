@@ -21,13 +21,15 @@ angular
         };
 
         this.$get = [
+            '$log',
             'System',
             'Keyboard',
             'Mouse',
             'VirtualGamepad',
             'KEYS',
+            'MOUSE_BUTTONS',
             'Signal',
-            function(System, Keyboard, Mouse, VirtualGamepad, KEYS, Signal) {
+            function($log, System, Keyboard, Mouse, VirtualGamepad, KEYS, MOUSE_BUTTONS, Signal) {
                 var InputSystem = System.extend({
                     init: function() {
                         var sys = this;
@@ -56,12 +58,22 @@ angular
                         // if so, emit action event
                         angular.forEach(_actionMappings, function(mappings, action) {
                             angular.forEach(mappings, function(mapping) {
+                                var testFn;
                                 // for the moment, just going to support single key actions
                                 if (mapping.type === 'keyboard') {
-                                    var testFn = mapping.check === 'pressed' ?
+                                    testFn = mapping.check === 'pressed' ?
                                         sys.keyboard.getKeyDown.bind(sys.keyboard) : sys.keyboard.getKey.bind(sys.keyboard);
 
                                     if (testFn(sys.KEYS[mapping.keys[0]])) {
+                                        sys.actions[action].emit();
+                                    }
+                                }
+
+                                if (mapping.type === 'mouse') {
+                                    testFn = mapping.check === 'pressed' ?
+                                        sys.mouse.getButtonDown.bind(sys.mouse) : sys.mouse.getButton.bind(sys.mouse);
+
+                                    if (testFn(MOUSE_BUTTONS[mapping.keys[0]])) {
                                         sys.actions[action].emit();
                                     }
                                 }
@@ -69,6 +81,7 @@ angular
                         });
                     },
                     register: function(action, callback) {
+                        $log.debug('register input: ', action, callback);
                         if (this.actions[action]) {
                             this.actions[action].add(callback);
                         }

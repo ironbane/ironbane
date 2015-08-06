@@ -12,12 +12,26 @@ angular
         'game.ui.statBar',
         'game.ui.inventoryBar',
         'game.ui.inventoryItem',
-        'game.clientSettings'
+        'game.clientSettings',
+        'engine.input.input-system',
     ])
     .config([
         '$stateProvider',
-        function($stateProvider) {
+        'InputSystemProvider',
+        function($stateProvider, InputSystemProvider) {
             'use strict';
+
+            // define actions used in play mode
+            // TODO: unregister them when switching back to menu?
+            InputSystemProvider.setActionMapping('primaryAttack', [{
+                type: 'mouse',
+                keys: ['MOUSE_BUTTON_LEFT'],
+                check: 'down'
+            }, {
+                type: 'keyboard',
+                keys: ['F'],
+                check: 'down'
+            }]);
 
             $stateProvider.state('three-root.play', {
                 templateUrl: 'client/game/ui/states/three-root/play/play.ng.html',
@@ -52,7 +66,7 @@ angular
                         inputSystem.register('open-chat', openChatHandler);
                         inputSystem.register('escape', escapeHandler);
 
-                        if(Roles.userIsInRole(Meteor.user(), ['game-master'])) {
+                        if (Roles.userIsInRole(Meteor.user(), ['game-master'])) {
                             inputSystem.register('admin-panel', adminHandler);
                         }
 

@@ -47,7 +47,7 @@ angular
                     volume: 1,
                     loop: false,
                     type: 'sound'
-                }                
+                }
             });
 
             // setup all input actions TODO: pull from config / local storage
@@ -82,16 +82,16 @@ angular
         'GlobalSound',
         function($window, Debugger, IB_CONSTANTS, $rootScope, $meteor, $state, $log, IbUtils, GlobalSound) {
             // for convenience
-            if(IB_CONSTANTS.isDev) {
+            if (IB_CONSTANTS.isDev) {
                 $window.debug = Debugger;
             }
 
-    		// If we don't wrap this, AUTH_REQUIRED error is thrown in incognito/first timers
-            IbUtils.waitForMeteorGuestUserLogin().then(function () {
-				// THIS IS WHERE IT ALL BEGINS!
-	            // NOTE: if we want to go to another state that isn't 3D, change logic here
-	            // maybe a router?
-            	$state.go('three-root.main-menu.enter-world');
+            // If we don't wrap this, AUTH_REQUIRED error is thrown in incognito/first timers
+            IbUtils.waitForMeteorGuestUserLogin().then(function() {
+                // THIS IS WHERE IT ALL BEGINS!
+                // NOTE: if we want to go to another state that isn't 3D, change logic here
+                // maybe a router?
+                $state.go('three-root.main-menu.enter-world');
             });
 
             /*$rootScope.$on('$stateChangeStart', function() {

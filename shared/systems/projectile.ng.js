@@ -1,152 +1,150 @@
 angular
     .module('systems.projectile', [
-        'ces'
+        'ces',
+        'three'
     ])
-    .factory('ProjectileSystem', function($log, System) {
-            'use strict';
+    .factory('ProjectileSystem', function($log, System, THREE) {
+        'use strict';
 
-            var calculateFiringAngle = function(startPosition, targetPosition, speed, throwHigh) {
-                throwHigh = throwHigh || false;
+        var calculateFiringAngle = function(startPosition, targetPosition, speed, throwHigh) {
+            throwHigh = throwHigh || false;
 
-                var targetTransform = targetPosition.clone();
-                var myTransform = startPosition.clone();
+            var targetTransform = targetPosition.clone();
+            var myTransform = startPosition.clone();
 
-                var y = targetTransform .y - myTransform .y;
+            var y = targetTransform.y - myTransform.y;
 
-                targetTransform.y = myTransform.y = 0;
+            targetTransform.y = myTransform.y = 0;
 
-                var x = targetTransform.sub(myTransform).length();
+            var x = targetTransform.sub(myTransform).length();
 
-                var v = speed;
-                var g = 10;
+            var v = speed;
+            var g = 10;
 
-                var sqrt = (v*v*v*v) - (g * (g * (x*x) + 2 * y * (v*v)));
+            var sqrt = (v * v * v * v) - (g * (g * (x * x) + 2 * y * (v * v)));
 
-                // Not enough range
-                var result;
+            // Not enough range
+            var result;
 
-                if (sqrt < 0) {
-                    console.log('out of range')
-                    result = Math.PI*0.15;
+            if (sqrt < 0) {
+                $log.log('out of range');
+                result = Math.PI * 0.15;
+            } else {
+                sqrt = Math.sqrt(sqrt);
+
+                // DirectFire chooses the low trajectory, otherwise high trajectory.
+                if (!throwHigh) {
+                    result = Math.atan(((v * v) - sqrt) / (g * x));
+                } else {
+                    result = Math.atan(((v * v) + sqrt) / (g * x));
                 }
-                else {
-                    sqrt = Math.sqrt(sqrt);
 
-                    // DirectFire chooses the low trajectory, otherwise high trajectory.
-                    if (!throwHigh) {
-                        result = Math.atan(((v*v) - sqrt) / (g*x));
-                    } else {
-                        result = Math.atan(((v*v) + sqrt) / (g*x));
+            }
+
+            return result;
+        };
+
+        return System.extend({
+            addedToWorld: function(world) {
+                this._super(world);
+
+                world.entityAdded('projectile').add(function(entity) {
+                    var projectileComponent = entity.getComponent('projectile');
+
+                    projectileComponent._canDeliverEffect = true;
+                    projectileComponent._owner = world.scene.getObjectByProperty('uuid', projectileComponent.ownerUuid);
+
+                    if (!projectileComponent._owner) {
+                        $log.error('Error fetching projectile owner from uuid! ', projectileComponent);
                     }
 
-                }
+                    var alteredTargetPosition = projectileComponent.targetPosition.clone();
+                    alteredTargetPosition.y += 0.2;
 
-                return result;
-            };
+                    var launchVelocity = alteredTargetPosition.clone().sub(entity.position);
+                    launchVelocity.normalize();
 
-            return System.extend({
-                addedToWorld: function(world) {
-                    this._super(world);
+                    var perpVec = launchVelocity.clone().cross(new THREE.Vector3(0, 1, 0));
 
-                    world.entityAdded('projectile').add(function(entity) {
-                        var projectileComponent = entity.getComponent('projectile');
+                    // debug.drawVector(perpVec, entity.position, 0x00FF00, true);
 
-                        projectileComponent._canDeliverEffect = true;
-                        projectileComponent._owner = world.scene.getObjectByProperty('uuid',
-                            projectileComponent.ownerUuid)
+                    var angle = calculateFiringAngle(entity.position, alteredTargetPosition, projectileComponent.speed, false);
 
-                        if (!projectileComponent._owner) {
-                            $log.error('Error fetching projectile owner from uuid! ', projectileComponent);
-                        }
+                    launchVelocity.multiplyScalar(projectileComponent.speed);
+                    launchVelocity.y = 0;
 
-                        var alteredTargetPosition = projectileComponent.targetPosition.clone();
-                        alteredTargetPosition.y += 0.2;
+                    var quat = new THREE.Quaternion().setFromAxisAngle(perpVec, angle);
+                    launchVelocity.applyQuaternion(quat);
 
-                        var launchVelocity = alteredTargetPosition.clone().sub(entity.position);
-                        launchVelocity.normalize();
+                    // debug.drawVector(launchVelocity, entity.position, 0xFF0000, true);
 
-                        var perpVec = launchVelocity.clone().cross(new THREE.Vector3(0, 1, 0));
+                    var rigidBodyComponent = entity.getComponent('rigidBody');
 
-                        // debug.drawVector(perpVec, entity.position, 0x00FF00, true);
+                    entity.lookAt(entity.position.clone().add(launchVelocity));
 
-                        var angle = calculateFiringAngle(entity.position, alteredTargetPosition, projectileComponent.speed, false);
+                    if (rigidBodyComponent) {
+                        rigidBodyComponent.loadPromise.then(function() {
+                            var vec = rigidBodyComponent.getBulletVec(launchVelocity);
+                            rigidBodyComponent.rigidBody.setLinearVelocity(vec);
+                        });
+                    }
 
-                        launchVelocity.multiplyScalar(projectileComponent.speed);
-                        launchVelocity.y = 0;
+                    // Make sure to remove it after a while
+                    setTimeout(function() {
+                        world.removeEntity(entity);
+                    }, 5000);
 
-                        var quat = new THREE.Quaternion().setFromAxisAngle(perpVec, angle);
-                        launchVelocity.applyQuaternion( quat );
+                    var collisionReporterComponent = entity.getComponent('collisionReporter');
+                    if (collisionReporterComponent) {
+                        collisionReporterComponent.collisionStart.add(function() {
+                            entity.removeComponent('collisionReporter');
+                            entity.removeComponent('rigidBody');
+                            projectileComponent._canDeliverEffect = false;
+                        });
+                    }
 
-                        // debug.drawVector(launchVelocity, entity.position, 0xFF0000, true);
+                });
+            },
+            update: function() {
+                var me = this;
 
-                        var rigidBodyComponent = entity.getComponent('rigidBody');
+                var projectileEntities = me.world.getEntities('projectile');
 
-                        entity.lookAt(entity.position.clone().add(launchVelocity));
+                projectileEntities.forEach(function(entity) {
+                    var rigidBodyComponent = entity.getComponent('rigidBody');
 
-                        if (rigidBodyComponent) {
-                            rigidBodyComponent.loadPromise.then(function () {
-                                var vec = rigidBodyComponent.getBulletVec(launchVelocity);
-                                rigidBodyComponent.rigidBody.setLinearVelocity(vec);
-                            })
-                        }
+                    if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
+                        var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity().toTHREEVector3();
+                        currentVel.normalize();
+                        entity.lookAt(entity.position.clone().add(currentVel));
+                    }
 
-                        // Make sure to remove it after a while
-                        setTimeout(function () {
-                            world.removeEntity(entity);
-                        }, 5000);
+                    var projectileComponent = entity.getComponent('projectile');
 
-                        var collisionReporterComponent = entity.getComponent('collisionReporter');
-                        if (collisionReporterComponent) {
-                            collisionReporterComponent.collisionStart.add(function (result) {
-                                entity.removeComponent('collisionReporter');
-                                entity.removeComponent('rigidBody');
-                                projectileComponent._canDeliverEffect = false;
+                    // Check for entities that can be hit with this projectile
+                    // apply the effect (e.g. damage but can also be beneficial)
+                    // and flag that we did so
+                    if (projectileComponent && projectileComponent._canDeliverEffect) {
+                        if (projectileComponent.type === 'damage') {
+                            var damageableEntities = me.world.getEntities('damageable');
+
+                            damageableEntities.forEach(function(damageableEntity) {
+                                if (damageableEntity !== projectileComponent._owner &&
+                                    damageableEntity.position.inRangeOf(entity.position, 0.5)) {
+
+                                    var damageableComponent = damageableEntity.getComponent('damageable');
+                                    damageableComponent.sources.push({
+                                        type: 'damage',
+                                        damage: projectileComponent.attribute1
+                                    });
+
+                                    projectileComponent._canDeliverEffect = false;
+                                }
                             });
                         }
+                    }
+                });
 
-                    });
-                },
-                update: function(dTime) {
-                    var me = this;
-
-                    var projectileEntities = me.world.getEntities('projectile');
-
-                    projectileEntities.forEach(function(entity) {
-                        var rigidBodyComponent = entity.getComponent('rigidBody');
-
-                        if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
-                            var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity().toTHREEVector3();
-                            currentVel.normalize();
-                            entity.lookAt(entity.position.clone().add(currentVel));
-                        }
-
-                        var projectileComponent = entity.getComponent('projectile');
-
-                        // Check for entities that can be hit with this projectile
-                        // apply the effect (e.g. damage but can also be beneficial)
-                        // and flag that we did so
-                        if (projectileComponent && projectileComponent._canDeliverEffect) {
-                            if (projectileComponent.type === 'damage') {
-                                var damageableEntities = me.world.getEntities('damageable');
-
-                                damageableEntities.forEach(function(damageableEntity) {
-                                    if (damageableEntity !== projectileComponent._owner &&
-                                        damageableEntity.position.inRangeOf(entity.position, 0.5)) {
-
-                                        var damageableComponent = damageableEntity.getComponent('damageable');
-                                        damageableComponent.sources.push({
-                                            type: 'damage',
-                                            damage: projectileComponent.attribute1
-                                        });
-
-                                        projectileComponent._canDeliverEffect = false;
-                                    }
-                                });
-                            }
-                        }
-                    });
-
-                }
-            });
-        }
-    );
+            }
+        });
+    });

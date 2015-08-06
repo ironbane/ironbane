@@ -55,6 +55,29 @@ angular
                         me.activeCollisions.splice(me.activeCollisions.indexOf(contact), 1);
                     });
                 }
+
+                // this might belong somewhere else...
+                var input = this.world.getSystem('input');
+
+                function primaryAttackHandler() {
+                    $log.debug('primaryAttackHandler');
+                    var mouseHelper = entity.getComponent('mouseHelper');
+                    if (mouseHelper) {
+                        var fighter = entity.getComponent('fighter');
+                        if (fighter) {
+
+                            var toTarget = mouseHelper.target.clone().sub(entity.position);
+
+                            if (toTarget.lengthSq() > mouseHelper.range * mouseHelper.range) {
+                                toTarget.normalize().multiplyScalar(mouseHelper.range);
+                            }
+
+                            fighter.attack(entity.position.clone().add(toTarget));
+                        }
+                    }
+                }
+
+                input.register('primaryAttack', primaryAttackHandler);
             };
 
             CharacterControllerScript.prototype.update = function(dt, elapsed, timestamp) {
@@ -125,7 +148,7 @@ angular
                                 }
                             }
                         }
-                    })
+                    });
                 }
 
                 if (this.entity.metadata.cheats && this.entity.metadata.cheats.jump) {
@@ -152,23 +175,6 @@ angular
                 // right now just use right stick as jump
                 if (rightStick) {
                     this.jump = true;
-                }
-
-                if (input.mouse.getButton(0)) {
-                    var mouseHelper = this.entity.getComponent('mouseHelper');
-                    if (mouseHelper) {
-                        var fighter = this.entity.getComponent('fighter');
-                        if (fighter) {
-
-                            var toTarget = mouseHelper.target.clone().sub(this.entity.position);
-
-                            if (toTarget.lengthSq() > mouseHelper.range * mouseHelper.range) {
-                                toTarget.normalize().multiplyScalar(mouseHelper.range);
-                            }
-
-                            fighter.attack(this.entity.position.clone().add(toTarget));
-                        }
-                    }
                 }
 
                 // keyboard controls

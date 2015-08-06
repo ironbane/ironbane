@@ -72,7 +72,6 @@ angular
                             });
                     };
 
-
                     $meteor.autorun($scope, function() {
                         var user = Meteor.user();
 
@@ -80,8 +79,7 @@ angular
                             GlobalSound.setMusicVolume(1);
                             GlobalSound.setSoundVolume(1);
                             // GlobalSound.unmute();
-                        }
-                        else {
+                        } else {
                             GlobalSound.setMusicVolume(0);
                             GlobalSound.setSoundVolume(0);
                             // GlobalSound.mute();
@@ -89,11 +87,11 @@ angular
                     });
 
 
-                    $scope.toggleSound = function () {
+                    $scope.toggleSound = function() {
                         var user = Meteor.user();
 
                         $meteor.call('updateProfile', 'enableSound', !user.profile.enableSound);
-                    }
+                    };
 
                     // TODO: we should really reset rootWorld instead
                     function clearOldLevel() {
@@ -125,8 +123,8 @@ angular
                         $scope.levelLoaded = false;
 
                         $rootWorld.load(newLevel)
-                            .then(function () {
-                                $timeout(function () {
+                            .then(function() {
+                                $timeout(function() {
                                     $scope.levelLoaded = true;
                                 });
                             })
@@ -151,8 +149,8 @@ angular
                     document.body.appendChild($rootWorld.renderer.domElement);
                     $rootWorld.renderer.setClearColor(0xd3fff8);
 
-			        $rootWorld.renderer.shadowMapEnabled = false;
-			        $rootWorld.renderer.shadowMapType = THREE.PCFShadowMap;
+                    $rootWorld.renderer.shadowMapEnabled = false;
+                    $rootWorld.renderer.shadowMapType = THREE.PCFShadowMap;
 
                     $window.addEventListener('resize', function() {
                         $rootWorld.renderer.setSize($window.innerWidth, $window.innerHeight);
