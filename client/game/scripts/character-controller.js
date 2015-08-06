@@ -60,7 +60,6 @@ angular
                 var input = this.world.getSystem('input');
 
                 function primaryAttackHandler() {
-                    $log.debug('primaryAttackHandler');
                     var mouseHelper = entity.getComponent('mouseHelper');
                     if (mouseHelper) {
                         var fighter = entity.getComponent('fighter');

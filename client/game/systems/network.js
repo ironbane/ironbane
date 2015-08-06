@@ -319,7 +319,7 @@ angular
                     });
 
                     if (Object.keys(packet).length > 0) {
-                        $log.debug('sending new transforms ', packet);
+                        //$log.debug('sending new transforms ', packet);
                         this._stream.emit('transforms', packet);
                     }
                 }
