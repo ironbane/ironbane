@@ -202,6 +202,12 @@ angular
                         }
                     });
 
+                    world.subscribe('combat:primaryAttack', function(entity, targetVector) {
+                        if (entity.hasComponent('netSend') && me._stream) {
+                            me._stream.emit('combat:primaryAttack', {entityId: entity.uuid, targetVector: targetVector});
+                        }
+                    });
+
                     // Set up streams and make sure it reruns everytime we change levels or change user
                     // $meteor.autorun is linked to $scope which we don't have here,
                     // so Meteor.autorun is the only way AFAIK
@@ -269,6 +275,16 @@ angular
 
                             if (entity) {
                                 inv.unequipItem(entity, data.fromSlot);
+                            }
+                        });
+
+                        // this one we'll just pass through
+                        me._stream.on('combat:primaryAttack', function(data) {
+                            var netEnts = world.getEntities('netRecv'),
+                                entity = _.findWhere(netEnts, {uuid: data.entityId});
+
+                            if (entity) {
+                                world.publish('combat:primaryAttack', entity, data.targetVector);
                             }
                         });
 

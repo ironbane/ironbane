@@ -118,6 +118,12 @@ angular
                         }
                     });
 
+                    // currently the server does not attack and check vector
+                    this._stream.on('combat:primaryAttack', function(data) {
+                        // just send it back out to everyone
+                        self._stream.emit('combat:primaryAttack', data);
+                    });
+
                     world.entityAdded('netSend').add(onNetSendEntityAdded.bind(this));
                     world.entityRemoved('netSend').add(onNetSendEntityRemoved.bind(this));
 

@@ -60,19 +60,21 @@ angular
                 var input = this.world.getSystem('input');
 
                 function primaryAttackHandler() {
-                    var mouseHelper = entity.getComponent('mouseHelper');
-                    if (mouseHelper) {
-                        var fighter = entity.getComponent('fighter');
-                        if (fighter) {
+                    var targetVector,
+                        mouseHelper = entity.getComponent('mouseHelper');
 
-                            var toTarget = mouseHelper.target.clone().sub(entity.position);
+                    if (mouseHelper) { // TODO: if no mouseHelper, shoot straight from direction facing
+                        var toTarget = mouseHelper.target.clone().sub(entity.position);
 
-                            if (toTarget.lengthSq() > mouseHelper.range * mouseHelper.range) {
-                                toTarget.normalize().multiplyScalar(mouseHelper.range);
-                            }
-
-                            fighter.attack(entity.position.clone().add(toTarget));
+                        if (toTarget.lengthSq() > mouseHelper.range * mouseHelper.range) {
+                            toTarget.normalize().multiplyScalar(mouseHelper.range);
                         }
+
+                        targetVector = entity.position.clone().add(toTarget);
+                    }
+
+                    if (targetVector) {
+                        world.publish('combat:primaryAttack', entity, targetVector);
                     }
                 }
 
