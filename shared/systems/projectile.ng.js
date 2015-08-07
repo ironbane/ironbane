@@ -134,6 +134,7 @@ angular
 
                                     var damageableComponent = damageableEntity.getComponent('damageable');
                                     damageableComponent.sources.push({
+                                        sourceId: projectileComponent._owner.uuid,
                                         type: 'damage',
                                         damage: projectileComponent.attribute1
                                     });
