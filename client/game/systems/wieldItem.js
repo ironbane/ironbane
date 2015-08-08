@@ -43,6 +43,7 @@ angular
                         mesh.geometry.buffersNeedUpdate = true;
                         mesh.geometry.uvsNeedUpdate = true;
                         mesh.material.transparent = true;
+                        mesh.renderOrder = 1;
                         mesh.visible = true;
                     });
 

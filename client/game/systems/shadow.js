@@ -39,6 +39,7 @@ angular
                                 shadow.geometry.buffersNeedUpdate = true;
                                 shadow.geometry.uvsNeedUpdate = true;
                                 shadow.material.transparent = true;
+                                shadow.renderOrder = 1;
                             });
 
                         shadowData.shadow = shadow;

@@ -19,7 +19,8 @@ angular
                     numberOfSpritesH: 1,
                     numberOfSpritesV: 1,
                     mirror: false,
-                    setVisibleOnLoad: true
+                    setVisibleOnLoad: true,
+                    renderOrder: 1
                 }
             });
         }
