@@ -59,6 +59,29 @@ angular
                 itemPivot.add(mesh);
                 item.add(itemPivot);
 
+                // // Helpers (for debugging)
+                // var geometry = new THREE.SphereGeometry(0.03, 32, 32);
+                // var material1 = new THREE.MeshBasicMaterial({
+                //     color: 0xffff00
+                // });
+                // var material2 = new THREE.MeshBasicMaterial({
+                //     color: 0xff0000
+                // });
+                // var material3 = new THREE.MeshBasicMaterial({
+                //     color: 0x00ff00
+                // });
+                // var sphere1 = new THREE.Mesh(geometry, material1);
+                // var sphere2 = new THREE.Mesh(geometry, material2);
+                // var sphere3 = new THREE.Mesh(geometry, material3);
+                // item.add(sphere1);
+                // itemPivot.add(sphere2);
+                // mesh.add(sphere3);
+
+                // item.renderOrder = 2;
+                // itemPivot.renderOrder = 2;
+                // mesh.renderOrder = 2;
+
+
                 return item;
             };
 
@@ -84,203 +107,164 @@ angular
                 }
             };
 
-            var animateHand = function(world, entity, item, dt, perceivedSpeed, direction, walkIndex, isLeftHand) {
+            var animateHand = function(world, entity, item, dt, perceivedSpeed, direction, walkIndex, isLeftHand, wieldItemComponent) {
                 var dtr = THREE.Math.degToRad,
                     time;
 
                 var weaponSwingAmount = new THREE.Vector3(Math.PI / 2, 0, 0);
 
-                item.walkSwingTimer += perceivedSpeed * 0.02;
+                item.walkSwingTimer += perceivedSpeed * 0.04;
 
                 // Reset everything first
                 var wo = item;
                 var wp = wo.children[0];
                 var wi = wp.children[0];
 
+                wo.rotation.set(0, 0, 0);
+                wo.scale.set(1, 1, 1);
+
                 wp.position.set(0, 0, 0);
                 wp.rotation.set(0, 0, 0);
+                wp.scale.set(1, 1, 1);
 
                 wi.position.set(0, 0, 0);
                 wi.rotation.set(0, 0, 0);
-                wi.scale.set(0.7, 0.7, 0.7);
+                wi.scale.set(0.55, 0.55, 0.55);
 
-                if (direction === 0) {
-                    wi.rotation.y += dtr(200);
+                wi.renderOrder = 1;
 
-                    wp.position.setX(0.38);
-                    wp.position.setY(-0.2);
-                    wp.position.setZ(-0.75);
-
-                    wp.scale.setX(1.0);
-
-                    wi.position.setX(0.25);
-                    wi.position.setY(0.25);
-                    wi.position.setZ(0);
-
-                    time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
-
-                    wp.rotation.z += dtr(30);
-                    wp.rotation.z += dtr(Math.cos(item.walkSwingTimer) * 10);
-
-
-                    weaponSwingAmount.x = dtr(-120);
-                    // wi.rotation.y += dtr(45);
-                    // wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
-                    // wi.rotateZ(Math.PI/4);
+                if (wieldItemComponent.type === 'weapon') {
+                    wi.position.x = 0.15;
+                    wi.position.y = 0.15;
                 }
 
-                if (direction === 1) {
-                    wi.rotation.y += dtr(180);
+                if (direction === 0 || direction === 4) {
+                    wp.position.x = 0.3;
+                    wp.position.y = -0.24;
+                    wp.position.z = -0.01;
+                    wi.renderOrder = 0.5;
 
-                    wp.position.setX(0.22 + walkIndex * 0.04);
-                    wp.position.setY(-0.25);
-                    wp.position.setZ(-0.1);
-
-                    wp.scale.setX(0.5);
-
-                    wi.position.setX(0.35);
-                    wi.position.setY(0.25);
-                    wi.position.setZ(0);
-
-                    time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+                    if (wieldItemComponent.type === 'weapon') {
+                        wp.position.z -= 0.15;
+                        wi.scale.x *= -1;
+                    }
 
                     wp.rotation.z += dtr(Math.cos(item.walkSwingTimer) * 10);
 
-                    weaponSwingAmount.z = -weaponSwingAmount.x;
-                    weaponSwingAmount.x = 0;
+                    weaponSwingAmount.x *= -1;
+
+                    if (isLeftHand) {
+                        wo.scale.x *= -1;
+                    }
+
+                    if (direction === 4) {
+                        wp.position.z *= -1;
+                        wi.renderOrder = 1.5;
+                        wo.scale.x *= -1;
+                    }
                 }
 
-                if (direction === 2) {
-                    wi.rotation.y += dtr(180);
+                if (direction === 1 || direction === 7) {
+                    wi.scale.x *= -1;
 
-                    wp.position.setX(-0.1 + walkIndex * 0.1);
-                    wp.position.setY(-0.25);
-                    wp.position.setZ(0.2);
+                    var switchHand = direction === 7;
+                    if (isLeftHand) {
+                        switchHand = !switchHand;
+                    }
 
-                    wp.scale.setX(0.8);
+                    wp.position.x = 0.25 + -walkIndex * 0.04;
+                    wp.position.y = -0.18 + -walkIndex * 0.04;
+                    wp.position.z = -0.01;
 
-                    wi.position.setX(0.25);
-                    wi.position.setY(0.25);
-                    wi.position.setZ(0);
-
-                    time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+                    if (switchHand) {
+                        wp.position.z -= 0.01;
+                        wi.renderOrder = 0.8;
+                    } else {
+                        wi.renderOrder = 0.9;
+                    }
 
                     wp.rotation.z += dtr(Math.cos(item.walkSwingTimer) * 10);
 
                     weaponSwingAmount.z = -weaponSwingAmount.x;
                     weaponSwingAmount.x = 0;
+
+                    if (direction === 7) {
+                        wo.scale.x *= -1;
+                    }
+
+                    if (switchHand) {
+                        wp.position.x -= 0.3;
+                    }
                 }
 
-                if (direction === 3) {
+                if (direction === 2 || direction === 6) {
                     wi.rotation.y += dtr(180);
 
-                    wp.position.setX(-0.1 - walkIndex * 0.1);
-                    wp.position.setY(-0.25);
-                    wp.position.setZ(0.2);
+                    var switchHand = direction === 6;
+                    if (isLeftHand) {
+                        switchHand = !switchHand;
+                    }
 
-                    wp.scale.setX(0.8);
+                    if (switchHand) {
+                        wp.position.x = 0.1 + walkIndex * -0.1;
+                    } else {
+                        wp.position.x = -0.2 + walkIndex * 0.1;
+                    }
+                    wp.position.y = -0.25;
+                    wp.position.z = 0.05;
 
-                    wi.position.setX(0.25);
-                    wi.position.setY(0.25);
-                    wi.position.setZ(0);
+                    if (switchHand) {
+                        wi.renderOrder = 0.5;
+                        wp.position.z = -0.05;
+                    } else {
+                        wi.renderOrder = 1.5;
+                    }
 
-                    time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+                    if (direction === 6) {
+                        wo.scale.x *= -1;
+                    }
 
                     wp.rotation.z += dtr(Math.cos(item.walkSwingTimer) * 10);
 
                     weaponSwingAmount.z = -weaponSwingAmount.x;
                     weaponSwingAmount.x = 0;
+
+
                 }
 
-                if (direction === 4) {
-                    wi.rotation.y += dtr(180);
+                if (direction === 3 || direction === 5) {
+                    wi.scale.x *= -1;
 
-                    wp.position.setX(-0.3);
-                    wp.position.setY(-0.25);
-                    wp.position.setZ(0.2);
+                    wp.position.x = 0.25 - walkIndex * 0.04;
+                    wp.position.y = -0.24 + walkIndex * 0.04;
+                    wp.position.z = 0.05;
+                    wi.renderOrder = 1;
 
-                    wp.scale.setX(-0.5);
+                    if (isLeftHand) {
+                        wp.position.z += 0.05;
+                        wi.renderOrder = 1.4;
+                    }
 
-                    wi.position.setX(0.25);
-                    wi.position.setY(0.25);
-                    wi.position.setZ(0);
-
-                    time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
+                    wi.renderOrder = 1.5;
 
                     wp.rotation.z += dtr(Math.cos(item.walkSwingTimer) * 10);
 
-                    // wi.rotation.y += dtr(45);
-                    // wp.rotation.z += dtr(((new Date()).getTime() * 0.1)% 360);
-                    // wi.rotateZ(Math.PI/4);
-                }
-
-                if (direction === 5) {
-                    wi.rotation.y += dtr(180);
-
-                    wp.position.setX(-0.2 - walkIndex * 0.05);
-                    wp.position.setY(-0.25);
-                    wp.position.setZ(0.2);
-
-                    wp.scale.setX(-0.8);
-
-                    wi.position.setX(0.25);
-                    wi.position.setY(0.25);
-                    wi.position.setZ(0);
-
-                    time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
-
-                    wp.rotation.z += dtr(Math.cos(item.walkSwingTimer) * 10);
-
-                    weaponSwingAmount.z = weaponSwingAmount.x;
+                    weaponSwingAmount.z = -weaponSwingAmount.x;
                     weaponSwingAmount.x = 0;
-                }
 
-                if (direction === 6) {
-                    wi.rotation.y += dtr(180);
+                    if (direction === 5) {
+                        wo.scale.x *= -1;
+                    }
 
-                    wp.position.setX(-0.1 - walkIndex * 0.05);
-                    wp.position.setY(-0.25);
-                    wp.position.setZ(-0.5);
-
-                    wp.scale.setX(-1);
-
-                    wi.position.setX(0.25);
-                    wi.position.setY(0.25);
-                    wi.position.setZ(0);
-
-                    time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
-
-                    wp.rotation.x -= dtr(30);
-                    wp.rotation.x += dtr(Math.cos(item.walkSwingTimer) * 10);
-
-                    weaponSwingAmount.z = weaponSwingAmount.x;
-                    weaponSwingAmount.x = 0;
-                }
-
-                if (direction === 7) {
-                    wi.rotation.y += dtr(180);
-
-                    wp.position.setX(0.2 - walkIndex * 0.05);
-                    wp.position.setY(-0.25);
-                    wp.position.setZ(-0.5);
-
-                    wp.scale.setX(-0.8);
-
-                    wi.position.setX(0.25);
-                    wi.position.setY(0.25);
-                    wi.position.setZ(0);
-
-                    time = new Date().getTime() * 0.005 * ((perceivedSpeed / 20));
-
-                    wp.rotation.z += dtr(Math.cos(item.walkSwingTimer) * 10);
-
-                    weaponSwingAmount.z = weaponSwingAmount.x;
-                    weaponSwingAmount.x = 0;
+                    if (isLeftHand) {
+                        wp.position.x -= 0.35;
+                    }
                 }
 
                 if (item.attackSwingTimer > 0) {
                     item.attackSwingTimer -= dt;
                 }
+
                 if (item.attackSwingTimer <= 0 &&
                     item.attackSwingingForward) {
                     item.attackSwingingForward = false;
@@ -289,6 +273,7 @@ angular
 
                 var swingVector = new THREE.Vector3();
                 var lerpAmount = (item.attackSwingTimer / ATTACK_SWING_TIME);
+                lerpAmount = Math.max(lerpAmount, 0);
                 if (item.attackSwingingForward) {
                     swingVector.lerp(weaponSwingAmount, (1.0 - lerpAmount));
                 } else {
@@ -299,27 +284,11 @@ angular
                 wp.rotation.y += swingVector.y;
                 wp.rotation.z += swingVector.z;
 
-                wp.rotation.x += Math.PI / 4;
+                wo.position.copy(entity.position);
 
-                debug.watch('weaponAttackSwingTimer', item.attackSwingTimer);
-
-                // TODO this logic is copied from the look-at-camera script
-                // this should probably me merged somehow
-                var entitiesWithCamera = world.getEntities('camera');
-                if (entitiesWithCamera.length) {
-                    var activeCamera = entitiesWithCamera[0].getComponent('camera')._camera;
-
-                    wo.position.copy(entity.position);
-
-                    if (isLeftHand) {
-                        // this is not really anywhere near where it should go... :)
-                        wo.position.x += 1;
-                    }
-
-                    var camWorldPos = new THREE.Vector3();
-                    camWorldPos.setFromMatrixPosition(activeCamera.matrixWorld);
-
-                    wo.lookAt(camWorldPos, wp.position, wp.up);
+                var quadComponent = entity.getComponent('quad');
+                if (quadComponent) {
+                    wo.rotation.copy(quadComponent._quad.rotation);
                 }
             };
 
@@ -419,12 +388,12 @@ angular
 
                         if (wieldItemComponent._rItem) {
                             isLeftHand = false;
-                            animateHand(world, entity, wieldItemComponent._rItem, dt, perceivedSpeed, walkAnimationComponent.dirIndex, walkAnimationComponent.walkIndex, isLeftHand);
+                            animateHand(world, entity, wieldItemComponent._rItem, dt, perceivedSpeed, walkAnimationComponent.dirIndex, walkAnimationComponent.walkIndex, isLeftHand, wieldItemComponent.rhand);
                         }
 
                         if (wieldItemComponent._lItem) {
                             isLeftHand = true;
-                            animateHand(world, entity, wieldItemComponent._lItem, dt, perceivedSpeed, walkAnimationComponent.dirIndex, walkAnimationComponent.walkIndex, isLeftHand);
+                            animateHand(world, entity, wieldItemComponent._lItem, dt, perceivedSpeed, walkAnimationComponent.dirIndex, walkAnimationComponent.walkIndex, isLeftHand, wieldItemComponent.lhand);
                         }
 
                     });
