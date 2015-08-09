@@ -21,6 +21,7 @@ angular.module('components', [
     'components.octree',
     'components.particleEmitter',
     'components.persisted',
+    'components.pickup',
     'components.player',
     'components.primitive',
     'components.proctree',

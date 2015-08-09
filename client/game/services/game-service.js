@@ -11,7 +11,8 @@ angular
         'systems.damage',
         'systems.mesh',
         'systems.projectile',
-        'systems.steering'
+        'systems.steering',
+        'systems.pickup'
     ])
     .service('GameService', [
         '$injector',
@@ -40,6 +41,7 @@ angular
                 'Sound',
                 'Script',
                 'ProcTree',
+                'Pickup',
                 'Sprite',
                 'Light',
                 'Helper',
