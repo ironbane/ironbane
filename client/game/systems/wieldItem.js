@@ -270,6 +270,21 @@ angular
                     }
                 }
 
+
+                var mouseHelper = entity.getComponent('mouseHelper');
+                if (mouseHelper) {
+                    var toTarget = mouseHelper.target.clone().sub(entity.position).setY(0).normalize();
+
+                    toTarget.applyQuaternion(entity.quaternion.clone().inverse());
+                    var dot = (Math.atan2(toTarget.z, toTarget.x));
+
+                    if (wieldItemComponent.type === 'weapon') {
+                        if (direction === 0) {
+                            wp.rotation.z += dtr(-45) - dot;
+                        }
+                    }
+                }
+
                 if (item.attackSwingTimer > 0) {
                     item.attackSwingTimer -= dt;
                 }
