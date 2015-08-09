@@ -235,14 +235,17 @@ angular
                 if (direction === 3 || direction === 5) {
                     wi.scale.x *= -1;
 
+                    var switchHand = direction === 3;
+                    if (isLeftHand) {
+                        switchHand = !switchHand;
+                    }
+
                     wp.position.x = 0.25 - walkIndex * 0.04;
                     wp.position.y = -0.24 + walkIndex * 0.04;
                     wp.position.z = 0.05;
-                    wi.renderOrder = 1;
 
-                    if (isLeftHand) {
+                    if (switchHand) {
                         wp.position.z += 0.05;
-                        wi.renderOrder = 1.4;
                     }
 
                     wi.renderOrder = 1.5;
@@ -256,7 +259,13 @@ angular
                         wo.scale.x *= -1;
                     }
 
-                    if (isLeftHand) {
+                    if (wieldItemComponent.type === 'shield' && direction === 3) {
+                        wp.position.x = 0.15 + walkIndex * 0.04;
+                        wp.position.z -= 0.15;
+                        wi.renderOrder = 0.5;
+                    }
+
+                    if (switchHand) {
                         wp.position.x -= 0.35;
                     }
                 }
