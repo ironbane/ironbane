@@ -135,6 +135,7 @@ angular
                     dropped;
 
                 function buildPickup(item) {
+                    var image = item.invImage ? item.invImage : item.image;
                     var pickup = EntityBuilder.build('pickup', {
                         components: {
                             quad: {
@@ -144,8 +145,8 @@ angular
                                 numberOfSpritesV: 128,
                                 width: 0.5,
                                 height: 0.5,
-                                indexH: IbUtils.spriteSheetIdToXY(item.image).h,
-                                indexV: IbUtils.spriteSheetIdToXY(item.image).v
+                                indexH: IbUtils.spriteSheetIdToXY(image).h,
+                                indexV: IbUtils.spriteSheetIdToXY(image).v
                             },
                             pickup: {
                                 item: item
