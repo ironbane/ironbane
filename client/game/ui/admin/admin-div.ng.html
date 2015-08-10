@@ -2,6 +2,7 @@
     <div ng-if="!mode">
         <h1>Admin panel</h1>
         <button class="ibutton" click-sound ng-click="$parent.mode = 'itemids'" style="width:145px;">Item IDs</button>
+        <button class="ibutton" click-sound ng-click="$parent.mode = 'armorids'" style="width:145px;">Armor IDs</button>
     </div>
     <div ng-if="mode">
         <button class="ibutton" click-sound ng-click="$parent.mode = ''" style="width:145px;">Back</button>
@@ -11,5 +12,17 @@
         <p>This page allows you to get ID's from the items spritesheet. Simply click on items to view their corresponding ID.</p>
         <h2 class="itemid">{{ $parent.imageId }}</h2>
         <img src="images/spritesheets/items.png" class="spritesheet" ng-click="$parent.getImageID($event)">
+    </div>
+    <div ng-if="mode == 'armorids'" class="armorids">
+        <h1>Armor IDs</h1>
+        <p>This page allows you to view Image ID's for the various armor types.</p>
+        <h2 class="itemid">{{ $parent.imageId }}</h2>
+        <div ng-repeat="(name, list) in armorImages" style="display:inline-block">
+            <h1>{{ name }}</h1>
+            <div ng-repeat="img in list" style="display:inline-block;padding-bottom:30px;">
+                <div style="position:absolute">{{ img }}</div>
+                <img ng-src="images/characters/{{ name }}/{{ img }}.png" ng-style="{ 'width': name == 'head' ? '32px' : '96px'}">
+            </div>
+        </div>
     </div>
 </div>
