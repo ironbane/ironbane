@@ -24,7 +24,7 @@ angular
             // Set the team to be admins
             var adminEmails = [
                 'bsparks42@gmail.com',
-                'Profils11@web.de',
+                'Profils96@web.de',
                 'ilovemusic628496@gmail.com',
                 'thaiberius.code@gmail.com',
                 'ayillon@gmail.com',
