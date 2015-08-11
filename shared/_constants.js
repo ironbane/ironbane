@@ -2,7 +2,7 @@ angular
     .module('global.constants', [])
     .constant('IB_CONSTANTS', {
         serverAnnouncementsTimeout: 300,
-        GAME_VERSION: '0.4.0 pre-alpha',
+        GAME_VERSION: '0.5 alpha',
         world: {
             mainMenuLevel: 'ravenwood',
             startLevel: 'ravenwood',
@@ -35,7 +35,7 @@ angular
             minCharNameLength: 2,
             maxCharNameLength: 15
         },
-        isDev: Meteor.isClient ? (window.location.hostname === 'localhost' || window.location.hostname === 'dev.ironbane.com') : (process.env.ROOT_URL.indexOf('localhost') !== -1)
+        isDev: Meteor.isClient ? (window.location.hostname !== 'play.ironbane.com') : (process.env.VIRTUAL_HOST !== 'play.ironbane.com')
     })
     .run([
         'IB_CONSTANTS',
