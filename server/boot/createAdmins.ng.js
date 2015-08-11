@@ -2,9 +2,10 @@ angular
     .module('server.boot.createAdmins', [
         'models',
         'global.constants',
-        'server.services.character'
+        'server.services.character',
+        'server.boot.adminEmailList'
     ])
-    .run(function(IB_CONSTANTS, AccountsCollection, RolesCollection, ZonesCollection, CharacterService, InventoryCollection) {
+    .run(function(IB_CONSTANTS, AccountsCollection, RolesCollection, ZonesCollection, CharacterService, InventoryCollection, ADMIN_EMAIL_LIST) {
             'use strict';
 
             if (IB_CONSTANTS.isDev) {
@@ -22,17 +23,7 @@ angular
             }
 
             // Set the team to be admins
-            var adminEmails = [
-                'bsparks42@gmail.com',
-                'Profils96@web.de',
-                'ilovemusic628496@gmail.com',
-                'thaiberius.code@gmail.com',
-                'ayillon@gmail.com',
-                'nikke@ironbane.com',
-                'arthasthelichking@sbcglobal.net'
-            ];
-
-            adminEmails.forEach(function (email) {
+            ADMIN_EMAIL_LIST.forEach(function (email) {
                 var userId = Meteor.users.findOne({
                     'emails.address': email
                 });
