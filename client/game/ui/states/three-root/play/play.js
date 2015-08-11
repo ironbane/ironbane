@@ -31,6 +31,10 @@ angular
                 type: 'keyboard',
                 keys: ['F'],
                 check: 'down'
+            }, {
+                type: 'gamepad',
+                keys: ['XBOX360_A'],
+                check: 'down'
             }]);
 
             $stateProvider.state('three-root.play', {

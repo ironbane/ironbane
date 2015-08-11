@@ -203,7 +203,7 @@ angular
                     this.rotateRight = true;
                 }
 
-                if (input.keyboard.getKey(input.KEYS.SPACE)) {
+                if (input.keyboard.getKey(input.KEYS.SPACE) || input.gamepadMgr.pad1.justPressed(0)) {
                     this.jump = true;
                 }
 

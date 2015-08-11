@@ -5,7 +5,8 @@ angular
         'engine.input.keyboard',
         'engine.input.mouse',
         'engine.input.keys',
-        'engine.input.virtual-gamepad'
+        'engine.input.virtual-gamepad',
+        'engine.input.gamepadMgr'
     ])
     .provider('InputSystem', function() {
         'use strict';
@@ -29,7 +30,9 @@ angular
             'KEYS',
             'MOUSE_BUTTONS',
             'Signal',
-            function($log, System, Keyboard, Mouse, VirtualGamepad, KEYS, MOUSE_BUTTONS, Signal) {
+            'GamepadMgr',
+            'GAMEPAD',
+            function($log, System, Keyboard, Mouse, VirtualGamepad, KEYS, MOUSE_BUTTONS, Signal, GamepadMgr, GAMEPAD) {
                 var InputSystem = System.extend({
                     init: function() {
                         var sys = this;
@@ -42,6 +45,8 @@ angular
                         this.virtualGamepad = new VirtualGamepad();
                         this.virtualGamepad.draw();
 
+                        this.gamepadMgr = new GamepadMgr();
+
                         this.KEYS = KEYS;
 
                         // build signals for all action mappings
@@ -53,6 +58,8 @@ angular
                     },
                     update: function() {
                         var sys = this;
+
+                        this.gamepadMgr.update();
 
                         // check if action mapping conditions have been met
                         // if so, emit action event
@@ -74,6 +81,24 @@ angular
                                         sys.mouse.getButtonDown.bind(sys.mouse) : sys.mouse.getButton.bind(sys.mouse);
 
                                     if (testFn(MOUSE_BUTTONS[mapping.keys[0]])) {
+                                        sys.actions[action].emit();
+                                    }
+                                }
+
+                                if (mapping.type === 'gamepad') {
+                                    if (mapping.check === 'pressed') {
+                                        testFn = sys.gamepadMgr.pad1.justPressed(GAMEPAD[mapping.keys[0]]);
+                                    }
+
+                                    if (mapping.check === 'released') {
+                                        testFn = sys.gamepadMgr.pad1.justReleased(GAMEPAD[mapping.keys[0]]);
+                                    }
+
+                                    if (mapping.check === 'down') {
+                                        testFn = sys.gamepadMgr.pad1.isDown(GAMEPAD[mapping.keys[0]]);
+                                    }
+
+                                    if (testFn) {
                                         sys.actions[action].emit();
                                     }
                                 }
