@@ -2,7 +2,8 @@
     <div ng-if="!mode">
         <h1>Admin panel</h1>
         <button class="ibutton" click-sound ng-click="$parent.mode = 'itemids'" style="width:145px;">Item IDs</button>
-        <button class="ibutton" click-sound ng-click="$parent.mode = 'armorids'" style="width:145px;">Armor IDs</button>
+        <button class="ibutton" click-sound ng-click="$parent.mode = 'skinids'" style="width:145px;">Skin/Armor IDs</button>
+        <button class="ibutton" click-sound ng-click="$parent.mode = 'npcbuilder'" style="width:145px;">NPC Builder</button>
     </div>
     <div ng-if="mode">
         <button class="ibutton" click-sound ng-click="$parent.mode = ''" style="width:145px;">Back</button>
@@ -13,16 +14,67 @@
         <h2 class="itemid">{{ $parent.imageId }}</h2>
         <img src="images/spritesheets/items.png" class="spritesheet" ng-click="$parent.getImageID($event)">
     </div>
-    <div ng-if="mode == 'armorids'" class="armorids">
-        <h1>Armor IDs</h1>
-        <p>This page allows you to view Image ID's for the various armor types.</p>
+    <div ng-if="mode == 'skinids'" class="skinids">
+        <h1>Skin/Armor IDs</h1>
+        <p>This page allows you to view image ID's for the various skin and armor types.</p>
         <h2 class="itemid">{{ $parent.imageId }}</h2>
-        <div ng-repeat="(name, list) in armorImages" style="display:inline-block">
+        <div ng-repeat="(name, list) in charImages" style="display:inline-block">
             <h1>{{ name }}</h1>
             <div ng-repeat="img in list" style="display:inline-block;padding-bottom:30px;">
                 <div style="position:absolute">{{ img }}</div>
-                <img ng-src="images/characters/{{ name }}/{{ img }}.png" ng-style="{ 'width': name == 'head' ? '32px' : '96px'}">
+                <img ng-src="images/characters/{{ name }}/{{ img }}.png" ng-style="{ 'width': name == 'head' || name == 'hair' ? '32px' : '96px'}">
             </div>
         </div>
+    </div>
+    <div ng-if="mode == 'npcbuilder'" class="npcbuilder">
+        <h1>NPC Builder</h1>
+
+            <button click-sound ng-click="randomize()" class="ibutton btn-left" style="width: 200px">Randomize</button>
+
+            <div class="left">
+                <div class="left-cust">
+                    <div class="">Skin</div>
+                    <div>
+                        <button click-sound ng-click="prevskin()" class="ibutton btn-left">←</button>
+                        <button click-sound ng-click="nextskin()" class="ibutton btn-right">→</button>
+                    </div>
+                    <div class="">Hair</div>
+                    <div>
+                        <button click-sound ng-click="prevhair()" class="ibutton btn-left">←</button>
+                        <button click-sound ng-click="nexthair()" class="ibutton btn-right">→</button>
+                    </div>
+                    <div class="">Eyes</div>
+                    <div>
+                        <button click-sound ng-click="preveyes()" class="ibutton btn-left">←</button>
+                        <button click-sound ng-click="nexteyes()" class="ibutton btn-right">→</button>
+                    </div>
+                </div>
+
+                <div class="right-cust">
+                    <div class="">Body Armor</div>
+                    <div>
+                        <button click-sound ng-click="prevbody()" class="ibutton btn-left">←</button>
+                        <button click-sound ng-click="nextbody()" class="ibutton btn-right">→</button>
+                    </div>
+                    <div class="">Foot Gear</div>
+                    <div>
+                        <button click-sound ng-click="prevfeet()" class="ibutton btn-left">←</button>
+                        <button click-sound ng-click="nextfeet()" class="ibutton btn-right">→</button>
+                    </div>
+                    <div class="">Head Gear</div>
+                    <div>
+                        <button click-sound ng-click="prevhead()" class="ibutton btn-left">←</button>
+                        <button click-sound ng-click="nexthead()" class="ibutton btn-right">→</button>
+                    </div>
+                </div>
+                <textarea ng-model="charPrevData"></textarea>
+            </div>
+
+            <div class="right ib-ui-login-box">
+                <div class="char-preview" ng-style="{ 'background-image': 'url(' + charPrevImg + ')' }"></div>
+                <img ng-src="{{charPrevImg}}">
+            </div>
+
+
     </div>
 </div>
