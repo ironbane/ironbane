@@ -65,6 +65,8 @@ angular
                     if (options[part]) {
                         if (part === 'hair' && options.head && !options.alwaysRenderHair) {
                             // don't render hair when wearing a helmet
+                        } else if (options[part] === 0) {
+                            // 0 is transparent, so don't add it
                         } else {
                             images.push('images/characters/' + part + '/' + options[part] + '.png');
                         }
