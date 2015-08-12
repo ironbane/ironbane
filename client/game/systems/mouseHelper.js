@@ -41,17 +41,40 @@ angular
                         var mouseHelperData = entity.getComponent('mouseHelper');
                         world.scene.remove(mouseHelperData.mesh);
                     });
+
+                    // hacky for now
+                    sys._useMouse = true; // default to mouse, it *is* a mouseHelper after all
+                    var input = world.getSystem('input');
+                    if (input) {
+                        input.gamepadMgr.pad1.on('gamepad:axischange', function() {
+                            sys._useMouse = false;
+                        });
+                        input.gamepadMgr.pad1.on('gamepad:disconnect', function() {
+                            sys._useMouse = true;
+                        });
+                    }
+                    sys._mousePos = input.mouse.getPosition();
                 },
                 update: function(dt) {
                     if ($clientSettings.get('isAdminPanelOpen')) {
                         return;
                     }
 
+                    var sys = this;
+
                     var input = this.world.getSystem('input');
 
                     var mouseHelpers = this.world.getEntities('mouseHelper');
                     var entitiesWithOctree = this.world.getEntities('octree');
                     var entitiesWithCamera = this.world.getEntities('camera');
+
+                    // update the stored mouse pos (so I can fake it with the gamepad)
+                    if (this._useMouse) {
+                        this._mousePos = input.mouse.getPosition();
+                    } else {
+                        this._mousePos.x += input.gamepadMgr.pad1.axis(2) * dt;
+                        this._mousePos.y += input.gamepadMgr.pad1.axis(3) * dt * -1;
+                    }
 
                     mouseHelpers.forEach(function(mouseHelperEnt) {
                         var mouseHelperData = mouseHelperEnt.getComponent('mouseHelper');
@@ -65,7 +88,8 @@ angular
                                 var octree = octreeEntity.getComponent('octree').octreeResultsNearPlayer;
 
                                 if (activeCamera && octree) {
-                                    var mouse = input.mouse.getPosition();
+                                    //var mouse = input.mouse.getPosition();
+                                    var mouse = sys._mousePos;
                                     var vector = new THREE.Vector3(mouse.x, mouse.y, 1);
                                     vector.unproject( activeCamera );
 
