@@ -1,12 +1,16 @@
 angular
     .module('systems.inventory', [
-        'ces'
+        'ces',
+        'engine.entity-builder',
+        'engine.util'
     ])
     .factory('InventorySystem', [
         '$log',
         'System',
         'Signal',
-        function($log, System, Signal) {
+        'EntityBuilder',
+        'IbUtils',
+        function($log, System, Signal, EntityBuilder, IbUtils) {
             'use strict';
 
             var isEquipable = function(item) {
@@ -25,6 +29,20 @@ angular
                 },
                 addedToWorld: function(world) {
                     this._super(world);
+
+                    var inventory = this;
+
+                    world.subscribe('inventory:dropAll', function(entity, flag) {
+                        $log.debug('inventory:dropAll', arguments);
+
+                        flag = flag || 'slots';
+
+                        if (flag === 'slots') {
+                            for (var i = 0; i < 8; i++) {
+                                inventory.dropItem(entity, 'slot' + i);
+                            }
+                        }
+                    });
                 },
                 findEmptySlot: function(entity) {
                     var inventory = entity.getComponent('inventory'),
@@ -59,6 +77,7 @@ angular
                     // still don't have a slot
                     if (!slot) {
                         // no room in inventory
+                        $log.debug('wanted to add ', item, 'but no slots!');
                         return; // error?
                     }
 
@@ -71,11 +90,11 @@ angular
                 removeItem: function(entity, slot) {
                     var inventory = entity.getComponent('inventory');
                     if (!inventory) {
-                        return; // error?
+                        return null; // error?
                     }
 
                     if (!inventory[slot]) {
-                        return; // no item to remove
+                        return null; // no item to remove
                     }
 
                     var item = inventory[slot];
@@ -83,6 +102,50 @@ angular
 
                     this.world.publish('inventory:onItemRemoved', entity, item);
                     this.onItemRemoved.emit(entity, item);
+
+                    return item;
+                },
+                dropItem: function(entity, slot) {
+                    var world = this.world,
+                        dropped;
+
+                    function buildPickup(item) {
+                        var image = item.invImage ? item.invImage : item.image;
+                        var pickup = EntityBuilder.build('pickup', {
+                            components: {
+                                quad: {
+                                    transparent: true,
+                                    texture: 'images/spritesheets/items.png',
+                                    numberOfSpritesH: 16,
+                                    numberOfSpritesV: 128,
+                                    width: 0.5,
+                                    height: 0.5,
+                                    indexH: IbUtils.spriteSheetIdToXY(image).h,
+                                    indexV: IbUtils.spriteSheetIdToXY(image).v
+                                },
+                                pickup: {
+                                    item: item
+                                }
+                            }
+                        });
+
+                        return pickup;
+                    }
+
+                    var item = this.removeItem(entity, slot);
+                    if (item) {
+                        dropped = buildPickup(item);
+                        dropped._droppedBy = entity.uuid;
+                        dropped.position.copy(entity.position);
+                        // move it a little because of many
+                        // TODO: launch random projectiles? better spread algorithm
+                        dropped.position.x += Math.random();
+                        dropped.position.z += Math.random();
+                        world.addEntity(dropped);
+
+                        $log.debug('drop item: ', entity, dropped);
+                        this.world.publish('inventory:onItemDropped', entity, item);
+                    }
                 },
                 equipItem: function(entity, slot) {
                     var inventory = entity.getComponent('inventory');
@@ -93,7 +156,7 @@ angular
                             //$log.debug('good to equip: ', itemToEquip, entity.uuid, slot);
                             var equipSlot;
 
-                            if(itemToEquip.type === 'weapon') {
+                            if (itemToEquip.type === 'weapon') {
                                 if (itemToEquip.handedness === 'r') { // specifically weapon must be right hand
                                     equipSlot = 'rhand';
                                 } else if (itemToEquip.handedness === 'l') { // specifically weapon must be left hand
@@ -176,7 +239,22 @@ angular
                     }
                 },
                 update: function() {
+                    // you have to have inventory to pickup inventory
+                    // for now, lets keep it to players only
+                    var inventory = this,
+                        grabbers = this.world.getEntities('inventory', 'player'),
+                        pickups = this.world.getEntities('pickup');
 
+                    grabbers.forEach(function(entity) {
+                        // TODO: some sort of spacial awareness so that it's not always the first in the array that wins
+                        pickups.forEach(function(pickup) {
+                            //$log.debug('pickup hunting: ', entity, pickups);
+                            if (entity.position.inRangeOf(pickup.position, 0.75)) {
+                                $log.debug('try pickup: ', entity, pickup);
+                                inventory.addItem(entity, pickup.getComponent('pickup').item);
+                            }
+                        });
+                    });
                 }
             });
 

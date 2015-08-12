@@ -128,51 +128,6 @@ angular
                 particle.position.copy(position);
                 this.world.addEntity(particle);
             },
-            dropLoot: function(entity) {
-                // not sure if loot belongs in this system...
-                var world = this.world,
-                    inv = entity.getComponent('inventory'),
-                    dropped;
-
-                function buildPickup(item) {
-                    var image = item.invImage ? item.invImage : item.image;
-                    var pickup = EntityBuilder.build('pickup', {
-                        components: {
-                            quad: {
-                                transparent: true,
-                                texture: 'images/spritesheets/items.png',
-                                numberOfSpritesH: 16,
-                                numberOfSpritesV: 128,
-                                width: 0.5,
-                                height: 0.5,
-                                indexH: IbUtils.spriteSheetIdToXY(image).h,
-                                indexV: IbUtils.spriteSheetIdToXY(image).v
-                            },
-                            pickup: {
-                                item: item
-                            }
-                        }
-                    });
-
-                    return pickup;
-                }
-
-                // for now we'll just do slots, not equipped (so we can have things like rat bite as a weapon?)
-                for (var i = 0; i < 8; i++) {
-                    if (inv['slot' + i]) {
-                        dropped = buildPickup(inv['slot' + i]);
-
-                        dropped.position.copy(entity.position);
-                        // move it a little because of many
-                        // TODO: launch random projectiles? better spread algorithm
-                        dropped.position.x += Math.random();
-                        dropped.position.z += Math.random();
-                        world.addEntity(dropped);
-
-                        $log.debug('drop item: ', entity, dropped);
-                    }
-                }
-            },
             update: function() {
                 var me = this;
 
@@ -222,7 +177,7 @@ angular
 
                                             if (entity.hasComponent('inventory')) {
                                                 // for now drop all inventory
-                                                me.dropLoot(entity);
+                                                me.world.publish('inventory:dropAll', entity, 'slots');
                                             }
 
                                             me.world.removeEntity(entity);
