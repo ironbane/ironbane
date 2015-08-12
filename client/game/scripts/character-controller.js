@@ -59,7 +59,37 @@ angular
                 // this might belong somewhere else...
                 var input = this.world.getSystem('input');
 
-                function primaryAttackHandler() {
+                var playMap = input.getActionMap('play');
+                playMap.map('jump', 'gamepad', 'XBOX360_A');
+                playMap.map('jump', 'keyboard', 'SPACE');
+
+                playMap.map('attack', 'gamepad', 'XBOX360_RIGHT_TRIGGER', 'D');
+                playMap.map('attack', 'keyboard', 'F', 'D');
+                playMap.map('attack', 'mouse', 'MOUSE_BUTTON_LEFT', 'D');
+
+                playMap.map('moveForward', 'keyboard', 'W', 'D');
+                playMap.map('moveForward', 'keyboard', 'UP', 'D');
+                playMap.map('moveForward', 'gamepad', 'XBOX360_STICK_LEFT_Y', 'A-');
+
+                playMap.map('moveBackward', 'keyboard', 'S', 'D');
+                playMap.map('moveBackward', 'keyboard', 'DOWN', 'D');
+                playMap.map('moveBackward', 'gamepad', 'XBOX360_STICK_LEFT_Y', 'A+');
+
+                playMap.map('moveLeft', 'keyboard', 'A', 'D');
+                playMap.map('moveLeft', 'keyboard', 'LEFT', 'D');
+                playMap.map('moveLeft', 'gamepad', 'XBOX360_STICK_LEFT_X', 'A-');
+
+                playMap.map('moveRight', 'keyboard', 'D', 'D');
+                playMap.map('moveRight', 'keyboard', 'RIGHT', 'D');
+                playMap.map('moveRight', 'gamepad', 'XBOX360_STICK_LEFT_X', 'A+');
+
+                playMap.map('rotateLeft', 'keyboard', 'Q', 'D');
+                playMap.map('rotateLeft', 'gamepad', 'XBOX360_LEFT_BUMPER', 'D');
+
+                playMap.map('rotateRight', 'keyboard', 'E', 'D');
+                playMap.map('rotateRight', 'gamepad', 'XBOX360_RIGHT_BUMPER', 'D');
+
+                this.primaryAttackHandler = function() {
                     var targetVector,
                         mouseHelper = entity.getComponent('mouseHelper');
 
@@ -76,9 +106,7 @@ angular
                     if (targetVector) {
                         world.publish('combat:primaryAttack', entity, targetVector);
                     }
-                }
-
-                input.register('primaryAttack', primaryAttackHandler);
+                };
             };
 
             CharacterControllerScript.prototype.update = function(dt, elapsed, timestamp) {
@@ -89,7 +117,8 @@ angular
 
                 var input = this.world.getSystem('input'), // should cache this during init?
                     leftStick = input.virtualGamepad.leftThumbstick,
-                    rightStick = input.virtualGamepad.rightThumbstick;
+                    rightStick = input.virtualGamepad.rightThumbstick,
+                    playMap = input.getActionMap('play');
 
                 // reset these every frame
                 this.moveForward = false;
@@ -178,33 +207,15 @@ angular
                     this.jump = true;
                 }
 
-                // keyboard controls
-                if (input.keyboard.getKey(input.KEYS.W) || input.keyboard.getKey(input.KEYS.UP)) {
-                    this.moveForward = true;
-                }
-
-                if (input.keyboard.getKey(input.KEYS.S) || input.keyboard.getKey(input.KEYS.DOWN)) {
-                    this.moveBackward = true;
-                }
-
-                if (input.keyboard.getKey(input.KEYS.A) || input.keyboard.getKey(input.KEYS.LEFT)) {
-                    this.moveLeft = true;
-                }
-
-                if (input.keyboard.getKey(input.KEYS.D) || input.keyboard.getKey(input.KEYS.RIGHT)) {
-                    this.moveRight = true;
-                }
-
-                if (input.keyboard.getKey(input.KEYS.Q)) {
-                    this.rotateLeft = true;
-                }
-
-                if (input.keyboard.getKey(input.KEYS.E)) {
-                    this.rotateRight = true;
-                }
-
-                if (input.keyboard.getKey(input.KEYS.SPACE) || input.gamepadMgr.pad1.justPressed(0)) {
-                    this.jump = true;
+                this.moveForward = playMap.test('moveForward');
+                this.moveBackward = playMap.test('moveBackward');
+                this.moveLeft = playMap.test('moveLeft');
+                this.moveRight = playMap.test('moveRight');
+                this.rotateRight = playMap.test('rotateRight');
+                this.rotateLeft = playMap.test('rotateLeft');
+                this.jump = playMap.test('jump');
+                if (playMap.test('attack')) {
+                    this.primaryAttackHandler();
                 }
 
                 var inputVector = new THREE.Vector3();

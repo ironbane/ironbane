@@ -6,7 +6,8 @@ angular
         'engine.input.mouse',
         'engine.input.keys',
         'engine.input.virtual-gamepad',
-        'engine.input.gamepadMgr'
+        'engine.input.gamepadMgr',
+        'engine.input.actionMap'
     ])
     .provider('InputSystem', function() {
         'use strict';
@@ -32,7 +33,8 @@ angular
             'Signal',
             'GamepadMgr',
             'GAMEPAD',
-            function($log, System, Keyboard, Mouse, VirtualGamepad, KEYS, MOUSE_BUTTONS, Signal, GamepadMgr, GAMEPAD) {
+            'ActionMap',
+            function($log, System, Keyboard, Mouse, VirtualGamepad, KEYS, MOUSE_BUTTONS, Signal, GamepadMgr, GAMEPAD, ActionMap) {
                 var InputSystem = System.extend({
                     init: function() {
                         var sys = this;
@@ -55,6 +57,15 @@ angular
                         angular.forEach(_actionMappings, function(mappings, action) {
                             sys.actions[action] = new Signal();
                         });
+
+                        this._actionMaps = {};
+                    },
+                    getActionMap: function(mapName) {
+                        if (!this._actionMaps[mapName]) {
+                            this._actionMaps[mapName] = new ActionMap(this);
+                        }
+
+                        return this._actionMaps[mapName];
                     },
                     update: function() {
                         var sys = this;

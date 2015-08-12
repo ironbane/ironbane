@@ -12,30 +12,12 @@ angular
         'game.ui.statBar',
         'game.ui.inventoryBar',
         'game.ui.inventoryItem',
-        'game.clientSettings',
-        'engine.input.input-system',
+        'game.clientSettings'
     ])
     .config([
         '$stateProvider',
-        'InputSystemProvider',
-        function($stateProvider, InputSystemProvider) {
+        function($stateProvider) {
             'use strict';
-
-            // define actions used in play mode
-            // TODO: unregister them when switching back to menu?
-            InputSystemProvider.setActionMapping('primaryAttack', [{
-                type: 'mouse',
-                keys: ['MOUSE_BUTTON_LEFT'],
-                check: 'down'
-            }, {
-                type: 'keyboard',
-                keys: ['F'],
-                check: 'down'
-            }, {
-                type: 'gamepad',
-                keys: ['XBOX360_A'],
-                check: 'down'
-            }]);
 
             $stateProvider.state('three-root.play', {
                 templateUrl: 'client/game/ui/states/three-root/play/play.ng.html',
