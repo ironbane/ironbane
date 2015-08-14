@@ -2,7 +2,8 @@ angular
     .module('systems.inventory', [
         'ces',
         'engine.entity-builder',
-        'engine.util'
+        'engine.util',
+        'engine.timing'
     ])
     .factory('InventorySystem', [
         '$log',
@@ -10,7 +11,8 @@ angular
         'Signal',
         'EntityBuilder',
         'IbUtils',
-        function($log, System, Signal, EntityBuilder, IbUtils) {
+        'Timer',
+        function($log, System, Signal, EntityBuilder, IbUtils, Timer) {
             'use strict';
 
             var isEquipable = function(item) {
@@ -26,6 +28,8 @@ angular
                     this.onUnEquipItem = new Signal();
                     this.onItemAdded = new Signal();
                     this.onItemRemoved = new Signal();
+
+                    this._pickupTimer = new Timer(0.5);
                 },
                 addedToWorld: function(world) {
                     this._super(world);
@@ -111,7 +115,7 @@ angular
 
                     function buildPickup(item) {
                         var image = item.invImage ? item.invImage : item.image;
-                        var pickup = EntityBuilder.build('pickup', {
+                        var pickup = EntityBuilder.build('pickup: ' + item.name, {
                             components: {
                                 quad: {
                                     transparent: true,
@@ -143,7 +147,7 @@ angular
                         dropped.position.z += Math.random();
                         world.addEntity(dropped);
 
-                        $log.debug('drop item: ', entity, dropped);
+                        $log.debug('drop item: ', entity.uuid, dropped.name, item);
                         this.world.publish('inventory:onItemDropped', entity, item);
                     }
                 },
@@ -241,20 +245,28 @@ angular
                 update: function() {
                     // you have to have inventory to pickup inventory
                     // for now, lets keep it to players only
-                    var inventory = this,
-                        grabbers = this.world.getEntities('inventory', 'player'),
-                        pickups = this.world.getEntities('pickup');
+                    var inventory = this;
 
-                    grabbers.forEach(function(entity) {
-                        // TODO: some sort of spacial awareness so that it's not always the first in the array that wins
-                        pickups.forEach(function(pickup) {
-                            //$log.debug('pickup hunting: ', entity, pickups);
-                            if (entity.position.inRangeOf(pickup.position, 0.75)) {
-                                $log.debug('try pickup: ', entity, pickup);
-                                inventory.addItem(entity, pickup.getComponent('pickup').item);
-                            }
+                    if (inventory._pickupTimer.isExpired) {
+                        //$log.debug('pickup scan');
+
+                        var grabbers = this.world.getEntities('inventory', 'player'),
+                            pickups = this.world.getEntities('pickup');
+
+                        grabbers.forEach(function(entity) {
+                            // TODO: some sort of spacial awareness so that it's not always the first in the array that wins
+                            pickups.forEach(function(pickup) {
+                                //$log.debug('pickup hunting: ', entity, pickups);
+                                if (entity.position.inRangeOf(pickup.position, 0.25)) {
+                                    $log.debug('picking up: ', entity.name, ' -> ', pickup.name);
+                                    inventory.addItem(entity, pickup.getComponent('pickup').item);
+                                    inventory.world.removeEntity(pickup);
+                                }
+                            });
                         });
-                    });
+
+                        inventory._pickupTimer.reset();
+                    }
                 }
             });
 
