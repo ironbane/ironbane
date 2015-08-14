@@ -55,8 +55,7 @@ angular
                             return function() {
                                 if (entity.hasComponent('player')) {
 
-                                }
-                                else {
+                                } else {
                                     // We're dealing with an NPC, so check for state changes
                                 }
 
@@ -82,8 +81,8 @@ angular
 
             function onStreamAdd(packet) {
                 var me = this;
-                $rootWorld.getLoadPromise().then(function () {
-                    $timeout(function () {
+                $rootWorld.getLoadPromise().then(function() {
+                    $timeout(function() {
                         handlePacket.bind(me)(packet);
                     });
                 });
@@ -129,8 +128,7 @@ angular
                         $entityCache.put('mainPlayer', builtEntity);
                         // needed somewhere on the scope for the UI, prolly doesn't *need* to be root
                         $rootScope.mainPlayer = builtEntity;
-                    }
-                    else {
+                    } else {
                         // other stuff we should recv
                         builtEntity.addComponent('netRecv');
                     }
@@ -191,27 +189,38 @@ angular
                     world.subscribe('inventory:onEquipItem', function(entity, item, toSlot, fromSlot) {
                         if (entity.hasComponent('netSend') && me._stream) {
                             // TODO: UUID for items
-                            me._stream.emit('inventory:onEquipItem', {entityId: entity.uuid, toSlot: toSlot, fromSlot: fromSlot});
+                            me._stream.emit('inventory:onEquipItem', {
+                                entityId: entity.uuid,
+                                toSlot: toSlot,
+                                fromSlot: fromSlot
+                            });
                         }
                     });
 
                     world.subscribe('inventory:onUnEquipItem', function(entity, item, fromSlot, toSlot) {
                         if (entity.hasComponent('netSend') && me._stream) {
                             // TODO: UUID for items
-                            me._stream.emit('inventory:onUnEquipItem', {entityId: entity.uuid, toSlot: toSlot, fromSlot: fromSlot});
+                            me._stream.emit('inventory:onUnEquipItem', {
+                                entityId: entity.uuid,
+                                toSlot: toSlot,
+                                fromSlot: fromSlot
+                            });
                         }
                     });
 
                     world.subscribe('combat:primaryAttack', function(entity, targetVector) {
                         if (entity.hasComponent('netSend') && me._stream) {
-                            me._stream.emit('combat:primaryAttack', {entityId: entity.uuid, targetVector: targetVector});
+                            me._stream.emit('combat:primaryAttack', {
+                                entityId: entity.uuid,
+                                targetVector: targetVector
+                            });
                         }
                     });
 
                     // Set up streams and make sure it reruns everytime we change levels or change user
                     // $meteor.autorun is linked to $scope which we don't have here,
                     // so Meteor.autorun is the only way AFAIK
-                    Meteor.autorun(function () {
+                    Meteor.autorun(function() {
                         if (me._stream) {
                             me._stream.close();
                         }
@@ -225,7 +234,7 @@ angular
 
                         // Remove all existing entities that were sent using streams
                         var entities = me.world.getEntities('netRecv').concat(me.world.getEntities('netSend'));
-                        entities.forEach(function (entity) {
+                        entities.forEach(function(entity) {
                             me.world.removeEntity(entity);
                         });
 
@@ -257,7 +266,9 @@ angular
                         me._stream.on('inventory:onEquipItem', function(data) {
                             var inv = world.getSystem('inventory'),
                                 netents = world.getEntities('netRecv'),
-                                entity = _.findWhere(netents, {uuid: data.entityId});
+                                entity = _.findWhere(netents, {
+                                    uuid: data.entityId
+                                });
 
                             //$log.debug('inventory:onEquipItem', data, entity.uuid);
 
@@ -269,7 +280,9 @@ angular
                         me._stream.on('inventory:onUnEquipItem', function(data) {
                             var inv = world.getSystem('inventory'),
                                 netents = world.getEntities('netRecv'),
-                                entity = _.findWhere(netents, {uuid: data.entityId});
+                                entity = _.findWhere(netents, {
+                                    uuid: data.entityId
+                                });
 
                             //$log.debug('inventory:onUnEquipItem', data, entity.uuid);
 
@@ -281,7 +294,9 @@ angular
                         // this one we'll just pass through
                         me._stream.on('combat:primaryAttack', function(data) {
                             var netEnts = world.getEntities('netRecv'),
-                                entity = _.findWhere(netEnts, {uuid: data.entityId});
+                                entity = _.findWhere(netEnts, {
+                                    uuid: data.entityId
+                                });
 
                             if (entity) {
                                 world.publish('combat:primaryAttack', entity, data.targetVector);
@@ -289,7 +304,7 @@ angular
                         });
 
                         // as we are added to the client's world, it'll even be main menu time, we want to ask for the current state of things
-                        Meteor.setTimeout(function () {
+                        Meteor.setTimeout(function() {
                             me._stream.emit('getState');
                         }, 1000);
 

@@ -1,61 +1,59 @@
 angular
     .module('systems.damage', [
         'engine.entity-builder',
-        'engine.char-builder',
         'engine.util',
         'three',
         'ces'
     ])
-    .factory('DamageSystem', function($log, System, EntityBuilder, CharBuilder, IbUtils, THREE) {
+    .factory('DamageSystem', function($log, System, EntityBuilder, IbUtils, THREE) {
         'use strict';
 
         return System.extend({
             addedToWorld: function(world) {
                 this._super(world);
-
-                world.entityAdded('damageable').add(function(entity) {
-                    var damageableComponent = entity.getComponent('damageable');
-                });
             },
             _spawnParticle: function(indexH, indexV, amount, position) {
                 var me = this;
-                CharBuilder.getSpriteSheetTile('images/ui/stats.png',
-                    indexH,
-                    indexV,
-                    4,
-                    3).then(function(texture) {
-                    var particle = EntityBuilder.build('particle', {
-                        components: {
-                            particleEmitter: {
-                                group: {
-                                    blending: THREE.NormalBlending,
-                                    texture: texture
-                                },
-                                emitter: {
-                                    type: 'cube',
-                                    acceleration: [0, 1, 0],
-                                    accelerationSpread: [0.2, 0.2, 0.2],
-                                    positionSpread: [0.2, 0.2, 0.2],
-                                    velocity: [0, 1, 0],
-                                    velocitySpread: [0, 0, 0],
-                                    duration: 0.5,
-                                    // particlesPerSecond: 1,
-                                    sizeStart: 1.0,
-                                    sizeEnd: 0.5,
-                                    angleStart: Math.PI,
-                                    angleEnd: Math.PI,
-                                    // colorStart: 'blue',
-                                    // colorEnd: 'white',
-                                    particleCount: amount
+
+                var particle = EntityBuilder.build('particle', {
+                    components: {
+                        particleEmitter: {
+                            group: {
+                                blending: THREE.NormalBlending,
+                                sprite: {
+                                    image: 'images/ui/stats.png',
+                                    tile: {
+                                        h: indexH,
+                                        v: indexV,
+                                        nH: 4,
+                                        nV: 3
+                                    }
                                 }
+                            },
+                            emitter: {
+                                type: 'cube',
+                                acceleration: [0, 1, 0],
+                                accelerationSpread: [0.2, 0.2, 0.2],
+                                positionSpread: [0.2, 0.2, 0.2],
+                                velocity: [0, 1, 0],
+                                velocitySpread: [0, 0, 0],
+                                duration: 0.5,
+                                // particlesPerSecond: 1,
+                                sizeStart: 1.0,
+                                sizeEnd: 0.5,
+                                angleStart: Math.PI,
+                                angleEnd: Math.PI,
+                                // colorStart: 'blue',
+                                // colorEnd: 'white',
+                                particleCount: amount
                             }
                         }
-                    });
-
-                    particle.position.copy(position);
-                    me.world.addEntity(particle);
-
+                    }
                 });
+
+                particle.position.copy(position);
+                me.world.addEntity(particle);
+
             },
             addDamageParticles: function(type, amount, position) {
 
@@ -174,11 +172,6 @@ angular
                                             // We died, so add proper particles
                                             // and remove ourselves from the world
                                             me.addDeathParticles(entity, entity.position);
-
-                                            if (entity.hasComponent('inventory')) {
-                                                // for now drop all inventory
-                                                me.world.publish('inventory:dropAll', entity, 'slots');
-                                            }
 
                                             me.world.removeEntity(entity);
                                         }

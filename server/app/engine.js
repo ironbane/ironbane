@@ -13,8 +13,7 @@ angular
         'models',
         'server.boot',
         'server.services',
-        'server.systems',
-        'systems.inventory' // shared.systems ??
+        'server.systems'
     ])
     .run([
         '$log',
@@ -37,6 +36,7 @@ angular
             var systemsForWorlds = [ // order matters
                 'Network',
                 'Persistence',
+                'Damage',
                 'Trigger',
                 'Movers',
                 'Actor',

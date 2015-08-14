@@ -6,5 +6,7 @@ angular
         'server.systems.persistence',
         'server.systems.trigger',
 
-        'systems.actor'
+        'systems.actor',
+        'systems.inventory',
+        'systems.damage'
     ]);

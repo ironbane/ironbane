@@ -36,17 +36,7 @@ angular
 
                     var inventory = this;
 
-                    world.subscribe('inventory:dropAll', function(entity, flag) {
-                        $log.debug('inventory:dropAll', arguments);
-
-                        flag = flag || 'slots';
-
-                        if (flag === 'slots') {
-                            for (var i = 0; i < 8; i++) {
-                                inventory.dropItem(entity, 'slot' + i);
-                            }
-                        }
-                    });
+                    world.subscribe('inventory:drop', inventory.dropItem.bind(inventory));
                 },
                 findEmptySlot: function(entity) {
                     var inventory = entity.getComponent('inventory'),
@@ -110,7 +100,10 @@ angular
                     return item;
                 },
                 dropItem: function(entity, slot) {
+                    $log.debug('inventory.dropItem', entity.uuid, slot);
+
                     var world = this.world,
+                        inventory = this,
                         dropped;
 
                     function buildPickup(item) {
@@ -136,8 +129,7 @@ angular
                         return pickup;
                     }
 
-                    var item = this.removeItem(entity, slot);
-                    if (item) {
+                    function dropItemInWorld(item) {
                         dropped = buildPickup(item);
                         dropped._droppedBy = entity.uuid;
                         dropped.position.copy(entity.position);
@@ -148,7 +140,25 @@ angular
                         world.addEntity(dropped);
 
                         $log.debug('drop item: ', entity.uuid, dropped.name, item);
-                        this.world.publish('inventory:onItemDropped', entity, item);
+                    }
+
+                    var item;
+                    if (slot === 'all_slots') {
+                        for (var i = 0; i < 8; i++) {
+                            item = this.removeItem(entity, 'slot' + i);
+                            if (item) {
+                                dropItemInWorld(item);
+                            }
+                        }
+                    } else if (slot === 'all_equipped') {
+                        // TODO
+                    } else if (slot === 'all') {
+                        // TODO
+                    } else {
+                        item = inventory.removeItem(entity, slot);
+                        if (item) {
+                            dropItemInWorld(item);
+                        }
                     }
                 },
                 equipItem: function(entity, slot) {
@@ -245,9 +255,19 @@ angular
                 update: function() {
                     // you have to have inventory to pickup inventory
                     // for now, lets keep it to players only
-                    var inventory = this;
+                    var invSystem = this;
 
-                    if (inventory._pickupTimer.isExpired) {
+                    var lootDroppers = invSystem.world.getEntities('inventory', 'health');
+                    // TODO: !player
+                    lootDroppers.forEach(function(entity) {
+                        var health = entity.getComponent('health');
+                        if (health.value <= 0) {
+                            // dead drop all loot
+                            invSystem.dropItem(entity, 'all_slots');
+                        }
+                    });
+
+                    if (invSystem._pickupTimer.isExpired) {
                         //$log.debug('pickup scan');
 
                         var grabbers = this.world.getEntities('inventory', 'player'),
@@ -259,13 +279,13 @@ angular
                                 //$log.debug('pickup hunting: ', entity, pickups);
                                 if (entity.position.inRangeOf(pickup.position, 0.25)) {
                                     $log.debug('picking up: ', entity.name, ' -> ', pickup.name);
-                                    inventory.addItem(entity, pickup.getComponent('pickup').item);
-                                    inventory.world.removeEntity(pickup);
+                                    invSystem.addItem(entity, pickup.getComponent('pickup').item);
+                                    invSystem.world.removeEntity(pickup);
                                 }
                             });
                         });
 
-                        inventory._pickupTimer.reset();
+                        invSystem._pickupTimer.reset();
                     }
                 }
             });

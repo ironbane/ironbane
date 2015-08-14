@@ -3,14 +3,17 @@ angular
         'ces',
         'three',
         'underscore',
-        'engine.shaderParticleEngine'
+        'engine.shaderParticleEngine',
+        'engine.textureLoader'
     ])
     .factory('ParticleSystem', [
         '_',
         'System',
         'THREE',
         'SPE',
-        function(_, System, THREE, SPE) {
+        'TextureLoader',
+        '$q',
+        function(_, System, THREE, SPE, TextureLoader, $q) {
             'use strict';
 
             // massasge pure data into object
@@ -69,34 +72,47 @@ angular
                             return found;
                         });
 
+                        function addEmitterToGroup(emitterData) {
+                            var particleEmitter = buildEmitterFromComponentData(emitterData.emitter);
+                            // sync position with entity (sadly can't add as a child)
+                            particleEmitter.position = entity.position.clone();
+
+                            // attach to component for later removal / manipulation
+                            emitterData._emitter = particleEmitter;
+
+                            particleGroup.addEmitter(particleEmitter);
+                        }
+
                         if (existingGroup) {
                             particleGroup = system._groups[groupIndex];
+                            addEmitterToGroup(emitterData);
                         } else {
                             system._groupData.push(emitterData.group); // copy instead?
                             var groupData = emitterData.group;
-                            var texture = emitterData.group.texture instanceof THREE.Texture ?
-                                emitterData.group.texture :
-                                THREE.ImageUtils.loadTexture(emitterData.group.texture);
-                            texture.magFilter = THREE.NearestFilter;
-                            texture.minFilter = THREE.NearestFilter;
-                            _.extend(groupData, {
-                                texture: texture // ajax + cache?
-                            });
-                            particleGroup = new SPE.Group(groupData);
-                            system._groups.push(particleGroup);
-                            // since the group encompasses more than this entity, just add it to the world scene
-                            system.world.scene.add(particleGroup.mesh);
+                            var texturePromise;
+                            if (angular.isString(groupData.texture)) {
+                                texturePromise = TextureLoader.load(groupData.texture);
+                            } else if (groupData.texture instanceof THREE.Texture) {
+                                texturePromise = $q.when(groupData.texture);
+                            } else if (groupData.sprite) {
+                                var sprite = groupData.sprite;
+                                texturePromise = TextureLoader.loadSpriteTileTexture(sprite.image, sprite.tile.h, sprite.tile.v, sprite.tile.nH, sprite.tile.nV);
+                            }
+
+                            if (texturePromise) {
+                                texturePromise.then(function(texture) {
+                                    groupData.texture = texture;
+                                    particleGroup = new SPE.Group(groupData);
+                                    system._groups.push(particleGroup);
+                                    // since the group encompasses more than this entity, just add it to the world scene
+                                    system.world.scene.add(particleGroup.mesh);
+
+                                    addEmitterToGroup(emitterData);
+                                });
+                            } else {
+                                throw new Error('unable to generate texture for particle group!');
+                            }
                         }
-
-                        // add the emitter to the group
-                        var particleEmitter = buildEmitterFromComponentData(emitterData.emitter);
-                        // sync position with entity (sadly can't add as a child)
-                        particleEmitter.position = entity.position.clone();
-
-                        // attach to component for later removal / manipulation
-                        emitterData._emitter = particleEmitter;
-
-                        particleGroup.addEmitter(particleEmitter);
                     });
 
                     // TODO: remove emitters

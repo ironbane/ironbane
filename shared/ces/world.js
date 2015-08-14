@@ -44,6 +44,9 @@ angular
 
                     // each world has a message bus
                     this._pubsub = new CESPubSub({debug: false});
+
+                    // queue up all remove calls until after the system update loop
+                    this._pendingRemovals = [];
                 },
 
                 publish: function(/* args */) {
@@ -139,6 +142,12 @@ angular
                  * @param {Entity} entity
                  */
                 removeEntity: function(entity) {
+                    // if we're in the middle of doing the system loop, wait until we're done
+                    if (this.__systemUpdate) {
+                        this._pendingRemovals.push(entity);
+                        return;
+                    }
+
                     var families, familyId;
 
                     // try to remove the entity from each family
@@ -150,6 +159,17 @@ angular
                     this._entities.remove(entity);
 
                     this._onEntityRemoveChild(null, entity);
+                },
+
+                _purgePendingRemovals: function() {
+                    if (this.__systemUpdate) {
+                        $log.warn('do not call purge during the update loop!');
+                    }
+
+                    var entity;
+                    while((entity = this._pendingRemovals.pop())) {
+                        this.removeEntity(entity);
+                    }
                 },
 
                 /**
@@ -179,10 +199,16 @@ angular
                 update: function(dt, elapsed, timestamp) {
                     var systems, i, len;
 
+                    this.__systemUpdate = true;
+
                     systems = this._systems;
                     for (i = 0, len = systems.length; i < len; ++i) {
                         systems[i].update(dt, elapsed, timestamp);
                     }
+
+                    this.__systemUpdate = false;
+
+                    this._purgePendingRemovals();
                 },
 
                 /**

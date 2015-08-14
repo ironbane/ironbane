@@ -28,6 +28,7 @@ angular
                 'Quad',
                 'Octree',
                 'CollisionReporter',
+                'Damage', // needs to be higher than anything checking the applied dmg (Inventory)
                 'Steering',
                 'Actor',
                 'Fighter',
@@ -35,7 +36,6 @@ angular
                 'Network',
                 'Inventory',
                 'Appearance',
-                'Damage',
                 'Armor',
                 'Input',
                 'Sound',
