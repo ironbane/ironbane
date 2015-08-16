@@ -30,7 +30,9 @@ angular.module('game.ui.admin.adminDiv', [
                     var updateCharacterPreview = function () {
                         var data = {};
                         _.each($scope.charPreview, function(val, key) {
-                            data[key] = $scope.charImages[key][val];
+                            if (['skin', 'hair', 'eyes'].indexOf(key) !== -1) {
+                                data[key] = $scope.charImages[key][val];
+                            }
                         });
                         $scope.charPrevData = JSON.stringify(data);
                         CharBuilder.makeChar(data).then(function (url) {
