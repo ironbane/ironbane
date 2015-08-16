@@ -20,33 +20,55 @@ angular
 
             var me = this;
 
-            this.create = function(width, height, sprites) {
+            this.create = function(sprites) {
                 var deferred = $q.defer();
 
-                var canvas = document.createElement('canvas');
-
-                canvas.width = width;
-                canvas.height = height;
                 // canvas.style.imageRendering = 'pixelated';
-
-                var ctx = canvas.getContext('2d');
-
-                ctx.msImageSmoothingEnabled = false;
-
                 var loadPromises = sprites.map(function(sprite) {
                     return loadImage(sprite);
                 });
 
                 $q.all(loadPromises).then(function(images) {
+                    var canvas = document.createElement('canvas');
+
+                    var ctx = canvas.getContext('2d');
+                    ctx.imageSmoothingEnabled = false;
+                    ctx.webkitImageSmoothingEnabled = false;
+                    ctx.msImageSmoothingEnabled = false;
+
+                    var width = 0;
+                    var height = 0;
+
                     images.forEach(function(img) {
-                        ctx.drawImage(img, 0, 0); // Or at whatever offset you like
+                        if (img.src.indexOf('/skin/') !== -1) {
+                            // Use as a reference
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+
+                            var ctx = canvas.getContext('2d');
+                            ctx.imageSmoothingEnabled = false;
+                            ctx.webkitImageSmoothingEnabled = false;
+                            ctx.msImageSmoothingEnabled = false;
+
+                            width = canvas.width;
+                            height = canvas.height;
+                        }
+                    });
+
+                    images.forEach(function(img) {
+
 
                         // Hack for sprites that only use 1 walking animation
                         if (img.src.indexOf('/hair/') !== -1 ||
                             img.src.indexOf('/head/') !== -1) {
                             // Just draw them at the other positions
-                            ctx.drawImage(img, 16, 0);
-                            ctx.drawImage(img, 32, 0);
+                            // 48
+                            ctx.drawImage(img, (width / 3) * 0, 0, width / 3, height);
+                            ctx.drawImage(img, (width / 3) * 1, 0, width / 3, height);
+                            ctx.drawImage(img, (width / 3) * 2, 0, width / 3, height);
+                        }
+                        else {
+                            ctx.drawImage(img, 0, 0, width, height); // Or at whatever offset you like
                         }
                     });
                     var dataURL = canvas.toDataURL();
@@ -73,7 +95,7 @@ angular
                     }
                 });
 
-                return me.create(16 * 3, 18 * 8, images);
+                return me.create(images);
             };
 
             this.getSpriteSheetTile = function(spritesheet, indexH, indexV, numberOfSpritesH, numberOfSpritesV, mirror) {

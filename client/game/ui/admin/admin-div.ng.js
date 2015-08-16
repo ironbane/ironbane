@@ -36,9 +36,10 @@ angular.module('game.ui.admin.adminDiv', [
                         });
                         $scope.charPrevData = JSON.stringify(data);
                         CharBuilder.makeChar(data).then(function (url) {
+                            $scope.charSpritesheetImg = url;
+                            return CharBuilder.getSpriteSheetTile(url, 1, 4, 3, 8);
+                        }).then(function (url) {
                             $scope.charPrevImg = url;
-                        }, function (err) {
-                            console.log(err);
                         });
                     };
 
