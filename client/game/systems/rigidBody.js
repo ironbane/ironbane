@@ -213,8 +213,10 @@ angular
             var calculateMeshTriangles = function(mesh) {
                 var deferred = $q.defer();
 
-                var triangles = getTrianglesFromMesh(mesh);
-                deferred.resolve(triangles);
+                setTimeout(function () {
+                    var triangles = getTrianglesFromMesh(mesh);
+                    deferred.resolve(triangles);
+                }, 100);
 
                 return deferred.promise;
             };
@@ -273,6 +275,15 @@ angular
 
                     }
                 }
+
+                triangles.map(function(triangle) {
+                    triangle.forEach(function (vertex) {
+                        var vec = new THREE.Vector3().copy(vertex).applyMatrix4(mesh.matrixWorld);
+                        vertex.x = vec.x;
+                        vertex.y = vec.y;
+                        vertex.z = vec.z;
+                    });
+                });
 
                 return triangles;
             };

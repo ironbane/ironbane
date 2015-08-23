@@ -355,6 +355,34 @@ angular
                 }
 
                 switch (data.userData.type) {
+                    case 'MeshCollider':
+
+                        // Something to keep in mind here:
+                        // The local position of the Mesh object, which we're adding
+                        // the rigidBody to will always be 0,0,0 because the true position
+                        // is stored one level above in the parent. The physics will work
+                        // however because we're baking the physics by passing triangles
+                        // to a triangleMesh inside rigidBody. Here we're applying the worldMatrix
+                        // of the mesh to every vertex, so the trimesh will be correct and its
+                        // position can be left at 0,0,0.
+                        // This in contrast with the BoxCollider which is dependent
+                        // on a position to properly align itself, hence it is added to the
+                        // parent instead.
+
+                        entity.parent.children.forEach(function(child) {
+                            if (child.data.type && child.data.type === 'Mesh') {
+                                child.addComponent($components.get('rigidBody', {
+                                    shape: {
+                                        type: 'concave'
+                                    },
+                                    mass: 0,
+                                    group: 'level',
+                                    collidesWith: ['all']
+                                }));
+                            }
+                        });
+
+                        break;
                     case 'BoxCollider':
 
                         entity.parent.addComponent($components.get('rigidBody', {
