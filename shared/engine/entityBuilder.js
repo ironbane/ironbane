@@ -385,12 +385,18 @@ angular
                         break;
                     case 'BoxCollider':
 
+                        // Although we're taking the scale of the parent into account
+                        // in a perfect world we'd use the scale of the world matrix
+                        // as there may be more objects in the hierarchy that alter
+                        // scale. Due to our exporter exporting the objects in a
+                        // flattened matter this should be fine for now.
+
                         entity.parent.addComponent($components.get('rigidBody', {
                             shape: {
                                 type: 'box',
-                                width: data.userData.size[0],
-                                height: data.userData.size[1],
-                                depth: data.userData.size[2]
+                                width: data.userData.size[0]*entity.parent.scale.x,
+                                height: data.userData.size[1]*entity.parent.scale.y,
+                                depth: data.userData.size[2]*entity.parent.scale.z
                             },
                             offset: (new THREE.Vector3()).fromArray(data.userData.center),
                             mass: 0,
