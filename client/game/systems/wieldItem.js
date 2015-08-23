@@ -280,7 +280,12 @@ angular
 
                     if (wieldItemComponent.type === 'weapon') {
                         if (direction === 0) {
-                            wp.rotation.z += dtr(-45) - dot;
+                            if (isLeftHand) {
+                                wp.rotation.z -= dtr(-115) - dot;
+                            }
+                            else {
+                                wp.rotation.z += dtr(-45) - dot;
+                            }
                         }
                     }
                 }
