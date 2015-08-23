@@ -84,6 +84,8 @@ angular
                                 eyes: IB_CONSTANTS.characterParts[gender].eyes[$scope.eyesIndex],
                                 hair: IB_CONSTANTS.characterParts[gender].hair[$scope.hairIndex],
                             }).then(function(url) {
+                                return CharBuilder.getSpriteSheetTile(url, 1, 4, 3, 8);
+                            }).then(function (url) {
                                 $scope.charPrevImg = url;
                             });
                         };
