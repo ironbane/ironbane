@@ -35,6 +35,35 @@ angular
             minCharNameLength: 2,
             maxCharNameLength: 15
         },
+        ironbloodRates: {
+            'tiny': {
+                name: 'Tiny Pack',
+                ironblood: 5,
+                dollars: 5
+            },
+            'small': {
+                name: 'Small Pack',
+                ironblood: 12,
+                dollars: 10,
+                desc: 'Most popular!'
+            },
+            'medium': {
+                name: 'Medium Pack',
+                ironblood: 26,
+                dollars: 20
+            },
+            'large': {
+                name: 'Large Pack',
+                ironblood: 70,
+                dollars: 50
+            },
+            'huge': {
+                name: 'Huge Pack',
+                ironblood: 160,
+                dollars: 100,
+                desc: 'Best value!'
+            },
+        },
         isDev: Meteor.isClient ? (window.location.hostname !== 'play.ironbane.com') : (process.env.VIRTUAL_HOST !== 'play.ironbane.com')
     })
     .run([

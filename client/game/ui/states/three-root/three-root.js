@@ -72,6 +72,10 @@ angular
                             });
                     };
 
+                    $scope.buy = function () {
+                        $state.go('three-root.main-menu.buy');
+                    };
+
                     $meteor.autorun($scope, function() {
                         var user = Meteor.user();
 

@@ -1,0 +1,41 @@
+<div class="ib-ui-window ib-ui-login-box buy">
+	<div ng-if="!selectedPack">
+	    <div class="pack" ng-repeat="(key, pack) in packs">
+	    	<div class="ironblood" style="width:100px;float:left;">
+				<div class="label">{{ pack.ironblood }}</div>
+				<inventory-item item="{image: 1836, name: 'Ironblood'}"></inventory-item>
+			</div>
+	        <button class="ibutton attention" click-sound ng-click="$parent.$parent.selectedPack=key" style="width:200px">Buy for ${{ pack.dollars }}</button>
+	    </div>
+	    <button class="ibutton" click-sound ng-click="back()" style="width:80px">Back</button>
+    </div>
+    <div ng-if="selectedPack">
+    	Selected pack:
+	    <div class="pack selected" ng-init="pack=$parent.packs[$parent.selectedPack]">
+	    	<div class="ironblood" style="width:100px;float:left;">
+				<div class="label">{{ pack.ironblood }}</div>
+				<inventory-item item="{image: 1836, name: 'Ironblood'}"></inventory-item>
+			</div>
+	        <div class="price-label" style="width:290px">Price: ${{ pack.dollars }}</div>
+	    </div>
+    	<div ng-if="$parent.purchaseStatus == 'idle'">
+		    <div class="braintree-wrapper">
+		    	<braintree-paypal options="$parent.$parent.getOptions()"></braintree-paypal>
+		    </div>
+		    <button class="ibutton" click-sound ng-click="$parent.$parent.selectedPack=null" style="width:80px">Back</button>
+	    </div>
+	    <div ng-if="$parent.purchaseStatus == 'verifying'">
+	    	Completing purchase...
+	    	<img src="images/ui/loading.gif" style="margin: 0 auto;display:block">
+	    </div>
+	    <div ng-if="$parent.purchaseStatus == 'success'">
+	    	<div>Success!</div>
+	    	<img src="images/ui/bought.png" style="position:absolute;right:0;bottom:0">
+	    	<button class="ibutton" click-sound ng-click="$parent.$parent.back()" style="width:150px;margin-top:10px;">Continue</button>
+	    </div>
+	    <div ng-if="$parent.purchaseStatus == 'error'">
+	    	Something went wrong. Please verify that your PayPal account is setup correctly. If the problem persists, please contact <a href="mailto:nikke@ironbane.com">support</a>.
+	    	<button class="ibutton" click-sound ng-click="$parent.$parent.back()" style="width:150px">Continue</button>
+	    </div>
+    </div>
+</div>

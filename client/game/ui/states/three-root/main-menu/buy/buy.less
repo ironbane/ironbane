@@ -1,0 +1,47 @@
+@import "../../../../../../less/variables.import.less";
+
+.buy {
+	.pack {
+	    width: 100%;
+	    box-sizing: border-box;
+	    display: inline-block;
+	    height: 50px;
+	    padding-top: 5px;
+
+		&.selected {
+			margin: 10px 0px;
+			color: @primary1;
+			background: @primary4;
+			outline: 3px solid @primary3;
+		}
+
+		.ironblood {
+			position: relative;
+
+			.label {
+				width: 45px;
+				text-align: right;
+				margin-top: 8px;
+			}
+			inventory-item {
+			    top: 5px;
+			    left: 45px;
+			    position: absolute;
+			}
+		}
+
+		.price-label {
+			text-align: right;
+			margin-top: 8px;
+		}
+	}
+
+	.braintree-wrapper {
+		margin-bottom: 10px;
+		#bt-paypal {
+			text-align: right;
+			background-color: white;
+		}
+
+	}
+}

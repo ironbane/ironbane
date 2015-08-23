@@ -6,6 +6,7 @@ angular
         'game.ui.states.three-root.main-menu.create-char',
         'game.ui.states.three-root.main-menu.login',
         'game.ui.states.three-root.main-menu.register',
+        'game.ui.states.three-root.main-menu.buy',
         'game.services.globalsound',
         'game.world-root',
         'engine.entity-builder',
