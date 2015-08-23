@@ -122,5 +122,30 @@ angular
                 return deferred.promise;
             };
 
+            this.resize = function(image, multiplier) {
+                var deferred = $q.defer();
+
+                loadImage(image).then(function(image) {
+
+                    var canvas = document.createElement('canvas');
+
+                    canvas.width = image.width * multiplier;
+                    canvas.height = image.height * multiplier;
+
+                    var ctx = canvas.getContext('2d');
+
+                    ctx.imageSmoothingEnabled = false;
+                    ctx.webkitImageSmoothingEnabled = false;
+                    ctx.msImageSmoothingEnabled = false;
+
+                    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+                    var dataURL = canvas.toDataURL();
+                    deferred.resolve(dataURL);
+                });
+
+                return deferred.promise;
+            };
+
         }
     ]);
