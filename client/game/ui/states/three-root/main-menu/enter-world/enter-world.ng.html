@@ -3,7 +3,7 @@
         <button class="ibutton attention playasguest" click-sound ng-click="play()">Play as Guest</button>
 
         <button class="ibutton" click-sound ng-click="login()" style="width:145px;float:left;margin-right:10px">Log in</button>
-        <button class="ibutton" click-sound ng-click="register()" style="width:145px">Register</button>
+        <button class="ibutton" click-sound ng-click="register()" style="width:145px">Sign up</button>
     </div>
     <div ng-if="!$root.currentUser.profile.guest">
         <button ng-hide="currentCharIndex === characters.length" class="ibutton del-btn" click-sound ng-click="deleteChar()" style="width:40px">&#10006;</button>

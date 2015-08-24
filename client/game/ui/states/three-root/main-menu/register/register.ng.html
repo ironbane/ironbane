@@ -10,7 +10,12 @@
 
         <input required type="email" class="iinput vspacer" placeholder="E-mail" ng-model="email">
 
-        <button class="ibutton attention" ng-disabled="registerForm.$invalid" click-sound ng-click="register()" style="width:145px;float:left;margin-right:10px">Register</button>
+        <div class="label agree">
+            By signing up, you agree to our <a href="http://legal.ironbane.com/termsandconditions.html" target="_blank">terms and conditions</a> and
+            <a href="http://legal.ironbane.com/privacypolicy.html" target="_blank">privacy policy</a>.
+        </div>
+
+        <button class="ibutton attention" ng-disabled="registerForm.$invalid" click-sound ng-click="register()" style="width:145px;float:left;margin-right:10px">Sign up</button>
         <button class="ibutton" click-sound ng-click="cancel()" style="width:145px">Cancel</button>
     </form>
 </div>
