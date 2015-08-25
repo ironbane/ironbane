@@ -111,14 +111,19 @@ angular
                             }
                         }
 
+                        var toTarget = mouseHelperData.target.clone().sub(mouseHelperEnt.position);
+
+                        var dot = toTarget.dot(new THREE.Vector3(0, 0, 1).applyQuaternion(mouseHelperEnt.quaternion));
+
                         mouseHelperData.mesh.position.lerp(mouseHelperData.target, dt * 20);
 
-                        if (mouseHelperData.target.clone().sub(mouseHelperEnt.position).lengthSq() > mouseHelperData.range * mouseHelperData.range) {
+                        if (dot > 0) {
+                            mouseHelperData.inRange = false;
+                        } else if (toTarget.lengthSq() > mouseHelperData.range * mouseHelperData.range) {
                             mouseHelperData.inRange = false;
                         } else {
                             mouseHelperData.inRange = true;
                         }
-
 
                         if (mouseHelperData.inRange) {
                             material.color.setRGB(0, 1, 0);

@@ -96,11 +96,16 @@ angular
                     if (mouseHelper) { // TODO: if no mouseHelper, shoot straight from direction facing
                         var toTarget = mouseHelper.target.clone().sub(entity.position);
 
-                        if (toTarget.lengthSq() > mouseHelper.range * mouseHelper.range) {
-                            toTarget.normalize().multiplyScalar(mouseHelper.range);
-                        }
+                        // Check if we're attacking within our field of vision
+                        var dot = toTarget.dot(new THREE.Vector3(0, 0, 1).applyQuaternion(entity.quaternion));
 
-                        targetVector = entity.position.clone().add(toTarget);
+                        if (dot < 0) {
+                            if (toTarget.lengthSq() > mouseHelper.range * mouseHelper.range) {
+                                toTarget.normalize().multiplyScalar(mouseHelper.range);
+                            }
+
+                            targetVector = entity.position.clone().add(toTarget);
+                        }
                     }
 
                     if (targetVector) {
