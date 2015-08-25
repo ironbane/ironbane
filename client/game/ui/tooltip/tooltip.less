@@ -1,6 +1,9 @@
 
-@tooltipTextColor: #ffff00;
-@tooltipBackgroundColor: #ff0000;
+@import "../../../less/variables.import.less";
+
+@tooltipTextColor: @primary1;
+@tooltipBackgroundColor: @primary4;
+@tooltipBorderColor: @tooltipTextColor;
 
 .tooltip {
   position: absolute;
@@ -11,6 +14,7 @@
   visibility: visible;
   filter: alpha(opacity=0);
   opacity: 0;
+
 }
 .tooltip.in {
   filter: alpha(opacity=90);
@@ -39,6 +43,7 @@
   text-align: center;
   text-decoration: none;
   background-color: @tooltipBackgroundColor;
+  border: 3px solid darken(@tooltipBorderColor, 20%);
 }
 .tooltip-arrow {
   position: absolute;
@@ -47,55 +52,59 @@
   border-color: transparent;
   border-style: solid;
 }
+
+@borderMarginWidth: 10px;
+@borderWidth: 10px;
+
 .tooltip.top .tooltip-arrow {
-  bottom: 0;
+  bottom: -5px;
   left: 50%;
-  margin-left: -5px;
-  border-width: 5px 5px 0;
-  border-top-color: @tooltipBackgroundColor;
+  margin-left: -@borderMarginWidth;
+  border-width: @borderWidth @borderWidth 0;
+  border-top-color: @tooltipBorderColor;
 }
 .tooltip.top-left .tooltip-arrow {
   bottom: 0;
-  left: 5px;
-  border-width: 5px 5px 0;
-  border-top-color: @tooltipBackgroundColor;
+  left: @borderMarginWidth;
+  border-width: @borderWidth @borderWidth 0;
+  border-top-color: @tooltipBorderColor;
 }
 .tooltip.top-right .tooltip-arrow {
-  right: 5px;
+  right: @borderMarginWidth;
   bottom: 0;
-  border-width: 5px 5px 0;
-  border-top-color: @tooltipBackgroundColor;
+  border-width: @borderWidth @borderWidth 0;
+  border-top-color: @tooltipBorderColor;
 }
 .tooltip.right .tooltip-arrow {
   top: 50%;
   left: 0;
-  margin-top: -5px;
-  border-width: 5px 5px 5px 0;
-  border-right-color: @tooltipBackgroundColor;
+  margin-top: -@borderMarginWidth;
+  border-width: @borderWidth @borderWidth @borderWidth 0;
+  border-right-color: @tooltipBorderColor;
 }
 .tooltip.left .tooltip-arrow {
   top: 50%;
   right: 0;
-  margin-top: -5px;
-  border-width: 5px 0 5px 5px;
-  border-left-color: @tooltipBackgroundColor;
+  margin-top: -@borderMarginWidth;
+  border-width: @borderWidth 0 @borderWidth @borderWidth;
+  border-left-color: @tooltipBorderColor;
 }
 .tooltip.bottom .tooltip-arrow {
   top: 0;
   left: 50%;
-  margin-left: -5px;
-  border-width: 0 5px 5px;
-  border-bottom-color: @tooltipBackgroundColor;
+  margin-left: -@borderMarginWidth;
+  border-width: 0 @borderWidth @borderWidth;
+  border-bottom-color: @tooltipBorderColor;
 }
 .tooltip.bottom-left .tooltip-arrow {
   top: 0;
-  left: 5px;
-  border-width: 0 5px 5px;
-  border-bottom-color: @tooltipBackgroundColor;
+  left: @borderMarginWidth;
+  border-width: 0 @borderWidth @borderWidth;
+  border-bottom-color: @tooltipBorderColor;
 }
 .tooltip.bottom-right .tooltip-arrow {
   top: 0;
-  right: 5px;
-  border-width: 0 5px 5px;
-  border-bottom-color: @tooltipBackgroundColor;
+  right: @borderMarginWidth;
+  border-width: 0 @borderWidth @borderWidth;
+  border-bottom-color: @tooltipBorderColor;
 }
