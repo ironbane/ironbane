@@ -208,15 +208,11 @@ angular
                 return shape;
             };
 
-            // rigidBodyData.shape.triangles = getTrianglesFromMesh(sceneComponent.scene);
-
             var calculateMeshTriangles = function(mesh) {
                 var deferred = $q.defer();
 
-                setTimeout(function () {
-                    var triangles = getTrianglesFromMesh(mesh);
-                    deferred.resolve(triangles);
-                }, 100);
+                var triangles = getTrianglesFromMesh(mesh);
+                deferred.resolve(triangles);
 
                 return deferred.promise;
             };
@@ -275,6 +271,8 @@ angular
 
                     }
                 }
+
+                $rootWorld.scene.updateMatrixWorld();
 
                 triangles.map(function(triangle) {
                     triangle.forEach(function (vertex) {
