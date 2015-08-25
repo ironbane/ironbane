@@ -132,6 +132,8 @@ angular
 
                         var me = this;
 
+                        me.camDistanceLimit = originalThirdPersonPositionLength;
+
                         if (entitiesWithOctree.length) {
                             entitiesWithOctree.forEach(function(octreeEntity) {
                                 var octree = octreeEntity.getComponent('octree').octreeResultsNearPlayer;
@@ -145,8 +147,6 @@ angular
                                     // debug.drawVector(normalizedThirdPersonPosition, me.entity.position);
 
                                     var intersections = ray.intersectOctreeObjects(octree);
-
-                                    me.camDistanceLimit = originalThirdPersonPositionLength;
 
                                     if (intersections.length) {
                                         var dist = intersections[0].distance;
