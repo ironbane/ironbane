@@ -18,7 +18,6 @@ angular
             window.addEventListener('mousemove', this._onMouseMove.bind(this));
             window.addEventListener('mousedown', this._onMouseDown.bind(this));
             window.addEventListener('mouseup', this._onMouseUp.bind(this));
-            // window.addEventListener('blur', this._onBlur.bind(this));
         };
 
         Mouse.prototype._onMouseMove = function(event) {
@@ -29,9 +28,12 @@ angular
         };
 
         Mouse.prototype._onMouseDown = function(event) {
-            // TODO only preventDefault for specific keys
-            // can't access dev tools otherwise
-            // event.preventDefault();
+            // Only allow the mouse to be triggered on the canvas
+            // Maybe this could be moved somewhere else
+            if (event.target.nodeName.toLowerCase() !== 'canvas') {
+                event.preventDefault();
+                return;
+            }
 
             if (!this.buttonsDown[event.button]) {
                 this.buttonsDownOnce[event.button] = true;
@@ -41,10 +43,6 @@ angular
         };
 
         Mouse.prototype._onMouseUp = function(event) {
-            // TODO only preventDefault for specific keys
-            // can't access dev tools otherwise
-            // event.preventDefault();
-
             this.buttonsDown[event.button] = false;
         };
 
