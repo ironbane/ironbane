@@ -72,7 +72,8 @@ angular
 
                                         console.log('spawnCount', spawnZoneComponent.spawnCount)
 
-                                    }).then(function () {}, console.error);
+                                    })
+                                    .then(null, function (err) {console.error(err.stack)});
                                 }
                             });
                         }

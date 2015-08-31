@@ -134,7 +134,7 @@ angular
                         }
 
                         if (Meteor.isServer && process.env.BUILDNAVNODES) {
-                            var zoneNodes = Patrol.buildNodes(NavNodes[sceneName]);
+                            var zoneNodes = NavNodes[sceneName];
                             var fs = Meteor.npmRequire('fs');
                             var script = 'NavNodes["' + sceneName + '"] = ' + JSON.stringify(zoneNodes) + ';';
                             var base = process.env.PWD
@@ -169,7 +169,8 @@ angular
                     return meshComponent._mesh;
                 }, function(err) {
                     return $q.reject('Error loading mesh! ', err);
-                });
+                })
+                .then(null, function (err) {console.error(err.stack)});
             }
 
             function onMeshRemoved(entity) {
