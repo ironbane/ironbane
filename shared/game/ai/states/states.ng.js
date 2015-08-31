@@ -12,9 +12,9 @@ angular
                 'goToPosition': GoToPosition
             };
 
-            this.get = function(name, entity, config) {
+            this.get = function(name, entity, config, world) {
                 if (states[name]) {
-                    var state = new states[name](entity, config);
+                    var state = new states[name](entity, config, world);
                     return state;
                 }
                 else {

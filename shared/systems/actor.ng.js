@@ -15,7 +15,7 @@ angular
                     stateNames.forEach(function (stateName) {
                         world.entityAdded(stateName).add(function(entity) {
                             var stateComponent = entity.getComponent(stateName);
-                            stateComponent._state = new States.get(stateComponent.state, entity, stateComponent.config);
+                            stateComponent._state = new States.get(stateComponent.state, entity, stateComponent.config, world);
                         });
                         world.entityRemoved(stateName).add(function(entity) {
                             var stateComponent = entity.getComponent(stateName);
