@@ -4,9 +4,11 @@ angular
         'server.systems.movers',
         'server.systems.network',
         'server.systems.persistence',
+        'server.systems.spawn',
         'server.systems.trigger',
 
         'systems.actor',
         'systems.inventory',
-        'systems.damage'
+        'systems.damage',
+        'systems.mesh'
     ]);

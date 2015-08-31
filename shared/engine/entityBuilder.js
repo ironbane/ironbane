@@ -55,6 +55,13 @@ angular
                             }
                         });
                     }
+
+                    // Because it has a prefab attached, it's dynamic.
+                    // Make sure the server will send information to the clients
+                    // about this entity.
+                    if (Meteor.isServer && ['SpawnZone'].indexOf(prefabName) === -1) {
+                        entity.addComponent($components.get('netSend'));
+                    }
                 }
             }
 
@@ -79,6 +86,13 @@ angular
                 // Right now we're stuck with r69 which doesn't have the updated objectLoader
                 // so we have to make a distinction here
                 if (Meteor.isClient) {
+
+                    json.images.forEach(function(img) {
+                        if (!img.originalUrl) {
+                            console.error('EntityBuilder: image originalUrl not set!')
+                        }
+                    });
+
                     images = objectLoader.parseImages(json.images, function() {
                         deferred.resolve(entity);
                     });
@@ -416,13 +430,6 @@ angular
                         break;
                     case 'Script':
                         addPrefabToEntity(data.userData.prefab, entity.parent, data);
-
-                        // Because it has a prefab attached, it's dynamic.
-                        // Make sure the server will send information to the clients
-                        // about this entity.
-                        if (Meteor.isServer) {
-                            entity.parent.addComponent($components.get('netSend'));
-                        }
                         break;
                 }
 

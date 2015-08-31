@@ -33,7 +33,7 @@ angular.module('components', [
     'components.script',
     'components.shadow',
     'components.sound',
-    'components.spawner',
+    'components.spawnZone',
     'components.spawnPoint',
     'components.speed',
     'components.sprite',

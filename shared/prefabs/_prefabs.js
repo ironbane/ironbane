@@ -6,6 +6,7 @@ angular
         'prefabs.movingPlatform',
         'prefabs.torch',
         'prefabs.bunny',
+        'prefabs.spawnZone',
         'prefabs.spawnPoint',
         'prefabs.proctree',
         'prefabs.waterFountain',
