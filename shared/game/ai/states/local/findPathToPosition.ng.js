@@ -16,8 +16,8 @@ angular
                     var steeringBehaviourComponent = this.entity.getComponent('steeringBehaviour');
 
                     if (this.calculatedPath && this.calculatedPath.length > 1) {
-                        if (calculatedPath[0].distanceToSquared(this.entity.position) > 1 * 1) {
-                            this.steeringBehaviour.seek(calculatedPath[0]);
+                        if (this.calculatedPath[0].distanceToSquared(this.entity.position) > 1 * 1) {
+                            this.steeringBehaviour.seek(this.calculatedPath[0]);
                         }
                         else {
                             // Remove node from the path we calculated

@@ -86,14 +86,11 @@ angular
                             if (this.entity.hasComponent('localState')) {
                                 this.entity.removeComponent('localState');
                             }
+                            this.lastFollowingEntity = null;
                         }
                     }
 
                     if (!foundTarget) {
-
-                        if (this.entity.hasComponent('localState')) {
-                            this.entity.removeComponent('localState');
-                        }
 
                         if (this.wanderWaypointChangeTimer < 0) {
                             this.wanderWaypointChangeTimer = this.wanderWaypointChangeTimeout || DEFAULT_WANDER_WAYPOINT_CHANGE_TIMEOUT;
