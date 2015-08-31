@@ -115,7 +115,7 @@ angular.module('ces.entity', [
              */
             Entity.prototype.removeComponent = function(componentName) {
                 this.onComponentRemoved.emit(this, componentName);
-                this._components['$' + componentName] = undefined;
+                delete this._components['$' + componentName];
             };
 
 
