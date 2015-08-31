@@ -954,7 +954,7 @@ angular
                 polygonVertices.push(vertices[vId]);
             });
 
-            if (vector.y < highestPoint + 0.5 && vector.y > lowestPoint - 0.5 &&
+            if (vector.y < highestPoint + 2.5 && vector.y > lowestPoint - 2.5 &&
                 isPointInPoly(polygonVertices, vector)) {
                 return true;
             }
@@ -1128,6 +1128,9 @@ angular
                 return _.sample(candidates) || new THREE.Vector3();
             },
             findPath: function(startPosition, targetPosition, zone, group) {
+
+                if (!zoneNodes[zone]) return null;
+                if (!zoneNodes[zone].groups[group]) return null;
 
                 var allNodes = zoneNodes[zone].groups[group];
                 var vertices = zoneNodes[zone].vertices;
