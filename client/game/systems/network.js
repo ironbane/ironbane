@@ -250,6 +250,31 @@ angular
                         // this for any adds (even first boot)
                         me._stream.on('add', onStreamAdd.bind(me));
 
+                        me._stream.on('cadd', function (uuid, component) {
+
+                            _.each(component, function (val, key, list) {
+                                // Not guaranteed to a Vector3 but likely.
+                                // TODO is there a more robust solution?
+                                if (val.x && val.y && val.z) {
+                                    list[key] = new THREE.Vector3().copy(val);
+                                }
+                            });
+
+                            console.log('cadd', component);
+                            var entity = world.scene.getObjectByProperty('uuid', uuid);
+                            if (entity) {
+                                entity.addComponent(component);
+                            }
+                        });
+
+                        me._stream.on('cremove', function (uuid, componentName) {
+                            console.log('cremove', componentName);
+                            var entity = world.scene.getObjectByProperty('uuid', uuid);
+                            if (entity) {
+                                entity.removeComponent(componentName);
+                            }
+                        });
+
                         me._stream.on('remove', function(entityId) {
                             // $log.debug('[NetworkSystem : remove]', entityId);
                             var obj = world.scene.getObjectByProperty('uuid', entityId);
