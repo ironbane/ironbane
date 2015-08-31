@@ -92,7 +92,7 @@ angular
                 }
                 //$log.debug('materials: ', materials);
                 entity = this.parseEntity(json.object);
-                entity = this.postProcessEntity(entity, geometries, materials);
+                entity = this.postProcessEntity(entity, geometries, materials, sceneName);
                 entity.isLoadedFromJsonFile = true;
 
                 return deferred.promise;
@@ -231,9 +231,11 @@ angular
             })();
 
 
-            this.postProcessEntity = function(entity, geometries, materials) {
+            this.postProcessEntity = function(entity, geometries, materials, sceneName) {
 
                 var data = entity.data;
+
+                entity.level = sceneName;
 
                 switch (data.type) {
                     case 'Scene':
@@ -420,7 +422,7 @@ angular
                 var me = this;
 
                 entity.children.forEach(function(child) {
-                    me.postProcessEntity(child, geometries, materials);
+                    me.postProcessEntity(child, geometries, materials, sceneName);
                 });
 
                 return entity;

@@ -169,6 +169,8 @@ angular.module('ces.entity', [
                     if (entity.metadata) {
                         data.metadata.cheats = entity.metadata.cheats;
                     }
+
+                    data.level = entity.level;
                 }
 
                 serializeComponents(json.object, this);
