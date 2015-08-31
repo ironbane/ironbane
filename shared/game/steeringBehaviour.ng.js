@@ -1,6 +1,9 @@
 angular
-    .module('game.steeringBehaviour', [])
-    .factory('SteeringBehaviour', function(Class) {
+    .module('game.steeringBehaviour', [
+        'patrol',
+        'engine.util'
+    ])
+    .factory('SteeringBehaviour', function(Class, Patrol, IbUtils) {
             'use strict';
 
             var btVec3 = new Ammo.btVector3();
@@ -9,13 +12,15 @@ angular
                 init: function(entity) {
                     this.entity = entity;
 
-                    this.speed = 5;
-                    this.maxSpeed = 10;
+                    var steeringBehaviourComponent = entity.getComponent('steeringBehaviour');
+
+                    this.speed = steeringBehaviourComponent.speed;
+                    this.maxSpeed = steeringBehaviourComponent.maxSpeed;
 
                     // Wander
-                    this.wanderRadius = 5.2;
-                    this.wanderDistance = 2.0;
-                    this.wanderJitter = 180.0;
+                    this.wanderRadius = steeringBehaviourComponent.wanderRadius;
+                    this.wanderDistance = steeringBehaviourComponent.wanderDistance;
+                    this.wanderJitter = steeringBehaviourComponent.wanderJitter;
                     this.wanderTarget = new THREE.Vector3();
 
                     var rigidBodyComponent = entity.getComponent('rigidBody');
@@ -25,7 +30,6 @@ angular
                     }
 
                     this.rigidBody = rigidBodyComponent.rigidBody;
-
                 },
                 update: function () {
                     if (!this.rigidBody) {
@@ -38,6 +42,13 @@ angular
                         }
                     }
                 },
+                brake: function (amount) {
+                    var currentVel = this.rigidBody.getLinearVelocity().toTHREEVector3();
+                    currentVel.multiplyScalar(-amount);
+
+                    btVec3.setValue(currentVel.x, currentVel.y, currentVel.z);
+                    this.rigidBody.applyCentralImpulse(btVec3);
+                },
                 seek: function(targetPos) {
                     if (this.rigidBody) {
                         var toTarget = targetPos.clone().sub(this.entity.position);
@@ -45,12 +56,14 @@ angular
                         //calculate the distance to the target position
                         var dist = toTarget.lengthSq();
                         var brakeLimiter = Math.min(1.0, dist);
-                        var desiredVelocity = toTarget.normalize().multiplyScalar(this.speed).multiplyScalar(brakeLimiter);
+                        var desiredVelocity = toTarget.normalize().multiplyScalar(this.speed);
+                        //.multiplyScalar(brakeLimiter);
 
-                        // var currentVel = this.rigidBody.getLinearVelocity().toTHREEVector3();
-                        // desiredVelocity.sub(currentVel);
+                        var currentVel = this.rigidBody.getLinearVelocity().toTHREEVector3();
+                        currentVel.y = 0;
+                        desiredVelocity.sub(currentVel);
 
-                        btVec3.setValue(desiredVelocity.x, desiredVelocity.y, desiredVelocity.z);
+                        btVec3.setValue(desiredVelocity.x, 0, desiredVelocity.z);
                         this.rigidBody.applyCentralImpulse(btVec3);
                     }
                 },
@@ -82,10 +95,11 @@ angular
 
                             var currentVel = this.rigidBody.getLinearVelocity();
                             currentVel = currentVel.toTHREEVector3();
+                            currentVel.y = 0;
                             desiredVelocity.sub(currentVel);
 
                             // return desiredVelocity.sub(this.entity.velocity);
-                            btVec3.setValue(desiredVelocity.x, desiredVelocity.y, desiredVelocity.z);
+                            btVec3.setValue(desiredVelocity.x, 0, desiredVelocity.z);
                             this.rigidBody.applyCentralImpulse(btVec3);
 
                         }
