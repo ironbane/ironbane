@@ -54,21 +54,20 @@ angular
                         var updateApplicator = (function(entity, data) {
                             return function() {
                                 if (entity.hasComponent('player')) {
-
-                                } else {
-                                    // We're dealing with an NPC, so check for state changes
-                                }
-
-                                if (entity.hasComponent('localState')) {
-                                    entity.removeComponent('localState');
-                                }
-
-                                entity.addComponent($components.get('localState', {
-                                    state: 'goToPosition',
-                                    config: {
-                                        targetPosition: (new THREE.Vector3()).fromArray(data.pos)
+                                    if (entity.hasComponent('localState')) {
+                                        entity.removeComponent('localState');
                                     }
-                                }));
+
+                                    entity.addComponent($components.get('localState', {
+                                        state: 'goToPosition',
+                                        config: {
+                                            targetPosition: (new THREE.Vector3()).fromArray(data.pos)
+                                        }
+                                    }));
+                                } else {
+                                    // We're dealing with an NPC. States will be added/removed using
+                                    // component add/remove handlers (see cadd/remove below)
+                                }
                             };
                         })(entity, packet[entity.uuid]);
                         system._updates.push(updateApplicator);

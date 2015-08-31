@@ -1,5 +1,7 @@
 angular
     .module('game.ai.states.global', [
-    	'three',
-    	'engine.util'
+        'ces',
+        'three',
+        'engine.util',
+        'patrol'
     ])

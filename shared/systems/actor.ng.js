@@ -33,6 +33,11 @@ angular
                             var stateComponent = entity.getComponent(stateName);
 
                             if (stateComponent) {
+                                if ((stateName === 'globalState' && Meteor.isClient) ||
+                                    (stateName === 'localState' && Meteor.isServer)) {
+                                    return;
+                                }
+
                                 stateComponent._state.update(dTime);
                             }
                         });
