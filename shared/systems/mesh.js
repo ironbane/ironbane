@@ -1,4 +1,3 @@
-// this is a shared system because both client & server need geometry
 angular
     .module('systems.mesh', [
         'ces',
@@ -6,7 +5,9 @@ angular
         'engine.geometryCache',
         'engine.materialCache',
         'engine.textureLoader',
-        'game.world-root'
+        'game.world-root',
+        'global.constants',
+        'patrol'
     ])
     .factory('MeshSystem', [
         'System',
@@ -17,7 +18,9 @@ angular
         'TextureLoader',
         '$log',
         '$rootWorld',
-        function(System, $q, THREE, $geometryCache, $materialCache, TextureLoader, $log, $rootWorld) {
+        'IB_CONSTANTS',
+        'Patrol',
+        function(System, $q, THREE, $geometryCache, $materialCache, TextureLoader, $log, $rootWorld, IB_CONSTANTS, Patrol) {
             'use strict';
 
             function loadTexturesForMesh(material, geometry, sceneId) {
@@ -43,10 +46,10 @@ angular
                             // material.wireframe = true;
                             geometry.buffersNeedUpdate = true;
                             geometry.uvsNeedUpdate = true;
-	                }, function(err) {
-	                	console.log('Error loading texture!', err);
-	                    return $q.reject('Error loading texture! ', err);
-	                });
+                    }, function(err) {
+                        console.log('Error loading texture!', err);
+                        return $q.reject('Error loading texture! ', err);
+                    });
                 };
 
                 // for a face material (others?) there are multiple materials, otherwise
@@ -58,26 +61,26 @@ angular
             // It's possible that we didn't load the required geometries/materials yet here
             // because the server sends us the entities before we loaded the required resources
             // Do a check here using timeout. There's probably a cleaner way to do it though.
-			var checkIfGeoAndMatsAreThere = function (meshComponent) {
-            	var deferred = $q.defer();
+            var checkIfGeoAndMatsAreThere = function (meshComponent) {
+                var deferred = $q.defer();
 
-            	var doCheck = function () {
-                	var geometry = $geometryCache.get(meshComponent.geometry);
-            		var material = $materialCache.get(meshComponent.material);
-            		if (geometry && material) {
-            			deferred.resolve({
-            				geometry: geometry,
-            				material: material
-            			});
-            		}
-            		else {
-            			setTimeout(doCheck, 100);
-            		}
-            	};
+                var doCheck = function () {
+                    var geometry = $geometryCache.get(meshComponent.geometry);
+                    var material = $materialCache.get(meshComponent.material);
+                    if (geometry && material) {
+                        deferred.resolve({
+                            geometry: geometry,
+                            material: material
+                        });
+                    }
+                    else {
+                        setTimeout(doCheck, 100);
+                    }
+                };
 
-        		doCheck();
+                doCheck();
 
-            	return deferred.promise;
+                return deferred.promise;
             };
 
             function onMeshAdded(entity) {
@@ -86,21 +89,82 @@ angular
                     promise;
 
 
-				promise = checkIfGeoAndMatsAreThere(meshComponent).then(function (result) {
-	                meshComponent._mesh = new THREE.Mesh(result.geometry, result.material);
-	                meshComponent._meshLoaded = false; // if you need to check status
+                promise = checkIfGeoAndMatsAreThere(meshComponent).then(function (result) {
+                    meshComponent._mesh = new THREE.Mesh(result.geometry, result.material);
+                    meshComponent._meshLoaded = false; // if you need to check status
 
 
-	                if (Meteor.isClient) {
-	                    return loadTexturesForMesh(result.material, result.geometry, sceneId);
-	                } else {
-	                    return $q.when(meshComponent._mesh);
-	                }
-				})
+                    if (Meteor.isClient) {
+                        return loadTexturesForMesh(result.material, result.geometry, sceneId);
+                    } else {
+                        return $q.when(meshComponent._mesh);
+                    }
+                })
 
                 meshComponent._meshLoadTask = promise.then(function() {
                     meshComponent._meshLoaded = true;
                     entity.add(meshComponent._mesh);
+
+                    $rootWorld.scene.updateMatrixWorld();
+
+                    var navMesh = entity.getComponent('navMesh');
+
+                    if (navMesh) {
+                        var sceneName = navMesh.sceneName;
+
+                        if (!NavNodes[sceneName]) {
+                            var clonedGeometry = meshComponent._mesh.geometry.clone();
+                            clonedGeometry.vertices.forEach(function(v) {
+                                // meshComponent._mesh.parent.parent.updateMatrixWorld(true);
+                                v.applyMatrix4(meshComponent._mesh.matrixWorld);
+                            });
+                            NavNodes[sceneName] = Patrol.buildNodes(clonedGeometry);
+
+                            // if (IB_CONSTANTS.isDev) {
+                                // var geometry = new THREE.BoxGeometry( 0.3, 0.3, 0.3 );
+                                // var newGeo =
+                                // var material = new THREE.MeshBasicMaterial( {color: 0xff9999} );
+                                // var allNodes = new THREE.Mesh();
+                                // clonedGeometry.vertices.forEach(function(v) {
+                                //     var node = new THREE.Mesh( geometry, material );
+                                //     node.position.copy(v);
+                                //     $rootWorld.scene.add( node );
+                                // })
+                            // }
+                        }
+
+                        if (Meteor.isServer && process.env.BUILDNAVNODES) {
+                            var zoneNodes = Patrol.buildNodes(NavNodes[sceneName]);
+                            var fs = Meteor.npmRequire('fs');
+                            var script = 'NavNodes["' + sceneName + '"] = ' + JSON.stringify(zoneNodes) + ';';
+                            var base = process.env.PWD
+                            var outputFilename = base + '/shared/navNodes/' + sceneName + '.js';
+                            fs.writeFile(outputFilename, script, function(err) {
+                                if(err) {
+                                  console.log(err);
+                                } else {
+                                  console.log("JSON saved to " + outputFilename);
+                                }
+                            });
+                        }
+
+                        Patrol.setZoneData(sceneName, NavNodes[sceneName]);
+
+                        if (IB_CONSTANTS.isDev) {
+                            meshComponent._mesh.material.transparent = true;
+                            meshComponent._mesh.material.opacity = 0.4;
+                            meshComponent._mesh.material.color.set(0xaa00aa);
+                            meshComponent._mesh.position.y += 0.01;
+
+                            var wireframe = new THREE.WireframeHelper(meshComponent._mesh, 0xaa00aa);
+                            $rootWorld.scene.add(wireframe);
+                        }
+                        else {
+                            entity.visible = false;
+                        }
+
+                        $log.log('Loaded NavMesh for ' + sceneName + ' (' + NavNodes[sceneName].vertices.length + ' verts, ' + NavNodes[sceneName].groups.length + ' groups)');
+                    }
 
                     return meshComponent._mesh;
                 }, function(err) {

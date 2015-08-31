@@ -16,6 +16,7 @@ angular.module('components', [
     'components.mouseHelper',
     'components.mover',
     'components.nameMesh',
+    'components.navMesh',
     'components.netRecv',
     'components.netSend',
     'components.octree',

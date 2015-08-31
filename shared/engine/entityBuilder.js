@@ -341,6 +341,13 @@ angular
                             }
                         });
 
+                        // Check if it's a navigation mesh
+                        if (entity.parent.name === 'NavMesh') {
+                            entity.addComponent($components.get('navMesh', {
+                                sceneName: sceneName
+                            }));
+                        }
+
                         break;
 
                     case 'Sprite':
