@@ -112,25 +112,8 @@ angular
                     if (navMesh) {
                         var sceneName = navMesh.sceneName;
 
-                        if (!NavNodes[sceneName]) {
-                            var clonedGeometry = meshComponent._mesh.geometry.clone();
-                            clonedGeometry.vertices.forEach(function(v) {
-                                // meshComponent._mesh.parent.parent.updateMatrixWorld(true);
-                                v.applyMatrix4(meshComponent._mesh.matrixWorld);
-                            });
-                            NavNodes[sceneName] = Patrol.buildNodes(clonedGeometry);
-
-                            // if (IB_CONSTANTS.isDev) {
-                                // var geometry = new THREE.BoxGeometry( 0.3, 0.3, 0.3 );
-                                // var newGeo =
-                                // var material = new THREE.MeshBasicMaterial( {color: 0xff9999} );
-                                // var allNodes = new THREE.Mesh();
-                                // clonedGeometry.vertices.forEach(function(v) {
-                                //     var node = new THREE.Mesh( geometry, material );
-                                //     node.position.copy(v);
-                                //     $rootWorld.scene.add( node );
-                                // })
-                            // }
+                        if (Meteor.isClient) {
+                            Patrol.buildNodes(sceneName, meshComponent._mesh);
                         }
 
                         if (Meteor.isServer && process.env.BUILDNAVNODES) {
@@ -148,9 +131,7 @@ angular
                             });
                         }
 
-                        Patrol.setZoneData(sceneName, NavNodes[sceneName]);
-
-                        if (IB_CONSTANTS.isDev) {
+                        if (IB_CONSTANTS.isDev && false) {
                             meshComponent._mesh.material.transparent = true;
                             meshComponent._mesh.material.opacity = 0.4;
                             meshComponent._mesh.material.color.set(0xaa00aa);
@@ -162,8 +143,6 @@ angular
                         else {
                             entity.visible = false;
                         }
-
-                        $log.log('Loaded NavMesh for ' + sceneName + ' (' + NavNodes[sceneName].vertices.length + ' verts, ' + NavNodes[sceneName].groups.length + ' groups)');
                     }
 
                     return meshComponent._mesh;
