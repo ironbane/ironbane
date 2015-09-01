@@ -1,9 +1,8 @@
 angular
     .module('game.steeringBehaviour', [
-        'patrol',
         'engine.util'
     ])
-    .factory('SteeringBehaviour', function(Class, Patrol, IbUtils) {
+    .factory('SteeringBehaviour', function(Class, IbUtils) {
             'use strict';
 
             var btVec3 = new Ammo.btVector3();

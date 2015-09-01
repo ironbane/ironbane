@@ -108,11 +108,11 @@ angular
                         .then(function(json) {
                             //$log.log('got json: ', Object.keys(json));
                             return EntityBuilder.load(json, sceneName).then(function (entityTree) {
-                                world.addEntity(entityTree);    
+                                world.addEntity(entityTree);
                                 world._isLoading[sceneName] = false;
-                            });                                                        
+                            });
                         }, function(err) {
-                            $log.error('Error loading ', sceneName, ' ERR: ', err);
+                            $log.error('Error loading ', sceneName, ' ERR: ', err.stack);
                             return $q.reject('Error loading ', sceneName, err);
                         });
 

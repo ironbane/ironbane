@@ -11,7 +11,7 @@ angular
                     _.each(config, function (val, key, list) {
                         // Not guaranteed to a Vector3 but likely.
                         // TODO is there a more robust solution?
-                        if (val.hasOwnProperty('x') &&
+                        if (val && val.hasOwnProperty('x') &&
                             val.hasOwnProperty('y') &&
                             val.hasOwnProperty('z')) {
                             list[key] = new THREE.Vector3().copy(val);
