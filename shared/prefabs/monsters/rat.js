@@ -31,7 +31,7 @@ angular
                     }
                 },
                 group: 'npcs',
-                collidesWith: ['level']
+                collidesWith: ['level', 'npcs', 'otherPlayers']
             },
             // helper: {
             //     line: true

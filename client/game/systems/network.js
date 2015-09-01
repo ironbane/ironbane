@@ -161,7 +161,7 @@ angular
                                 }
                             },
                             group: 'otherPlayers',
-                            collidesWith: ['level']
+                            collidesWith: ['level', 'npcs']
                         });
                         builtEntity.addComponent('steeringBehaviour');
                         builtEntity.addComponent('fighter');

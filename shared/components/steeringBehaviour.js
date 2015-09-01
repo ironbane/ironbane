@@ -8,7 +8,7 @@ angular
             $componentsProvider.register({
                 'steeringBehaviour': {
                     speed: 2,
-                    maxSpeed: 5,
+                    maxSpeed: 2,
 
                     // Wander
                     wanderRadius: 5.2,
