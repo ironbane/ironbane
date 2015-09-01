@@ -1,6 +1,8 @@
 angular
-    .module('engine.util', [])
-    .service('IbUtils', ['$q', function($q) {
+    .module('engine.util', [
+        'three'
+    ])
+    .service('IbUtils', ['$q', 'THREE', function($q, THREE) {
         'use strict';
 
         this.getRandomInt = function(min, max) {
@@ -11,6 +13,18 @@ angular
         this.getRandomFloat = function(minValue, maxValue, precision) {
             precision = precision || 2;
             return parseFloat(Math.min(minValue + (Math.random() * (maxValue - minValue)), maxValue).toFixed(precision));
+        };
+
+        this.getRandomVector3 = function(base, spread) {
+            var v = new THREE.Vector3();
+
+            v.copy(base);
+
+            v.x += Math.random() * spread.x - (spread.x / 2);
+            v.y += Math.random() * spread.y - (spread.y / 2);
+            v.z += Math.random() * spread.z - (spread.z / 2);
+
+            return v;
         };
 
         this.roundNumber = function(number, decimals) {
