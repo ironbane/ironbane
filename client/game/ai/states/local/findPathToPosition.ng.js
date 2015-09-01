@@ -7,8 +7,14 @@ angular
                 init: function(entity, config, world) {
                     this._super.apply(this, arguments);
 
-                    this.calculatedPath = Patrol.findPath(entity.position.clone().add(new THREE.Vector3(0, -0.5, 0)),
-                        this.targetPosition, this.entity.level, this.navMeshGroup);
+                    var me = this;
+
+                    var p = Patrol.findPath(entity.position.clone(),
+                        this.targetPosition, this.entity.level)
+                        .then(function (path) {
+                            me.calculatedPath = path;
+                            debug.drawPath(me.entity.uuid + 'findPathToPosition', me.calculatedPath);
+                        });
                 },
                 update: function(dTime) {
                     this._super.apply(this, arguments);
@@ -29,7 +35,7 @@ angular
                     }
                 },
                 destroy: function() {
-
+                    debug.clearPath(this.entity.uuid + 'findPathToPosition');
                 },
                 handleMessage: function(message, data) {
 

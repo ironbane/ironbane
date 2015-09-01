@@ -10,10 +10,15 @@ angular
                     this.findPathTimeoutTimer = 0.0;
                 },
                 findPathToEntity: function (targetEntity) {
-                    this.calculatedPath = Patrol.findPath(this.entity.position.clone().add(new THREE.Vector3(0, -0.5, 0)),
-                        targetEntity.position.clone().add(new THREE.Vector3(0, -0.5, 0)), this.entity.level, this.navMeshGroup);
+                    var me = this;
 
-                    debug.drawPath(this.entity.uuid + 'seekEntity', this.calculatedPath);
+                    this.calculatedPath = Patrol.findPath(this.entity.position.clone(),
+                        targetEntity.position.clone(), this.entity.level, this.navMeshGroup)
+                        .then(function (path) {
+                            me.calculatedPath = path;
+                            debug.drawPath(me.entity.uuid + 'seekEntity', me.calculatedPath);
+                        });
+
                 },
                 update: function(dTime) {
                     this._super.apply(this, arguments);
@@ -48,7 +53,7 @@ angular
                     }
                 },
                 destroy: function() {
-
+                    debug.clearPath(this.entity.uuid + 'seekEntity');
                 },
                 handleMessage: function(message, data) {
 

@@ -9,8 +9,9 @@ angular
             // We just tell the client the state of the monster and trust the client to take care of the rest.
             // Prone to cheating but in a co-op environment this should be managable. The big advantage is speed.
 
-            var DEFAULT_SPAWN_RADIUS = 10;
+            var DEFAULT_SPAWN_RADIUS = 30;
             var DEFAULT_WANDER_WAYPOINT_CHANGE_TIMEOUT = 7.5;
+            var DEFAULT_WANDER_RANGE = 30.0;
 
             return Class.extend({
                 init: function(entity, config, world) {
@@ -26,22 +27,6 @@ angular
                     this.lastFollowingEntity = null;
 
                     var me = this;
-
-                    var checkForNavMeshGroup = function () {
-                        me.navMeshGroup = Patrol.getGroup(entity.level, entity.position.clone().add(new THREE.Vector3(0, -0.5, 0)));
-                        if (me.navMeshGroup === null) {
-                            setTimeout(checkForNavMeshGroup, 100);
-                        }
-                    };
-                    checkForNavMeshGroup();
-
-                    // setInterval(function () {
-                    //     var players = world.getEntities('player');
-                    //     console.log('active players')
-                    //     players.forEach(function (player) {
-                    //         console.log(player.uuid);
-                    //     });
-                    // }, 500);
 
                 },
                 update: function(dTime) {
@@ -95,7 +80,7 @@ angular
                         if (this.wanderWaypointChangeTimer < 0) {
                             this.wanderWaypointChangeTimer = this.wanderWaypointChangeTimeout || DEFAULT_WANDER_WAYPOINT_CHANGE_TIMEOUT;
 
-                            var targetPosition = Patrol.getRandomNode(this.entity.level, this.navMeshGroup, this.spawnPosition, 10);
+                            var targetPosition = IbUtils.getRandomVector3(this.entity.position, new THREE.Vector3(this.wanderRange || DEFAULT_WANDER_RANGE, 0, this.wanderRange || DEFAULT_WANDER_RANGE));
 
                             // console.log(this.entity.name + ' changed position');
                             // console.log('position: ', this.entity.position);

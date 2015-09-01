@@ -6,7 +6,7 @@ angular
     .factory('ActorSystem', function($log, System, States) {
             'use strict';
 
-            var stateNames = ['localState', 'globalState']
+            var stateNames = [Meteor.isClient ? 'localState' : 'globalState']
 
             return System.extend({
                 addedToWorld: function(world) {
@@ -33,11 +33,6 @@ angular
                             var stateComponent = entity.getComponent(stateName);
 
                             if (stateComponent) {
-                                if ((stateName === 'globalState' && Meteor.isClient) ||
-                                    (stateName === 'localState' && Meteor.isServer)) {
-                                    return;
-                                }
-
                                 stateComponent._state.update(dTime);
                             }
                         });

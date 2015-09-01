@@ -20,8 +20,6 @@ angular
 
                     _.extend(this, config);
 
-
-
                     var steeringBehaviourComponent = this.entity.getComponent('steeringBehaviour');
                     if (steeringBehaviourComponent) {
                         this.steeringBehaviour = steeringBehaviourComponent.steeringBehaviour;
@@ -30,14 +28,6 @@ angular
                         console.error('No steeringBehaviour found!');
                     }
 
-                    var me = this;
-                    var checkForNavMeshGroup = function () {
-                        me.navMeshGroup = Patrol.getGroup(entity.level, entity.position.clone().add(new THREE.Vector3(0, -0.5, 0)));
-                        if (me.navMeshGroup === null) {
-                            setTimeout(checkForNavMeshGroup, 100);
-                        }
-                    };
-                    checkForNavMeshGroup();
                 },
                 update: function(dTime) {
                     var rigidBodyComponent = this.entity.getComponent('rigidBody');
