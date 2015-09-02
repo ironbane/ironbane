@@ -42,7 +42,7 @@ angular
                                 ],
 
                                 [
-                                    'Note that Ironbane is in pre-alpha stage.',
+                                    'Note that Ironbane is in alpha stage.',
                                     'Please report all bugs in the forum.'
                                 ],
 
