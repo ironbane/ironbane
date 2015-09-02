@@ -42,12 +42,12 @@ angular
                 ]
             },
             health: {
-                max: 10,
-                value: 10
+                max: 3,
+                value: 3
             },
             armor: {
-                max: 10,
-                value: 10
+                max: 3,
+                value: 3
             },
             inventory: {
                 slot0: {name: 'Cheese', type: 'food', image: 289, health: 2},
