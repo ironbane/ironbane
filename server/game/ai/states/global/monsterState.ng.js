@@ -26,11 +26,14 @@ angular
 
                     this.lastFollowingEntity = null;
 
+                    this.timeAlive = 0.0;
+
                     var me = this;
 
                 },
                 update: function(dTime) {
                     this.wanderWaypointChangeTimer -= dTime;
+                    this.timeAlive += dTime;
 
                     var me = this;
 
@@ -51,18 +54,23 @@ angular
 
 
                     if (this.lastFollowingEntity !== foundTarget && foundTarget) {
-                        this.lastFollowingEntity = foundTarget;
+                        // If a target is already present while we spawn, there's a bug where the cadd/remove emits
+                        // aren't coming across for some reason (perhaps because it's too soon, before the onComponentAdd handlers are added?).
+                        // Only try after we've been alive for a short while
+                        if (this.timeAlive > 1.0) {
+                            this.lastFollowingEntity = foundTarget;
 
-                        if (this.entity.hasComponent('localState')) {
-                            this.entity.removeComponent('localState');
-                        }
-
-                        this.entity.addComponent($components.get('localState', {
-                            state: 'seekEntity',
-                            config: {
-                                targetEntityUuid: this.lastFollowingEntity.uuid
+                            if (this.entity.hasComponent('localState')) {
+                                this.entity.removeComponent('localState');
                             }
-                        }));
+
+                            this.entity.addComponent($components.get('localState', {
+                                state: 'seekEntity',
+                                config: {
+                                    targetEntityUuid: this.lastFollowingEntity.uuid
+                                }
+                            }));
+                        }
                     }
 
                     if (this.lastFollowingEntity) {
