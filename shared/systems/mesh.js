@@ -105,7 +105,9 @@ angular
                     meshComponent._meshLoaded = true;
                     entity.add(meshComponent._mesh);
 
-                    $rootWorld.scene.updateMatrixWorld();
+                    meshComponent._mesh.traverseAncestors(function (parent) {
+                        parent.updateMatrixWorld();
+                    })
 
                     var navMesh = entity.getComponent('navMesh');
 
