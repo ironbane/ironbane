@@ -17,7 +17,7 @@ angular
                         var spawnZoneComponent = entity.getComponent('spawnZone');
 
                         spawnZoneComponent.spawnTimer = 0.0;
-                        spawnZoneComponent.spawnCount = 0;
+                        spawnZoneComponent.spawnList = [];
 
                     });
 
@@ -32,10 +32,8 @@ angular
                         var spawnZoneComponent = entity.getComponent('spawnZone');
 
                         if (spawnZoneComponent.spawnTimer <= dTime &&
-                            spawnZoneComponent.spawnCount < spawnZoneComponent.amountOfEntitiesToHaveAtAllTimes) {
+                            spawnZoneComponent.spawnList.length < spawnZoneComponent.amountOfEntitiesToHaveAtAllTimes) {
                             spawnZoneComponent.spawnTimer = spawnZoneComponent.spawnDelay;
-
-                            spawnZoneComponent.spawnCount++;
 
                             entity.children.forEach(function(child) {
 
@@ -67,6 +65,16 @@ angular
                                         builtEntity.position.copy(randomPosition);
 
                                         world.addEntity(builtEntity);
+
+                                        spawnZoneComponent.spawnList.push(builtEntity);
+
+                                        var listener = function (entity) {
+                                            if (entity === builtEntity) {
+                                                spawnZoneComponent.spawnList = _.without(spawnZoneComponent.spawnList, builtEntity);
+                                                world.singleEntityRemoved.remove(listener);
+                                            }
+                                        };
+                                        world.singleEntityRemoved.add(listener);
 
                                     })
                                     .then(null, function (err) {console.error(err.stack)});
