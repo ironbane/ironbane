@@ -64,13 +64,9 @@ angular
 
                                         randomPosition.applyMatrix4(mesh.matrixWorld);
 
-                                        // console.log(randomPosition);
-
-                                        builtEntity.position.copy(randomPosition).add(entity.position);
+                                        builtEntity.position.copy(randomPosition);
 
                                         world.addEntity(builtEntity);
-
-                                        console.log('spawnCount', spawnZoneComponent.spawnCount)
 
                                     })
                                     .then(null, function (err) {console.error(err.stack)});
