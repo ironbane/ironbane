@@ -97,15 +97,15 @@ angular
                         var toTarget = mouseHelper.target.clone().sub(entity.position);
 
                         // Check if we're attacking within our field of vision
-                        var dot = toTarget.dot(new THREE.Vector3(0, 0, 1).applyQuaternion(entity.quaternion));
+                        // var dot = toTarget.dot(new THREE.Vector3(0, 0, 1).applyQuaternion(entity.quaternion));
 
-                        if (dot < 0) {
+                        // if (dot < 0) {
                             if (toTarget.lengthSq() > mouseHelper.range * mouseHelper.range) {
                                 toTarget.normalize().multiplyScalar(mouseHelper.range);
                             }
 
                             targetVector = entity.position.clone().add(toTarget);
-                        }
+                        // }
                     }
 
                     if (targetVector) {
