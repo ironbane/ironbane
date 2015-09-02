@@ -4,6 +4,7 @@ angular
         'ces.family',
         'ces.entity',
         'ces.entitylist',
+        'ces.signal',
         'ces.pubsub'
     ])
     .factory('World', [
@@ -12,8 +13,9 @@ angular
         'Entity',
         'EntityList',
         'CESPubSub',
+        'Signal',
         '$log',
-        function(Class, Family, Entity, EntityList, CESPubSub, $log) {
+        function(Class, Family, Entity, EntityList, CESPubSub, Signal, $log) {
             'use strict';
 
             /**
@@ -47,6 +49,8 @@ angular
 
                     // queue up all remove calls until after the system update loop
                     this._pendingRemovals = [];
+
+                    this.singleEntityRemoved = new Signal();
                 },
 
                 publish: function(/* args */) {
@@ -159,6 +163,8 @@ angular
                     this._entities.remove(entity);
 
                     this._onEntityRemoveChild(null, entity);
+
+                    this.singleEntityRemoved.emit(entity);
                 },
 
                 _purgePendingRemovals: function() {
