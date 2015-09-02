@@ -1,9 +1,10 @@
 angular
     .module('systems.projectile', [
         'ces',
-        'three'
+        'three',
+        'engine.entity-cache'
     ])
-    .factory('ProjectileSystem', function($log, System, THREE) {
+    .factory('ProjectileSystem', function($log, System, THREE, $entityCache) {
         'use strict';
 
         var calculateFiringAngle = function(startPosition, targetPosition, speed, throwHigh) {
@@ -130,14 +131,21 @@ angular
 
                             damageableEntities.forEach(function(damageableEntity) {
                                 if (damageableEntity !== projectileComponent._owner &&
-                                    damageableEntity.position.inRangeOf(entity.position, 0.5)) {
+                                    damageableEntity.position.inRangeOf(entity.position, 1.0)) {
 
-                                    var damageableComponent = damageableEntity.getComponent('damageable');
-                                    damageableComponent.sources.push({
-                                        sourceId: projectileComponent._owner.uuid,
-                                        type: 'damage',
-                                        damage: projectileComponent.attribute1
-                                    });
+                                    // Only publish if the projectile has something to do with the mainPlayer
+                                    // Other projectile hit events will be sent over the network
+                                    var mainPlayer = $entityCache.get('mainPlayer');
+
+                                    if (mainPlayer === damageableEntity ||
+                                        mainPlayer === projectileComponent._owner) {
+
+                                        me.world.publish('combat:damageEntity', damageableEntity, {
+                                            sourceEntity: projectileComponent._owner,
+                                            type: 'damage',
+                                            damage: projectileComponent.attribute1
+                                        });
+                                    }
 
                                     projectileComponent._canDeliverEffect = false;
                                 }

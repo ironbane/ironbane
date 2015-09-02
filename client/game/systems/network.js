@@ -216,6 +216,25 @@ angular
                         }
                     });
 
+                    world.subscribe('combat:damageEntity', function(victimEntity, data) {
+                        // We only tell the server if the event has something to do with the mainPlayer
+                        // otherwise it's none of our business
+                        var mainPlayer = $entityCache.get('mainPlayer');
+
+                        if (victimEntity === mainPlayer || data.sourceEntity === mainPlayer) {
+                            if (victimEntity.hasComponent('damageable') && me._stream) {
+                                me._stream.emit('combat:damageEntity', {
+                                    victimEntityUuid: victimEntity.uuid,
+                                    sourceEntityUuid: data.sourceEntity.uuid,
+                                    damage: data.damage
+                                });
+                            }
+                        }
+
+                        var damageableComponent = victimEntity.getComponent('damageable');
+                        damageableComponent.sources.push(data);
+                    });
+
                     // Set up streams and make sure it reruns everytime we change levels or change user
                     // $meteor.autorun is linked to $scope which we don't have here,
                     // so Meteor.autorun is the only way AFAIK
@@ -315,6 +334,31 @@ angular
 
                             if (entity) {
                                 world.publish('combat:primaryAttack', entity, data.targetVector);
+                            }
+                        });
+
+                        // this one we'll just pass through
+                        me._stream.on('combat:damageEntity', function(data) {
+                            var damageableEntities = world.getEntities('damageable');
+
+                            var victimEntity = _.findWhere(damageableEntities, {
+                                uuid: data.victimEntityUuid
+                            });
+
+                            var sourceEntity = _.findWhere(damageableEntities, {
+                                uuid: data.sourceEntityUuid
+                            });
+
+                            var mainPlayer = $entityCache.get('mainPlayer');
+
+                            // Server shouldn't include info if it's the mainPlayer but it does
+                            // so we need to check for it here and ignore it
+                            if (victimEntity !== mainPlayer && sourceEntity !== mainPlayer) {
+                                me.world.publish('combat:damageEntity', victimEntity, {
+                                    sourceEntity: sourceEntity,
+                                    type: 'damage',
+                                    damage: data.damage
+                                });
                             }
                         });
 

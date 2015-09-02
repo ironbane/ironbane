@@ -140,10 +140,10 @@ angular
                         damageableComponent.sources.forEach(function(source) {
                             if (entity.hasComponent('player')) {
                                 // if the victim of damage is a player, make sure that it was not inflicted by another player (no pvp)
-                                if (source.sourceId) {
-                                    var playerAttacker = me.world.getEntityById(source.sourceId, 'player');
-                                    //$log.debug('player attacker', source, playerAttacker);
-                                    if (playerAttacker) {
+                                if (source.sourceEntity) {
+                                    var playerComponent = source.sourceEntity.getComponent('player');
+
+                                    if (playerComponent) {
                                         return;
                                     }
                                 }
@@ -157,7 +157,11 @@ angular
                                         var armorDamageDone = Math.min(armorComponent.value, damage);
                                         damage -= armorDamageDone;
                                         armorComponent.value -= armorDamageDone;
-                                        me.addDamageParticles('armor', armorDamageDone, entity.position);
+
+                                        if (Meteor.isClient) {
+                                            me.addDamageParticles('armor', armorDamageDone, entity.position);
+                                        }
+
                                         $log.debug('armor', armorDamageDone, entity.position);
                                     }
 
@@ -165,15 +169,25 @@ angular
                                         var healthDamageDone = Math.min(healthComponent.value, damage);
                                         damage -= healthDamageDone;
                                         healthComponent.value -= healthDamageDone;
-                                        me.addDamageParticles('health', healthDamageDone, entity.position);
+
+                                        if (Meteor.isClient) {
+                                            me.addDamageParticles('health', healthDamageDone, entity.position);
+                                        }
+
                                         $log.debug('health', healthDamageDone, entity.position);
 
                                         if (healthComponent.value <= 0) {
                                             // We died, so add proper particles
                                             // and remove ourselves from the world
-                                            me.addDeathParticles(entity, entity.position);
-
-                                            me.world.removeEntity(entity);
+                                            if (Meteor.isClient) {
+                                                me.addDeathParticles(entity, entity.position);
+                                                me.world.removeEntity(entity);
+                                            }
+                                            else {
+                                                setTimeout(function () {
+                                                    me.world.removeEntity(entity);
+                                                }, 1000);
+                                            }
                                         }
                                     }
                                     break;

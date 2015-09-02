@@ -127,6 +127,56 @@ angular
                         self._stream.emit('combat:primaryAttack', data);
                     });
 
+                    // currently the server does not attack and check vector
+                    this._stream.on('combat:damageEntity', function(data) {
+                        // victimEntityUuid: victimEntity.uuid,
+                        // ownerEntityUuid: ownerEntity.uuid,
+                        // damage: damage
+                        var damageableEntities = world.getEntities('damageable');
+
+                        var victimEntity = _.findWhere(damageableEntities, {
+                            uuid: data.victimEntityUuid
+                        });
+                        var sourceEntity = _.findWhere(damageableEntities, {
+                            uuid: data.sourceEntityUuid
+                        });
+
+                        var playerEntities = world.getEntities('player');
+                        var playerChar = _.findWhere(playerEntities, {
+                            owner: this.userId
+                        });
+
+                        if (!playerChar) {
+                            $log.error('player entity not found!');
+                            return;
+                        }
+
+                        if (!_.isNumber(data.damage)) {
+                            $log.error('data.damage must be a number!');
+                        }
+
+                        if (data.damage <= 0) {
+                            $log.error('data.damage must be > 0!');
+                        }
+
+                        if (victimEntity === playerChar || sourceEntity === playerChar) {
+                            var damageableComponent = victimEntity.getComponent('damageable');
+
+                            // TODO very naive! Add anti-cheat measures later
+                            if (damageableComponent) {
+                                damageableComponent.sources.push({
+                                    sourceEntity: playerChar,
+                                    type: 'damage',
+                                    damage: data.damage
+                                });
+
+                                // TODO for some reason emits *are* being sent even though
+                                // they are not being sent here, not sure why
+                                //self._stream.emit('combat:damageEntity', data);
+                            }
+                        }
+                    });
+
                     world.entityAdded('netSend').add(onNetSendEntityAdded.bind(this));
                     world.entityRemoved('netSend').add(onNetSendEntityRemoved.bind(this));
 
