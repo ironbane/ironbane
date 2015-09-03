@@ -1,0 +1,21 @@
+
+@import "../../../less/variables.import.less";
+
+big-messages-box {
+    position: fixed;
+    /* background-color: red; */
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    text-align: center;
+    padding-top: 100px;
+    pointer-events: none;
+    li {
+        list-style: none;
+
+        font-size: 25px;
+        color: @primary4;
+        text-shadow: 1px 1px 0px @primary2, -1px 1px 0px @primary2, 1px -1px 0px @primary2, -1px -1px 0px @primary2;
+    }
+}

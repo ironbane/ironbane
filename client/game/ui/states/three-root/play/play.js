@@ -12,6 +12,7 @@ angular
         'game.ui.statBar',
         'game.ui.inventoryBar',
         'game.ui.inventoryItem',
+        'game.ui.bigMessages.bigMessagesBox',
         'game.clientSettings'
     ])
     .config([
