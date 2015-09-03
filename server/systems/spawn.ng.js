@@ -3,9 +3,10 @@ angular
         'ces',
         'three',
         'engine.util',
-        'engine.entity-builder'
+        'engine.entity-builder',
+        'server.services.activeWorlds'
     ])
-    .factory('SpawnSystem', function(System, IbUtils, EntityBuilder, THREE) {
+    .factory('SpawnSystem', function(System, IbUtils, EntityBuilder, THREE, $activeWorlds) {
             'use strict';
 
             return System.extend({
@@ -64,6 +65,8 @@ angular
 
                                         builtEntity.position.copy(randomPosition);
 
+                                        builtEntity.name = randomPrefabName;
+
                                         world.addEntity(builtEntity);
 
                                         spawnZoneComponent.spawnList.push(builtEntity);
@@ -87,6 +90,57 @@ angular
                             spawnZoneComponent.spawnTimer -= dTime;
                         }
 
+                    });
+
+
+                    // Check if we're able to respawn players
+                    var healthEntities = world.getEntities('health');
+                    healthEntities.forEach(function(entity) {
+                        var healthComponent = entity.getComponent('health');
+                        if (healthComponent) {
+                            if (healthComponent.value <= 0 && !healthComponent.__isRespawning) {
+                                if (entity.hasComponent('player')) {
+                                    // entity.removeComponent('quad');
+                                    // entity.removeComponent('wieldItem');
+                                    // entity.removeComponent('fighter');
+                                    // entity.removeComponent('shadow');
+                                    healthComponent.__isRespawning = true;
+
+                                    setTimeout(function () {
+                                        world.removeEntity(entity);
+                                    }, 1000);
+
+                                    setTimeout(function () {
+                                        delete healthComponent.__isRespawning;
+                                        healthComponent.value = healthComponent.max;
+
+                                        if ($activeWorlds[entity.level]) {
+                                            // if not we have a problem!
+                                            var spawns = $activeWorlds[entity.level].getEntities('spawnPoint');
+                                            if (spawns.length === 0) {
+                                                $log.log(entity.level, ' has no spawn points defined!');
+                                            }
+                                            // Just pick one of them
+                                            // Having multiple spawns is useful against AFK players so
+                                            // we don't have players spawning in/on top of eachother too much.
+                                            (function(spawn) {
+                                                var component = spawn.getComponent('spawnPoint');
+
+                                                if (component.tag === 'playerStart') {
+                                                    entity.position.copy(spawn.position);
+                                                    entity.rotation.copy(spawn.rotation);
+                                                }
+                                            })(_.sample(spawns));
+                                        }
+
+                                        world.addEntity(entity);
+                                    }, 5000);
+                                }
+                                else {
+                                    world.removeEntity(entity);
+                                }
+                            }
+                        }
                     });
 
                 }

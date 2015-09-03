@@ -165,7 +165,7 @@ angular
                             // TODO very naive! Add anti-cheat measures later
                             if (damageableComponent) {
                                 damageableComponent.sources.push({
-                                    sourceEntity: playerChar,
+                                    sourceEntity: sourceEntity,
                                     type: 'damage',
                                     damage: data.damage
                                 });

@@ -2,10 +2,11 @@ angular
     .module('systems.damage', [
         'engine.entity-builder',
         'engine.util',
+        'game.ui.bigMessages.bigMessagesService',
         'three',
         'ces'
     ])
-    .factory('DamageSystem', function($log, System, EntityBuilder, IbUtils, THREE) {
+    .factory('DamageSystem', function($log, System, EntityBuilder, IbUtils, THREE, BigMessagesService) {
         'use strict';
 
         var DASH_TIME = 0.2;
@@ -232,12 +233,18 @@ angular
                                             // and remove ourselves from the world
                                             if (Meteor.isClient) {
                                                 me.addDeathParticles(entity, entity.position);
-                                                me.world.removeEntity(entity);
-                                            }
-                                            else {
-                                                setTimeout(function () {
+
+                                                if (!entity.hasComponent('player')) {
                                                     me.world.removeEntity(entity);
-                                                }, 1000);
+                                                }
+                                                else {
+                                                    entity.removeComponent('quad');
+                                                    entity.removeComponent('wieldItem');
+                                                    entity.removeComponent('fighter');
+                                                    entity.removeComponent('shadow');
+
+                                                    BigMessagesService.add('You died!');
+                                                }
                                             }
                                         }
                                     }
