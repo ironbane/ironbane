@@ -80,7 +80,7 @@ angular
                                         indexV: IbUtils.spriteSheetIdToXY(wieldItemComponent.rhand.image).v
                                     },
                                     projectile: {
-                                        speed: 8,
+                                        speed: wieldItemComponent.rhand.projectileSpeed || 12,
                                         targetPosition: targetPosition,
                                         ownerUuid: entity.uuid,
                                         attribute1: wieldItemComponent.rhand.damage
