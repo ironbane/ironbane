@@ -8,9 +8,19 @@ angular
     .factory('DamageSystem', function($log, System, EntityBuilder, IbUtils, THREE) {
         'use strict';
 
+        var DASH_TIME = 0.2;
+
         return System.extend({
             addedToWorld: function(world) {
                 this._super(world);
+
+                world.entityAdded('damageable').add(function(entity) {
+                    var damageableComponent = entity.getComponent('damageable');
+
+                    damageableComponent.sources = [];
+                    damageableComponent.dashTimer = 0.0;
+                    damageableComponent.dashDirection = new THREE.Vector3();
+                });
             },
             _spawnParticle: function(indexH, indexV, amount, position) {
                 var me = this;
@@ -126,7 +136,15 @@ angular
                 particle.position.copy(position);
                 this.world.addEntity(particle);
             },
-            update: function() {
+            dash: function (entity, direction) {
+                var damageableComponent = entity.getComponent('damageable');
+
+                if (damageableComponent) {
+                    damageableComponent.dashTimer = DASH_TIME;
+                    damageableComponent.dashDirection.copy(direction);
+                }
+            },
+            update: function(dTime) {
                 var me = this;
 
                 var damageableEntities = me.world.getEntities('damageable');
@@ -135,6 +153,20 @@ angular
                     var damageableComponent = entity.getComponent('damageable');
                     var healthComponent = entity.getComponent('health');
                     var armorComponent = entity.getComponent('armor');
+                    var quadComponent = entity.getComponent('quad');
+
+                    if (damageableComponent.dashTimer >= 0) {
+                        damageableComponent.dashTimer -= dTime;
+                    }
+
+                    if (quadComponent && Meteor.isClient) {
+                        var time = damageableComponent.dashTimer;
+                        if (time > (DASH_TIME*0.5)) {
+                            time = (DASH_TIME*0.5)-(time-(DASH_TIME*0.5));
+                        }
+                        time /= DASH_TIME;
+                        quadComponent.offsetPosition.copy(new THREE.Vector3().lerp(damageableComponent.dashDirection, time))
+                    }
 
                     if (damageableComponent) {
                         damageableComponent.sources.forEach(function(source) {
@@ -148,6 +180,10 @@ angular
                                     }
                                 }
                             }
+
+                            var direction = entity.position.clone().sub(source.sourceEntity.position).setY(0.3).normalize();
+
+                            me.dash(entity, direction);
 
                             switch (source.type) {
                                 case 'damage':

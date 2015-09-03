@@ -78,6 +78,8 @@ angular
                             quadWrapper.visible = false;
                         }
 
+                        quadData.offsetPosition = new THREE.Vector3().copy(quadData.offsetPosition);
+
                         quad1 = new THREE.Mesh(planeGeo, new THREE.MeshBasicMaterial());
                         quad1.material.side = THREE.DoubleSide;
                         quad1.geometry.dynamic = true;
@@ -169,10 +171,10 @@ angular
                             return;
                         }
                         quad.position.copy(quadEnt.position);
+                        quad.position.add(quadComponent.offsetPosition);
 
                         var camWorldPos = new THREE.Vector3();
                         camWorldPos.setFromMatrixPosition(activeCamera.matrixWorld);
-
                         camWorldPos.y = quad.position.y;
 
                         displayUVFrame(quad.children[0],
