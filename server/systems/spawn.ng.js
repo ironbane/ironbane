@@ -71,7 +71,9 @@ angular
                                         var listener = function (entity) {
                                             if (entity === builtEntity) {
                                                 spawnZoneComponent.spawnList = _.without(spawnZoneComponent.spawnList, builtEntity);
-                                                world.singleEntityRemoved.remove(listener);
+                                                setTimeout(function () {
+                                                    world.singleEntityRemoved.remove(listener);
+                                                }, 0);
                                             }
                                         };
                                         world.singleEntityRemoved.add(listener);
