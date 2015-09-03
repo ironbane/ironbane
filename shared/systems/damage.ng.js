@@ -159,13 +159,16 @@ angular
                         damageableComponent.dashTimer -= dTime;
                     }
 
-                    if (quadComponent && Meteor.isClient) {
+                    if (quadComponent && Meteor.isClient && quadComponent._quad) {
                         var time = damageableComponent.dashTimer;
                         if (time > (DASH_TIME*0.5)) {
                             time = (DASH_TIME*0.5)-(time-(DASH_TIME*0.5));
                         }
                         time /= DASH_TIME;
                         quadComponent.offsetPosition.copy(new THREE.Vector3().lerp(damageableComponent.dashDirection, time))
+
+                        quadComponent._quad.children[0].material.color.g = 1 - time;
+                        quadComponent._quad.children[0].material.color.b = 1 - time;
                     }
 
                     // blink red when low on health
