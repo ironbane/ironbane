@@ -168,6 +168,18 @@ angular
                         quadComponent.offsetPosition.copy(new THREE.Vector3().lerp(damageableComponent.dashDirection, time))
                     }
 
+                    // blink red when low on health
+                    if (healthComponent && quadComponent && quadComponent._quad) {
+                        var max = parseInt(healthComponent.max / 3, 10);
+
+                        if (healthComponent.value < max) {
+                            var mp = 0.5 + (Math.cos(new Date().getTime() / 1000 * (5)) / 2);
+
+                            quadComponent._quad.children[0].material.color.g = mp;
+                            quadComponent._quad.children[0].material.color.b = mp;
+                        }
+                    }
+
                     if (damageableComponent) {
                         damageableComponent.sources.forEach(function(source) {
                             if (entity.hasComponent('player')) {
