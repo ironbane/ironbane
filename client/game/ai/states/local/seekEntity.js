@@ -13,7 +13,7 @@ angular
                     var me = this;
 
                     this.calculatedPath = Patrol.findPath(this.entity.position.clone(),
-                        targetEntity.position.clone(), this.entity.level, this.navMeshGroup)
+                        targetEntity.position.clone(), this.entity.level)
                         .then(function (path) {
                             me.calculatedPath = path;
                             debug.drawPath(me.entity.uuid + 'seekEntity', me.calculatedPath);

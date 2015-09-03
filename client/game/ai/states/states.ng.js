@@ -3,7 +3,7 @@ angular
         'game.ai.states.local',
         'ces'
     ])
-    .service('States', function(GoToPosition, FindPathToPosition, SeekEntity, $log) {
+    .service('States', function(GoToPosition, FindPathToPosition, SeekEntity, SearchAndDestroyEntity, $log) {
             'use strict';
 
             // TODO is there a way to automatically load these?
@@ -11,7 +11,8 @@ angular
             var states = {
                 'goToPosition': GoToPosition,
                 'findPathToPosition': FindPathToPosition,
-                'seekEntity': SeekEntity
+                'seekEntity': SeekEntity,
+                'searchAndDestroyEntity': SearchAndDestroyEntity
             };
 
             this.get = function(name, entity, config, world) {

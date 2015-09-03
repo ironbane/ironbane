@@ -163,8 +163,6 @@ angular
                             group: 'otherPlayers',
                             collidesWith: ['level', 'npcs']
                         });
-                        builtEntity.addComponent('steeringBehaviour');
-                        builtEntity.addComponent('fighter');
                     }
 
                     world.addEntity(builtEntity);

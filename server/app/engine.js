@@ -98,6 +98,10 @@ angular
                             ent.addComponent('netRecv');
                             ent.addComponent('player');
                             ent.addComponent('persisted', {_id: doc._id});
+                            ent.addComponent('steeringBehaviour');
+                            ent.addComponent('fighter', {
+                                faction: 'ravenwood'
+                            });
                             ent.owner = doc.owner;
 
                             // Used to access metadata like cheats later on

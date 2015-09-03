@@ -41,6 +41,9 @@ angular
                     '/scripts/built-in/walk-animation.js',
                 ]
             },
+            fighter: {
+                faction: 'wilderness'
+            },
             health: {
                 max: 3,
                 value: 3

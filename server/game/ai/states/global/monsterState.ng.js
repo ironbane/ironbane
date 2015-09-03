@@ -37,19 +37,27 @@ angular
 
                     var me = this;
 
-                    var players = this.world.getEntities('player')
-                        .filter(function (player) {
-                            return player.position.distanceToSquared(me.entity.position) < Math.pow(me.spawnRadius || DEFAULT_SPAWN_RADIUS, 2)
+                    var fighterComponent = this.entity.getComponent('fighter');
+
+                    var fighterEntities = this.world.getEntities('fighter', 'health')
+                        .filter(function (entity) {
+                            var otherFighterComponent = entity.getComponent('fighter');
+                            if (fighterComponent.faction === otherFighterComponent.faction) return false;
+
+                            var otherHealthComponent = entity.getComponent('health');
+                            if (otherHealthComponent.value <= 0) return false;
+
+                            return entity.position.distanceToSquared(me.entity.position) < Math.pow(me.spawnRadius || DEFAULT_SPAWN_RADIUS, 2)
                         });
 
-                    // Follow nearest player
-                    players.sort(function(a, b) {
+                    // Find nearest hostile target
+                    fighterEntities.sort(function(a, b) {
                         return a.position.distanceToSquared(me.entity.position) - b.position.distanceToSquared(me.entity.position);
                     });
 
                     var foundTarget = null;
-                    if (players.length) {
-                        foundTarget = players[0];
+                    if (fighterEntities.length) {
+                        foundTarget = fighterEntities[0];
                     }
 
 
@@ -65,7 +73,7 @@ angular
                             }
 
                             this.entity.addComponent($components.get('localState', {
-                                state: 'seekEntity',
+                                state: 'searchAndDestroyEntity',
                                 config: {
                                     targetEntityUuid: this.lastFollowingEntity.uuid
                                 }
@@ -74,8 +82,8 @@ angular
                     }
 
                     if (this.lastFollowingEntity) {
-                        // Stop pursuing if they get too far away
-                        if (this.lastFollowingEntity.position.distanceToSquared(me.entity.position) > Math.pow(me.spawnRadius || DEFAULT_SPAWN_RADIUS, 2)) {
+                        // Stop pursuing if they are no longer in our target list
+                        if (!_.contains(fighterEntities, this.lastFollowingEntity)) {
                             if (this.entity.hasComponent('localState')) {
                                 this.entity.removeComponent('localState');
                             }

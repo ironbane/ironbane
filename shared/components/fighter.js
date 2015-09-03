@@ -7,7 +7,9 @@ angular
 
             $componentsProvider.register({
                 'fighter': {
-                	attackCooldown: 0.5
+                    faction: 'ravenwood',
+                	attackCooldown: 0.5,
+                    attackRange: 5
                 }
             });
         }
