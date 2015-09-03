@@ -319,6 +319,9 @@ angular
                 if (quadComponent) {
                     wo.rotation.copy(quadComponent._quad.rotation);
                 }
+
+                wi.material.color.g = 1 - lerpAmount;
+                wi.material.color.b = 1 - lerpAmount;
             };
 
             var WieldItemSystem = System.extend({
