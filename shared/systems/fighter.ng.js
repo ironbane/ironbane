@@ -38,6 +38,13 @@ angular
 
                         handMesh.doAttackAnimation();
 
+                        if (!item.image) {
+                            // Do a regular dash
+                            var damageSystem = world.getSystem('damage');
+                            var direction = targetPosition.clone().sub(entity.position).normalize();
+                            damageSystem.dash(entity, direction, 'dealDamage');
+                        }
+
                         // Throw the weapon
                         var projectile = EntityBuilder.build('projectile', {
                             components: {

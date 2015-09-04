@@ -19,6 +19,7 @@ angular
                     var damageableComponent = entity.getComponent('damageable');
 
                     damageableComponent.sources = [];
+                    damageableComponent.dashType = 'receiveDamage';
                     damageableComponent.dashTimer = 0.0;
                     damageableComponent.dashDirection = new THREE.Vector3();
                 });
@@ -137,11 +138,12 @@ angular
                 particle.position.copy(position);
                 this.world.addEntity(particle);
             },
-            dash: function (entity, direction) {
+            dash: function (entity, direction, type) {
                 var damageableComponent = entity.getComponent('damageable');
 
                 if (damageableComponent) {
                     damageableComponent.dashTimer = DASH_TIME;
+                    damageableComponent.dashType = type;
                     damageableComponent.dashDirection.copy(direction);
                 }
             },
@@ -179,8 +181,14 @@ angular
                         if (healthComponent.value < max) {
                             var mp = 0.5 + (Math.cos(new Date().getTime() / 1000 * (5)) / 2);
 
-                            quadComponent._quad.children[0].material.color.g = mp;
-                            quadComponent._quad.children[0].material.color.b = mp;
+                            if (damageableComponent.dashType === 'receiveDamage') {
+                                quadComponent._quad.children[0].material.color.g = mp;
+                                quadComponent._quad.children[0].material.color.b = mp;
+                            }
+                            if (damageableComponent.dashType === 'dealDamage') {
+                                quadComponent._quad.children[0].material.color.g = mp / 2;
+                                quadComponent._quad.children[0].material.color.b = mp;
+                            }
                         }
                     }
 
@@ -199,7 +207,7 @@ angular
 
                             var direction = entity.position.clone().sub(source.sourceEntity.position).setY(0.3).normalize();
 
-                            me.dash(entity, direction);
+                            me.dash(entity, direction, 'receiveDamage');
 
                             switch (source.type) {
                                 case 'damage':

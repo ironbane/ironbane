@@ -56,7 +56,7 @@ angular
             inventory: {
                 slot0: {name: 'Cheese', type: 'food', image: 289, health: 2},
                 slot1: {name: 'Rat Skin Cap', type: 'head', image: 8, invImage: 428, armor: 1},
-                rhand: {name: 'Rat Claws', type: 'weapon', handedness: '1', image: 1551, damage: 1}
+                rhand: {name: 'Rat Claws', type: 'weapon', handedness: '1', damage: 1}
             },
             damageable: {},
             globalState: {
