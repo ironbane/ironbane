@@ -250,6 +250,8 @@ angular
                                                     entity.removeComponent('wieldItem');
                                                     entity.removeComponent('fighter');
                                                     entity.removeComponent('shadow');
+                                                    entity.removeComponent('health');
+                                                    entity.removeComponent('script');
 
                                                     BigMessagesService.add('You died!');
                                                 }
