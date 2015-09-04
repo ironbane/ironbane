@@ -66,6 +66,7 @@ angular
                 this.thirdPersonPosition = originalThirdPersonPosition.clone();
                 this.camDistanceLimit = 0;
                 this.temporarilyDisableAutoCameraCorrection = false;
+                this.cameraType = 'arcade';
 
                 var cameraComponent = this.entity.getComponent('camera');
 
@@ -107,6 +108,18 @@ angular
                 targetPosition.x = position.x + 100 * Math.sin(phi) * Math.cos(theta);
                 targetPosition.y = position.y + 100 * Math.cos(phi);
                 targetPosition.z = position.z + 100 * Math.sin(phi) * Math.sin(theta);
+            };
+
+            MultiCamScript.prototype.changeCamera = function() {
+                if (this.cameraType === 'arcade') {
+                    this.cameraType = 'locked';
+                }
+                else if (this.cameraType === 'locked') {
+                    this.cameraType = 'classic';
+                }
+                else {
+                    this.cameraType = 'arcade';
+                }
             };
 
             MultiCamScript.prototype.update = function(dt, elapsed, timestamp) {
@@ -180,7 +193,7 @@ angular
                         vectorThatIsAlwaysBehindThePlayer.applyQuaternion(this.entity.quaternion);
                         // debug.drawVector(vectorThatIsAlwaysBehindThePlayer, this.entity.position);
 
-						if (!this.temporarilyDisableAutoCameraCorrection) {
+						if (!this.temporarilyDisableAutoCameraCorrection && this.cameraType === 'arcade') {
 							this.thirdPersonPosition.lerp(vectorThatIsAlwaysBehindThePlayer, dt * 1.5);
 						}
 

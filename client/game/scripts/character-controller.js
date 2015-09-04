@@ -5,7 +5,8 @@ angular
         'ammo',
         'engine.debugger',
         'engine.util',
-        'game.clientSettings'
+        'game.clientSettings',
+        'game.ui.bigMessages.bigMessagesService'
     ])
     .run([
         '$log',
@@ -15,7 +16,8 @@ angular
         'Debugger',
         'IbUtils',
         '$clientSettings',
-        function($log, ScriptBank, THREE, Ammo, Debugger, IbUtils, $clientSettings) {
+        'BigMessagesService',
+        function($log, ScriptBank, THREE, Ammo, Debugger, IbUtils, $clientSettings, BigMessagesService) {
             'use strict';
 
             // The amount of time that must pass before you can jump again
@@ -88,6 +90,9 @@ angular
 
                 playMap.map('rotateRight', 'keyboard', 'E', 'D');
                 playMap.map('rotateRight', 'gamepad', 'XBOX360_RIGHT_BUMPER', 'D');
+
+                playMap.map('changeCamera', 'keyboard', 'C', 'P');
+                // TODO add Xbox control for changeCamera
 
                 this.primaryAttackHandler = function() {
                     var targetVector,
@@ -219,8 +224,20 @@ angular
                 this.rotateRight = playMap.test('rotateRight');
                 this.rotateLeft = playMap.test('rotateLeft');
                 this.jump = playMap.test('jump');
+
                 if (playMap.test('attack')) {
                     this.primaryAttackHandler();
+                }
+
+                var multiCamComponent = this.entity.getScript('/scripts/built-in/character-multicam.js');
+
+                if (multiCamComponent.cameraType === 'classic') {
+                    var tml = this.moveLeft;
+                    var tmr = this.moveRight;
+                    this.moveLeft = this.rotateLeft;
+                    this.moveRight = this.rotateRight;
+                    this.rotateLeft = tml;
+                    this.rotateRight = tmr;
                 }
 
                 var inputVector = new THREE.Vector3();
@@ -232,6 +249,7 @@ angular
                 if (this.moveBackward) {
                     inputVector.z += 1;
                 }
+
                 if (this.moveLeft) {
                     inputVector.x -= 1;
                 }
@@ -239,13 +257,19 @@ angular
                     inputVector.x += 1;
                 }
 
-                var multiCamComponent = this.entity.getScript('/scripts/built-in/character-multicam.js');
-
                 // Make sure they can't gain extra speed if moving diagonally
                 inputVector.normalize();
 
-                if (inputVector.lengthSq() > 0.01) {
+                if (playMap.test('attack')) {
+                    multiCamComponent.temporarilyDisableAutoCameraCorrection = true;
+                }
+                else if (inputVector.lengthSq() > 0.01) {
                     multiCamComponent.temporarilyDisableAutoCameraCorrection = false;
+                }
+
+                if (playMap.test('changeCamera')) {
+                    multiCamComponent.changeCamera();
+                    BigMessagesService.add('Camera: ' + multiCamComponent.cameraType);
                 }
 
                 if (rigidBodyComponent) {
@@ -300,6 +324,15 @@ angular
                     }
                     if (this.rotateRight) {
                         multiCamComponent.thirdPersonPosition.applyEuler(new THREE.Euler(0, -speedComponent.rotateSpeed * dt, 0));
+                    }
+
+                    if (multiCamComponent.cameraType === 'classic') {
+                        if (this.rotateLeft) {
+                            this.entity.rotation.y += speedComponent.rotateSpeed * dt;
+                        }
+                        if (this.rotateRight) {
+                            this.entity.rotation.y -= speedComponent.rotateSpeed * dt;
+                        }
                     }
                 }
 
