@@ -114,10 +114,13 @@ angular
                                 if (wieldItemComponent[handMesh] &&
                                     fighterComponent.attackCooldownTimer[attackType] <= 0) {
                                     fighterComponent.attackCooldownTimer[attackType] = wieldItemComponent[attackType].attackCooldown || 3;
-                                    attackWithOneHand(wieldItemComponent[handMesh],
-                                        wieldItemComponent[attackType],
-                                        attackType === 'lhand' ? new THREE.Vector3(-0.3, 0, 0.1) : new THREE.Vector3(0.3, 0, 0.1),
-                                        targetPosition);
+
+                                    if (wieldItemComponent[attackType].type === 'weapon') {
+                                        attackWithOneHand(wieldItemComponent[handMesh],
+                                            wieldItemComponent[attackType],
+                                            attackType === 'lhand' ? new THREE.Vector3(-0.3, 0, 0.1) : new THREE.Vector3(0.3, 0, 0.1),
+                                            targetPosition);
+                                    }
                                 }
                             });
                         }
