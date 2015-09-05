@@ -133,21 +133,25 @@ angular
                                 if (damageableEntity !== projectileComponent._owner &&
                                     damageableEntity.position.inRangeOf(entity.position, 1.0)) {
 
-                                    // Only publish if the projectile has something to do with the mainPlayer
-                                    // Other projectile hit events will be sent over the network
-                                    var mainPlayer = $entityCache.get('mainPlayer');
+                                    // Only if it isn't a player, otherwise players might 'block' projectiles
+                                    if (!damageableEntity.hasComponent('player')) {
 
-                                    if (mainPlayer === damageableEntity ||
-                                        mainPlayer === projectileComponent._owner) {
+                                        // Only publish if the projectile has something to do with the mainPlayer
+                                        // Other projectile hit events will be sent over the network
+                                        var mainPlayer = $entityCache.get('mainPlayer');
 
-                                        me.world.publish('combat:damageEntity', damageableEntity, {
-                                            sourceEntity: projectileComponent._owner,
-                                            type: 'damage',
-                                            damage: projectileComponent.attribute1
-                                        });
+                                        if (mainPlayer === damageableEntity ||
+                                            mainPlayer === projectileComponent._owner) {
+
+                                            me.world.publish('combat:damageEntity', damageableEntity, {
+                                                sourceEntity: projectileComponent._owner,
+                                                type: 'damage',
+                                                damage: projectileComponent.attribute1
+                                            });
+                                        }
+
+                                        projectileComponent._canDeliverEffect = false;
                                     }
-
-                                    projectileComponent._canDeliverEffect = false;
                                 }
                             });
                         }
