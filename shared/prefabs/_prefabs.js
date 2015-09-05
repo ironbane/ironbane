@@ -10,9 +10,5 @@ angular
         'prefabs.spawnPoint',
         'prefabs.proctree',
         'prefabs.waterFountain',
-        'prefabs.worldMesh',
-
-
-        // Monsters
-        'prefabs.monsters.rat'
+        'prefabs.worldMesh'
     ]);

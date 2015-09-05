@@ -4,6 +4,7 @@ angular
         'three',
         'engine.geometryCache',
         'engine.materialCache',
+        'services.contentLoader',
         'prefabs'
     ])
     .service('EntityBuilder', [
@@ -15,7 +16,8 @@ angular
         '$injector',
         '$log',
         '$q',
-        function(Entity, THREE, $components, $geometryCache, $materialCache, $injector, $log, $q) {
+        'ContentLoader',
+        function(Entity, THREE, $components, $geometryCache, $materialCache, $injector, $log, $q, ContentLoader) {
             'use strict';
 
             var objectLoader = new THREE.ObjectLoader();
@@ -25,36 +27,41 @@ angular
                     var prefabFactoryName = prefabName + 'Prefab', // naming convention for DI
                         prefabFactory;
 
-                    try {
-                        prefabFactory = $injector.get(prefabFactoryName);
-                    } catch (err) {
-                        $log.debug('[EntityBuilder] Error Loading Prefab: ', prefabFactoryName, ' ERR: ', err.message);
-                    }
+                    var componentData = {};
 
-                    if (prefabFactory) {
-                        var componentData = {};
-                        if (angular.isFunction(prefabFactory)) {
-                            // if the prefab entity is a function, then it should produce
-                            // the needed data
-                            angular.extend(componentData, prefabFactory(originalConfigData));
-                        } else {
-                            // else assume the prefab obj is just a JSON (Constant)
-                            angular.extend(componentData, prefabFactory);
+                    // Check if the prefab can be found in the spreadsheet
+                    // These are usually NPC's and thus can only be added through the server
+                    if (Meteor.isServer && ContentLoader.getNPCPrefab(prefabName)) {
+                        angular.extend(componentData, ContentLoader.getNPCPrefab(prefabName));
+                    }
+                    else {
+                        try {
+                            prefabFactory = $injector.get(prefabFactoryName);
+                        } catch (err) {
+                            $log.debug('[EntityBuilder] Error Loading Prefab: ', prefabFactoryName, ' ERR: ', err.message);
                         }
 
-                        // TODO: allow prefabs to pass back other info than components and utilize it
-                        // OR convert all prefabs to just components objects and remove the top "components" tree
-
-                        // now actually add the components
-                        angular.forEach(componentData.components, function(cData, componentName) {
-                            var component = $components.get(componentName, cData);
-                            // might not find, could be bad/old db data
-                            if (component) {
-                                // console.log('add component:', component)
-                                entity.addComponent(component);
+                        if (prefabFactory) {
+                            if (angular.isFunction(prefabFactory)) {
+                                // if the prefab entity is a function, then it should produce
+                                // the needed data
+                                angular.extend(componentData, prefabFactory(originalConfigData));
+                            } else {
+                                // else assume the prefab obj is just a JSON (Constant)
+                                angular.extend(componentData, prefabFactory);
                             }
-                        });
+                        }
                     }
+
+                    // now actually add the components
+                    angular.forEach(componentData.components, function(cData, componentName) {
+                        var component = $components.get(componentName, cData);
+                        // might not find, could be bad/old db data
+                        if (component) {
+                            // console.log('add component:', component)
+                            entity.addComponent(component);
+                        }
+                    });
 
                     // Because it has a prefab attached, it's dynamic.
                     // Make sure the server will send information to the clients

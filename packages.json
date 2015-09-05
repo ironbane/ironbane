@@ -8,5 +8,7 @@
 	"q": "1.2.0",
 	"fs-extra": "0.17.0",
 	"braintree": "1.23.0",
-	"node-hipchat": "0.4.5"
+	"node-hipchat": "0.4.5",
+	"csv-parse": "1.0.0",
+	"request": "2.61.0"
 }

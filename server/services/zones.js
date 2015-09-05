@@ -1,10 +1,12 @@
 angular
     .module('server.services.zones', [
-        'models'
+        'models',
+        'services.contentLoader'
     ])
     .run([
         'ZonesCollection',
-        function(ZonesCollection) {
+        'ContentLoader',
+        function(ZonesCollection, ContentLoader) {
             'use strict';
 
             var path = Meteor.npmRequire('path');
@@ -17,14 +19,18 @@ angular
             // clear out available zones before reload
             ZonesCollection.remove({});
 
-            walk(scenePath, {
-                'no_recurse': true,
-            }, Meteor.bindEnvironment(function(filePath) {
-                var sceneId = path.basename(filePath);
-                // add to zones TODO: perhaps load some zone metadata from ib_world?
-                ZonesCollection.insert({
-                    name: sceneId
-                });
+            ContentLoader.load().then(Meteor.bindEnvironment(function () {
+
+                walk(scenePath, {
+                    'no_recurse': true,
+                }, Meteor.bindEnvironment(function(filePath) {
+                    var sceneId = path.basename(filePath);
+                    // add to zones TODO: perhaps load some zone metadata from ib_world?
+                    ZonesCollection.insert({
+                        name: sceneId
+                    });
+                }));
+
             }));
         }
     ]);
