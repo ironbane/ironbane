@@ -1,11 +1,11 @@
 angular
-    .module('global.constants', [])
+    .module('global.constants.game', [])
     .constant('IB_CONSTANTS', {
         serverAnnouncementsTimeout: 300,
         GAME_VERSION: '0.5 alpha',
         world: {
-            mainMenuLevel: 'ravenwood',
-            startLevel: 'ravenwood',
+            mainMenuLevel: 'dev-zone',
+            startLevel: 'dev-zone',
             startPosition: [-15, 2, 12],
             startRotation: [0, Math.PI - 0.3, 0]
         },
