@@ -104,6 +104,12 @@ angular
                         deferred.resolve(entity);
                     });
                     textures = objectLoader.parseTextures(json.textures, images);
+
+                    // Fix for some clients getting blurry textures. This shouldn't be set to 16 anyway (needs more GPU power)
+                    _.each(textures, function (t) {
+                        t.anisotropy = 1;
+                    });
+
                     materials = objectLoader.parseMaterials(json.materials, textures);
                 } else {
                     materials = objectLoader.parseMaterials(json.materials);
