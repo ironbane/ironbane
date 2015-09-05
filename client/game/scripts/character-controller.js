@@ -111,6 +111,9 @@ angular
 
                             targetVector = entity.position.clone().add(toTarget);
                         // }
+
+                        // Rotate the player towards the attack direction
+                        entity.rotation.y = IbUtils.vecToEuler(toTarget) - Math.PI / 2;
                     }
 
                     if (targetVector) {
@@ -302,7 +305,7 @@ angular
 
 
 
-                    if (inputVector.lengthSq() > 0.01) {
+                    if (inputVector.lengthSq() > 0.01 && !playMap.test('attack')) {
                         this.entity.rotation.y = IbUtils.vecToEuler(currentVel) - Math.PI / 2;
                     }
 
