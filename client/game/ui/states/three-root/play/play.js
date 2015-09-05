@@ -28,7 +28,10 @@ angular
                     '$log',
                     '$state',
                     '$clientSettings',
-                    function($scope, $rootWorld, $log, $state, $clientSettings) {
+                    'dialogService',
+                    '$meteor',
+                    'BigMessagesService',
+                    function($scope, $rootWorld, $log, $state, $clientSettings, dialogService, $meteor, BigMessagesService) {
                         $scope.gui = {
                             showChatInput: false,
                             showAdminPanel: false
@@ -62,6 +65,20 @@ angular
                             inputSystem.unregister('escape', escapeHandler);
                             inputSystem.unregister('admin-panel', adminHandler);
                         });
+
+                        $scope.resetPlayer = function () {
+                            dialogService.confirm('Teleport home?').then(function () {
+                                $meteor.call('resetPlayer')
+                                    .then(function () {
+                                        BigMessagesService.add('Teleporting home...');
+                                    }, function(err) {
+                                        if (err) {
+                                            dialogService.alert(err.reason);
+                                        }
+                                    });
+                            });
+
+                        };
                     }
                 ],
                 onExit: [

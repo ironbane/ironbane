@@ -1,11 +1,13 @@
 angular
     .module('server.services.game', [
-        'models'
+        'models',
+        'global.constants'
     ])
     .service('GameService', [
         'EntitiesCollection',
         '$activeWorlds',
-        function(EntitiesCollection, $activeWorlds) {
+        'IB_CONSTANTS',
+        function(EntitiesCollection, $activeWorlds, IB_CONSTANTS) {
             'use strict';
 
             this.enterGame = function(charId) {
@@ -55,6 +57,58 @@ angular
                     multi: true
                 });
             };
+
+            this.resetPlayer = function() {
+
+                // Later, instead of ravenwood, we can point players to their real home
+                // which they rent/bought using the virtul currency
+                // TODO add timeout?
+
+                var startLevel = IB_CONSTANTS.world.startLevel;
+
+
+                var me = this;
+
+                _.each($activeWorlds, function (world) {
+                    var playerEntities = world.getEntities('player');
+                    playerEntities.forEach(function (player) {
+                        if (player.owner === me.userId && !player.__isResetting) {
+
+                            player.__isResetting = true;
+
+                            world.removeEntity(player);
+
+                            setTimeout(function () {
+                                if ($activeWorlds[startLevel]) {
+                                    // if not we have a problem!
+                                    var spawns = $activeWorlds[startLevel].getEntities('spawnPoint');
+                                    if (spawns.length === 0) {
+                                        $log.log(startLevel, ' has no spawn points defined!');
+                                    }
+                                    // Just pick one of them
+                                    // Having multiple spawns is useful against AFK players so
+                                    // we don't have players spawning in/on top of eachother too much.
+                                    (function(spawn) {
+                                        var component = spawn.getComponent('spawnPoint');
+
+                                        if (component.tag === 'playerStart') {
+                                            player.position.copy(spawn.position);
+                                            player.rotation.copy(spawn.rotation);
+                                        }
+                                    })(_.sample(spawns));
+                                }
+
+                                $activeWorlds[startLevel].addEntity(player);
+
+                                delete player.__isResetting;
+                            }, 2000);
+
+                        }
+                    });
+                });
+
+                return true;
+            };
         }
     ])
     .run(['GameService', function(GameService) {
@@ -62,6 +116,7 @@ angular
 
         Meteor.methods({
             enterGame: GameService.enterGame,
-            leaveGame: GameService.leaveGame
+            leaveGame: GameService.leaveGame,
+            resetPlayer: GameService.resetPlayer
         });
     }]);
