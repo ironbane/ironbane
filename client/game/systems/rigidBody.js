@@ -470,6 +470,13 @@ angular
                         }
                     });
                 },
+                applyCentralImpulse: function (entity, impulse) {
+                    btVec3a.setValue(impulse.x, impulse.y, impulse.z);
+                    var rigidBodyComponent = entity.getComponent('rigidBody');
+                    if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
+                        rigidBodyComponent.rigidBody.applyCentralImpulse(btVec3a);
+                    }
+                },
                 syncBody: function(entity) { // this will move the rigidbody based on a set value like from network
                     var rigidBodyComponent = entity.getComponent('rigidBody');
 

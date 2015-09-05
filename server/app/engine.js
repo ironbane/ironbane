@@ -98,7 +98,10 @@ angular
                             ent.addComponent('netRecv');
                             ent.addComponent('player');
                             ent.addComponent('persisted', {_id: doc._id});
-                            ent.addComponent('steeringBehaviour');
+                            ent.addComponent('steeringBehaviour', {
+                                speed: 10,
+                                maxSpeed: 10
+                            });
                             ent.addComponent('fighter', {
                                 faction: 'ravenwood'
                             });

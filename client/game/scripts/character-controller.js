@@ -288,8 +288,7 @@ angular
 
                     if (this.jump && this.canJump && currentVel.y < 1 && this.jumpTimer > minimumJumpDelay) {
                         this.jumpTimer = 0.0;
-                        btVec3.setValue(0, 5, 0);
-                        rigidBodyComponent.rigidBody.applyCentralImpulse(btVec3);
+                        this.world.publish('fighter:jump', this.entity);
                     }
 
                     currentVel.y = 0;

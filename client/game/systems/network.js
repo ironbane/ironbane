@@ -214,6 +214,14 @@ angular
                         }
                     });
 
+                    world.subscribe('fighter:jump', function(entity, targetVector) {
+                        if (entity.hasComponent('netSend') && me._stream) {
+                            me._stream.emit('fighter:jump', {
+                                entityId: entity.uuid
+                            });
+                        }
+                    });
+
                     world.subscribe('combat:damageEntity', function(victimEntity, data) {
                         // We only tell the server if the event has something to do with the mainPlayer
                         // otherwise it's none of our business
@@ -332,6 +340,18 @@ angular
 
                             if (entity) {
                                 world.publish('combat:primaryAttack', entity, data.targetVector);
+                            }
+                        });
+
+                        // this one we'll just pass through
+                        me._stream.on('fighter:jump', function(data) {
+                            var netEnts = world.getEntities('netRecv'),
+                                entity = _.findWhere(netEnts, {
+                                    uuid: data.entityId
+                                });
+
+                            if (entity) {
+                                world.publish('fighter:jump', entity);
                             }
                         });
 

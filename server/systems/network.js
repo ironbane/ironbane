@@ -124,7 +124,13 @@ angular
                     // currently the server does not attack and check vector
                     this._stream.on('combat:primaryAttack', function(data) {
                         // just send it back out to everyone
-                        self._stream.emit('combat:primaryAttack', data);
+                        // self._stream.emit('combat:primaryAttack', data);
+                    });
+
+
+                    this._stream.on('fighter:jump', function(data) {
+                        // just send it back out to everyone
+                        // self._stream.emit('fighter:jump', data);
                     });
 
                     // currently the server does not attack and check vector
