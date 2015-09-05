@@ -194,7 +194,7 @@ angular
                         // debug.drawVector(vectorThatIsAlwaysBehindThePlayer, this.entity.position);
 
 						if (!this.temporarilyDisableAutoCameraCorrection && this.cameraType === 'arcade') {
-							this.thirdPersonPosition.lerp(vectorThatIsAlwaysBehindThePlayer, dt * 1.5);
+							this.thirdPersonPosition.lerp(vectorThatIsAlwaysBehindThePlayer, dt * 2.5);
 						}
 
                         // debug.watch('cameraThirdPersonLookAtTarget', cameraThirdPersonLookAtTarget);
