@@ -4,9 +4,10 @@ angular
         'engine.util',
         'game.ui.bigMessages.bigMessagesService',
         'three',
-        'ces'
+        'ces',
+        'game.services.globalsound'
     ])
-    .factory('DamageSystem', function($log, System, EntityBuilder, IbUtils, THREE, BigMessagesService) {
+    .factory('DamageSystem', function($log, System, EntityBuilder, IbUtils, THREE, BigMessagesService, GlobalSound) {
         'use strict';
 
         var DASH_TIME = 0.2;
@@ -221,6 +222,8 @@ angular
                                 case 'damage':
                                     var damage = source.damage;
 
+                                    GlobalSound.play(_.sample(['hit1','hit2','hit3']), entity.position);
+
                                     if (armorComponent) {
                                         var armorDamageDone = Math.min(armorComponent.value, damage);
                                         damage -= armorDamageDone;
@@ -249,6 +252,8 @@ angular
                                             // and remove ourselves from the world
                                             if (Meteor.isClient) {
                                                 me.addDeathParticles(entity, entity.position);
+
+                                                GlobalSound.play(_.sample(['die1','die2','die3']), entity.position);
 
                                                 if (!entity.hasComponent('player')) {
                                                     me.world.removeEntity(entity);

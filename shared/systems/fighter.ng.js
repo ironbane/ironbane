@@ -3,9 +3,10 @@ angular
         'ces',
         'engine.entity-builder',
         'engine.util',
-        'three'
+        'three',
+        'game.services.globalsound'
     ])
-    .factory('FighterSystem', function($log, System, States, EntityBuilder, IbUtils, THREE) {
+    .factory('FighterSystem', function($log, System, States, EntityBuilder, IbUtils, THREE, GlobalSound) {
         'use strict';
 
         var attackTypes = ['lhand', 'rhand'];
@@ -23,6 +24,12 @@ angular
                     if (fighter) {
                         fighter.attack(target);
                     }
+                });
+
+                world.subscribe('fighter:jump', function(entity) {
+                    var rigidBodySystem = world.getSystem('rigidbody');
+                    rigidBodySystem.applyCentralImpulse(entity, new THREE.Vector3(0,5,0));
+                    GlobalSound.play(_.sample(['jump']), entity.position);
                 });
 
                 world.entityAdded('fighter').add(function(entity) {
@@ -108,6 +115,7 @@ angular
                         var wieldItemComponent = entity.getComponent('wieldItem');
 
                         if (wieldItemComponent) {
+                            var playedSound = false;
                             attackTypes.forEach(function (attackType) {
                                 var handMesh = attackType === 'lhand' ? '_lItem' : '_rItem';
 
@@ -120,6 +128,11 @@ angular
                                             wieldItemComponent[attackType],
                                             attackType === 'lhand' ? new THREE.Vector3(-0.3, 0, 0.1) : new THREE.Vector3(0.3, 0, 0.1),
                                             targetPosition);
+
+                                        if (!playedSound) {
+                                            playedSound = true;
+                                            GlobalSound.play(_.sample(['swing1','swing2','swing3']), entity.position);
+                                        }
                                     }
                                 }
                             });

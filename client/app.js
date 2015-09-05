@@ -20,35 +20,23 @@ angular
         'engine.util',
         'engine.debugger',
         'util.name-gen',
-        'game.services.globalsound'
+        'game.services.globalsound',
+        'global.constants.sound'
     ])
     .config([
         '$locationProvider',
         'SoundSystemProvider',
         'IbConfigProvider',
         'InputSystemProvider',
-        function($locationProvider, SoundSystemProvider, IbConfigProvider, InputSystemProvider) {
+        'SOUND_CONFIG',
+        function($locationProvider, SoundSystemProvider, IbConfigProvider, InputSystemProvider, SOUND_CONFIG) {
             $locationProvider.html5Mode(true);
 
             IbConfigProvider.set('domElement', document);
 
             // define all of the sounds & music for the game
             // TODO: load from a config file
-            SoundSystemProvider.setAudioLibraryData({
-                theme: {
-                    path: 'music/ib_theme',
-                    volume: 0.55,
-                    loop: true,
-                    type: 'music'
-                },
-
-                click: {
-                    path: 'sound/click',
-                    volume: 1,
-                    loop: false,
-                    type: 'sound'
-                }
-            });
+            SoundSystemProvider.setAudioLibraryData(SOUND_CONFIG);
 
             // setup all input actions TODO: pull from config / local storage
             InputSystemProvider.setActionMapping('open-chat', [{
