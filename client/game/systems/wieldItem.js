@@ -419,19 +419,25 @@ angular
                             walkAnimationComponent = entity.getScript('/scripts/built-in/walk-animation.js'),
                             isLeftHand = false;
 
-                        var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity();
-                        currentVel = currentVel.toTHREEVector3();
-                        var perceivedSpeed = IbUtils.roundNumber(currentVel.lengthSq(), 2);
-                        perceivedSpeed = Math.min(perceivedSpeed, 20);
+                        if (wieldItemComponent &&
+                            rigidBodyComponent && rigidBodyComponent.rigidBody &&
+                            walkAnimationComponent) {
 
-                        if (wieldItemComponent._rItem) {
-                            isLeftHand = false;
-                            animateHand(world, entity, wieldItemComponent._rItem, dt, perceivedSpeed, walkAnimationComponent.dirIndex, walkAnimationComponent.walkIndex, isLeftHand, wieldItemComponent.rhand);
-                        }
+                            var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity();
+                            currentVel = currentVel.toTHREEVector3();
+                            var perceivedSpeed = IbUtils.roundNumber(currentVel.lengthSq(), 2);
+                            perceivedSpeed = Math.min(perceivedSpeed, 20);
 
-                        if (wieldItemComponent._lItem) {
-                            isLeftHand = true;
-                            animateHand(world, entity, wieldItemComponent._lItem, dt, perceivedSpeed, walkAnimationComponent.dirIndex, walkAnimationComponent.walkIndex, isLeftHand, wieldItemComponent.lhand);
+                            if (wieldItemComponent._rItem) {
+                                isLeftHand = false;
+                                animateHand(world, entity, wieldItemComponent._rItem, dt, perceivedSpeed, walkAnimationComponent.dirIndex, walkAnimationComponent.walkIndex, isLeftHand, wieldItemComponent.rhand);
+                            }
+
+                            if (wieldItemComponent._lItem) {
+                                isLeftHand = true;
+                                animateHand(world, entity, wieldItemComponent._lItem, dt, perceivedSpeed, walkAnimationComponent.dirIndex, walkAnimationComponent.walkIndex, isLeftHand, wieldItemComponent.lhand);
+                            }
+
                         }
 
                     });
