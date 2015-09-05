@@ -8,7 +8,12 @@ angular
             $componentsProvider.register({
                 'wieldItem': {
                     rhand: null,
-                    lhand: null
+                    lhand: null,
+                    offsetPosition: {
+                        x: 0,
+                        y: 0,
+                        z: 0
+                    }
                 }
             });
         }

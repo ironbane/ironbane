@@ -315,6 +315,9 @@ angular
 
                 wo.position.copy(entity.position);
 
+                var wieldItemComponent = entity.getComponent('wieldItem');
+                wo.position.add(wieldItemComponent.offsetPosition);
+
                 var quadComponent = entity.getComponent('quad');
                 if (quadComponent) {
                     wo.rotation.copy(quadComponent._quad.rotation);
@@ -391,6 +394,9 @@ angular
 
                     world.entityAdded('wieldItem').add(function(entity) {
                         updateHands(entity, world);
+
+                        var wieldItemComponent = entity.getComponent('wieldItem');
+                        wieldItemComponent.offsetPosition = new THREE.Vector3().copy(wieldItemComponent.offsetPosition);
                     });
 
                     world.entityRemoved('wieldItem').add(function(entity) {

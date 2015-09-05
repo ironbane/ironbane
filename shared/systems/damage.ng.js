@@ -157,6 +157,7 @@ angular
                     var healthComponent = entity.getComponent('health');
                     var armorComponent = entity.getComponent('armor');
                     var quadComponent = entity.getComponent('quad');
+                    var wieldItemComponent = entity.getComponent('wieldItem');
 
                     if (damageableComponent.dashTimer >= 0) {
                         damageableComponent.dashTimer -= dTime;
@@ -169,6 +170,7 @@ angular
                         }
                         time /= DASH_TIME;
                         quadComponent.offsetPosition.copy(new THREE.Vector3().lerp(damageableComponent.dashDirection, time))
+                        wieldItemComponent.offsetPosition.copy(quadComponent.offsetPosition);
 
                         quadComponent._quad.children[0].material.color.g = 1 - time;
                         quadComponent._quad.children[0].material.color.b = 1 - time;
