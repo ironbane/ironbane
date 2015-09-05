@@ -110,30 +110,37 @@ angular
                                         world.removeEntity(entity);
                                     }, 1000);
 
-                                    setTimeout(function () {
-                                        delete healthComponent.__isRespawning;
-                                        healthComponent.value = healthComponent.max;
+                                    Meteor.setTimeout(function () {
 
-                                        if ($activeWorlds[entity.level]) {
-                                            // if not we have a problem!
-                                            var spawns = $activeWorlds[entity.level].getEntities('spawnPoint');
-                                            if (spawns.length === 0) {
-                                                $log.log(entity.level, ' has no spawn points defined!');
-                                            }
-                                            // Just pick one of them
-                                            // Having multiple spawns is useful against AFK players so
-                                            // we don't have players spawning in/on top of eachother too much.
-                                            (function(spawn) {
-                                                var component = spawn.getComponent('spawnPoint');
+                                        // Make sure the player is still online!
+                                        var user = Meteor.users.findOne(entity.owner);
+                                        if (user.status.online) {
 
-                                                if (component.tag === 'playerStart') {
-                                                    entity.position.copy(spawn.position);
-                                                    entity.rotation.copy(spawn.rotation);
+                                            delete healthComponent.__isRespawning;
+                                            healthComponent.value = healthComponent.max;
+
+                                            if ($activeWorlds[entity.level]) {
+                                                // if not we have a problem!
+                                                var spawns = $activeWorlds[entity.level].getEntities('spawnPoint');
+                                                if (spawns.length === 0) {
+                                                    $log.log(entity.level, ' has no spawn points defined!');
                                                 }
-                                            })(_.sample(spawns));
-                                        }
+                                                // Just pick one of them
+                                                // Having multiple spawns is useful against AFK players so
+                                                // we don't have players spawning in/on top of eachother too much.
+                                                (function(spawn) {
+                                                    var component = spawn.getComponent('spawnPoint');
 
-                                        world.addEntity(entity);
+                                                    if (component.tag === 'playerStart') {
+                                                        entity.position.copy(spawn.position);
+                                                        entity.rotation.copy(spawn.rotation);
+                                                    }
+                                                })(_.sample(spawns));
+                                            }
+
+                                            world.addEntity(entity);
+
+                                        }
                                     }, 5000);
                                 }
                                 else {
