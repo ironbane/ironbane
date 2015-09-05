@@ -7,7 +7,7 @@ angular
 
             $componentsProvider.register({
                 'shadow': {
-
+                    simple: false
                 }
             });
         }

@@ -67,20 +67,34 @@ angular
                         octreeEnts = this.world.getEntities('octree');
 
                     shadows.forEach(function(shadowEnt) {
-                        var shadow = shadowEnt.getComponent('shadow').shadow;
-                        octreeEnts.forEach(function(entity) {
-                            var octreeComponent = entity.getComponent('octree');
+                        var shadowComponent = shadowEnt.getComponent('shadow')
+                        var shadow = shadowComponent.shadow;
 
-                            if (octreeComponent.octreeResultsNearPlayer) {
-                                var ray = new THREE.Raycaster(shadowEnt.position, new THREE.Vector3(0, -1, 0));
+                        if (shadowComponent.simple) {
+                            var rigidBodyComponent = shadowEnt.getComponent('rigidBody');
 
-                                var intersections = ray.intersectOctreeObjects(octreeComponent.octreeResultsNearPlayer);
-
-                                if (intersections.length) {
-                                    shadow.position.copy(intersections[0].point.add(new THREE.Vector3(0, 0.01, 0)));
+                            if (rigidBodyComponent) {
+                                if (rigidBodyComponent.shape.type === 'sphere' && rigidBodyComponent.shape.radius) {
+                                    shadow.position.copy(shadowEnt.position.add(new THREE.Vector3(0, -rigidBodyComponent.shape.radius+0.01, 0)));
                                 }
                             }
-                        });
+                        }
+                        else {
+                            octreeEnts.forEach(function(entity) {
+                                var octreeComponent = entity.getComponent('octree');
+
+                                if (octreeComponent.octreeResultsNearPlayer) {
+                                    var ray = new THREE.Raycaster(shadowEnt.position, new THREE.Vector3(0, -1, 0));
+
+                                    var intersections = ray.intersectOctreeObjects(octreeComponent.octreeResultsNearPlayer);
+
+                                    if (intersections.length) {
+                                        shadow.position.copy(intersections[0].point.add(new THREE.Vector3(0, 0.01, 0)));
+                                    }
+                                }
+                            });
+                        }
+
                     });
                 }
             });
