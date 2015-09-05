@@ -205,7 +205,13 @@ angular
                                 }
                             }
 
-                            var direction = entity.position.clone().sub(source.sourceEntity.position).setY(0.3).normalize();
+                            if (!source.sourceEntity) {
+                                // Possible that a request was sent when the entity was already removed from the world
+                                return;
+                            }
+
+                            var direction = entity.position.clone()
+                                .sub(source.sourceEntity.position).setY(0.3).normalize();
 
                             me.dash(entity, direction, 'receiveDamage');
 
