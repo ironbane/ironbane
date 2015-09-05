@@ -106,10 +106,6 @@ angular
                                     // entity.removeComponent('shadow');
                                     healthComponent.__isRespawning = true;
 
-                                    setTimeout(function () {
-                                        world.removeEntity(entity);
-                                    }, 1000);
-
                                     Meteor.setTimeout(function () {
 
                                         // Make sure the player is still online!
@@ -143,9 +139,11 @@ angular
                                         }
                                     }, 5000);
                                 }
-                                else {
+
+                                setTimeout(function () {
                                     world.removeEntity(entity);
-                                }
+                                }, 1000);
+
                             }
                         }
                     });
