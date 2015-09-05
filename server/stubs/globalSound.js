@@ -1,3 +1,5 @@
 angular
     .module('game.services.globalsound', [])
-    .service('GlobalSound', function () {});
+    .service('GlobalSound', function () {
+        this.play = function () {};
+    });
