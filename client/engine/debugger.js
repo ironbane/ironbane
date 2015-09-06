@@ -4,7 +4,8 @@ angular
         'three',
         'underscore',
         'game.world-root',
-        'engine.entity-builder'
+        'engine.entity-builder',
+        'global.constants'
     ])
     .service('Debugger', [
         '_',
@@ -12,7 +13,8 @@ angular
         'EntityBuilder',
         '$components',
         'THREE',
-        function(_, $rootWorld, EntityBuilder, $components, THREE) {
+        'IB_CONSTANTS',
+        function(_, $rootWorld, EntityBuilder, $components, THREE, IB_CONSTANTS) {
             'use strict';
 
             this.watched = {};
@@ -23,6 +25,10 @@ angular
             };
 
             this.drawVector = function(vector, origin, color, notrack) {
+                if (!IB_CONSTANTS.isDev) {
+                    return;
+                }
+
                 color = color || 0x0000FF;
                 origin = origin || new THREE.Vector3(0,0,0);
 
@@ -42,6 +48,10 @@ angular
             };
 
             this.drawPath = function (id, path) {
+                if (!IB_CONSTANTS.isDev) {
+                    return;
+                }
+
                 if (path && path.length) {
                     this.clearPath(id);
                     var material = new THREE.LineBasicMaterial({

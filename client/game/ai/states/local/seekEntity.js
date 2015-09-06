@@ -16,7 +16,7 @@ angular
                         targetEntity.position.clone(), this.entity.level)
                         .then(function (path) {
                             me.calculatedPath = path;
-                            debug.drawPath(me.entity.uuid + 'seekEntity', me.calculatedPath);
+                            //debug.drawPath(me.entity.uuid + 'seekEntity', me.calculatedPath);
                         });
 
                 },

@@ -13,7 +13,7 @@ angular
                         this.targetPosition, this.entity.level)
                         .then(function (path) {
                             me.calculatedPath = path;
-                            debug.drawPath(me.entity.uuid + 'findPathToPosition', me.calculatedPath);
+                            //debug.drawPath(me.entity.uuid + 'findPathToPosition', me.calculatedPath);
                         });
                 },
                 update: function(dTime) {
