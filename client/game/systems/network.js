@@ -371,7 +371,7 @@ angular
 
                             // Server shouldn't include info if it's the mainPlayer but it does
                             // so we need to check for it here and ignore it
-                            if (victimEntity !== mainPlayer && sourceEntity !== mainPlayer) {
+                            if (sourceEntity && victimEntity !== mainPlayer && sourceEntity !== mainPlayer) {
                                 me.world.publish('combat:damageEntity', victimEntity, {
                                     sourceEntity: sourceEntity,
                                     type: 'damage',

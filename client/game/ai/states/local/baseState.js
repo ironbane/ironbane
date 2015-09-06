@@ -32,7 +32,7 @@ angular
                 update: function(dTime) {
                     var rigidBodyComponent = this.entity.getComponent('rigidBody');
 
-                    if (rigidBodyComponent.rigidBody) {
+                    if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
                         // Update rotation
                         var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity().toTHREEVector3();
                         if (currentVel.lengthSq() > 0.1) {

@@ -69,6 +69,11 @@ angular
                     return 0;
                 }
 
+                // early exit check
+                if (!entityRb || !otherRb) {
+                    return 0;
+                }
+
                 var entityRigidBodyComponent = entityRb.rigidBody;
                 var otherRigidBodyComponent = otherRb.rigidBody;
 
