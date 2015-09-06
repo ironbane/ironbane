@@ -21,6 +21,7 @@ angular
         'engine.debugger',
         'util.name-gen',
         'game.services.globalsound',
+        'game.services.analytics',
         'global.constants.sound'
     ])
     .config([
@@ -68,7 +69,8 @@ angular
         '$log',
         'IbUtils',
         'GlobalSound',
-        function($window, Debugger, IB_CONSTANTS, $rootScope, $meteor, $state, $log, IbUtils, GlobalSound) {
+        'GoogleAnalytics',
+        function($window, Debugger, IB_CONSTANTS, $rootScope, $meteor, $state, $log, IbUtils, GlobalSound, GoogleAnalytics) {
             // for convenience
             if (IB_CONSTANTS.isDev) {
                 $window.debug = Debugger;
@@ -97,6 +99,10 @@ angular
             /*$rootScope.$on('$stateNotFound', function() {
                 $log.debug('$stateNotFound', arguments);
             });*/
+
+
+            GoogleAnalytics.setup();
+            GoogleAnalytics.track();
         }
     ]);
 
