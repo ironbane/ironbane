@@ -22,7 +22,8 @@ angular
         'util.name-gen',
         'game.services.globalsound',
         'game.services.analytics',
-        'global.constants.sound'
+        'global.constants.sound',
+        'ngDragDrop'
     ])
     .config([
         '$locationProvider',

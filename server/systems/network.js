@@ -83,41 +83,24 @@ angular
                         self.sendNetState(this.userId, netEnts);
                     });
 
-                    this._stream.on('inventory:onEquipItem', function(data) {
+                    this._stream.on('inventory:equipItem', function(data) {
                         var inv = world.getSystem('inventory'),
                             netents = world.getEntities('netRecv'),
                             entity = _.findWhere(netents, {uuid: data.entityId});
 
-                        //$log.debug('inventory:onEquipItem', data, entity.uuid);
+                        $log.debug('inventory:equipItem', entity.name, data.sourceSlot, data.targetSlot);
 
                         if (entity) {
-                            inv.equipItem(entity, data.fromSlot);
+                            inv.equipItem(entity, data.sourceSlot, data.targetSlot);
                         }
                     });
 
-                    this._stream.on('inventory:onUnEquipItem', function(data) {
-                        var inv = world.getSystem('inventory'),
-                            netents = world.getEntities('netRecv'),
-                            entity = _.findWhere(netents, {uuid: data.entityId});
-
-                        //$log.debug('inventory:onUnEquipItem', data, entity.uuid);
-
-                        if (entity) {
-                            inv.unequipItem(entity, data.fromSlot);
-                        }
-                    });
-
-                    world.subscribe('inventory:onEquipItem', function(entity, item, toSlot, fromSlot) {
+                    world.subscribe('inventory:equipItem', function(entity, sourceSlot, targetSlot) {
                         if (entity.hasComponent('netSend') && self._stream) {
                             // TODO: UUID for items
-                            self._stream.emit('inventory:onEquipItem', {entityId: entity.uuid, toSlot: toSlot, fromSlot: fromSlot});
-                        }
-                    });
-
-                    world.subscribe('inventory:onUnEquipItem', function(entity, item, fromSlot, toSlot) {
-                        if (entity.hasComponent('netSend') && self._stream) {
-                            // TODO: UUID for items
-                            self._stream.emit('inventory:onUnEquipItem', {entityId: entity.uuid, toSlot: toSlot, fromSlot: fromSlot});
+                            // self._stream.emit('inventory:equipItem', {entityId: entity.uuid, sourceSlot: sourceSlot, targetSlot: targetSlot});
+                            var inv = entity.getComponent('inventory');
+                            self._stream.emit('inventory:snapshot', {entityId: entity.uuid, snapshot: inv.serializeNet()});
                         }
                     });
 

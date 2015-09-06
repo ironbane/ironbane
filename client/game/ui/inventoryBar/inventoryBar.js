@@ -5,7 +5,8 @@ angular
     .directive('inventoryBar', [
         '$log',
         '$rootWorld',
-        function($log, $rootWorld) {
+        '$q',
+        function($log, $rootWorld, $q) {
             'use strict';
 
             var config = {
@@ -21,6 +22,7 @@ angular
                     var ctrl = this,
                         inventorySystem = $rootWorld.getSystem('inventory'),
                         onChange;
+
 
                     var slotDefs = [
                         {
@@ -113,6 +115,23 @@ angular
                         slot.cssStyle = {
                             'background-position': cssBackgrounds.join(',')
                         };
+
+                        $scope['onDrop' + slot.name] = function (e, obj) {
+                            var deferred = $q.defer();
+                            if (obj.draggable) {
+                                var targetSlot = slot.name;
+                                var sourceSlot = obj.draggable.context.attributes['data-slot'].value;
+                                var result = inventorySystem.equipItem(ctrl.entity, sourceSlot, targetSlot);
+                                if (result) {
+                                    deferred.resolve();
+                                }
+                                else {
+                                    deferred.reject();
+                                }
+                            }
+                            return deferred.promise;
+                        };
+
                         return slot;
                     });
 

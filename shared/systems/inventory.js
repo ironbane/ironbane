@@ -190,96 +190,81 @@ angular
                     dropItemInWorld(item);
 
                 },
-                equipItem: function(entity, slot) {
+                equipItem: function(entity, sourceSlot, targetSlot) {
+                    if (sourceSlot === targetSlot) return false;
+
+                    var regularSlots = [
+                        'slot0',
+                        'slot1',
+                        'slot2',
+                        'slot3',
+                        'slot4',
+                        'slot5',
+                        'slot6',
+                        'slot7'
+                    ];
+
                     var inventory = entity.getComponent('inventory');
                     //$log.debug('equipItem: ', entity.uuid, inventory, slot);
-                    if (inventory && inventory[slot]) {
-                        var itemToEquip = inventory[slot];
-                        if (isEquipable(itemToEquip)) {
-                            //$log.debug('good to equip: ', itemToEquip, entity.uuid, slot);
-                            var equipSlot;
+                    if (inventory) {
+                        var sourceItem = inventory[sourceSlot];
+                        var targetItem = inventory[targetSlot];
 
-                            if (itemToEquip.type === 'weapon') {
-                                if (itemToEquip.handedness === 'r') { // specifically weapon must be right hand
-                                    equipSlot = 'rhand';
-                                } else if (itemToEquip.handedness === 'l') { // specifically weapon must be left hand
-                                    equipSlot = 'lhand';
-                                } else if (itemToEquip.handedness === '1' || !itemToEquip.handedness) { // either hand
-                                    // first check right
-                                    if (inventory['rhand']) {
-                                        if (inventory['lhand']) {
-                                            equipSlot = 'rhand'; // the idea here is that we'll always replace right (for now, later deal with shields)
-                                        } else {
-                                            equipSlot = 'lhand';
-                                        }
-                                    } else {
-                                        equipSlot = 'rhand';
-                                    }
-                                } else {
-                                    // some other kind of weapon (2hweapon)
-                                    equipSlot = '2hweapon';
+                        var checkSwitch = function (item, slot) {
+                            if (!item) return true;
+
+                            // Check that the change is valid
+                            if (item.type === 'weapon') {
+                                if (regularSlots.concat(['lhand','rhand']).indexOf(slot) === -1) {
+                                    return false;
                                 }
-                            } else {
-                                equipSlot = itemToEquip.type;
                             }
-
-                            // TODO: handle 2hweapon
-
-                            if (itemToEquip.type === 'shield') {
-                                equipSlot = 'lhand';
+                            if (item.type === 'shield') {
+                                if (regularSlots.concat(['lhand','rhand']).indexOf(slot) === -1) {
+                                    return false;
+                                }
                             }
-
-                            if (equipSlot === 'relic') {
-                                // find open relic slot (TODO: support more than 3 here)
-                                if (inventory['relic1']) {
-                                    if (inventory['relic2']) {
-                                        if (inventory['relic3']) {
-                                            equipSlot = 'relic1'; // again for now just replace 1 when they are full
-                                        } else {
-                                            equipSlot = 'relic3';
-                                        }
-                                    } else {
-                                        equipSlot = 'relic2';
-                                    }
-                                } else {
-                                    equipSlot = 'relic1';
+                            if (item.type === 'relic') {
+                                if (regularSlots.concat(['relic1','relic2','relic3']).indexOf(slot) === -1) {
+                                    return false;
+                                }
+                            }
+                            if (item.type === 'head') {
+                                if (regularSlots.concat(['head']).indexOf(slot) === -1) {
+                                    return false;
+                                }
+                            }
+                            if (item.type === 'body') {
+                                if (regularSlots.concat(['body']).indexOf(slot) === -1) {
+                                    return false;
+                                }
+                            }
+                            if (item.type === 'feet') {
+                                if (regularSlots.concat(['feet']).indexOf(slot) === -1) {
+                                    return false;
                                 }
                             }
 
-                            if (inventory[equipSlot]) {
-                                var currentItem = inventory[equipSlot];
-                                inventory[equipSlot] = itemToEquip;
-                                inventory[slot] = currentItem;
-                            } else {
-                                inventory[equipSlot] = itemToEquip;
-                                inventory[slot] = null;
-                            }
-
-                            //$log.debug('inventory adjusted: ', inventory);
-
-                            this.world.publish('inventory:onEquipItem', entity, itemToEquip, equipSlot, slot);
-                            this.onEquipItem.emit(entity, itemToEquip, equipSlot, slot);
+                            return true;
                         }
+
+                        if (!checkSwitch(sourceItem, targetSlot) ||
+                            !checkSwitch(targetItem, sourceSlot)) {
+                            return false;
+                        }
+
+
+                        var temp = inventory[targetSlot];
+                        inventory[targetSlot] = inventory[sourceSlot];
+                        inventory[sourceSlot] = temp;
+
+                        this.world.publish('inventory:equipItem', entity, sourceSlot, targetSlot);
+                        this.onEquipItem.emit(entity, sourceSlot, targetSlot);
+
+                        return true;
                     }
 
-                    return;
-                },
-                unequipItem: function(entity, slot) {
-                    var inventory = entity.getComponent('inventory');
-                    if (inventory && inventory[slot]) {
-                        var invSlot = this.findEmptySlot(entity);
-                        if (invSlot) {
-                            var item = inventory[slot];
-                            inventory[invSlot] = item;
-                            inventory[slot] = null;
-
-                            this.world.publish('inventory:onUnEquipItem', entity, item, slot, invSlot);
-                            this.onUnEquipItem.emit(entity, item, slot, invSlot);
-                        } else {
-                            // no free slots to unequip to, drop it or do nothing?
-                            return;
-                        }
-                    }
+                    return false;
                 },
                 update: function() {
 

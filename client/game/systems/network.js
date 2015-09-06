@@ -197,24 +197,13 @@ angular
 
                     var me = this;
 
-                    world.subscribe('inventory:onEquipItem', function(entity, item, toSlot, fromSlot) {
+                    world.subscribe('inventory:equipItem', function(entity, sourceSlot, targetSlot) {
                         if (entity.hasComponent('netSend') && me._stream) {
                             // TODO: UUID for items
-                            me._stream.emit('inventory:onEquipItem', {
+                            me._stream.emit('inventory:equipItem', {
                                 entityId: entity.uuid,
-                                toSlot: toSlot,
-                                fromSlot: fromSlot
-                            });
-                        }
-                    });
-
-                    world.subscribe('inventory:onUnEquipItem', function(entity, item, fromSlot, toSlot) {
-                        if (entity.hasComponent('netSend') && me._stream) {
-                            // TODO: UUID for items
-                            me._stream.emit('inventory:onUnEquipItem', {
-                                entityId: entity.uuid,
-                                toSlot: toSlot,
-                                fromSlot: fromSlot
+                                sourceSlot: sourceSlot,
+                                targetSlot: targetSlot
                             });
                         }
                     });
@@ -326,7 +315,7 @@ angular
                             $rootScope.$apply();
                         });
 
-                        me._stream.on('inventory:onEquipItem', function(data) {
+                        me._stream.on('inventory:equipItem', function(data) {
                             var inv = world.getSystem('inventory'),
                                 netents = world.getEntities('netRecv'),
                                 entity = _.findWhere(netents, {
@@ -336,8 +325,27 @@ angular
                             //$log.debug('inventory:onEquipItem', data, entity.uuid);
 
                             if (entity) {
-                                inv.equipItem(entity, data.fromSlot);
+                                inv.equipItem(entity, data.sourceSlot, data.targetSlot);
                             }
+                        });
+
+                      me._stream.on('inventory:snapshot', function(data) {
+                            var inventorySystem = world.getSystem('inventory'),
+                                netents = world.getEntities('netSend'),
+                                entity = _.findWhere(netents, {
+                                    uuid: data.entityId
+                                });
+
+                            if (entity) {
+                                var inventoryComponent = entity.getComponent('inventory');
+                                if (inventoryComponent) {
+                                    console.log('inv snapshot', data.snapshot);
+                                    angular.extend(inventoryComponent, data.snapshot);
+                                    inventorySystem.onEquipItem.emit(entity);
+                                }
+                            }
+                            //$log.debug('inventory:onEquipItem', data, entity.uuid);
+
                         });
 
                         me._stream.on('inventory:onItemAdded', function(data) {
@@ -365,20 +373,6 @@ angular
 
                             if (entity) {
                                 inv.removeItem(entity, data.item);
-                            }
-                        });
-
-                        me._stream.on('inventory:onUnEquipItem', function(data) {
-                            var inv = world.getSystem('inventory'),
-                                netents = world.getEntities('netRecv'),
-                                entity = _.findWhere(netents, {
-                                    uuid: data.entityId
-                                });
-
-                            //$log.debug('inventory:onUnEquipItem', data, entity.uuid);
-
-                            if (entity) {
-                                inv.unequipItem(entity, data.fromSlot);
                             }
                         });
 

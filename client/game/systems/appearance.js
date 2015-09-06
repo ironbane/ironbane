@@ -71,8 +71,7 @@ angular
 
                     world.entityAdded('inventory').add(updateAppearance);
 
-                    world.subscribe('inventory:onEquipItem', updateAppearance);
-                    world.subscribe('inventory:onUnEquipItem', updateAppearance);
+                    world.subscribe('inventory:equipItem', updateAppearance);
                 },
                 update: function() {
 

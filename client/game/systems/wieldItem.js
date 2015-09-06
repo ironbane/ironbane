@@ -365,22 +365,17 @@ angular
                         }
                     });
 
-                    world.subscribe('inventory:onEquipItem', function(entity, item, slot) {
+                    world.subscribe('inventory:equipItem', function(entity, sourceSlot, targetSlot) {
                         var data = {};
-                        if (slot === 'rhand' || slot === 'lhand') {
-                            data[slot] = item;
-                            doWield(entity, data);
-                        }
-                    });
 
-                    world.subscribe('inventory:onUnEquipItem', function(entity, item, slot) {
                         var component = entity.getComponent('wieldItem');
-                        if (slot === 'rhand') {
+
+                        if (sourceSlot === 'rhand') {
                             world.scene.remove(component._rItem);
                             component.rhand = null;
                             component._rItem = null;
                         }
-                        if (slot === 'lhand') {
+                        if (sourceSlot === 'lhand') {
                             world.scene.remove(component._lItem);
                             component.lhand = null;
                             component._lItem = null;
@@ -389,6 +384,12 @@ angular
                         // we could keep the component around, but removing it lowers loop checks
                         if (component && !component.rhand && !component.lhand) {
                             entity.removeComponent('wieldItem');
+                        }
+
+                        if (targetSlot === 'rhand' || targetSlot === 'lhand') {
+                            var inv = entity.getComponent('inventory');
+                            data[targetSlot] = inv[targetSlot];
+                            doWield(entity, data);
                         }
                     });
 
