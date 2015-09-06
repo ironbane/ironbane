@@ -121,6 +121,59 @@ angular
                         }
                     });
 
+                    world.subscribe('inventory:onItemAdded', function(entity, item, slot) {
+                        if (entity.hasComponent('netSend') && self._stream) {
+                            self._stream.emit('inventory:onItemAdded', {
+                                entityId: entity.uuid,
+                                item: item,
+                                slot: slot
+                            });
+                        }
+                    });
+
+                    world.subscribe('inventory:onItemRemoved', function(entity, item) {
+                        if (entity.hasComponent('netSend') && self._stream) {
+                            self._stream.emit('inventory:onItemRemoved', {entityId: entity.uuid, itemId: item.uuid});
+                        }
+                    });
+
+                    this._stream.on('pickup:entity', function(data) {
+                        var inv = world.getSystem('inventory'),
+                            netents = world.getEntities('netSend'),
+                            pickupents = world.getEntities('pickup'),
+                            entity = _.findWhere(netents, {uuid: data.entityId}),
+                            pickup = _.findWhere(pickupents, {uuid: data.pickupId});
+
+                        if (!entity) {
+                            $log.error('[pickup:entity] entity not found!');
+                            return;
+                        }
+
+                        if (entity.owner !== this.userId) {
+                            $log.error('[pickup:entity] entity has wrong owner');
+                            return;
+                        }
+
+                        var freeSlot = inv.findEmptySlot(entity);
+                        if (!freeSlot) {
+                            return;
+                        }
+
+                        if (!pickup) {
+                            $log.error('[pickup:entity] pickup not found!');
+                            return;
+                        }
+
+                        var pickupComponent = pickup.getComponent('pickup');
+
+                        if (pickupComponent) {
+                            world.removeEntity(pickup);
+                            inv.addItem(entity, pickupComponent.item);
+
+                            $log.log('picking up item ' + pickupComponent.item.name);
+                        }
+                    });
+
                     // currently the server does not attack and check vector
                     this._stream.on('combat:primaryAttack', function(data) {
                         // just send it back out to everyone

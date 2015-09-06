@@ -219,6 +219,15 @@ angular
                         }
                     });
 
+                    world.subscribe('pickup:entity', function(entity, pickup) {
+                        if (entity.hasComponent('netSend') && me._stream) {
+                            me._stream.emit('pickup:entity', {
+                                entityId: entity.uuid,
+                                pickupId: pickup.uuid
+                            });
+                        }
+                    });
+
                     world.subscribe('combat:primaryAttack', function(entity, targetVector) {
                         if (entity.hasComponent('netSend') && me._stream) {
                             me._stream.emit('combat:primaryAttack', {
@@ -328,6 +337,34 @@ angular
 
                             if (entity) {
                                 inv.equipItem(entity, data.fromSlot);
+                            }
+                        });
+
+                        me._stream.on('inventory:onItemAdded', function(data) {
+                            var inv = world.getSystem('inventory'),
+                                netents = world.getEntities('netSend'),
+                                entity = _.findWhere(netents, {
+                                    uuid: data.entityId
+                                });
+
+                            //$log.debug('inventory:onEquipItem', data, entity.uuid);
+
+                            if (entity) {
+                                inv.addItem(entity, data.item, data.slot);
+                            }
+                        });
+
+                        me._stream.on('inventory:onItemRemoved', function(data) {
+                            var inv = world.getSystem('inventory'),
+                                netents = world.getEntities('netSend'),
+                                entity = _.findWhere(netents, {
+                                    uuid: data.entityId
+                                });
+
+                            //$log.debug('inventory:onEquipItem', data, entity.uuid);
+
+                            if (entity) {
+                                inv.removeItem(entity, data.item);
                             }
                         });
 

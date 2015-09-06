@@ -1,6 +1,7 @@
 angular
     .module('systems.inventory', [
         'ces',
+        'three',
         'engine.entity-builder',
         'engine.util',
         'engine.timing'
@@ -12,13 +13,34 @@ angular
         'EntityBuilder',
         'IbUtils',
         'Timer',
-        function($log, System, Signal, EntityBuilder, IbUtils, Timer) {
+        '$components',
+        'THREE',
+        function($log, System, Signal, EntityBuilder, IbUtils, Timer, $components, THREE) {
             'use strict';
 
             var isEquipable = function(item) {
                 return item.type === 'head' || item.type === 'body' || item.type === 'feet' || item.type === 'relic' ||
                     item.type.search(/weapon/ig) >= 0 || item.type === 'shield';
             };
+
+            var invSlotList = [
+                'head',
+                'body',
+                'feet',
+                'rhand',
+                'lhand',
+                'relic1',
+                'relic2',
+                'relic3',
+                'slot0',
+                'slot1',
+                'slot2',
+                'slot3',
+                'slot4',
+                'slot5',
+                'slot6',
+                'slot7'
+            ];
 
             var InventorySystem = System.extend({
                 init: function() {
@@ -81,29 +103,45 @@ angular
                     this.world.publish('inventory:onItemAdded', entity, item, slot);
                     this.onItemAdded.emit(entity, item, slot);
                 },
-                removeItem: function(entity, slot) {
+                removeItem: function(entity, item) {
                     var inventory = entity.getComponent('inventory');
                     if (!inventory) {
                         return null; // error?
                     }
 
-                    if (!inventory[slot]) {
-                        return null; // no item to remove
+                    var me = this;
+
+                    _.each(invSlotList, function (slotName) {
+                        var slotItem = inventory[slotName];
+                        if (slotItem && slotItem.uuid === item.uuid) {
+                            inventory[slotName] = null;
+
+                            me.world.publish('inventory:onItemRemoved', entity, item);
+                            me.onItemRemoved.emit(entity, item);
+                        }
+                    });
+                },
+                dropAll: function(entity) {
+                    var inventory = entity.getComponent('inventory');
+                    if (!inventory) {
+                        return null; // error?
                     }
 
-                    var item = inventory[slot];
-                    inventory[slot] = null;
+                    var me = this;
 
-                    this.world.publish('inventory:onItemRemoved', entity, item);
-                    this.onItemRemoved.emit(entity, item);
+                    _.each(invSlotList, function (slotName) {
+                        var item = inventory[slotName];
+                        if (item) {
+                            me.dropItem(entity, item);
+                        }
+                    });
 
-                    return item;
                 },
-                dropItem: function(entity, slot) {
-                    $log.debug('inventory.dropItem', entity.uuid, slot);
+                dropItem: function(entity, item, dropStyle) {
+                    $log.debug('inventory.dropItem', entity.uuid, item);
 
                     var world = this.world,
-                        inventory = this,
+                        me = this,
                         dropped;
 
                     function buildPickup(item) {
@@ -121,10 +159,16 @@ angular
                                     indexV: IbUtils.spriteSheetIdToXY(image).v
                                 },
                                 shadow: {
-                                    simple: true
+                                    simple: true,
+                                    simpleHeight: 0.49
                                 },
                                 pickup: {
                                     item: item
+                                },
+                                netSend: {},
+                                teleport: {
+                                    targetEntityUuid: entity.uuid,
+                                    offsetPosition: IbUtils.getRandomVector3(new THREE.Vector3(), new THREE.Vector3(2, 0, 2))
                                 }
                             }
                         });
@@ -136,33 +180,15 @@ angular
                         dropped = buildPickup(item);
                         dropped._droppedBy = entity.uuid;
                         dropped.position.copy(entity.position);
-                        // move it a little because of many
-                        // TODO: launch random projectiles? better spread algorithm
-                        dropped.position.x += Math.random();
-                        dropped.position.z += Math.random();
+
                         world.addEntity(dropped);
 
                         $log.debug('drop item: ', entity.uuid, dropped.name, item);
                     }
 
-                    var item;
-                    if (slot === 'all_slots') {
-                        for (var i = 0; i < 8; i++) {
-                            item = this.removeItem(entity, 'slot' + i);
-                            if (item) {
-                                dropItemInWorld(item);
-                            }
-                        }
-                    } else if (slot === 'all_equipped') {
-                        // TODO
-                    } else if (slot === 'all') {
-                        // TODO
-                    } else {
-                        item = inventory.removeItem(entity, slot);
-                        if (item) {
-                            dropItemInWorld(item);
-                        }
-                    }
+                    this.removeItem(entity, item);
+                    dropItemInWorld(item);
+
                 },
                 equipItem: function(entity, slot) {
                     var inventory = entity.getComponent('inventory');
@@ -256,39 +282,47 @@ angular
                     }
                 },
                 update: function() {
-                    // you have to have inventory to pickup inventory
-                    // for now, lets keep it to players only
+
+                    var me = this;
+
                     var invSystem = this;
 
-                    var lootDroppers = invSystem.world.getEntities('inventory', 'health');
-                    // TODO: !player
-                    lootDroppers.forEach(function(entity) {
-                        var health = entity.getComponent('health');
-                        if (health.value <= 0) {
-                            // dead drop all loot
-                            invSystem.dropItem(entity, 'all_slots');
-                        }
-                    });
+                    if (Meteor.isServer) {
 
-                    if (invSystem._pickupTimer.isExpired) {
-                        //$log.debug('pickup scan');
+                        var lootDroppers = invSystem.world.getEntities('inventory', 'health');
 
-                        var grabbers = this.world.getEntities('inventory', 'player'),
-                            pickups = this.world.getEntities('pickup');
+                        lootDroppers.forEach(function(entity) {
+                            var healthComponent = entity.getComponent('health');
+                            if (healthComponent.value <= 0 && !healthComponent.__hasDroppedInventory && !entity.hasComponent('player')) {
+                                healthComponent.__hasDroppedInventory = true;
 
-                        grabbers.forEach(function(entity) {
-                            // TODO: some sort of spacial awareness so that it's not always the first in the array that wins
-                            pickups.forEach(function(pickup) {
-                                //$log.debug('pickup hunting: ', entity, pickups);
-                                if (entity.position.inRangeOf(pickup.position, 0.25)) {
-                                    $log.debug('picking up: ', entity.name, ' -> ', pickup.name);
-                                    invSystem.addItem(entity, pickup.getComponent('pickup').item);
-                                    invSystem.world.removeEntity(pickup);
-                                }
-                            });
+                                invSystem.dropAll(entity);
+                            }
                         });
 
-                        invSystem._pickupTimer.reset();
+                    }
+                    if (Meteor.isClient) {
+                        if (invSystem._pickupTimer.isExpired) {
+                            //$log.debug('pickup scan');
+
+                            var grabbers = this.world.getEntities('inventory', 'player'),
+                                pickups = this.world.getEntities('pickup');
+
+                            grabbers.forEach(function(entity) {
+                                // TODO: some sort of spacial awareness so that it's not always the first in the array that wins
+                                pickups.forEach(function(pickup) {
+                                    //$log.debug('pickup hunting: ', entity, pickups);
+                                    if (entity.position.inRangeOf(pickup.position, 1)) {
+                                        $log.debug('picking up: ', entity.name, ' -> ', pickup.name);
+
+                                        me.world.publish('pickup:entity', entity, pickup);
+                                        // invSystem.world.removeEntity(pickup);
+                                    }
+                                });
+                            });
+
+                            invSystem._pickupTimer.reset();
+                        }
                     }
                 }
             });
