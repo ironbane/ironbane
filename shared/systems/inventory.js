@@ -120,6 +120,9 @@ angular
                                     indexH: IbUtils.spriteSheetIdToXY(image).h,
                                     indexV: IbUtils.spriteSheetIdToXY(image).v
                                 },
+                                shadow: {
+                                    simple: true
+                                },
                                 pickup: {
                                     item: item
                                 }
