@@ -38,6 +38,7 @@ angular.module('components', [
     'components.speed',
     'components.sprite',
     'components.steeringBehaviour',
+    'components.teleport',
     'components.trigger',
     'components.wieldItem'
 ]);
