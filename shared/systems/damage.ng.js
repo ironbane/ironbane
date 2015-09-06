@@ -267,16 +267,19 @@ angular
 
                                                 GlobalSound.play(_.sample(['die1','die2','die3']), entity.position);
 
+                                                entity.removeComponent('quad');
+                                                entity.removeComponent('wieldItem');
+                                                entity.removeComponent('fighter');
+                                                entity.removeComponent('shadow');
+                                                entity.removeComponent('health');
+                                                entity.removeComponent('rigidBody');
+                                                entity.removeComponent('script');
+
                                                 if (!entity.hasComponent('player')) {
-                                                    me.world.removeEntity(entity);
+                                                    // me.world.removeEntity(entity);
                                                 }
                                                 else {
-                                                    entity.removeComponent('quad');
-                                                    entity.removeComponent('wieldItem');
-                                                    entity.removeComponent('fighter');
-                                                    entity.removeComponent('shadow');
-                                                    entity.removeComponent('health');
-                                                    entity.removeComponent('script');
+
 
                                                     BigMessagesService.add('You died!');
                                                 }

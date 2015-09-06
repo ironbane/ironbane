@@ -98,13 +98,16 @@ angular
                     healthEntities.forEach(function(entity) {
                         var healthComponent = entity.getComponent('health');
                         if (healthComponent) {
-                            if (healthComponent.value <= 0 && !healthComponent.__isRespawning) {
+                            if (healthComponent.value <= 0 && !healthComponent.__hasDied) {
+
+                                healthComponent.__hasDied = true;
+
                                 if (entity.hasComponent('player')) {
                                     // entity.removeComponent('quad');
                                     // entity.removeComponent('wieldItem');
                                     // entity.removeComponent('fighter');
                                     // entity.removeComponent('shadow');
-                                    healthComponent.__isRespawning = true;
+
 
                                     Meteor.setTimeout(function () {
 
@@ -112,7 +115,7 @@ angular
                                         var user = Meteor.users.findOne(entity.owner);
                                         if (user.status.online) {
 
-                                            delete healthComponent.__isRespawning;
+                                            delete healthComponent.__hasDied;
                                             healthComponent.value = healthComponent.max;
 
                                             if ($activeWorlds[entity.level]) {
