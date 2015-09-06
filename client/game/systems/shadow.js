@@ -73,11 +73,15 @@ angular
                         if (shadowComponent.simple) {
                             var rigidBodyComponent = shadowEnt.getComponent('rigidBody');
 
+                            var simpleHeight = shadowComponent.simpleHeight;
+
                             if (rigidBodyComponent) {
                                 if (rigidBodyComponent.shape.type === 'sphere' && rigidBodyComponent.shape.radius) {
-                                    shadow.position.copy(shadowEnt.position.add(new THREE.Vector3(0, -rigidBodyComponent.shape.radius+0.01, 0)));
+                                    simpleHeight = rigidBodyComponent.shape.radius;
                                 }
                             }
+
+                            shadow.position.copy(shadowEnt.position.clone().add(new THREE.Vector3(0, -simpleHeight+0.01, 0)));
                         }
                         else {
                             octreeEnts.forEach(function(entity) {
