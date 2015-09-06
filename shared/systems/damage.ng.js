@@ -67,6 +67,10 @@ angular
                 particle.position.copy(position);
                 me.world.addEntity(particle);
 
+                setTimeout(function () {
+                    me.world.removeEntity(particle);
+                }, 5000);
+
             },
             addDamageParticles: function(type, amount, position) {
 
@@ -138,6 +142,11 @@ angular
 
                 particle.position.copy(position);
                 this.world.addEntity(particle);
+
+                var me = this;
+                setTimeout(function () {
+                    me.world.removeEntity(particle);
+                }, 5000);
             },
             dash: function (entity, direction, type) {
                 var damageableComponent = entity.getComponent('damageable');

@@ -115,7 +115,23 @@ angular
                         }
                     });
 
-                    // TODO: remove emitters
+                    world.entityRemoved('particleEmitter').add(function(entity) {
+                        var emitterData = entity.getComponent('particleEmitter');
+                        var particleGroup;
+                        // determine if we have already created this group
+                        var groupIndex = -1;
+                        var existingGroup = _.find(system._groupData, function(group) {
+                            var found = _.isMatch(group, emitterData.group);
+                            groupIndex++;
+                            return found;
+                        });
+
+                        if (existingGroup) {
+                            particleGroup = system._groups[groupIndex];
+                            system.world.scene.remove(particleGroup.mesh);
+                        }
+
+                    });
                 },
                 update: function(dt) {
                     // sync up emitter positions

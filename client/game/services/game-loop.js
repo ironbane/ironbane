@@ -52,6 +52,8 @@ angular
                     }
 
                     debug.clear();
+
+                    debug.watch('scene.children.length', $rootWorld.scene.children.length);
                 }
 
                 if (uiTimer.isExpired) {
