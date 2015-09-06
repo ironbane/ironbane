@@ -275,7 +275,7 @@ angular
                         me._stream.on('add', onStreamAdd.bind(me));
 
                         me._stream.on('cadd', function (uuid, component) {
-                            console.log('cadd', component);
+                            // console.log('cadd', component);
                             var entity = world.scene.getObjectByProperty('uuid', uuid);
                             if (entity) {
                                 entity.addComponent(component);
@@ -283,7 +283,7 @@ angular
                         });
 
                         me._stream.on('cremove', function (uuid, componentName) {
-                            console.log('cremove', componentName);
+                            // console.log('cremove', componentName);
                             var entity = world.scene.getObjectByProperty('uuid', uuid);
                             if (entity) {
                                 entity.removeComponent(componentName);

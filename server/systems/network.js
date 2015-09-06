@@ -287,7 +287,7 @@ angular
                     // TODO: net specific components? are there some that clients don't need to know about?
                     var component = entity.getComponent(componentName);
 
-                    $log.debug('cadd: ', entity.uuid, component.serializeNet());
+                    // $log.debug('cadd: ', entity.uuid, component.serializeNet());
 
                     this._stream.emit('cadd', entity.uuid, component.serializeNet());
                 },
