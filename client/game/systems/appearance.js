@@ -43,25 +43,27 @@ angular
                     options.feet = inventory.feet.image;
                 }
 
-                CharBuilder.makeChar(options).then(function(image) {
-                    return TextureLoader.load(image)
-                        .then(function(loadedTexture) {
-                            // TODO: something like quad.updateTexture(loadedTexture);
+                quad.__loadPromise.then(function () {
+                    return CharBuilder.makeChar(options).then(function(image) {
+                        return TextureLoader.load(image)
+                            .then(function(loadedTexture) {
+                                // TODO: something like quad.updateTexture(loadedTexture);
 
-                            loadedTexture.minFilter = loadedTexture.magFilter = THREE.NearestFilter;
-                            loadedTexture.wrapS = loadedTexture.wrapT = THREE.ClampToEdgeWrapping;
-                            // loadedTexture.needsUpdate = true;
-                            quad1.material.map = loadedTexture;
-                            // quad1.material.emissive.set('#999'); // char is always lit to some degree
-                            quad1.material.needsUpdate = true;
-                            quad1.geometry.buffersNeedUpdate = true;
-                            quad1.geometry.uvsNeedUpdate = true;
-                            quad1.material.transparent = quad.transparent;
-                            // quad1.material.transparent = false;
-                            if (quad.setVisibleOnLoad) {
-                                quadWrapper.visible = true;
-                            }
-                        });
+                                loadedTexture.minFilter = loadedTexture.magFilter = THREE.NearestFilter;
+                                loadedTexture.wrapS = loadedTexture.wrapT = THREE.ClampToEdgeWrapping;
+                                // loadedTexture.needsUpdate = true;
+                                quad1.material.map = loadedTexture;
+                                // quad1.material.emissive.set('#999'); // char is always lit to some degree
+                                quad1.material.needsUpdate = true;
+                                quad1.geometry.buffersNeedUpdate = true;
+                                quad1.geometry.uvsNeedUpdate = true;
+                                quad1.material.transparent = quad.transparent;
+                                // quad1.material.transparent = false;
+                                if (quad.setVisibleOnLoad) {
+                                    quadWrapper.visible = true;
+                                }
+                            });
+                    });
                 });
             };
 

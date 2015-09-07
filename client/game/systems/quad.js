@@ -129,6 +129,8 @@ angular
                             });
                         }
 
+                        quadData.__loadPromise = promise;
+
                         quadData._quad = quadWrapper;
 
                         // It's not worth it to keep the quad as a child of the original entity,
