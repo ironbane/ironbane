@@ -99,11 +99,11 @@ angular
                         if (entity.hasComponent('netSend') && self._stream) {
                             // var inv = entity.getComponent('inventory');
                             // self._stream.emit('inventory:snapshot', {entityId: entity.uuid, snapshot: inv.serializeNet()});
-                            self._stream.emit('inventory:equipItem', {
-                                entityId: entity.uuid,
-                                sourceSlot: sourceSlot,
-                                targetSlot: targetSlot
-                            });
+                            // self._stream.emit('inventory:equipItem', {
+                            //     entityId: entity.uuid,
+                            //     sourceSlot: sourceSlot,
+                            //     targetSlot: targetSlot
+                            // });
                         }
                     });
 
@@ -364,6 +364,13 @@ angular
                     // when a component is added to an entity, we need to update all the clients
                     // TODO: net specific components? are there some that clients don't need to know about?
                     this._stream.emit('cremove', entity.uuid, componentName);
+                },
+                updateComponent: function(entity, componentName) {
+                    var component = entity.getComponent(componentName);
+
+                    $log.debug('cupdate: ', entity.uuid, component.serializeNet());
+
+                    this._stream.emit('cupdate', entity.uuid, component.serializeNet(), componentName);
                 }
             });
 
