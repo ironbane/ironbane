@@ -365,6 +365,28 @@ angular
                         }
                     });
 
+                    world.subscribe('inventory:onItemRemoved', function(entity, item, slot) {
+                        var data = {};
+
+                        var component = entity.getComponent('wieldItem');
+
+                        if (slot === 'rhand') {
+                            world.scene.remove(component._rItem);
+                            component.rhand = null;
+                            component._rItem = null;
+                        }
+                        if (slot === 'lhand') {
+                            world.scene.remove(component._lItem);
+                            component.lhand = null;
+                            component._lItem = null;
+                        }
+
+                        // we could keep the component around, but removing it lowers loop checks
+                        if (component && !component.rhand && !component.lhand) {
+                            entity.removeComponent('wieldItem');
+                        }
+                    });
+
                     world.subscribe('inventory:equipItem', function(entity, sourceSlot, targetSlot) {
                         var data = {};
 

@@ -129,12 +129,13 @@ angular
                                 projectileSpeed: 'Projectile Speed',
                                 attackCooldown: 'Attack Cooldown',
                                 handedness: 'Handedness',
-                                price: 'Buy Price'
+                                price: 'Buy Price',
+                                dropChance: 'Drop Chance %'
                             };
 
                             _.each(mapping, function (val, key) {
                                 var mappedValue = getValue(item, itemHeaders, val);
-                                if (mappedValue) {
+                                if (mappedValue || mappedValue === 0) {
                                     inventory[slot][key] = mappedValue;
                                 }
                             });

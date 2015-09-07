@@ -1,6 +1,6 @@
 <ul class="inventoryBar">
     <li ng-repeat="slot in inventoryBar.slots track by $index" ng-style="slot.cssStyle" jqyoui-droppable="{beforeDrop: 'onDrop' + slot.name}" data-drop="true">
-        <div ng-if="slot.item" data-drag="true" data-slot="{{ slot.name }}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable>
+        <div ng-if="slot.item" data-drag="true" data-slot="{{ slot.name }}" data-uuid="{{ slot.item.uuid }}" data-jqyoui-options="{revert: 'invalid'}" jqyoui-draggable="{onStart: 'onStart', onStop: 'onStop'}">
             <inventory-item item="slot.item"></inventory-item>
         </div>
     </li>

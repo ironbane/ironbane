@@ -10,36 +10,35 @@ angular
         function($log, System, Timer) {
             'use strict';
 
-            var isArmorType = function(item) {
-                return item.armor;
-            };
-
             var ArmorSystem = System.extend({
                 addedToWorld: function(world) {
                     this._super(world);
 
-                    world.subscribe('inventory:onEquipItem', function(entity, item) {
-                        if (isArmorType(item)) {
-                            if (!entity.hasComponent('armor')) {
-                                entity.addComponent('armor', {
-                                    value: 0,
-                                    max: item.armor
-                                });
-                            } else {
-                                entity.getComponent('armor').max += item.armor;
-                            }
-                        }
-                    });
+                    var inventorySystem = world.getSystem('inventory');
 
-                    world.subscribe('inventory:onUnEquipItem', function(entity, item) {
-                        if (isArmorType(item) && entity.hasComponent('armor')) {
-                            var armor = entity.getComponent('armor');
-                            armor.max -= item.armor;
-                            if (armor.value > armor.max) {
-                                armor.value = armor.max;
+                    var buildArmor = function(entity) {
+
+                        var totalArmor = 0;
+                        inventorySystem.loopItems(entity, function (item, slot) {
+                            if (item.armor) {
+                                totalArmor += item.armor;
                             }
+                        }, 'equipment');
+
+                        if (!entity.hasComponent('armor')) {
+                            entity.addComponent('armor', {
+                                value: 0,
+                                max: totalArmor
+                            });
                         }
-                    });
+                        else {
+                            entity.getComponent('armor').max = totalArmor;
+                        }
+
+                    };
+
+                    world.subscribe('inventory:equipItem', buildArmor);
+                    world.subscribe('inventory:load', buildArmor);
 
                     world.entityAdded('armorRegen').add(function(entity) {
                         var regen = entity.getComponent('armorRegen');

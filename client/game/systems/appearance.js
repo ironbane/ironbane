@@ -72,6 +72,9 @@ angular
                     world.entityAdded('inventory').add(updateAppearance);
 
                     world.subscribe('inventory:equipItem', updateAppearance);
+                    world.subscribe('inventory:onItemRemoved', updateAppearance);
+                    world.subscribe('inventory:onItemAdded', updateAppearance);
+                    world.subscribe('inventory:load', updateAppearance);
                 },
                 update: function() {
 

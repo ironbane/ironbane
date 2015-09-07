@@ -208,6 +208,16 @@ angular
                         }
                     });
 
+                    world.subscribe('inventory:dropItem', function(entity, item) {
+                        if (entity.hasComponent('netSend') && me._stream) {
+                            // TODO: UUID for items
+                            me._stream.emit('inventory:dropItem', {
+                                entityId: entity.uuid,
+                                itemUuid: item.uuid
+                            });
+                        }
+                    });
+
                     world.subscribe('pickup:entity', function(entity, pickup) {
                         if (entity.hasComponent('netSend') && me._stream) {
                             me._stream.emit('pickup:entity', {
@@ -329,7 +339,7 @@ angular
                             }
                         });
 
-                      me._stream.on('inventory:snapshot', function(data) {
+                        me._stream.on('inventory:snapshot', function(data) {
                             var inventorySystem = world.getSystem('inventory'),
                                 netents = world.getEntities('netSend'),
                                 entity = _.findWhere(netents, {
@@ -341,7 +351,7 @@ angular
                                 if (inventoryComponent) {
                                     console.log('inv snapshot', data.snapshot);
                                     angular.extend(inventoryComponent, data.snapshot);
-                                    inventorySystem.onEquipItem.emit(entity);
+                                    inventorySystem.refresh.emit(entity);
                                 }
                             }
                             //$log.debug('inventory:onEquipItem', data, entity.uuid);
@@ -355,8 +365,6 @@ angular
                                     uuid: data.entityId
                                 });
 
-                            //$log.debug('inventory:onEquipItem', data, entity.uuid);
-
                             if (entity) {
                                 inv.addItem(entity, data.item, data.slot);
                             }
@@ -369,10 +377,11 @@ angular
                                     uuid: data.entityId
                                 });
 
-                            //$log.debug('inventory:onEquipItem', data, entity.uuid);
-
                             if (entity) {
-                                inv.removeItem(entity, data.item);
+                                var item = inv.findItemByUuid(entity, data.itemId);
+                                if (item) {
+                                    inv.removeItem(entity, item);
+                                }
                             }
                         });
 

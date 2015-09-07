@@ -17,7 +17,7 @@ angular
                 },
                 bindToController: true,
                 controllerAs: 'inventoryBar',
-                controller: ['$scope', function($scope) {
+                controller: ['$scope', '$rootScope', function($scope, $rootScope) {
 
                     var ctrl = this,
                         inventorySystem = $rootWorld.getSystem('inventory'),
@@ -105,6 +105,14 @@ angular
                     ],
                     validSlotNames = /head|body|feet|rhand|lhand|relic*|slot*/;
 
+                    $scope.onStart = function () {
+                        $rootScope.$broadcast('dragStart');
+                    };
+
+                    $scope.onStop = function () {
+                        $rootScope.$broadcast('dragStop');
+                    };
+
                     slotDefs = _.map(slotDefs, function(slot) {
                         var cssBackgrounds = [];
                         slot.backgrounds.forEach(function (bg) {
@@ -122,13 +130,8 @@ angular
                                 var targetSlot = slot.name;
                                 var sourceSlot = obj.draggable.context.attributes['data-slot'].value;
                                 var result = inventorySystem.equipItem(ctrl.entity, sourceSlot, targetSlot);
-                                if (result) {
-                                    deferred.resolve();
-                                }
-                                else {
-                                    deferred.reject();
-                                }
                             }
+                                deferred.reject();
                             return deferred.promise;
                         };
 
@@ -157,7 +160,6 @@ angular
 
                     // any change we need to re-assess the inventory UI
                     inventorySystem.onEquipItem.add(onChange);
-                    inventorySystem.onUnEquipItem.add(onChange);
                     inventorySystem.onItemAdded.add(onChange);
                     inventorySystem.onItemRemoved.add(onChange);
 
@@ -171,12 +173,7 @@ angular
                     });
 
                     ctrl.use = function(slot) {
-                        // for now just equip/unequip
-                        if (slot.item && slot.name.match(/slot*/)) {
-                            inventorySystem.equipItem(ctrl.entity, slot.name);
-                        } else {
-                            inventorySystem.unequipItem(ctrl.entity, slot.name);
-                        }
+                        inventorySystem.useItem(ctrl.entity, slot.item);
                     };
                 }]
             };

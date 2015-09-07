@@ -23,7 +23,7 @@ angular
                     item.type.search(/weapon/ig) >= 0 || item.type === 'shield';
             };
 
-            var invSlotList = [
+            var armorList = [
                 'head',
                 'body',
                 'feet',
@@ -32,6 +32,9 @@ angular
                 'relic1',
                 'relic2',
                 'relic3',
+            ];
+
+            var slotList = [
                 'slot0',
                 'slot1',
                 'slot2',
@@ -42,12 +45,13 @@ angular
                 'slot7'
             ];
 
+            var invSlotList = armorList.concat(slotList);
+
             var InventorySystem = System.extend({
                 init: function() {
                     this._super();
 
                     this.onEquipItem = new Signal();
-                    this.onUnEquipItem = new Signal();
                     this.onItemAdded = new Signal();
                     this.onItemRemoved = new Signal();
 
@@ -58,7 +62,12 @@ angular
 
                     var inventory = this;
 
-                    world.subscribe('inventory:drop', inventory.dropItem.bind(inventory));
+                    // world.subscribe('inventory:drop', inventory.dropItem.bind(inventory));
+
+                    world.entityAdded('inventory').add(function(entity) {
+                        var inventoryComponent = entity.getComponent('inventory');
+                        world.publish('inventory:load', entity);
+                    });
                 },
                 findEmptySlot: function(entity) {
                     var inventory = entity.getComponent('inventory'),
@@ -69,7 +78,7 @@ angular
                     }
 
                     // pick first available
-                    var slots = Object.keys(inventory);
+                    var slots = invSlotList;
                     for (var s = 0, slen = slots.length; s < slen; s++) {
                         if (slots[s].search(/slot/) === 0 && inventory[slots[s]] === null) {
                             slot = slots[s];
@@ -84,6 +93,8 @@ angular
                     if (!inventory) {
                         return; // error?
                     }
+
+                    console.log('addItem', entity, item, slot);
 
                     if (!slot) {
                         // pick first available
@@ -100,14 +111,37 @@ angular
                     // now we can add the item to the slot
                     inventory[slot] = item;
 
-                    this.world.publish('inventory:onItemAdded', entity, item, slot);
+                    // if (Meteor.isServer) {
+                        this.world.publish('inventory:onItemAdded', entity, item, slot);
+                    // }
+
                     this.onItemAdded.emit(entity, item, slot);
+                },
+                findItemByUuid: function(entity, uuid) {
+                    var inventory = entity.getComponent('inventory');
+                    if (!inventory) {
+                        return null; // error?
+                    }
+
+                    var me = this;
+
+                    var found = null;
+                    _.each(invSlotList, function (slotName) {
+                        var slotItem = inventory[slotName];
+                        if (slotItem && slotItem.uuid === uuid) {
+                            found = slotItem;
+                        }
+                    });
+
+                    return found;
                 },
                 removeItem: function(entity, item) {
                     var inventory = entity.getComponent('inventory');
                     if (!inventory) {
                         return null; // error?
                     }
+
+                    // console.log('removeItem', entity, item);
 
                     var me = this;
 
@@ -116,10 +150,31 @@ angular
                         if (slotItem && slotItem.uuid === item.uuid) {
                             inventory[slotName] = null;
 
-                            me.world.publish('inventory:onItemRemoved', entity, item);
+                            // if (Meteor.isServer) {
+                                me.world.publish('inventory:onItemRemoved', entity, item, slotName);
+                            // }
+
                             me.onItemRemoved.emit(entity, item);
                         }
                     });
+                },
+                loopItems: function(entity, fn, list) {
+                    var slotNames = invSlotList;
+                    if (list === 'equipment') {
+                        slotNames = armorList;
+                    }
+                    if (list === 'slots') {
+                        slotNames = slotList;
+                    }
+                    var inventoryComponent = entity.getComponent('inventory');
+                    if (inventoryComponent) {
+                        _.each(slotNames, function (slotName) {
+                            var slotItem = inventoryComponent[slotName];
+                            if (slotItem) {
+                                fn(slotItem, slotName);
+                            }
+                        });
+                    }
                 },
                 dropAll: function(entity) {
                     var inventory = entity.getComponent('inventory');
@@ -132,13 +187,18 @@ angular
                     _.each(invSlotList, function (slotName) {
                         var item = inventory[slotName];
                         if (item) {
-                            me.dropItem(entity, item);
+                            var chance = IbUtils.getRandomInt(0, 100);
+                            console.log(item.dropChance, chance);
+                            if (item.dropChance > chance) {
+                                console.log('dropping:', item.dropChance, ' > ', chance);
+                                me.dropItem(entity, item);
+                            }
                         }
                     });
 
                 },
                 dropItem: function(entity, item, dropStyle) {
-                    $log.debug('inventory.dropItem', entity.uuid, item);
+                    // $log.debug('inventory.dropItem', entity.uuid, item);
 
                     var world = this.world,
                         me = this,
@@ -168,7 +228,7 @@ angular
                                 netSend: {},
                                 teleport: {
                                     targetEntityUuid: entity.uuid,
-                                    offsetPosition: IbUtils.getRandomVector3(new THREE.Vector3(), new THREE.Vector3(2, 0, 2))
+                                    offsetPosition: IbUtils.getRandomVector3(new THREE.Vector3(), new THREE.Vector3(2, 0, 2)).normalize().multiplyScalar(1.1)
                                 }
                             }
                         });
@@ -183,6 +243,11 @@ angular
 
                         world.addEntity(dropped);
 
+                        // Remove the item after a while
+                        setTimeout(function () {
+                            world.removeEntity(dropped);
+                        }, 20000);
+
                         $log.debug('drop item: ', entity.uuid, dropped.name, item);
                     }
 
@@ -192,17 +257,6 @@ angular
                 },
                 equipItem: function(entity, sourceSlot, targetSlot) {
                     if (sourceSlot === targetSlot) return false;
-
-                    var regularSlots = [
-                        'slot0',
-                        'slot1',
-                        'slot2',
-                        'slot3',
-                        'slot4',
-                        'slot5',
-                        'slot6',
-                        'slot7'
-                    ];
 
                     var inventory = entity.getComponent('inventory');
                     //$log.debug('equipItem: ', entity.uuid, inventory, slot);
@@ -215,32 +269,38 @@ angular
 
                             // Check that the change is valid
                             if (item.type === 'weapon') {
-                                if (regularSlots.concat(['lhand','rhand']).indexOf(slot) === -1) {
+                                if (slotList.concat(['lhand','rhand']).indexOf(slot) === -1) {
                                     return false;
                                 }
                             }
-                            if (item.type === 'shield') {
-                                if (regularSlots.concat(['lhand','rhand']).indexOf(slot) === -1) {
+                            else if (item.type === 'shield') {
+                                if (slotList.concat(['lhand','rhand']).indexOf(slot) === -1) {
                                     return false;
                                 }
                             }
-                            if (item.type === 'relic') {
-                                if (regularSlots.concat(['relic1','relic2','relic3']).indexOf(slot) === -1) {
+                            else if (item.type === 'relic') {
+                                if (slotList.concat(['relic1','relic2','relic3']).indexOf(slot) === -1) {
                                     return false;
                                 }
                             }
-                            if (item.type === 'head') {
-                                if (regularSlots.concat(['head']).indexOf(slot) === -1) {
+                            else if (item.type === 'head') {
+                                if (slotList.concat(['head']).indexOf(slot) === -1) {
                                     return false;
                                 }
                             }
-                            if (item.type === 'body') {
-                                if (regularSlots.concat(['body']).indexOf(slot) === -1) {
+                            else if (item.type === 'body') {
+                                if (slotList.concat(['body']).indexOf(slot) === -1) {
                                     return false;
                                 }
                             }
-                            if (item.type === 'feet') {
-                                if (regularSlots.concat(['feet']).indexOf(slot) === -1) {
+                            else if (item.type === 'feet') {
+                                if (slotList.concat(['feet']).indexOf(slot) === -1) {
+                                    return false;
+                                }
+                            }
+                            else {
+                                // All other stuff can only be moved between slots
+                                if (slotList.indexOf(slot) === -1) {
                                     return false;
                                 }
                             }
@@ -297,7 +357,7 @@ angular
                                 // TODO: some sort of spacial awareness so that it's not always the first in the array that wins
                                 pickups.forEach(function(pickup) {
                                     //$log.debug('pickup hunting: ', entity, pickups);
-                                    if (entity.position.inRangeOf(pickup.position, 1)) {
+                                    if (entity.position.inRangeOf(pickup.position, 1.0)) {
                                         $log.debug('picking up: ', entity.name, ' -> ', pickup.name);
 
                                         me.world.publish('pickup:entity', entity, pickup);

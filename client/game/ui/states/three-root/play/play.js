@@ -13,6 +13,7 @@ angular
         'game.ui.inventoryBar',
         'game.ui.inventoryItem',
         'game.ui.bigMessages.bigMessagesBox',
+        'game.ui.dropZone',
         'game.clientSettings'
     ])
     .config([

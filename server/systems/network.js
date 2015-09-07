@@ -97,10 +97,13 @@ angular
 
                     world.subscribe('inventory:equipItem', function(entity, sourceSlot, targetSlot) {
                         if (entity.hasComponent('netSend') && self._stream) {
-                            // TODO: UUID for items
-                            // self._stream.emit('inventory:equipItem', {entityId: entity.uuid, sourceSlot: sourceSlot, targetSlot: targetSlot});
-                            var inv = entity.getComponent('inventory');
-                            self._stream.emit('inventory:snapshot', {entityId: entity.uuid, snapshot: inv.serializeNet()});
+                            // var inv = entity.getComponent('inventory');
+                            // self._stream.emit('inventory:snapshot', {entityId: entity.uuid, snapshot: inv.serializeNet()});
+                            self._stream.emit('inventory:equipItem', {
+                                entityId: entity.uuid,
+                                sourceSlot: sourceSlot,
+                                targetSlot: targetSlot
+                            });
                         }
                     });
 
@@ -118,6 +121,36 @@ angular
                         if (entity.hasComponent('netSend') && self._stream) {
                             self._stream.emit('inventory:onItemRemoved', {entityId: entity.uuid, itemId: item.uuid});
                         }
+                    });
+
+                    this._stream.on('inventory:dropItem', function(data) {
+                        var inv = world.getSystem('inventory'),
+                            netents = world.getEntities('netSend'),
+                            entity = _.findWhere(netents, {uuid: data.entityId})
+
+                        if (!entity) {
+                            $log.error('[inventory:dropItem] entity not found!');
+                            return;
+                        }
+
+                        if (entity.owner !== this.userId) {
+                            $log.error('[inventory:dropItem] entity has wrong owner!');
+                            return;
+                        }
+
+                        var inventoryComponent = entity.getComponent('inventory');
+                        if (!inventoryComponent) {
+                            $log.error('[inventory:dropItem] entity has no inventory!');
+                            return;
+                        }
+
+                        var item = inv.findItemByUuid(entity, data.itemUuid);
+                        if (!item) {
+                            $log.error('[inventory:dropItem] uuid not found!');
+                            return;
+                        }
+
+                        inv.dropItem(entity, item);
                     });
 
                     this._stream.on('pickup:entity', function(data) {
