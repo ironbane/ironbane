@@ -133,8 +133,9 @@ angular
                                 if (damageableEntity !== projectileComponent._owner &&
                                     damageableEntity.position.inRangeOf(entity.position, 1.0)) {
 
-                                    // Only if it isn't a player, otherwise players might 'block' projectiles
-                                    if (!damageableEntity.hasComponent('player')) {
+                                    // Only allow hits if an NPC + player is involved
+                                    if ((projectileComponent._owner.hasComponent('player') && !damageableEntity.hasComponent('player')) ||
+                                        (!projectileComponent._owner.hasComponent('player') && damageableEntity.hasComponent('player'))) {
 
                                         // Only publish if the projectile has something to do with the mainPlayer
                                         // Other projectile hit events will be sent over the network
