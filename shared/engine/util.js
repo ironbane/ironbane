@@ -72,6 +72,20 @@ angular
             return value;
         };
 
+        this.generateUuid = function() {
+            var str = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+
+            str = str.replace(/[xy]/g, function(c) {
+                var rand = Math.random();
+                var r = rand * 16 | 0 % 16,
+                    v = c === 'x' ? r : (r & 0x3 | 0x8);
+
+                return v.toString(16);
+            });
+
+            return str;
+        };
+
         // TODO: replace with moment.js
         this.timeSince = function(date) {
             var seconds = Math.floor((new Date() - date) / 1000);

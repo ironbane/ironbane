@@ -31,7 +31,7 @@ angular
 
                     // Check if the prefab can be found in the spreadsheet
                     // These are usually NPC's and thus can only be added through the server
-                    if (Meteor.isServer && ContentLoader.getNPCPrefab(prefabName)) {
+                    if (Meteor.isServer && ContentLoader.hasNPCPrefab(prefabName)) {
                         angular.extend(componentData, ContentLoader.getNPCPrefab(prefabName));
                     }
                     else {

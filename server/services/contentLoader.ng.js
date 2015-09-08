@@ -1,8 +1,9 @@
 angular
     .module('services.contentLoader', [
-        'global.constants'
+        'global.constants',
+        'engine.util'
     ])
-    .service('ContentLoader', function (IB_CONSTANTS, $q) {
+    .service('ContentLoader', function (IB_CONSTANTS, $q, IbUtils) {
 
         var fs = Meteor.npmRequire('fs');
         var parse = Meteor.npmRequire('csv-parse');
@@ -19,20 +20,6 @@ angular
 
         var getValue = function (row, headers, header) {
             return row[headers.indexOf(header)];
-        };
-
-        var generateID = function() {
-            var str = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-
-            str = str.replace(/[xy]/g, function(c) {
-                var rand = Math.random();
-                var r = rand * 16 | 0 % 16,
-                    v = c === 'x' ? r : (r & 0x3 | 0x8);
-
-                return v.toString(16);
-            });
-
-            return str;
         };
 
         var loadContent = function (remoteUrl, assetsName) {
@@ -117,7 +104,7 @@ angular
                             inventory[slot] = {
                                 name: name,
                                 type: type,
-                                uuid: generateID()
+                                uuid: IbUtils.generateUuid()
                             };
 
                             var mapping = {
@@ -154,14 +141,15 @@ angular
 
             rawNpcs.forEach(function (npc) {
 
-                // First build an inventory
-                var carriedItemNames = getValue(npc, npcHeaders, 'inventory').split(',');
-                var inventory = me.buildInventory(carriedItemNames);
+                // For now only set the names
+                // We'll build the inventory when fetching the prefab to ensure unique uuid's
+                var itemNames = getValue(npc, npcHeaders, 'inventory').split(',');
 
                 var charBuildData = getValue(npc, npcHeaders, 'imageData');
 
                 // Build a list of NPCS with all their components
                 var npcPrefab = {
+                    itemNames: itemNames,
                     components: {
                         quad: {
                             transparent: true,
@@ -211,7 +199,6 @@ angular
                             max: getValue(npc, npcHeaders, 'armor'),
                             value: getValue(npc, npcHeaders, 'armor')
                         },
-                        inventory: inventory,
                         damageable: {},
                         globalState: {
                             state: getValue(npc, npcHeaders, 'scriptType')
@@ -249,8 +236,15 @@ angular
 
         };
 
-        this.getNPCPrefab = function (prefabName) {
+        this.hasNPCPrefab = function (prefabName) {
             return npcPrefabs[prefabName];
+        };
+
+        this.getNPCPrefab = function (prefabName) {
+            var prefab = _.clone(npcPrefabs[prefabName]);
+            prefab.components.inventory = this.buildInventory(prefab.itemNames);
+            delete prefab.itemNames;
+            return prefab;
         };
 
     })
