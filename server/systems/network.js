@@ -256,6 +256,16 @@ angular
                             return;
                         }
 
+                        if (!victimEntity) {
+                            $log.error('victim entity not found!');
+                            return;
+                        }
+
+                        if (!sourceEntity) {
+                            $log.error('source entity not found!');
+                            return;
+                        }
+
                         if (!_.isNumber(data.damage)) {
                             $log.error('data.damage must be a number!');
                         }
