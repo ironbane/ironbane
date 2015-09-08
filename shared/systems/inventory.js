@@ -4,7 +4,8 @@ angular
         'three',
         'engine.entity-builder',
         'engine.util',
-        'engine.timing'
+        'engine.timing',
+        'game.services.globalsound'
     ])
     .factory('InventorySystem', [
         '$log',
@@ -15,7 +16,8 @@ angular
         'Timer',
         '$components',
         'THREE',
-        function($log, System, Signal, EntityBuilder, IbUtils, Timer, $components, THREE) {
+        'GlobalSound',
+        function($log, System, Signal, EntityBuilder, IbUtils, Timer, $components, THREE, GlobalSound) {
             'use strict';
 
             var isEquipable = function(item) {
@@ -110,6 +112,10 @@ angular
 
                     // now we can add the item to the slot
                     inventory[slot] = item;
+
+                    if (Meteor.isClient) {
+                        GlobalSound.play(_.sample(['pickup']), entity.position);
+                    }
 
                     // if (Meteor.isServer) {
                         this.world.publish('inventory:onItemAdded', entity, item, slot);

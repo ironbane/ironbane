@@ -131,7 +131,7 @@ angular
 
                                         if (!playedSound) {
                                             playedSound = true;
-                                            GlobalSound.play(_.sample(['swing1','swing2','swing3']), entity.position);
+                                            GlobalSound.play(_.sample(['swing1']), entity.position);
                                         }
                                     }
                                 }

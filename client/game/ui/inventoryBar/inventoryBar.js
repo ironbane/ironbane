@@ -1,12 +1,14 @@
 angular
     .module('game.ui.inventoryBar', [
-        'game.world-root'
+        'game.world-root',
+        'game.services.globalsound'
     ])
     .directive('inventoryBar', [
         '$log',
         '$rootWorld',
         '$q',
-        function($log, $rootWorld, $q) {
+        'GlobalSound',
+        function($log, $rootWorld, $q, GlobalSound) {
             'use strict';
 
             var config = {
@@ -133,7 +135,13 @@ angular
                                 var sourceSlot = obj.draggable.context.attributes['data-slot'].value;
                                 var result = inventorySystem.equipItem(ctrl.entity, sourceSlot, targetSlot);
                             }
-                                deferred.reject();
+
+                            if (result) {
+                                GlobalSound.play(_.sample(['bag1']), ctrl.entity.position);
+                            }
+
+                            deferred.reject();
+
                             return deferred.promise;
                         };
 
@@ -157,6 +165,7 @@ angular
 
                             slot.use = function() {
                                 if (!isDragging) {
+                                    GlobalSound.play(_.sample(['use']), ctrl.entity.position);
                                     inventorySystem.useItem(ctrl.entity, slot.item);
                                 }
                                 isDragging = false;

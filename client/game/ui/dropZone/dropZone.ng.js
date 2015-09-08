@@ -1,7 +1,8 @@
 angular.module('game.ui.dropZone', [
-    'game.world-root'
+    'game.world-root',
+    'game.services.globalsound'
 ])
-.directive('dropZone', function($rootWorld, $q) {
+.directive('dropZone', function($rootWorld, $q, GlobalSound) {
         'use strict';
 
         return {
@@ -45,6 +46,7 @@ angular.module('game.ui.dropZone', [
                         var item = inventorySystem.findItemByUuid(ctrl.entity, itemUuid);
                         if (item) {
                             $rootWorld.publish('inventory:dropItem', ctrl.entity, item);
+                            GlobalSound.play(_.sample(['drop']), ctrl.entity.position);
                             deferred.resolve();
                         }
                         else {

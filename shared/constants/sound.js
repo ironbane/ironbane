@@ -16,43 +16,13 @@ angular
         },
 
 
-        // Battle
-        arrowhit1: {
-            path: "sound/battle/arrowhit1",
-            volume: 0.6,
-            loop: false,
-            type: 'sound'
-        },
-        arrowhit2: {
-            path: "sound/battle/arrowhit2",
-            volume: 0.6,
-            loop: false,
-            type: 'sound'
-        },
-        arrowhit3: {
-            path: "sound/battle/arrowhit3",
-            volume: 0.6,
-            loop: false,
-            type: 'sound'
-        },
         swing1: {
             path: "sound/battle/swing1",
-            volume: 0.6,
+            volume: 1.0,
             loop: false,
             type: 'sound'
         },
-        swing2: {
-            path: "sound/battle/swing2",
-            volume: 0.6,
-            loop: false,
-            type: 'sound'
-        },
-        swing3: {
-            path: "sound/battle/swing3",
-            volume: 0.6,
-            loop: false,
-            type: 'sound'
-        },
+
         hit1: {
             path: "sound/battle/hit1",
             volume: 0.6,
@@ -89,24 +59,6 @@ angular
             loop: false,
             type: 'sound'
         },
-        firestaff: {
-            path: "sound/battle/firestaff",
-            volume: 0.6,
-            loop: false,
-            type: 'sound'
-        },
-        firearrow1: {
-            path: "sound/battle/firearrow1",
-            volume: 0.6,
-            loop: false,
-            type: 'sound'
-        },
-        firearrow2: {
-            path: "sound/battle/firearrow2",
-            volume: 0.6,
-            loop: false,
-            type: 'sound'
-        },
 
 
         // Fighter
@@ -117,8 +69,35 @@ angular
             type: 'sound'
         },
 
+        // Inventory
+        bag1: {
+            path: "sound/inv/bag1",
+            volume: 1.0,
+            loop: false,
+            type: 'sound'
+        },
 
+        // Inventory
+        pickup: {
+            path: "sound/inv/pickup",
+            volume: 1.0,
+            loop: false,
+            type: 'sound'
+        },
 
+        drop: {
+            path: "sound/inv/drop",
+            volume: 0.4,
+            loop: false,
+            type: 'sound'
+        },
+
+        use: {
+            path: "sound/inv/use",
+            volume: 0.6,
+            loop: false,
+            type: 'sound'
+        },
 
         __bogusSoundFile: {}
     })
