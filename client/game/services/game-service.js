@@ -6,6 +6,7 @@ angular
         // shared systems
         'systems.actor',
         'systems.armor',
+        'systems.buff',
         'systems.fighter',
         'systems.inventory',
         'systems.damage',
@@ -37,6 +38,7 @@ angular
                 'Inventory',
                 'Appearance',
                 'Armor',
+                'Buff',
                 'Input',
                 'Sound',
                 'Script',

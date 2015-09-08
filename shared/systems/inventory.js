@@ -255,6 +255,22 @@ angular
                     dropItemInWorld(item);
 
                 },
+                useItem: function(entity, item) {
+                    if (Meteor.isServer) {
+                        if (item.type === 'food') {
+                            this.removeItem(entity, item);
+
+                            entity.addComponent('buff', {
+                                type: 'heal',
+                                amountPerSecond: 1,
+                                duration: item.damage
+                            });
+                        }
+                    }
+                    else {
+                        this.world.publish('inventory:useItem', entity, item);
+                    }
+                },
                 equipItem: function(entity, sourceSlot, targetSlot) {
                     if (sourceSlot === targetSlot) return false;
 

@@ -38,6 +38,7 @@ angular
                 'Damage',
                 'Mesh',
                 'Spawn',
+                'Buff',
                 'Trigger',
                 'Movers',
                 'Actor',

@@ -105,7 +105,9 @@ angular
                     ],
                     validSlotNames = /head|body|feet|rhand|lhand|relic*|slot*/;
 
+                    var isDragging = false;
                     $scope.onStart = function () {
+                        isDragging = true;
                         $rootScope.$broadcast('dragStart');
                     };
 
@@ -152,6 +154,14 @@ angular
                             var slot = _.findWhere(slotDefs, {name: slotName});
                             slot.item = inventory[slotName];
 
+
+                            slot.use = function() {
+                                if (!isDragging) {
+                                    inventorySystem.useItem(ctrl.entity, slot.item);
+                                }
+                                isDragging = false;
+                            };
+
                             return slot;
                         });
 
@@ -172,9 +182,6 @@ angular
                         onChange(entity);
                     });
 
-                    ctrl.use = function(slot) {
-                        inventorySystem.useItem(ctrl.entity, slot.item);
-                    };
                 }]
             };
 

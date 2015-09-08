@@ -218,6 +218,16 @@ angular
                         }
                     });
 
+                    world.subscribe('inventory:useItem', function(entity, item) {
+                        if (entity.hasComponent('netSend') && me._stream) {
+                            // TODO: UUID for items
+                            me._stream.emit('inventory:useItem', {
+                                entityId: entity.uuid,
+                                itemUuid: item.uuid
+                            });
+                        }
+                    });
+
                     world.subscribe('pickup:entity', function(entity, pickup) {
                         if (entity.hasComponent('netSend') && me._stream) {
                             me._stream.emit('pickup:entity', {

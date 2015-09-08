@@ -95,6 +95,36 @@ angular
                         }
                     });
 
+                    this._stream.on('inventory:useItem', function(data) {
+                        var inv = world.getSystem('inventory'),
+                            netents = world.getEntities('netSend'),
+                            entity = _.findWhere(netents, {uuid: data.entityId})
+
+                        if (!entity) {
+                            $log.error('[inventory:dropItem] entity not found!');
+                            return;
+                        }
+
+                        if (entity.owner !== this.userId) {
+                            $log.error('[inventory:dropItem] entity has wrong owner!');
+                            return;
+                        }
+
+                        var inventoryComponent = entity.getComponent('inventory');
+                        if (!inventoryComponent) {
+                            $log.error('[inventory:dropItem] entity has no inventory!');
+                            return;
+                        }
+
+                        var item = inv.findItemByUuid(entity, data.itemUuid);
+                        if (!item) {
+                            $log.error('[inventory:dropItem] uuid not found!');
+                            return;
+                        }
+
+                        inv.useItem(entity, item);
+                    });
+
                     world.subscribe('inventory:equipItem', function(entity, sourceSlot, targetSlot) {
                         if (entity.hasComponent('netSend') && self._stream) {
                             // var inv = entity.getComponent('inventory');
