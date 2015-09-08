@@ -145,10 +145,14 @@ angular
 
                     var me = this;
 
+                    var removed = false;
+
                     _.each(invSlotList, function (slotName) {
                         var slotItem = inventory[slotName];
-                        if (slotItem && slotItem.uuid === item.uuid) {
+                        if (!removed && slotItem && slotItem.uuid === item.uuid) {
                             inventory[slotName] = null;
+
+                            removed = true;
 
                             // if (Meteor.isServer) {
                                 me.world.publish('inventory:onItemRemoved', entity, item, slotName);
