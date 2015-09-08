@@ -42,7 +42,8 @@ angular
                 'Trigger',
                 'Movers',
                 'Actor',
-                'Inventory'
+                'Inventory',
+                'Armor'
             ];
 
             // populate all the worlds (zones)

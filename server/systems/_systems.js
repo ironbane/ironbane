@@ -8,6 +8,7 @@ angular
         'server.systems.trigger',
 
         'systems.actor',
+        'systems.armor',
         'systems.buff',
         'systems.inventory',
         'systems.damage',
