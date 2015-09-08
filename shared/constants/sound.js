@@ -4,7 +4,7 @@ angular
         theme: {
             path: 'music/ib_theme',
             volume: 0.55,
-            loop: true,
+            loop: false,
             type: 'music'
         },
 
