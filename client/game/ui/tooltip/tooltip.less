@@ -9,11 +9,37 @@
   position: absolute;
   z-index: 1030;
   display: block;
-  font-size: 12px;
-  line-height: 1.4;
+  // font-size: 12px;
+  // line-height: 1.4;
   visibility: visible;
   filter: alpha(opacity=0);
   opacity: 0;
+  width: 200px;
+
+  .weak {
+      color: @rarity_weak;
+  }
+
+  .normal {
+      color: @rarity_normal;
+  }
+
+  .strong {
+      color: @rarity_strong;
+  }
+
+  .epic {
+      color: @rarity_epic;
+  }
+
+  .legendary {
+      color: @rarity_legendary;
+  }
+
+  img {
+
+    margin-bottom: -7px;
+  }
 
 }
 .tooltip.in {
@@ -45,6 +71,7 @@
   background-color: @tooltipBackgroundColor;
   border: 3px solid darken(@tooltipBorderColor, 20%);
 }
+
 .tooltip-arrow {
   position: absolute;
   width: 0;

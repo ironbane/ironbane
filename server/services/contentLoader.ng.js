@@ -125,6 +125,7 @@ angular
                                 invImage: 'Inventory Image',
                                 damage: 'Damage',
                                 armor: 'Armor',
+                                rarity: 'Rarity',
                                 range: 'Range',
                                 projectileSpeed: 'Projectile Speed',
                                 attackCooldown: 'Attack Cooldown',

@@ -1,10 +1,14 @@
 angular
     .module('game.ui.inventoryItem', [
-        'ui.bootstrap'
+        'ui.bootstrap',
+        'engine.char-builder',
+        'engine.util'
     ])
     .directive('inventoryItem', [
         '$log',
-        function($log) {
+        'CharBuilder',
+        'IbUtils',
+        function($log, CharBuilder, IbUtils) {
             'use strict';
 
             var config = {
@@ -36,6 +40,43 @@ angular
                             'background-position': -col * 32 + 'px ' +
                                 -row * 32 + 'px'
                         };
+
+                        CharBuilder.getSpriteSheetTile('images/ui/stats.png', 3, 1, 4, 3)
+                        .then(function (url) {
+                            return CharBuilder.resize(url, 2);
+                        })
+                        .then(function (url) {
+                            $scope.healthUrl = url;
+                        });
+
+                        CharBuilder.getSpriteSheetTile('images/ui/stats.png', 1, 1, 4, 3)
+                        .then(function (url) {
+                            return CharBuilder.resize(url, 2);
+                        })
+                        .then(function (url) {
+                            $scope.armorUrl = url;
+                        });
+
+                        CharBuilder.getSpriteSheetTile('images/ui/stats.png', 1, 1, 4, 3)
+                        .then(function (url) {
+                            return CharBuilder.resize(url, 2);
+                        })
+                        .then(function (url) {
+                            $scope.armorUrl = url;
+                        });
+
+                        CharBuilder.getSpriteSheetTile('images/spritesheets/items.png',
+                            IbUtils.spriteSheetIdToXY(1945).h,
+                            IbUtils.spriteSheetIdToXY(1945).v,
+                            16, 128)
+                        .then(function (url) {
+                            return CharBuilder.resize(url, 2);
+                        })
+                        .then(function (url) {
+                            $scope.damageUrl = url;
+                        });
+
+                        ctrl.cssClass = item.rarity;
                     });
                 }
             };
