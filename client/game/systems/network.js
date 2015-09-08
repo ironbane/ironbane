@@ -58,10 +58,20 @@ angular
                                         entity.removeComponent('localState');
                                     }
 
+                                    var rigidbodySystem = system.world.getSystem('rigidbody');
+
+                                    var targetPosition = (new THREE.Vector3()).fromArray(data.pos);
+
+                                    // If the distance is too far away, just teleport them
+                                    if (entity.position.distanceToSquared(targetPosition) > 5 * 5) {
+                                        entity.position.copy(targetPosition);
+                                        rigidbodySystem.syncBody(entity);
+                                    }
+
                                     entity.addComponent($components.get('localState', {
                                         state: 'goToPosition',
                                         config: {
-                                            targetPosition: (new THREE.Vector3()).fromArray(data.pos)
+                                            targetPosition: targetPosition
                                         }
                                     }));
                                 } else {
