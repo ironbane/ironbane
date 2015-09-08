@@ -66,11 +66,13 @@ angular
                         }
                     };
 
-                    $scope.$watch('characters.length', function() {
+                    var charRefresh = function () {
                         updateCharacterPreview();
 
-                        $scope.freeSlots = IB_CONSTANTS.rules.maxCharactersAllowed - $scope.characters.length;
-                    });
+                        $scope.freeSlots = $scope.currentUser.profile.maxCharactersAllowed - $scope.characters.length;
+                    };
+                    $scope.$watch('characters.length', charRefresh);
+                    $scope.$watch('currentUser.profile.maxCharactersAllowed', charRefresh);
 
                     var enterGame = function(charId) {
                         // We need to first change to playmode so network.js can test whether
@@ -135,6 +137,13 @@ angular
 
                     $scope.createChar = function() {
                         $state.go('^.create-char');
+                    };
+
+                    $scope.buyCharSlot = function() {
+                        dialogService.buy('Extra Character Slot', 'extraCharacterSlot')
+                            .then(function() {
+
+                            });
                     };
 
                     $scope.prevChar = function() {

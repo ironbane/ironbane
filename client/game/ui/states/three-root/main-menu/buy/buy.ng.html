@@ -1,11 +1,11 @@
 <div class="ib-ui-window ib-ui-login-box buy">
 	<div ng-if="!selectedPack">
 	    <div class="pack" ng-repeat="(key, pack) in packs">
-	    	<div class="ironblood" style="width:100px;float:left;">
-				<div class="label">{{ pack.ironblood }}</div>
+	    	<div class="ironblood" style="width:120px;float:left;">
+				<div class="label">{{ pack.ironblood }} &#10006;</div>
 				<inventory-item item="{image: 1836, name: 'Ironblood'}"></inventory-item>
 			</div>
-	        <button class="ibutton attention" click-sound ng-click="$parent.$parent.selectedPack=key" style="width:200px">Buy for ${{ pack.dollars }}</button>
+	        <button class="ibutton attention" click-sound ng-click="$parent.$parent.selectedPack=key" style="width:180px">Buy for ${{ pack.dollars }}</button>
 	    </div>
 	    <button class="ibutton" click-sound ng-click="back()" style="width:80px">Back</button>
     </div>
@@ -13,7 +13,7 @@
     	Selected pack:
 	    <div class="pack selected" ng-init="pack=$parent.packs[$parent.selectedPack]">
 	    	<div class="ironblood" style="width:100px;float:left;">
-				<div class="label">{{ pack.ironblood }}</div>
+				<div class="label">{{ pack.ironblood }} &#10006;</div>
 				<inventory-item item="{image: 1836, name: 'Ironblood'}"></inventory-item>
 			</div>
 	        <div class="price-label" style="width:290px">Price: ${{ pack.dollars }}</div>

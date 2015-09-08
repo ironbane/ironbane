@@ -31,11 +31,13 @@ angular
             all: 65535
         },
         rules: {
-            maxCharactersAllowed: 3,
             minCharNameLength: 2,
             maxCharNameLength: 15
         },
         ironbloodRates: {
+            extraCharacterSlot: 5
+        },
+        ironbloodPacks: {
             'tiny': {
                 name: 'Tiny Pack',
                 ironblood: 5,

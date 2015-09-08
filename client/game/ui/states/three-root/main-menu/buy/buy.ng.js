@@ -14,7 +14,7 @@ angular
             templateUrl: 'client/game/ui/states/three-root/main-menu/buy/buy.ng.html',
             controller: function($scope, $rootScope, $state, dialogService, IB_CONSTANTS, CharBuilder) {
 
-                $scope.packs = IB_CONSTANTS.ironbloodRates;
+                $scope.packs = IB_CONSTANTS.ironbloodPacks;
                 $scope.selectedPack = null;
                 $scope.purchaseStatus = 'idle';
                 $rootScope.success = false;

@@ -31,7 +31,7 @@ angular
                         })._id;
                     }
                 } else {
-                    if (charCount >= IB_CONSTANTS.rules.maxCharactersAllowed) {
+                    if (charCount >= user.profile.maxCharactersAllowed) {
                         throw new Meteor.Error('tooManyChars', 'You\'ve reached the limit of characters you can create.');
                     }
                 }

@@ -1,9 +1,11 @@
 'use strict';
 
 angular.module('game.ui.dialog', [
-	'ui.bootstrap'
+	'ui.bootstrap',
+	'global.constants',
+	'angular-meteor'
 ])
-.factory('dialogService', ['$modal', function ($modal) {
+.factory('dialogService', ['$modal', 'IB_CONSTANTS', function ($modal, IB_CONSTANTS) {
 
 	// Exampe usage:
 	//
@@ -63,6 +65,42 @@ angular.module('game.ui.dialog', [
 				$scope.result = {};
 				$scope.ok = function () {
 					$modalInstance.close($scope.result.prompt);
+				};
+				$scope.cancel = function () {
+					$modalInstance.dismiss('cancel');
+				};
+			}]
+		}).result;
+	};
+
+	self.buy = function (itemLabel, itemName) {
+		return $modal.open({
+			templateUrl: 'client/game/ui/dialog/buyDialog.ng.html',
+			controller: ['$scope', '$modalInstance', '$meteor', '$state', function ($scope, $modalInstance, $meteor, $state) {
+				$scope.price = IB_CONSTANTS.ironbloodRates[itemName];
+				$scope.itemLabel = itemLabel;
+				$scope.result = {};
+				$scope.transactionInProgress = false;
+				$scope.buy = function () {
+					$scope.transactionInProgress = true;
+					$meteor.call('buyItem', itemName)
+					.then(function (result) {
+						self.alert('Success!')
+						.then(function () {
+							$modalInstance.dismiss('cancel');
+						});
+						console.log(result);
+					}, function (result) {
+						if (result.error === 'not-enough-ironblood') {
+							self.confirm('You don\'t have enough Ironblood. Would you like to buy some?')
+							.then(function () {
+								$modalInstance.dismiss('cancel');
+								$state.go('three-root.main-menu.buy');
+							}, function () {
+								$modalInstance.dismiss('cancel');
+							});
+						}
+					});
 				};
 				$scope.cancel = function () {
 					$modalInstance.dismiss('cancel');

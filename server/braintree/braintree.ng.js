@@ -1,10 +1,10 @@
 angular
     .module('server.services.braintree', [
-        'models',
         'global.constants',
+        'models.transactions',
         'server.services.hipchat'
     ])
-    .run(function(AccountsCollection, IB_CONSTANTS, HipChat) {
+    .run(function(IB_CONSTANTS, HipChat, TransactionsCollection) {
         'use strict';
 
         var braintree = Meteor.npmRequire('braintree');
@@ -50,11 +50,17 @@ angular
                     throw new Meteor.Error('not-logged-in', 'You need to be logged in before you can make a purchase!');
                 }
 
+                var user = Meteor.users.findOne(this.userId);
+
+                if (user.profile && user.profile.guest) {
+                    throw new Meteor.Error('not-logged-in-guest', 'You need to be logged in before you can make a purchase!');
+                }
+
                 if (!data.pack) {
                     throw new Meteor.Error('no-pack', 'There was no pack associated with the purchase!');
                 }
 
-                var packThatWasBought = IB_CONSTANTS.ironbloodRates[data.pack];
+                var packThatWasBought = IB_CONSTANTS.ironbloodPacks[data.pack];
 
                 if (!packThatWasBought) {
                     throw new Meteor.Error('bad-pack', 'The pack that you are trying to buy cannot be found!');
@@ -76,8 +82,6 @@ angular
                 });
 
                 if (response.success) {
-                    var user = Meteor.users.findOne(this.userId);
-
                     // Update the user's Ironblood
                     Meteor.users.update(this.userId, {
                         $inc: {
@@ -89,6 +93,14 @@ angular
                     if (!IB_CONSTANTS.isDev) {
                         HipChat.postMessage('Ironbane Chillout', user.username + ' bought ' + packThatWasBought.ironblood + ' Ironblood for $' + amount+ '.');
                     }
+
+                    TransactionsCollection.insert({
+                        type: 'ironblood',
+                        buyerId: user._id,
+                        buyerName: user.username,
+                        buyerEmail: user.email,
+                        pack: packThatWasBought
+                    });
                 }
 
                 return response;
