@@ -272,6 +272,7 @@ angular
                                                 entity.removeComponent('fighter');
                                                 entity.removeComponent('shadow');
                                                 entity.removeComponent('health');
+                                                entity.removeComponent('damageable');
                                                 entity.removeComponent('armor');
                                                 entity.removeComponent('rigidBody');
                                                 entity.removeComponent('script');
