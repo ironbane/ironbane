@@ -279,9 +279,7 @@ angular
                                                 if (!entity.hasComponent('player')) {
                                                     // me.world.removeEntity(entity);
                                                 }
-                                                else {
-
-
+                                                else if (entity.hasComponent('netSend')) {
                                                     BigMessagesService.add('You died!');
                                                 }
                                             }
