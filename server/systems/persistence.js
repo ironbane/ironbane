@@ -12,7 +12,7 @@ angular
         function(System, EntitiesCollection, Timer, $log) {
             'use strict';
 
-            var persist = function (entity) {
+            var persist =  Meteor.bindEnvironment(function (entity) {
                 var persist = entity.getComponent('persisted'),
                     entityState = entity.toJSON();
 
@@ -26,7 +26,7 @@ angular
                 }, {
                     $set: entityState
                 });
-            };
+            });
 
             var PersistSystem = System.extend({
                 init: function() {
