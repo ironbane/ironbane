@@ -25,31 +25,30 @@ angular
                     entities.forEach(function(entity) {
                         var buffComponent = entity.getComponent('buff');
 
-                        console.log('buff timer', buffComponent.timer);
-
                         if (buffComponent.timer > 0) {
                             buffComponent.timer -= dTime;
                         }
                         else {
                             buffComponent.timer = buffComponent.interval;
 
-                            if (buffComponent.type === 'heal') {
-                                var healthComponent = entity.getComponent('health');
-
-                                if (healthComponent) {
-                                    if (healthComponent.value < healthComponent.max) {
-                                        healthComponent.value += buffComponent.amountPerInterval;
-                                        if (healthComponent.value > healthComponent.max) {
-                                            healthComponent.value = healthComponent.max;
-                                        }
-                                    }
-                                }
-                            }
-
                             buffComponent.duration -= buffComponent.interval;
 
                             if (buffComponent.duration < 0) {
                                 entity.removeComponent('buff');
+                            }
+                            else {
+                                if (buffComponent.type === 'heal') {
+                                    var healthComponent = entity.getComponent('health');
+
+                                    if (healthComponent) {
+                                        if (healthComponent.value < healthComponent.max) {
+                                            healthComponent.value += buffComponent.amountPerInterval;
+                                            if (healthComponent.value > healthComponent.max) {
+                                                healthComponent.value = healthComponent.max;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
 
