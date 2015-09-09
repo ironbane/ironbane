@@ -41,28 +41,28 @@ angular
             'tiny': {
                 name: 'Tiny Pack',
                 ironblood: 5,
-                dollars: 5
+                dollars: 5 * 0.5
             },
             'small': {
                 name: 'Small Pack',
                 ironblood: 12,
-                dollars: 10,
+                dollars: 10 * 0.5,
                 desc: 'Most popular!'
             },
             'medium': {
                 name: 'Medium Pack',
                 ironblood: 26,
-                dollars: 20
+                dollars: 20 * 0.5
             },
             'large': {
                 name: 'Large Pack',
                 ironblood: 70,
-                dollars: 50
+                dollars: 50 * 0.5
             },
             'huge': {
                 name: 'Huge Pack',
                 ironblood: 160,
-                dollars: 100,
+                dollars: 100 * 0.5,
                 desc: 'Best value!'
             },
         },
