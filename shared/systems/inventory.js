@@ -266,8 +266,8 @@ angular
 
                             entity.addComponent('buff', {
                                 type: 'heal',
-                                amountPerSecond: 1,
-                                duration: item.damage
+                                amountPerInterval: 0.5,
+                                duration: item.damage * 2
                             });
                         }
                     }

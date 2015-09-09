@@ -2,9 +2,9 @@
 <p ng-class="item.rarity">{{ item.name }}</p>
 <p ng-switch="item.type">
     <span ng-switch-when="cash">{{ item.qty }} Gold</span>
-    <span ng-switch-when="head" ng-if="item.armor > 0"><img ng-src="{{armorUrl}}"> &#10006; {{ item.armor * 0.5 }}</span>
-    <span ng-switch-when="body" ng-if="item.armor > 0"><img ng-src="{{armorUrl}}"> &#10006; {{ item.armor * 0.5 }}</span>
-    <span ng-switch-when="feet" ng-if="item.armor > 0"><img ng-src="{{armorUrl}}"> &#10006; {{ item.armor * 0.5 }}</span>
-    <span ng-switch-when="weapon" ng-if="item.damage > 0"><img ng-src="{{damageUrl}}"><img ng-src="{{healthUrl}}"> &#10006; {{ item.damage * 0.5 }}</span>
-    <span ng-switch-when="food" ng-if="item.damage > 0"><img ng-src="{{healthUrl}}"> &#10006; {{ item.damage * 0.5 }}</span>
+    <span ng-switch-when="head" ng-if="item.armor > 0"><img ng-src="{{armorUrl}}"> &#10006; {{ item.armor }}</span>
+    <span ng-switch-when="body" ng-if="item.armor > 0"><img ng-src="{{armorUrl}}"> &#10006; {{ item.armor }}</span>
+    <span ng-switch-when="feet" ng-if="item.armor > 0"><img ng-src="{{armorUrl}}"> &#10006; {{ item.armor }}</span>
+    <span ng-switch-when="weapon" ng-if="item.damage > 0"><img ng-src="{{damageUrl}}"><img ng-src="{{healthUrl}}"> &#10006; {{ item.damage }}</span>
+    <span ng-switch-when="food" ng-if="item.damage > 0"><img ng-src="{{healthUrl}}"> &#10006; {{ item.damage }}</span>
 </p>

@@ -58,9 +58,6 @@ angular
                                 regen._regenTimer.unpause(); // will check again next tick
                             } else if (regen._regenTimer.isExpired) {
                                 armor.value += regen.amount;
-                                if (armor.value > armor.max) {
-                                    armor.value = armor.max;
-                                }
 
                                 if (armor.value < armor.max) {
                                     regen._regenTimer.reset();
@@ -70,6 +67,8 @@ angular
                                 }
                             }
                         }
+
+                        armor.value = Math.min(armor.value, armor.max);
                     });
                 }
             });

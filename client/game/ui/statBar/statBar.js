@@ -27,15 +27,15 @@ angular
                             return;
                         }
 
-                        var totalFull = Math.ceil(component.max / 2);
+                        var totalFull = Math.ceil(component.max);
                         for (var i = totalFull; i >= 1; i--) {
-                            var value = i * 2;
+                            var value = i;
                             if (component.value >= value) {
                                 ctrl.icons.unshift({
                                     icon: i,
                                     css: 'sprite-' + component.name + '_full'
                                 });
-                            } else if (component.value >= value - 1) {
+                            } else if (component.value >= value - 0.5) {
                                 ctrl.icons.unshift({
                                     icon: i,
                                     css: 'sprite-' + component.name + '_half'

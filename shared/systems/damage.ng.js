@@ -75,20 +75,20 @@ angular
             addDamageParticles: function(type, amount, position) {
 
                 var halfParticle = false;
-                if (amount % 2 === 1) {
-                    amount--;
+                if (amount % 1 === 0.5) {
+                    amount -= 0.5;
                     halfParticle = true;
                 }
 
                 switch (type) {
                     case 'health':
-                        this._spawnParticle(3, 1, amount * 0.5, position);
+                        this._spawnParticle(3, 1, amount, position);
                         if (halfParticle) {
                             this._spawnParticle(3, 2, 1, position);
                         }
                         break;
                     case 'armor':
-                        this._spawnParticle(1, 1, amount * 0.5, position);
+                        this._spawnParticle(1, 1, amount, position);
                         if (halfParticle) {
                             this._spawnParticle(2, 1, 1, position);
                         }
