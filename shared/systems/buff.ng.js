@@ -34,12 +34,14 @@ angular
                             buffComponent.timer = buffComponent.interval;
 
                             if (buffComponent.type === 'heal') {
-                                var health = entity.getComponent('health');
+                                var healthComponent = entity.getComponent('health');
 
-                                if (health.value < health.max) {
-                                    health.value += buffComponent.amountPerInterval;
-                                    if (health.value > health.max) {
-                                        health.value = health.max;
+                                if (healthComponent) {
+                                    if (healthComponent.value < healthComponent.max) {
+                                        healthComponent.value += buffComponent.amountPerInterval;
+                                        if (healthComponent.value > healthComponent.max) {
+                                            healthComponent.value = healthComponent.max;
+                                        }
                                     }
                                 }
                             }

@@ -125,7 +125,9 @@ angular
                     // Check for entities that can be hit with this projectile
                     // apply the effect (e.g. damage but can also be beneficial)
                     // and flag that we did so
-                    if (projectileComponent && projectileComponent._canDeliverEffect) {
+                    if (projectileComponent &&
+                        projectileComponent._owner &&
+                        projectileComponent._canDeliverEffect) {
                         if (projectileComponent.type === 'damage') {
                             var damageableEntities = me.world.getEntities('damageable');
 
