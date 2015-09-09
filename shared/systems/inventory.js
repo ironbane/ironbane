@@ -5,7 +5,8 @@ angular
         'engine.entity-builder',
         'engine.util',
         'engine.timing',
-        'game.services.globalsound'
+        'game.services.globalsound',
+        'global.constants.inv'
     ])
     .factory('InventorySystem', [
         '$log',
@@ -17,7 +18,8 @@ angular
         '$components',
         'THREE',
         'GlobalSound',
-        function($log, System, Signal, EntityBuilder, IbUtils, Timer, $components, THREE, GlobalSound) {
+        'INV_SLOTS',
+        function($log, System, Signal, EntityBuilder, IbUtils, Timer, $components, THREE, GlobalSound, INV_SLOTS) {
             'use strict';
 
             var isEquipable = function(item) {
@@ -25,27 +27,8 @@ angular
                     item.type.search(/weapon/ig) >= 0 || item.type === 'shield';
             };
 
-            var armorList = [
-                'head',
-                'body',
-                'feet',
-                'rhand',
-                'lhand',
-                'relic1',
-                'relic2',
-                'relic3',
-            ];
-
-            var slotList = [
-                'slot0',
-                'slot1',
-                'slot2',
-                'slot3',
-                'slot4',
-                'slot5',
-                'slot6',
-                'slot7'
-            ];
+            var armorList = INV_SLOTS.armorList;
+            var slotList = INV_SLOTS.slotList;
 
             var invSlotList = armorList.concat(slotList);
 
@@ -260,20 +243,87 @@ angular
 
                 },
                 useItem: function(entity, item) {
-                    if (Meteor.isServer) {
-                        if (item.type === 'food') {
-                            this.removeItem(entity, item);
 
-                            entity.addComponent('buff', {
-                                type: 'heal',
-                                amountPerInterval: 0.5,
-                                duration: item.damage * 2
-                            });
+                    var inventoryComponent = entity.getComponent('inventory');
+
+                    if (!inventoryComponent) {
+                        return;
+                    }
+
+                    // TODO Maybe add a isUsable flag to items instead?
+                    if (['food'].indexOf(item.type) === -1) {
+                        var equipSlot = null;
+                        if (item.type === 'weapon') {
+                            if (item.handedness === 'r') { // specifically weapon must be right hand
+                                equipSlot = 'rhand';
+                            } else if (item.handedness === 'l') { // specifically weapon must be left hand
+                                equipSlot = 'lhand';
+                            } else { // either hand
+                                // first check right
+                                if (inventoryComponent['rhand']) {
+                                    if (inventoryComponent['lhand']) {
+                                        equipSlot = 'rhand'; // the idea here is that we'll always replace right (for now, later deal with shields)
+                                    } else {
+                                        equipSlot = 'lhand';
+                                    }
+                                } else {
+                                    equipSlot = 'rhand';
+                                }
+                            }
                         }
+                        else {
+                            equipSlot = item.type;
+                        }
+
+                        if (equipSlot === 'relic') {
+                            // find open relic slot (TODO: support more than 3 here)
+                            if (inventoryComponent['relic1']) {
+                                if (inventoryComponent['relic2']) {
+                                    if (inventoryComponent['relic3']) {
+                                        equipSlot = 'relic1'; // again for now just replace 1 when they are full
+                                    } else {
+                                        equipSlot = 'relic3';
+                                    }
+                                } else {
+                                    equipSlot = 'relic2';
+                                }
+                            } else {
+                                equipSlot = 'relic1';
+                            }
+                        }
+
+                        var sourceSlot = null;
+                        this.loopItems(entity, function (loopItem, loopSlot) {
+                            if (loopItem === item) {
+                                sourceSlot = loopSlot;
+                            }
+                        });
+
+                        if (sourceSlot && equipSlot) {
+                            var result = this.equipItem(entity, sourceSlot, equipSlot);
+                        }
+
                     }
                     else {
-                        this.world.publish('inventory:useItem', entity, item);
+                        if (Meteor.isServer) {
+                            if (item.type === 'food') {
+                                this.removeItem(entity, item);
+
+                                entity.addComponent('buff', {
+                                    type: 'heal',
+                                    amountPerInterval: 0.5,
+                                    duration: item.damage * 2
+                                });
+                            }
+                        }
+                        else {
+                            if (entity.hasComponent('netSend')) {
+                                GlobalSound.play(_.sample(['use']), entity.position);
+                            }
+                            this.world.publish('inventory:useItem', entity, item);
+                        }
                     }
+
                 },
                 equipItem: function(entity, sourceSlot, targetSlot) {
                     if (sourceSlot === targetSlot) return false;
@@ -284,14 +334,38 @@ angular
                         var sourceItem = inventory[sourceSlot];
                         var targetItem = inventory[targetSlot];
 
+
+                        if (inventory['lhand'] || inventory['rhand']) {
+                            if (['rhand','lhand'].indexOf(targetSlot) !== -1) {
+                                if (sourceItem.handedness === '2h') {
+                                    return false;
+                                }
+                            }
+                            if ((inventory['lhand'] && inventory['lhand'].handedness === '2h') ||
+                                (inventory['rhand'] && inventory['rhand'].handedness === '2h')) {
+                                if (sourceItem.handedness === '1h') {
+                                    return false;
+                                }
+                            }
+                        }
+
+
                         var checkSwitch = function (item, slot) {
                             if (!item) return true;
+
+
 
                             // Check that the change is valid
                             if (item.type === 'weapon') {
                                 if (slotList.concat(['lhand','rhand']).indexOf(slot) === -1) {
                                     return false;
                                 }
+
+
+                                // ['rhand','lhand'].indexOf(targetSlot) !== -1 &&
+                                // sourceItem) {
+
+
                             }
                             else if (item.type === 'shield') {
                                 if (slotList.concat(['lhand','rhand']).indexOf(slot) === -1) {
@@ -337,6 +411,10 @@ angular
                         var temp = inventory[targetSlot];
                         inventory[targetSlot] = inventory[sourceSlot];
                         inventory[sourceSlot] = temp;
+
+                        if (entity.hasComponent('netSend')) {
+                            GlobalSound.play(_.sample(['bag1']), entity.position);
+                        }
 
                         this.world.publish('inventory:equipItem', entity, sourceSlot, targetSlot);
                         this.onEquipItem.emit(entity, sourceSlot, targetSlot);

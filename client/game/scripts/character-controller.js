@@ -6,7 +6,8 @@ angular
         'engine.debugger',
         'engine.util',
         'game.clientSettings',
-        'game.ui.bigMessages.bigMessagesService'
+        'game.ui.bigMessages.bigMessagesService',
+        'global.constants.inv'
     ])
     .run([
         '$log',
@@ -17,7 +18,8 @@ angular
         'IbUtils',
         '$clientSettings',
         'BigMessagesService',
-        function($log, ScriptBank, THREE, Ammo, Debugger, IbUtils, $clientSettings, BigMessagesService) {
+        'INV_SLOTS',
+        function($log, ScriptBank, THREE, Ammo, Debugger, IbUtils, $clientSettings, BigMessagesService, INV_SLOTS) {
             'use strict';
 
             // The amount of time that must pass before you can jump again
@@ -93,6 +95,12 @@ angular
 
                 playMap.map('changeCamera', 'keyboard', 'C', 'P');
                 // TODO add Xbox control for changeCamera
+
+                for (var i = 1; i <= 8; i++) {
+                    playMap.map('hotKey' + i, 'keyboard', i, 'P');
+                }
+                playMap.map('hotKeySecondRowToggle', 'keyboard', 'SHIFT', 'D');
+
 
                 this.primaryAttackHandler = function() {
                     var targetVector,
@@ -273,6 +281,24 @@ angular
                 if (playMap.test('changeCamera')) {
                     multiCamComponent.changeCamera();
                     BigMessagesService.add('Camera: ' + multiCamComponent.cameraType);
+                }
+
+                var inventorySystem = this.world.getSystem('inventory');
+                var inventoryComponent = this.entity.getComponent('inventory');
+
+                if (inventoryComponent) {
+                    for (var i = 0; i <= 7; i++) {
+                        if (playMap.test('hotKeySecondRowToggle') && playMap.test('hotKey' + (i+1))) {
+                            // if (inventoryComponent[INV_SLOTS.armorList[i]]) {
+                            //     inventorySystem.useItem(this.entity, inventoryComponent[INV_SLOTS.armorList[i]]);
+                            // }
+                        }
+                        else if (playMap.test('hotKey' + (i+1))) {
+                            if (inventoryComponent['slot' + i]) {
+                                inventorySystem.useItem(this.entity, inventoryComponent['slot' + i]);
+                            }
+                        }
+                    }
                 }
 
                 if (rigidBodyComponent) {
