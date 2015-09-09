@@ -21,6 +21,7 @@ deps@1.0.7
 ejson@1.0.6
 email@1.0.6
 fastclick@1.0.3
+force-ssl@1.0.4
 geojson-utils@1.0.3
 gwendall:session-json@0.1.7
 html-tools@1.0.4
@@ -62,6 +63,7 @@ session@1.1.0
 sha@1.0.3
 spacebars@1.0.6
 spacebars-compiler@1.0.6
+spiderable@1.0.7
 srp@1.0.3
 templating@1.1.1
 tracker@1.0.7
