@@ -4,8 +4,8 @@ angular
         'engine.util'
     ])
     .service('ContentLoader', function (IB_CONSTANTS, $q, IbUtils) {
+        'use strict';
 
-        var fs = Meteor.npmRequire('fs');
         var parse = Meteor.npmRequire('csv-parse');
         var request = Meteor.npmRequire('request');
 
@@ -33,11 +33,13 @@ angular
 
                     deferred.resolve(data);
                 });
+
+                return parser;
             };
 
             if (IB_CONSTANTS.isDev) {
                 request(remoteUrl, function (error, response, body) {
-                    if (!error && response.statusCode == 200) {
+                    if (!error && response.statusCode === 200) {
                         load(body);
                     }
                     else {
@@ -213,27 +215,27 @@ angular
             });
         };
 
-        this.load = function () {
-
+        this.load = function() {
             var me = this;
 
-            return loadContent('https://docs.google.com/spreadsheets/d/1a_dtZT1dUZnA3DlFTWbGKBCUZIAhuy2NQ6Hj8wtZJdU/pub?output=csv', 'npcs.csv').then(function (npcs) {
-                return loadContent('https://docs.google.com/spreadsheets/d/1ZC-ydW7if6Ci0TytsSLaio0LMoCntQwaUkXAOwjn7Y8/pub?output=csv', 'items.csv').then(function (items) {
+            return $q.all([
+                loadContent('https://docs.google.com/spreadsheets/d/1a_dtZT1dUZnA3DlFTWbGKBCUZIAhuy2NQ6Hj8wtZJdU/pub?output=csv', 'npcs.csv'),
+                loadContent('https://docs.google.com/spreadsheets/d/1ZC-ydW7if6Ci0TytsSLaio0LMoCntQwaUkXAOwjn7Y8/pub?output=csv', 'items.csv')
+            ]).then(function(result) {
+                var npcs = result[0],
+                    items = result[1];
 
-                    rawItems = items;
-                    rawNpcs = npcs;
+                rawItems = items;
+                rawNpcs = npcs;
 
-                    itemHeaders = rawItems.shift();
-                    npcHeaders = rawNpcs.shift();
+                itemHeaders = rawItems.shift();
+                npcHeaders = rawNpcs.shift();
 
-                    me.buildNPCPrefabs();
+                me.buildNPCPrefabs();
 
-                    console.log('Loaded ' + rawItems.length + ' items');
-                    console.log('Loaded ' + rawNpcs.length + ' NPC prefabs');
-
-                });
+                console.log('Loaded ' + rawItems.length + ' items');
+                console.log('Loaded ' + rawNpcs.length + ' NPC prefabs');
             });
-
         };
 
         this.hasNPCPrefab = function (prefabName) {
@@ -247,4 +249,4 @@ angular
             return prefab;
         };
 
-    })
+    });
