@@ -18,10 +18,10 @@ angular
                 merchantId: 'mnyv5zhrfr6f82nn'
             },
             prod: {
-                // environment: braintree.Environment.Sandbox,
-                // publicKey: 'n67tqmn4njr9r2zs',
-                // privateKey: '81bd974c0265560204e5b42906debc75',
-                // merchantId: 'mnyv5zhrfr6f82nn'
+                environment: braintree.Environment.Sandbox,
+                publicKey: 'n67tqmn4njr9r2zs',
+                privateKey: '81bd974c0265560204e5b42906debc75',
+                merchantId: 'mnyv5zhrfr6f82nn'
             }
         };
 
