@@ -2,13 +2,11 @@ angular.module('game.ui.chat.chatBoxDirective', [
         'angular-meteor',
         'luegg.directives',
         'game.ui.directives',
-        'models.entities',
         'models.chatMessages'
     ])
     .directive('chatBox', [
-        'EntitiesCollection',
         'ChatMessagesCollection',
-        function(EntitiesCollection, ChatMessagesCollection) {
+        function(ChatMessagesCollection) {
             'use strict';
 
             return {
@@ -31,25 +29,8 @@ angular.module('game.ui.chat.chatBoxDirective', [
                                 event.stopPropagation();
 
                                 if (event.keyCode === 13) {
-
-		                            var currentCharacter = EntitiesCollection.findOne({
-		                                owner: Meteor.userId(),
-		                                active: true
-		                            });
-
-                                    $scope.$apply(function() {
-                                        ctrl.messages.unshift({
-                                            msg: ctrl.newmsg,
-                                            userId: Meteor.userId(),
-                                            user: {
-                                                name: currentCharacter.name
-                                                // TODO: add flags here, based on roles? (publish?)
-                                            },
-                                            pos: currentCharacter.position,
-                                            room: currentCharacter.level
-                                        });
-                                        ctrl.showInput = false;
-                                        ctrl.newmsg = '';
+                                    $meteor.call('chat', {
+                                          msg: ctrl.newmsg
                                     });
                                 }
                             };

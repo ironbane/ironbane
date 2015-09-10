@@ -1,9 +1,15 @@
 angular
-    .module('server.systems.network', ['ces'])
+    .module('server.systems.network', [
+        'ces',
+        'three',
+        'server.services.chat'
+    ])
     .factory('NetworkSystem', [
         'System',
         '$log',
-        function(System, $log) {
+        'ChatService',
+        'THREE',
+        function(System, $log, ChatService, THREE) {
             'use strict';
 
             function arraysAreEqual(a1, a2) {
@@ -11,31 +17,14 @@ angular
                 return (a1[0] === a2[0]) && (a1[1] === a2[1]) && (a1[2] === a2[2]);
             }
 
-            function onRecieveTransforms(packet) {
-                var sender = this.userId,
-                    world = this.world,
-                    netEntities = world.getEntities('netRecv');
-
-                // TODO: might be better instead to just find them by ID? not sure which search is faster
-                // (and then test they have the netRecv component)
-                netEntities.forEach(function(entity) {
-                    var netComponent = entity.getComponent('netRecv');
-
-                    // most likely this should be one per client, however perhaps other player owned things
-                    // may come
-                    if (packet[entity.uuid]) { // && entity.owner === sender) {
-                        entity.position.deserialize(packet[entity.uuid].pos);
-                        entity.rotation.deserialize(packet[entity.uuid].rot);
-                    }
-                });
-            }
-
             function onNetSendEntityAdded(entity) {
                 // hook into the entity's events for component mgmt
                 entity.onComponentAdded.add(this.entityComponentAddedHandler);
                 entity.onComponentRemoved.add(this.entityComponentRemovedHandler);
 
-                this.sendNetState(null, entity);
+                // Maintain a list of entities we know about
+                var netSendComponent = entity.getComponent('netSend');
+                netSendComponent.__knownEntities = [];
             }
 
             function onNetSendEntityRemoved(entity) {
@@ -43,7 +32,7 @@ angular
                 entity.onComponentRemoved.remove(this.entityComponentRemovedHandler);
 
                 // since we're syncing up the server's uuid, just send that
-                this._stream.emit('remove', entity.uuid);
+                // this._stream.emit('remove', entity.uuid);
             }
 
             var NetworkSystem = System.extend({
@@ -59,287 +48,254 @@ angular
 
                     this._super(world);
 
-                    // each world should have its own network stream
-                    this._stream = new Meteor.Stream(world.name + '_entities');
 
-                    this._stream.permissions.write(function(eventName) {
-                        if (eventName === 'add') {
-                            return false;
-                        }
+                    // this._stream.on('inventory:equipItem', function(data) {
+                    //     var inv = world.getSystem('inventory'),
+                    //         netents = world.getEntities('netRecv'),
+                    //         entity = _.findWhere(netents, {uuid: data.entityId});
 
-                        return true;
-                    });
+                    //     // $log.debug('inventory:equipItem', entity.name, data.sourceSlot, data.targetSlot);
 
-                    this._stream.permissions.read(function(eventName) {
-                        return true;
-                    });
+                    //     if (entity) {
+                    //         inv.equipItem(entity, data.sourceSlot, data.targetSlot);
+                    //     }
+                    // });
 
-                    this._stream.on('transforms', onRecieveTransforms.bind(this));
+                    // this._stream.on('inventory:useItem', function(data) {
+                    //     var inv = world.getSystem('inventory'),
+                    //         netents = world.getEntities('netSend'),
+                    //         entity = _.findWhere(netents, {uuid: data.entityId})
 
-                    // a client may request a full state update (typically this should be for bootup, TODO somehow throttle this so that we don't get hammered)
-                    this._stream.on('getState', function() {
-                        // $log.debug('server getState: ', this.userId, this.subscriptionId);
-                        var netEnts = _.filter(self.world.getEntities('netSend'), function(ent) { return !ent.isLoadedFromJsonFile; });
-                        self.sendNetState(this.userId, netEnts);
-                    });
+                    //     if (!entity) {
+                    //         $log.error('[inventory:dropItem] entity not found!');
+                    //         return;
+                    //     }
 
-                    this._stream.on('inventory:equipItem', function(data) {
-                        var inv = world.getSystem('inventory'),
-                            netents = world.getEntities('netRecv'),
-                            entity = _.findWhere(netents, {uuid: data.entityId});
+                    //     if (entity.owner !== this.userId) {
+                    //         $log.error('[inventory:dropItem] entity has wrong owner!');
+                    //         return;
+                    //     }
 
-                        // $log.debug('inventory:equipItem', entity.name, data.sourceSlot, data.targetSlot);
+                    //     var inventoryComponent = entity.getComponent('inventory');
+                    //     if (!inventoryComponent) {
+                    //         $log.error('[inventory:dropItem] entity has no inventory!');
+                    //         return;
+                    //     }
 
-                        if (entity) {
-                            inv.equipItem(entity, data.sourceSlot, data.targetSlot);
-                        }
-                    });
+                    //     var item = inv.findItemByUuid(entity, data.itemUuid);
+                    //     if (!item) {
+                    //         $log.error('[inventory:dropItem] uuid not found!');
+                    //         return;
+                    //     }
 
-                    this._stream.on('inventory:useItem', function(data) {
-                        var inv = world.getSystem('inventory'),
-                            netents = world.getEntities('netSend'),
-                            entity = _.findWhere(netents, {uuid: data.entityId})
+                    //     inv.useItem(entity, item);
+                    // });
 
-                        if (!entity) {
-                            $log.error('[inventory:dropItem] entity not found!');
-                            return;
-                        }
+                    // world.subscribe('inventory:equipItem', function(entity, sourceSlot, targetSlot) {
+                    //     if (entity.hasComponent('netSend') && self._stream) {
+                    //         // var inv = entity.getComponent('inventory');
+                    //         // self._stream.emit('inventory:snapshot', {entityId: entity.uuid, snapshot: inv.serializeNet()});
+                    //         // self._stream.emit('inventory:equipItem', {
+                    //         //     entityId: entity.uuid,
+                    //         //     sourceSlot: sourceSlot,
+                    //         //     targetSlot: targetSlot
+                    //         // });
+                    //     }
+                    // });
 
-                        if (entity.owner !== this.userId) {
-                            $log.error('[inventory:dropItem] entity has wrong owner!');
-                            return;
-                        }
+                    // world.subscribe('inventory:onItemAdded', function(entity, item, slot) {
+                    //     if (entity.hasComponent('netSend') && self._stream) {
+                    //         self._stream.emit('inventory:onItemAdded', {
+                    //             entityId: entity.uuid,
+                    //             item: item,
+                    //             slot: slot
+                    //         });
+                    //     }
+                    // });
 
-                        var inventoryComponent = entity.getComponent('inventory');
-                        if (!inventoryComponent) {
-                            $log.error('[inventory:dropItem] entity has no inventory!');
-                            return;
-                        }
+                    // world.subscribe('inventory:onItemRemoved', function(entity, item) {
+                    //     if (entity.hasComponent('netSend') && self._stream) {
+                    //         self._stream.emit('inventory:onItemRemoved', {entityId: entity.uuid, itemId: item.uuid});
+                    //     }
+                    // });
 
-                        var item = inv.findItemByUuid(entity, data.itemUuid);
-                        if (!item) {
-                            $log.error('[inventory:dropItem] uuid not found!');
-                            return;
-                        }
+                    // this._stream.on('inventory:dropItem', function(data) {
+                    //     var inv = world.getSystem('inventory'),
+                    //         netents = world.getEntities('netSend'),
+                    //         entity = _.findWhere(netents, {uuid: data.entityId})
 
-                        inv.useItem(entity, item);
-                    });
+                    //     if (!entity) {
+                    //         $log.error('[inventory:dropItem] entity not found!');
+                    //         return;
+                    //     }
 
-                    world.subscribe('inventory:equipItem', function(entity, sourceSlot, targetSlot) {
-                        if (entity.hasComponent('netSend') && self._stream) {
-                            // var inv = entity.getComponent('inventory');
-                            // self._stream.emit('inventory:snapshot', {entityId: entity.uuid, snapshot: inv.serializeNet()});
-                            // self._stream.emit('inventory:equipItem', {
-                            //     entityId: entity.uuid,
-                            //     sourceSlot: sourceSlot,
-                            //     targetSlot: targetSlot
-                            // });
-                        }
-                    });
+                    //     if (entity.owner !== this.userId) {
+                    //         $log.error('[inventory:dropItem] entity has wrong owner!');
+                    //         return;
+                    //     }
 
-                    world.subscribe('inventory:onItemAdded', function(entity, item, slot) {
-                        if (entity.hasComponent('netSend') && self._stream) {
-                            self._stream.emit('inventory:onItemAdded', {
-                                entityId: entity.uuid,
-                                item: item,
-                                slot: slot
-                            });
-                        }
-                    });
+                    //     var inventoryComponent = entity.getComponent('inventory');
+                    //     if (!inventoryComponent) {
+                    //         $log.error('[inventory:dropItem] entity has no inventory!');
+                    //         return;
+                    //     }
 
-                    world.subscribe('inventory:onItemRemoved', function(entity, item) {
-                        if (entity.hasComponent('netSend') && self._stream) {
-                            self._stream.emit('inventory:onItemRemoved', {entityId: entity.uuid, itemId: item.uuid});
-                        }
-                    });
+                    //     var item = inv.findItemByUuid(entity, data.itemUuid);
+                    //     if (!item) {
+                    //         $log.error('[inventory:dropItem] uuid not found!');
+                    //         return;
+                    //     }
 
-                    this._stream.on('inventory:dropItem', function(data) {
-                        var inv = world.getSystem('inventory'),
-                            netents = world.getEntities('netSend'),
-                            entity = _.findWhere(netents, {uuid: data.entityId})
+                    //     inv.dropItem(entity, item);
+                    // });
 
-                        if (!entity) {
-                            $log.error('[inventory:dropItem] entity not found!');
-                            return;
-                        }
+                    // this._stream.on('pickup:entity', function(data) {
+                    //     var inv = world.getSystem('inventory'),
+                    //         netents = world.getEntities('netSend'),
+                    //         pickupents = world.getEntities('pickup'),
+                    //         entity = _.findWhere(netents, {uuid: data.entityId}),
+                    //         pickup = _.findWhere(pickupents, {uuid: data.pickupId});
 
-                        if (entity.owner !== this.userId) {
-                            $log.error('[inventory:dropItem] entity has wrong owner!');
-                            return;
-                        }
+                    //     if (!entity) {
+                    //         $log.error('[pickup:entity] entity not found!');
+                    //         return;
+                    //     }
 
-                        var inventoryComponent = entity.getComponent('inventory');
-                        if (!inventoryComponent) {
-                            $log.error('[inventory:dropItem] entity has no inventory!');
-                            return;
-                        }
+                    //     if (entity.owner !== this.userId) {
+                    //         $log.error('[pickup:entity] entity has wrong owner');
+                    //         return;
+                    //     }
 
-                        var item = inv.findItemByUuid(entity, data.itemUuid);
-                        if (!item) {
-                            $log.error('[inventory:dropItem] uuid not found!');
-                            return;
-                        }
+                    //     var freeSlot = inv.findEmptySlot(entity);
+                    //     if (!freeSlot) {
+                    //         return;
+                    //     }
 
-                        inv.dropItem(entity, item);
-                    });
+                    //     if (!pickup) {
+                    //         $log.error('[pickup:entity] pickup not found!');
+                    //         return;
+                    //     }
 
-                    this._stream.on('pickup:entity', function(data) {
-                        var inv = world.getSystem('inventory'),
-                            netents = world.getEntities('netSend'),
-                            pickupents = world.getEntities('pickup'),
-                            entity = _.findWhere(netents, {uuid: data.entityId}),
-                            pickup = _.findWhere(pickupents, {uuid: data.pickupId});
+                    //     var pickupComponent = pickup.getComponent('pickup');
 
-                        if (!entity) {
-                            $log.error('[pickup:entity] entity not found!');
-                            return;
-                        }
+                    //     if (pickupComponent) {
+                    //         world.removeEntity(pickup);
+                    //         inv.addItem(entity, pickupComponent.item);
 
-                        if (entity.owner !== this.userId) {
-                            $log.error('[pickup:entity] entity has wrong owner');
-                            return;
-                        }
-
-                        var freeSlot = inv.findEmptySlot(entity);
-                        if (!freeSlot) {
-                            return;
-                        }
-
-                        if (!pickup) {
-                            $log.error('[pickup:entity] pickup not found!');
-                            return;
-                        }
-
-                        var pickupComponent = pickup.getComponent('pickup');
-
-                        if (pickupComponent) {
-                            world.removeEntity(pickup);
-                            inv.addItem(entity, pickupComponent.item);
-
-                            // $log.log('picking up item ' + pickupComponent.item.name);
-                        }
-                    });
+                    //         // $log.log('picking up item ' + pickupComponent.item.name);
+                    //     }
+                    // });
 
                     // currently the server does not attack and check vector
-                    this._stream.on('combat:primaryAttack', function(data) {
-                        // just send it back out to everyone
-                        // self._stream.emit('combat:primaryAttack', data);
-                    });
+                    // this._stream.on('combat:primaryAttack', function(data) {
+                    //     // just send it back out to everyone
+                    //     // self._stream.emit('combat:primaryAttack', data);
+                    // });
 
 
-                    this._stream.on('fighter:jump', function(data) {
-                        // just send it back out to everyone
-                        // self._stream.emit('fighter:jump', data);
-                    });
+                    // this._stream.on('fighter:jump', function(data) {
+                    //     // just send it back out to everyone
+                    //     // self._stream.emit('fighter:jump', data);
+                    // });
 
                     // currently the server does not attack and check vector
-                    this._stream.on('combat:damageEntity', function(data) {
-                        // victimEntityUuid: victimEntity.uuid,
-                        // ownerEntityUuid: ownerEntity.uuid,
-                        // damage: damage
-                        var damageableEntities = world.getEntities('damageable');
+                    // this._stream.on('combat:damageEntity', function(data) {
+                    //     // victimEntityUuid: victimEntity.uuid,
+                    //     // ownerEntityUuid: ownerEntity.uuid,
+                    //     // damage: damage
+                    //     var damageableEntities = world.getEntities('damageable');
 
-                        var victimEntity = _.findWhere(damageableEntities, {
-                            uuid: data.victimEntityUuid
-                        });
-                        var sourceEntity = _.findWhere(damageableEntities, {
-                            uuid: data.sourceEntityUuid
-                        });
+                    //     var victimEntity = _.findWhere(damageableEntities, {
+                    //         uuid: data.victimEntityUuid
+                    //     });
+                    //     var sourceEntity = _.findWhere(damageableEntities, {
+                    //         uuid: data.sourceEntityUuid
+                    //     });
 
-                        var playerEntities = world.getEntities('player');
-                        var playerChar = _.findWhere(playerEntities, {
-                            owner: this.userId
-                        });
+                    //     var playerEntities = world.getEntities('player');
+                    //     var playerChar = _.findWhere(playerEntities, {
+                    //         owner: this.userId
+                    //     });
 
-                        if (!playerChar) {
-                            $log.error('player entity not found!');
-                            return;
-                        }
+                    //     if (!playerChar) {
+                    //         $log.error('player entity not found!');
+                    //         return;
+                    //     }
 
-                        if (!victimEntity) {
-                            $log.error('victim entity not found!');
-                            return;
-                        }
+                    //     if (!victimEntity) {
+                    //         $log.error('victim entity not found!');
+                    //         return;
+                    //     }
 
-                        if (!sourceEntity) {
-                            $log.error('source entity not found!');
-                            return;
-                        }
+                    //     if (!sourceEntity) {
+                    //         $log.error('source entity not found!');
+                    //         return;
+                    //     }
 
-                        if (!_.isNumber(data.damage)) {
-                            $log.error('data.damage must be a number!');
-                        }
+                    //     if (!_.isNumber(data.damage)) {
+                    //         $log.error('data.damage must be a number!');
+                    //     }
 
-                        if (data.damage <= 0) {
-                            $log.error('data.damage must be > 0!');
-                        }
+                    //     if (data.damage <= 0) {
+                    //         $log.error('data.damage must be > 0!');
+                    //     }
 
-                        if (victimEntity === playerChar || sourceEntity === playerChar) {
-                            var damageableComponent = victimEntity.getComponent('damageable');
+                    //     if (victimEntity === playerChar || sourceEntity === playerChar) {
+                    //         var damageableComponent = victimEntity.getComponent('damageable');
 
-                            // TODO very naive! Add anti-cheat measures later
-                            if (damageableComponent) {
-                                damageableComponent.sources.push({
-                                    sourceEntity: sourceEntity,
-                                    type: 'damage',
-                                    damage: data.damage
-                                });
+                    //         // TODO very naive! Add anti-cheat measures later
+                    //         if (damageableComponent) {
+                    //             damageableComponent.sources.push({
+                    //                 sourceEntity: sourceEntity,
+                    //                 type: 'damage',
+                    //                 damage: data.damage
+                    //             });
 
-                                // TODO for some reason emits *are* being sent even though
-                                // they are not being sent here, not sure why
-                                //self._stream.emit('combat:damageEntity', data);
+                    //             // TODO for some reason emits *are* being sent even though
+                    //             // they are not being sent here, not sure why
+                    //             //self._stream.emit('combat:damageEntity', data);
+                    //         }
+                    //     }
+                    // });
+
+
+
+                    // Because we're unable to delete streams, we need to cache and reuse them
+                    var streams = {};
+
+                    Meteor.users.find({
+                        'status.online': true
+                    }).observe({
+                        added: function(user) {
+                            var streamName = [user._id, 'entities'].join('_');
+
+                            if (!streams[streamName]) {
+                                streams[streamName] = new Meteor.Stream(streamName);
                             }
                         }
                     });
 
-                    world.entityAdded('netSend').add(onNetSendEntityAdded.bind(this));
-                    world.entityRemoved('netSend').add(onNetSendEntityRemoved.bind(this));
+                    world.entityAdded('netSend', 'player').add(function (entity) {
+                        var streamName = [entity.owner, 'entities'].join('_');
 
-                    // cache streams for direct user communication
-                    this._userStreams = {};
-
-                    Accounts.onLogin(function (info) {
-                        var userId = info.user._id;
-
-                        // TODO clear when user logs out
-                        if (!self._userStreams[userId]) {
-                            var userStream = [userId, self.world.name, 'entities'].join('_');
-                            // console.log('stream: ' + userStream);
-                            self._userStreams[userId] = new Meteor.Stream(userStream);
-                            var stream = self._userStreams[userId];
-
-                            stream.permissions.write(function() {
-                                return this.userId === userId;
-                            });
-
-                            // can read anything the server sends
-                            stream.permissions.read(function() {
-                                return this.userId === userId;
-                            });
+                        if (!streams[streamName]) {
+                            console.error('stream not found:', streamName);
+                            return;
                         }
-                    });
-                },
-                sendNetState: function(userId, entities) {
-                    if (!entities || (entities.length && entities.length === 0)) {
-                        return;
-                    }
 
-                    if (!angular.isArray(entities)) {
-                        entities = [entities];
-                    }
+                        entity.stream = streams[streamName];
 
-                    var stream, packet = {};
-                    if (!userId) {
-                        // then send it to everyone
-                        stream = this._stream;
-                    } else {
-                        // get user stream
-                        stream = this._userStreams[userId];
-                    }
+                        entity.stream.permissions.write(function() {
+                            return this.userId === entity.owner;
+                        });
 
-                    // pack them up in a single update
-                    entities.forEach(function(entity) {
-                        // TODO: specific network serialization
+                        // can read anything the server sends
+                        entity.stream.permissions.read(function() {
+                            return this.userId === entity.owner;
+                        });
+
+                        var packet = {};
+
                         var serialized = JSON.parse(JSON.stringify(entity));
                         // TODO: something is wrong with the serializer...
                         delete serialized.matrix;
@@ -349,68 +305,185 @@ angular
                         delete serialized.components.netSend;
                         delete serialized.components.netRecv;
                         packet[entity.uuid] = serialized;
+
+                        // setTimeout(function () {
+                        entity.stream.emit('add', packet);
+                        // }, 1000);
+
+                        ChatService.announce(entity.name + ' has entered the world.', {
+                            join: true
+                        });
+
+                        entity.stream.on('transforms', function (packet) {
+                            var netEntities = world.getEntities('netRecv');
+
+                            // TODO: might be better instead to just find them by ID? not sure which search is faster
+                            // (and then test they have the netRecv component)
+                            netEntities.forEach(function(netEntity) {
+                                var netComponent = entity.getComponent('netRecv');
+
+                                // most likely this should be one per client, however perhaps other player owned things
+                                // may come
+                                if (packet[netEntity.uuid] && netEntity.owner === entity.owner) {
+                                    var newPos = new THREE.Vector3();
+
+                                    newPos.deserialize(packet[netEntity.uuid].pos);
+
+                                    // Some anti-cheat
+                                    if (newPos.distanceToSquared(netEntity.position) < 5*5) {
+                                        netEntity.position.deserialize(packet[netEntity.uuid].pos);
+                                        // netEntity.rotation.deserialize(packet[netEntity.uuid].rot);
+                                    }
+                                    else {
+                                        // TODO Disconnect? Keep track of cheat count?
+                                    }
+
+                                }
+                            });
+                        });
+
                     });
 
-                    if (Object.keys(packet).length > 0) {
-                        stream.emit('add', packet);
-                    }
+                    world.entityRemoved('netSend', 'player').add(function (entity) {
+
+                        ChatService.announce(entity.name + ' has left the world.', {
+                            leave: true
+                        });
+
+                        // setTimeout(function () {
+                        entity.stream.emit('remove', entity.uuid);
+                        // }, 1000);
+
+                        // entity.stream.close();
+                        // delete entity.stream;
+                    });
+
+                    world.entityAdded('netSend').add(onNetSendEntityAdded.bind(this));
+                    world.entityRemoved('netSend').add(onNetSendEntityRemoved.bind(this));
+
                 },
                 update: function() {
-                    // TODO: need to send information about add/remove components as well
 
                     // for now just send transform
-                    var entities = this.world.getEntities('netSend'),
-                        packet = {};
-
+                    var entities = this.world.getEntities('netSend');
+                    var otherEntities = entities;
                     entities.forEach(function(entity) {
-                        // we only want to send changed
-                        // TODO: later only send "interesting" entities to each client
                         var sendComponent = entity.getComponent('netSend');
-                        if (sendComponent._last) {
-                            var pos = entity.position.serialize(),
-                                rot = entity.rotation.serialize(),
-                                lastPos = sendComponent._last.pos,
-                                lastRot = sendComponent._last.rot;
 
-                            if (!arraysAreEqual(pos, lastPos) || !arraysAreEqual(rot, lastRot)) {
-                                sendComponent._last.pos = pos;
-                                sendComponent._last.rot = rot;
-
-                                packet[entity.uuid] = sendComponent._last;
+                        var knownEntities = [];
+                        otherEntities.forEach(function(otherEntity) {
+                            if (entity === otherEntity) {
+                                return;
                             }
-                        } else {
-                            sendComponent._last = {
-                                pos: entity.position.serialize(),
-                                rot: entity.rotation.serialize()
-                            };
-                            packet[entity.uuid] = sendComponent._last;
-                        }
-                    });
 
-                    if (Object.keys(packet).length > 0) {
-                        this._stream.emit('transforms', packet);
-                    }
+                            if (entity.level === otherEntity.level &&
+                                entity.position.distanceToSquared(otherEntity.position) < 20 * 20) {
+                                knownEntities.push(otherEntity);
+                            }
+                        });
+
+                        // if (entity.hasComponent('player')) {
+                        //     console.log(knownEntities.map(function (e) {
+                        //         return e.name;
+                        //     }), knownEntities.map(function (e) {
+                        //         return e.position.distanceTo(entity.position);
+                        //     }));
+                        // }
+
+                        if (entity.hasComponent('player')) {
+                            _.each(sendComponent.__knownEntities, function (knownEntity) {
+                                if (!_.contains(knownEntities, knownEntity)) {
+                                    entity.stream.emit('remove', knownEntity.uuid);
+                                    console.log('SEND remove to', entity.name, knownEntity.name);
+                                }
+                            });
+
+                            _.each(knownEntities, function (knownEntity) {
+                                if (!_.contains(sendComponent.__knownEntities, knownEntity)) {
+                                    var packet = {};
+
+                                    var serialized = JSON.parse(JSON.stringify(knownEntity));
+                                    // TODO: something is wrong with the serializer...
+                                    delete serialized.matrix;
+                                    serialized.position = knownEntity.position.serialize();
+                                    serialized.rotation = knownEntity.rotation.serialize();
+                                    // we should remove the networking components, and let the client decide
+                                    delete serialized.components.netSend;
+                                    delete serialized.components.netRecv;
+                                    packet[knownEntity.uuid] = serialized;
+
+                                    entity.stream.emit('add', packet);
+                                    console.log('SEND add to', entity.name, serialized.name);
+                                }
+                            });
+                        }
+
+                        sendComponent.__knownEntities = knownEntities;
+
+                        if (entity.hasComponent('player')) {
+                            sendComponent.__knownEntities.forEach(function (knownEntity) {
+                                var packet = {};
+                                if (sendComponent._last) {
+                                    var pos = knownEntity.position.serialize(),
+                                        rot = knownEntity.rotation.serialize(),
+                                        lastPos = sendComponent._last.pos,
+                                        lastRot = sendComponent._last.rot;
+
+                                    if (!arraysAreEqual(pos, lastPos) || !arraysAreEqual(rot, lastRot)) {
+                                        sendComponent._last.pos = pos;
+                                        sendComponent._last.rot = rot;
+
+                                        packet[knownEntity.uuid] = sendComponent._last;
+                                    }
+                                } else {
+                                    sendComponent._last = {
+                                        pos: knownEntity.position.serialize(),
+                                        rot: knownEntity.rotation.serialize()
+                                    };
+                                    packet[knownEntity.uuid] = sendComponent._last;
+                                }
+
+                                if (Object.keys(packet).length > 0) {
+                                    entity.stream.emit('transforms', packet);
+                                }
+                            })
+                        }
+
+                    });
                 },
                 _entityCAH: function(entity, componentName) {
-                    // when a component is added to an entity, we need to update all the clients
-                    // TODO: net specific components? are there some that clients don't need to know about?
+                    console.log('cadd', entity.name, componentName);
                     var component = entity.getComponent(componentName);
 
-                    // $log.debug('cadd: ', entity.uuid, component.serializeNet());
-
-                    this._stream.emit('cadd', entity.uuid, component.serializeNet());
+                    var sendComponent = entity.getComponent('netSend');
+                    sendComponent.__knownEntities.forEach(function(knownEntity) {
+                        if (knownEntity.hasComponent('player')) {
+                            console.log('SEND cadd to', knownEntity.name, component.serializeNet());
+                            knownEntity.stream.emit('cadd', entity.uuid, component.serializeNet());
+                        }
+                    });
                 },
                 _entityCRH: function(entity, componentName) {
-                    // when a component is added to an entity, we need to update all the clients
-                    // TODO: net specific components? are there some that clients don't need to know about?
-                    this._stream.emit('cremove', entity.uuid, componentName);
+                    console.log('cremove', entity.name, componentName);
+                    var component = entity.getComponent(componentName);
+
+                    var sendComponent = entity.getComponent('netSend');
+                    sendComponent.__knownEntities.forEach(function(knownEntity) {
+                        if (knownEntity.hasComponent('player')) {
+                            console.log('SEND cremove to', knownEntity.name, componentName);
+                            knownEntity.stream.emit('cremove', entity.uuid, componentName);
+                        }
+                    });
                 },
                 updateComponent: function(entity, componentName) {
                     var component = entity.getComponent(componentName);
 
-                    // $log.debug('cupdate: ', entity.uuid, component.serializeNet());
-
-                    this._stream.emit('cupdate', entity.uuid, component.serializeNet(), componentName);
+                    var sendComponent = entity.getComponent('netSend');
+                    sendComponent.__knownEntities.forEach(function(knownEntity) {
+                        if (knownEntity.hasComponent('player')) {
+                            knownEntity.stream.emit('cupdate', entity.uuid, component.serializeNet(), componentName);
+                        }
+                    });
                 }
             });
 

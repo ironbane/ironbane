@@ -11,6 +11,7 @@ angular
         'three',
         'ammo',
         'ammo.physics-world',
+        'models',
         'components',
         'game.systems',
         'game.scripts',
@@ -71,11 +72,14 @@ angular
         'IbUtils',
         'GlobalSound',
         'GoogleAnalytics',
-        function($window, Debugger, IB_CONSTANTS, $rootScope, $meteor, $state, $log, IbUtils, GlobalSound, GoogleAnalytics) {
+        'EntitiesCollection',
+        function($window, Debugger, IB_CONSTANTS, $rootScope, $meteor, $state, $log, IbUtils, GlobalSound, GoogleAnalytics, EntitiesCollection) {
             // for convenience
             if (IB_CONSTANTS.isDev) {
                 $window.debug = Debugger;
             }
+
+            var entities = EntitiesCollection;
 
             // If we don't wrap this, AUTH_REQUIRED error is thrown in incognito/first timers
             IbUtils.waitForMeteorGuestUserLogin().then(function() {

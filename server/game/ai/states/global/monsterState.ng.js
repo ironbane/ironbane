@@ -47,7 +47,7 @@ angular
                             var otherHealthComponent = entity.getComponent('health');
                             if (otherHealthComponent.value <= 0) return false;
 
-                            return entity.position.distanceToSquared(me.entity.position) < Math.pow(me.spawnRadius || DEFAULT_SPAWN_RADIUS, 2)
+                            return entity.position.distanceToSquared(me.entity.position) < Math.pow(10 || DEFAULT_SPAWN_RADIUS, 2)
                         });
 
                     // Find nearest hostile target

@@ -1,60 +1,97 @@
 angular
     .module('server.services.game', [
         'models',
+        'server.services.activeWorlds',
+        'engine.entity-builder',
         'global.constants'
     ])
     .service('GameService', [
         'EntitiesCollection',
         '$activeWorlds',
         'IB_CONSTANTS',
-        function(EntitiesCollection, $activeWorlds, IB_CONSTANTS) {
+        'EntityBuilder',
+        function(EntitiesCollection, $activeWorlds, IB_CONSTANTS, EntityBuilder) {
             'use strict';
 
             this.enterGame = function(charId) {
-                var user = Meteor.user();
+                var me = this;
 
-                var character = EntitiesCollection.findOne({
-                    active: true,
-                    owner: user._id
+                var doc = EntitiesCollection.findOne({
+                    owner: this.userId,
+                    _id: charId
                 });
 
-                if (character) {
-                    // Just a safety to make sure you can't play on the same account in two game instances
-                    // This is assuming the code for logout/disconnect isn't buggy
-                    // as was the case with old IB...
-                    throw new Meteor.Error('activeCharFound', 'You are already in-game!');
+                if (!doc) {
+                    throw new Meteor.Error('char-not-found', 'Character not found!');
                 }
 
-                var characterToEnter = EntitiesCollection.findOne({
-                    _id: charId,
-                    owner: user._id
+                _.each($activeWorlds, function (world) {
+                    var playerEntities = world.getEntities('player');
+                    playerEntities.forEach(function (player) {
+                        if (player.owner === me.userId) {
+                            throw new Meteor.Error('already-in-game', 'You are already in-game!');
+                        }
+                    });
                 });
 
-                if (!characterToEnter) {
-                    throw new Meteor.Error('charToEnterNotFound', 'Character not found.');
-                }
+                if ($activeWorlds[doc.level]) {
+                    doc.components.player = {};
+                    doc.components.netSend = {};
+                    doc.components.netRecv = {};
 
-                EntitiesCollection.update({
-                    _id: characterToEnter._id
-                }, {
-                    $set: {
-                        active: true
+                    var ent = EntityBuilder.build(doc);
+                    if (ent) {
+                        // it's unlikely that the server will not want to send an entity
+                        ent.addComponent('persisted', {_id: doc._id});
+                        ent.addComponent('steeringBehaviour', {
+                            speed: 10,
+                            maxSpeed: 10
+                        });
+                        ent.addComponent('fighter', {
+                            faction: 'ravenwood'
+                        });
+                        ent.owner = doc.owner;
+
+                        // Used to access metadata like cheats later on
+                        ent.metadata = {
+                            cheats: doc.cheats
+                        };
+
+                        // TODO: decorate entity with other components, such as "player", etc. like the client does
+                        $activeWorlds[doc.level]._ownerCache[doc.owner] = ent.uuid;
+                        $activeWorlds[doc.level].addEntity(ent);
+                    } else {
+                        $log.log('error building entity for: ', doc);
                     }
-                });
-
+                    //$log.log('adding entity: ', doc.name, ' to ', doc.level, ' count: ', $activeWorlds[doc.level].getEntities().length);
+                }
             };
 
-            this.leaveGame = function() {
-                var user = Meteor.user();
+            Meteor.users.find({
+                'status.online': true
+            }).observe({
+                removed: function(user) {
+                    _.each($activeWorlds, function (world) {
+                        var playerEntities = world.getEntities('player');
+                        playerEntities.forEach(function (player) {
+                            if (player.owner === user._id) {
+                                world.removeEntity(player);
+                            }
+                        });
+                    });
+                }
+            });
 
-                EntitiesCollection.update({
-                    owner: user._id
-                }, {
-                    $set: {
-                        active: false
-                    }
-                }, {
-                    multi: true
+            this.leaveGame = function() {
+                var me = this;
+
+                _.each($activeWorlds, function (world) {
+                    var playerEntities = world.getEntities('player');
+                    playerEntities.forEach(function (player) {
+                        if (player.owner === me.userId) {
+                            world.removeEntity(player);
+                        }
+                    });
                 });
             };
 

@@ -24,9 +24,8 @@ angular
         'ThreeWorld',
         '$components',
         'ZonesCollection',
-        'EntitiesCollection',
         function($log, $rootWorld, $injector, AutoAnnounceSystem, EntityBuilder, $activeWorlds,
-            ThreeWorld, $components, ZonesCollection, EntitiesCollection) {
+            ThreeWorld, $components, ZonesCollection) {
             'use strict';
 
             // on the server the rootWorld isn't actually tied to any scene
@@ -71,69 +70,6 @@ angular
                 removed: function(doc) {
                     // TODO: add some shutdown code for the zone (persist to db, etc)
                     delete $activeWorlds[doc.name];
-                }
-            });
-
-
-            // Make sure players are set to inactive incase the server crashes
-            // otherwise they'll get the "already-in-game" error and can't log in.
-            // TODO move this somewhere else?
-            EntitiesCollection.update({}, {
-                $set: {
-                    active: false
-                }
-            }, {
-                multi: true
-            });
-
-
-            var entitiesCursor = EntitiesCollection.find({
-                active: true
-            });
-            entitiesCursor.observe({
-                added: function(doc) {
-                    if ($activeWorlds[doc.level]) {
-                        var ent = EntityBuilder.build(doc);
-                        if (ent) {
-                            // it's unlikely that the server will not want to send an entity
-                            ent.addComponent('netSend');
-                            ent.addComponent('netRecv');
-                            ent.addComponent('player');
-                            ent.addComponent('persisted', {_id: doc._id});
-                            ent.addComponent('steeringBehaviour', {
-                                speed: 10,
-                                maxSpeed: 10
-                            });
-                            ent.addComponent('fighter', {
-                                faction: 'ravenwood'
-                            });
-                            ent.owner = doc.owner;
-
-                            // Used to access metadata like cheats later on
-                            ent.metadata = {
-                                cheats: doc.cheats
-                            };
-
-                            // TODO: decorate entity with other components, such as "player", etc. like the client does
-                            $activeWorlds[doc.level]._ownerCache[doc.owner] = ent.uuid;
-                            $activeWorlds[doc.level].addEntity(ent);
-                        } else {
-                            $log.log('error building entity for: ', doc);
-                        }
-                        //$log.log('adding entity: ', doc.name, ' to ', doc.level, ' count: ', $activeWorlds[doc.level].getEntities().length);
-                    }
-                },
-                removed: function(doc) {
-                    if ($activeWorlds[doc.level]) {
-                        var worldId = $activeWorlds[doc.level]._ownerCache[doc.owner],
-                            entity = $activeWorlds[doc.level].scene.getObjectByProperty('uuid', worldId);
-
-                        if (entity) {
-                            $activeWorlds[doc.level].removeEntity(entity);
-                        } else {
-                            $log.debug('id not found', worldId, doc);
-                        }
-                    }
                 }
             });
         }

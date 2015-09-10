@@ -47,7 +47,14 @@ angular
                             },
                             escapeHandler = function() {
                                 // $log.debug('escape pressed');
-                                $state.go('^.main-menu.enter-world');
+                                $meteor.call('leaveGame')
+                                    .then(function () {
+                                        $state.go('^.main-menu.enter-world');
+                                    }, function(err) {
+                                        if (err) {
+                                            dialogService.alert(err.reason);
+                                        }
+                                    });
                             },
                             adminHandler = function() {
                                 $scope.gui.showAdminPanel = !$scope.gui.showAdminPanel;
@@ -80,27 +87,6 @@ angular
                             });
 
                         };
-                    }
-                ],
-                onExit: [
-                    '$entityCache',
-                    '$log',
-                    'ChatService',
-                    '$meteor',
-                    'dialogService',
-                    function($entityCache, $log, ChatService, $meteor, dialogService) {
-                        var mainPlayer = $entityCache.get('mainPlayer');
-                        if (mainPlayer) {
-                            // $log.debug('mainPlayer', mainPlayer);
-
-                            // the cursor in network should be watching this to remove it from the world
-                            $meteor.call('leaveGame')
-                                .then(null, function(err) {
-                                    if (err) {
-                                        dialogService.alert(err.reason);
-                                    }
-                                });
-                        }
                     }
                 ]
             });

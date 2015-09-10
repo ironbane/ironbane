@@ -10,7 +10,6 @@ angular
         'server.services.game',
         'server.services.hipchat',
         'server.services.items',
-        'server.services.inventory',
         'server.services.ironblood',
         'server.services.zones'
     ]);

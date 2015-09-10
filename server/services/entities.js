@@ -21,52 +21,9 @@ angular
             });
 
             Meteor.publish('entities', function() {
-                return EntitiesCollection.find({});
+                return EntitiesCollection.find({
+                    owner: this.userId
+                });
             });
         }
     ])
-    .run([
-        'EntitiesCollection',
-        'ChatService',
-        function(EntitiesCollection, ChatService) {
-            'use strict';
-
-            Meteor.users.find({
-                'status.online': true
-            }).observe({
-                added: function(user) {
-                    // user just came online
-                },
-                removed: function(user) {
-                    // user just went offline
-                    EntitiesCollection.update({
-                        owner: user._id
-                    }, {
-                        $set: {
-                            active: false
-                        }
-                    }, {
-                        multi: true
-                    });
-                }
-            });
-
-            EntitiesCollection.find({
-                active: true,
-                owner: {
-                    $exists: true
-                }
-            }).observe({
-                added: function(character) {
-                    ChatService.announce(character.name + ' has entered the world.', {
-                        join: true
-                    });
-                },
-                removed: function(character) {
-                    ChatService.announce(character.name + ' has left the world.', {
-                        leave: true
-                    });
-                }
-            });
-        }
-    ]);

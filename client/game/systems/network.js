@@ -43,69 +43,27 @@ angular
                 return simpleRotationY;
             };
 
-            function onReceiveTransforms(packet) {
-                var netEntities = this.world.getEntities('netRecv'),
-                    system = this;
-
-                // TODO: might be better instead to just find them by ID? not sure which search is faster
-                // (and then test they have the netRecv component)
-                netEntities.forEach(function(entity) {
-                    if (packet[entity.uuid]) {
-                        var updateApplicator = (function(entity, data) {
-                            return function() {
-                                if (entity.hasComponent('player')) {
-                                    if (entity.hasComponent('localState')) {
-                                        entity.removeComponent('localState');
-                                    }
-
-                                    var rigidbodySystem = system.world.getSystem('rigidbody');
-
-                                    var targetPosition = (new THREE.Vector3()).fromArray(data.pos);
-
-                                    // If the distance is too far away, just teleport them
-                                    if (entity.position.distanceToSquared(targetPosition) > 5 * 5) {
-                                        entity.position.copy(targetPosition);
-                                        rigidbodySystem.syncBody(entity);
-                                    }
-
-                                    entity.addComponent($components.get('localState', {
-                                        state: 'goToPosition',
-                                        config: {
-                                            targetPosition: targetPosition
-                                        }
-                                    }));
-                                } else {
-                                    // We're dealing with an NPC. States will be added/removed using
-                                    // component add/remove handlers (see cadd/remove below)
-                                }
-                            };
-                        })(entity, packet[entity.uuid]);
-                        system._updates.push(updateApplicator);
-                        //$log.debug('entity: ', entity.name, entity.uuid, ' tranform update');
-                        //entity.position.deserialize(packet[entity.uuid].pos);
-                        //entity.rotation.deserialize(packet[entity.uuid].rot);
-                    }
-                });
-            }
-
             function onStreamAdd(packet) {
                 var me = this;
                 $rootWorld.getLoadPromise().then(function() {
                     $timeout(function() {
-                        handlePacket.bind(me)(packet);
+                        handleAddPacket.bind(me)(packet);
                     });
                 });
             };
 
-            function handlePacket(packet) {
+            function handleAddPacket(packet) {
                 var world = this.world;
 
                 angular.forEach(packet, function(entity, uuid) {
-                    var exists = world.scene.getObjectByProperty('uuid', uuid);
-                    if (exists) {
+
+                    $log.debug('[NetworkSystem : add]', uuid);
+
+                    // var exists = world.scene.getObjectByProperty('uuid', uuid);
+                    // if (exists) {
                         // we should update the object from the server in case of like a moving platform
-                        return;
-                    }
+                        // return;
+                    // }
 
                     // ok let's see what happens when we build it
                     var builtEntity = EntityBuilder.build(entity);
@@ -286,35 +244,82 @@ angular
                     // Set up streams and make sure it reruns everytime we change levels or change user
                     // $meteor.autorun is linked to $scope which we don't have here,
                     // so Meteor.autorun is the only way AFAIK
+
+                    var streams = {};
+
                     Meteor.autorun(function() {
+
                         if (me._stream) {
                             me._stream.close();
-                        }
-                        if (me._userStream) {
-                            me._userStream.close();
                         }
 
                         if (!Meteor.user()) {
                             return;
                         }
 
-                        // Remove all existing entities that were sent using streams
-                        var entities = me.world.getEntities('netRecv').concat(me.world.getEntities('netSend'));
-                        entities.forEach(function(entity) {
-                            me.world.removeEntity(entity);
+                        var streamName = [Meteor.userId(), 'entities'].join('_');
+
+                        if (streams[streamName]) {
+                            me._stream = streams[streamName]
+                        }
+                        else {
+                            me._stream = new Meteor.Stream(streamName);
+                            streams[streamName] = me._stream;
+                        }
+
+                        me._stream.on('transforms', function (packet) {
+                            var netEntities = world.getEntities('netRecv');
+
+                            // TODO: might be better instead to just find them by ID? not sure which search is faster
+                            // (and then test they have the netRecv component)
+                            netEntities.forEach(function(entity) {
+                                if (packet[entity.uuid]) {
+                                    var data = packet[entity.uuid];
+                                    if (entity.hasComponent('player')) {
+                                        if (entity.hasComponent('localState')) {
+                                            entity.removeComponent('localState');
+                                        }
+
+                                        var rigidbodySystem = world.getSystem('rigidbody');
+
+                                        var targetPosition = (new THREE.Vector3()).fromArray(data.pos);
+
+                                        // If the distance is too far away, just teleport them
+                                        if (entity.position.distanceToSquared(targetPosition) > 5 * 5) {
+                                            entity.position.copy(targetPosition);
+                                            rigidbodySystem.syncBody(entity);
+                                        }
+
+                                        entity.addComponent($components.get('localState', {
+                                            state: 'goToPosition',
+                                            config: {
+                                                targetPosition: targetPosition
+                                            }
+                                        }));
+                                    } else {
+                                        // We're dealing with an NPC. States will be added/removed using
+                                        // component add/remove handlers (see cadd/remove below)
+                                    }
+                                }
+                            });
                         });
-
-                        // TOOD don't link activeLevel to the session as clients can abuse it
-                        var activeLevel = Session.get('activeLevel');
-
-                        // $log.debug('[NetworkSystem addedToWorld]', world.name, activeLevel);
-
-                        me._stream = new Meteor.Stream(activeLevel + '_entities');
-
-                        me._stream.on('transforms', onReceiveTransforms.bind(me));
 
                         // this for any adds (even first boot)
                         me._stream.on('add', onStreamAdd.bind(me));
+
+                        me._stream.on('remove', function(entityId) {
+                            $log.debug('[NetworkSystem : remove]', entityId);
+                            var obj = world.scene.getObjectByProperty('uuid', entityId);
+                            // test if instanceof Entity?
+                            if (obj) {
+                                world.removeEntity(obj);
+                            } else {
+                                $log.debug('not found to remove...');
+                            }
+
+                            $rootScope.$apply();
+                        });
+
 
                         me._stream.on('cadd', function (uuid, component) {
                             // console.log('cadd', component);
@@ -332,18 +337,6 @@ angular
                             }
                         });
 
-                        me._stream.on('remove', function(entityId) {
-                            // $log.debug('[NetworkSystem : remove]', entityId);
-                            var obj = world.scene.getObjectByProperty('uuid', entityId);
-                            // test if instanceof Entity?
-                            if (obj) {
-                                world.removeEntity(obj);
-                            } else {
-                                $log.debug('not found to remove...');
-                            }
-
-                            $rootScope.$apply();
-                        });
 
                         me._stream.on('inventory:equipItem', function(data) {
                             var inv = world.getSystem('inventory'),
@@ -454,15 +447,7 @@ angular
                             }
                         });
 
-                        // as we are added to the client's world, it'll even be main menu time, we want to ask for the current state of things
-                        Meteor.setTimeout(function() {
-                            me._stream.emit('getState');
-                        }, 1000);
 
-                        // we also get a private user stream
-                        var userStream = [Meteor.userId(), activeLevel, 'entities'].join('_');
-                        me._userStream = new Meteor.Stream(userStream);
-                        me._userStream.on('add', onStreamAdd.bind(me));
                     });
                 },
                 update: function() {
