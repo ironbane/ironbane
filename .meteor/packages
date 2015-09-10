@@ -18,5 +18,5 @@ npm-container
 alanning:roles
 underscore
 msavin:mongol
-force-ssl
 spiderable
+keyvan:my-force-ssl
