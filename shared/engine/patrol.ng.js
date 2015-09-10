@@ -57,6 +57,9 @@ angular
 
             },
             findPath: function(startPosition, targetPosition, zone, group) {
+                if (!recastPromises[zone]) {
+                    return $q.when(targetPosition);
+                }
                 return recastPromises[zone].then(function (recast) {
                     var deferred = $q.defer();
 
