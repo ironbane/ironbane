@@ -187,12 +187,6 @@ angular
                     //     }
                     // });
 
-                    // currently the server does not attack and check vector
-                    // this._stream.on('combat:primaryAttack', function(data) {
-                    //     // just send it back out to everyone
-                    //     // self._stream.emit('combat:primaryAttack', data);
-                    // });
-
 
                     // currently the server does not attack and check vector
                     // this._stream.on('combat:damageEntity', function(data) {
@@ -259,13 +253,31 @@ angular
                         if (sendComponent) {
                             sendComponent.__knownEntities.forEach(function(knownEntity) {
                                 if (knownEntity.hasComponent('player') && knownEntity !== sourceEntity) {
-                                    knownEntity.stream.emit('fighter:jump', entity.uuid);
+                                    knownEntity.stream.emit('fighter:jump', {
+                                        entityUuid: entity.uuid
+                                    });
                                 }
                             });
                         }
                     });
 
-                    // Because we're unable to delete streams, we need to cache and reuse them
+                    world.subscribe('combat:primaryAttack', function(entity, targetVector, sourceEntity) {
+                        var sendComponent = entity.getComponent('netSend');
+                        if (sendComponent) {
+                            sendComponent.__knownEntities.forEach(function(knownEntity) {
+                                if (knownEntity.hasComponent('player') && knownEntity !== sourceEntity) {
+                                    knownEntity.stream.emit('combat:primaryAttack', {
+                                        entityUuid: entity.uuid,
+                                        targetVector: targetVector.toArray()
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                    // Because we're unable to delete streams on the server
+                    // we need to cache and reuse them
+                    // TODO test disconnect/reconnects
                     var streams = {};
 
                     Meteor.users.find({
@@ -322,6 +334,10 @@ angular
                         entity.stream.on('transforms', function (packet) {
                             var netEntities = world.getEntities('netRecv');
 
+                            if (!_.isObject(packet)) {
+                                return;
+                            }
+
                             // TODO: might be better instead to just find them by ID? not sure which search is faster
                             // (and then test they have the netRecv component)
                             netEntities.forEach(function(netEntity) {
@@ -330,14 +346,18 @@ angular
                                 // most likely this should be one per client, however perhaps other player owned things
                                 // may come
                                 if (packet[netEntity.uuid] && netEntity.owner === entity.owner) {
-                                    var newPos = new THREE.Vector3();
+                                    var data = packet[netEntity.uuid];
 
-                                    newPos.deserialize(packet[netEntity.uuid].pos);
+                                    if (!_.isNumber(data.rot)) {
+                                        return;
+                                    }
+
+                                    var newPos = new THREE.Vector3().fromArray(data.pos);
 
                                     // Some anti-cheat
                                     if (newPos.distanceToSquared(netEntity.position) < 5*5) {
-                                        netEntity.position.deserialize(packet[netEntity.uuid].pos);
-                                        // netEntity.rotation.deserialize(packet[netEntity.uuid].rot);
+                                        netEntity.position.copy(newPos);
+                                        netEntity.rotation.y = data.rot;
                                     }
                                     else {
                                         // TODO Disconnect? Keep track of cheat count?
@@ -347,13 +367,40 @@ angular
                             });
                         });
 
-                        entity.stream.on('fighter:jump', function(uuid) {
-                            // Make sure the entity's owner is the same as ours
+                        entity.stream.on('fighter:jump', function(data) {
                             var netEntities = world.getEntities('netRecv');
 
+                            if (!_.isObject(data)) {
+                                return;
+                            }
+
                             netEntities.forEach(function(netEntity) {
-                                if (netEntity.uuid === uuid && netEntity.owner === entity.owner) {
+                                if (netEntity.uuid === data.entityUuid && netEntity.owner === entity.owner) {
                                     world.publish('fighter:jump', netEntity, entity);
+                                }
+                            });
+                        });
+
+                        entity.stream.on('combat:primaryAttack', function(data) {
+                            var netEntities = world.getEntities('netRecv');
+
+                            if (!_.isObject(data)) {
+                                return;
+                            }
+
+                            if (!_.isArray(data.targetVector)) {
+                                return;
+                            }
+
+                            netEntities.forEach(function(netEntity) {
+                                if (netEntity.uuid === data.entityUuid && netEntity.owner === entity.owner) {
+                                    var targetVector = new THREE.Vector3().fromArray(data.targetVector);
+
+                                    // Some anti-cheat
+                                    // TODO compare with actual weapon range currently equipped?
+                                    if (targetVector.distanceToSquared(netEntity.position) < 25*25) {
+                                        world.publish('combat:primaryAttack', netEntity, targetVector, entity);
+                                    }
                                 }
                             });
                         });
@@ -440,8 +487,8 @@ angular
                             sendComponent.__knownEntities.forEach(function (knownEntity) {
                                 var packet = {};
                                 if (sendComponent._last) {
-                                    var pos = knownEntity.position.serialize(),
-                                        rot = knownEntity.rotation.serialize(),
+                                    var pos = knownEntity.position.toArray(),
+                                        rot = knownEntity.rotation.toArray(),
                                         lastPos = sendComponent._last.pos,
                                         lastRot = sendComponent._last.rot;
 
@@ -453,8 +500,8 @@ angular
                                     }
                                 } else {
                                     sendComponent._last = {
-                                        pos: knownEntity.position.serialize(),
-                                        rot: knownEntity.rotation.serialize()
+                                        pos: knownEntity.position.toArray(),
+                                        rot: knownEntity.rotation.toArray()
                                     };
                                     packet[knownEntity.uuid] = sendComponent._last;
                                 }

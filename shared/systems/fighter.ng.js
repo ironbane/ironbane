@@ -16,13 +16,9 @@ angular
                 this._super(world);
 
                 world.subscribe('combat:primaryAttack', function(entity, targetVector) {
-                    // when coming from net, it's not a Vector3 anymore
-                    var target = new THREE.Vector3();
-                    target.copy(targetVector);
-
                     var fighter = entity.getComponent('fighter');
                     if (fighter) {
-                        fighter.attack(target);
+                        fighter.attack(targetVector);
                     }
                 });
 

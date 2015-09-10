@@ -208,15 +208,17 @@ angular
                     world.subscribe('combat:primaryAttack', function(entity, targetVector) {
                         if (entity.hasComponent('netSend') && me._stream) {
                             me._stream.emit('combat:primaryAttack', {
-                                entityId: entity.uuid,
-                                targetVector: targetVector
+                                entityUuid: entity.uuid,
+                                targetVector: targetVector.toArray()
                             });
                         }
                     });
 
                     world.subscribe('fighter:jump', function(entity) {
                         if (entity.hasComponent('netSend') && me._stream) {
-                            me._stream.emit('fighter:jump', entity.uuid);
+                            me._stream.emit('fighter:jump', {
+                                entityUuid: entity.uuid
+                            });
                         }
                     });
 
@@ -280,12 +282,17 @@ angular
 
                                         var rigidbodySystem = world.getSystem('rigidbody');
 
-                                        var targetPosition = (new THREE.Vector3()).fromArray(data.pos);
+                                        var targetPosition = new THREE.Vector3().fromArray(data.pos);
 
                                         // If the distance is too far away, just teleport them
                                         if (entity.position.distanceToSquared(targetPosition) > 5 * 5) {
                                             entity.position.copy(targetPosition);
                                             rigidbodySystem.syncBody(entity);
+                                        }
+
+                                        if (data.rot) {
+                                            var targetRotation = new THREE.Euler().fromArray(data.rot);
+                                            entity.rotation.copy(targetRotation);
                                         }
 
                                         entity.addComponent($components.get('localState', {
@@ -396,15 +403,14 @@ angular
                             }
                         });
 
-                        // this one we'll just pass through
                         me._stream.on('combat:primaryAttack', function(data) {
                             var netEnts = world.getEntities('netRecv'),
                                 entity = _.findWhere(netEnts, {
-                                    uuid: data.entityId
+                                    uuid: data.entityUuid
                                 });
 
                             if (entity) {
-                                world.publish('combat:primaryAttack', entity, data.targetVector);
+                                world.publish('combat:primaryAttack', entity, new THREE.Vector3().fromArray(data.targetVector));
                             }
                         });
 
@@ -462,12 +468,12 @@ angular
                         // we only want to send changed
                         var sendComponent = entity.getComponent('netSend');
                         if (sendComponent._last) {
-                            var pos = entity.position.serialize(),
-                                rot = entity.rotation.serialize(),
+                            var pos = entity.position.toArray(),
+                                rot = entity.rotation.y,
                                 lastPos = sendComponent._last.pos,
                                 lastRot = sendComponent._last.rot;
 
-                            if (!arraysAreEqual(pos, lastPos) || !arraysAreEqual(rot, lastRot)) {
+                            if (!arraysAreEqual(pos, lastPos) || rot !== lastRot) {
                                 sendComponent._last.pos = pos;
                                 sendComponent._last.rot = rot;
 
@@ -475,8 +481,8 @@ angular
                             }
                         } else {
                             sendComponent._last = {
-                                pos: entity.position.serialize(),
-                                rot: entity.rotation.serialize()
+                                pos: entity.position.toArray(),
+                                rot: entity.rotation.y
                             };
                             packet[entity.uuid] = sendComponent._last;
                         }
