@@ -156,7 +156,7 @@ angular
 
             function onMeshRemoved(entity) {
                 // needed?
-                $log.debug('[MeshSystem] mesh removed: ', entity.name);
+                // $log.debug('[MeshSystem] mesh removed: ', entity.name);
             }
 
             var MeshSystem = System.extend({

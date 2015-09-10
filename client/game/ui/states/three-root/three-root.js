@@ -8,11 +8,7 @@ angular
         'game.ui.states.three-root.play',
         'game.ui.states.three-root.main-menu',
         'game.world-root',
-        'game.services.globalsound',
-        'engine.util.debugging.rStats',
-        'engine.util.debugging.rStats.threeStatsPlugin',
-        'engine.util.debugging.rStats.glStatsPlugin',
-        'engine.util.debugging.rStats.browserStatsPlugin'
+        'game.services.globalsound'
     ])
     .config(['$stateProvider', function($stateProvider) {
         'use strict';
@@ -67,7 +63,7 @@ angular
                                 return $meteor.waitForUser();
                             })
                             .then(function(user) {
-                                $log.debug('logged out: ', user);
+                                // $log.debug('logged out: ', user);
                                 $state.go('three-root.main-menu.enter-world');
                             });
                     };
@@ -144,11 +140,7 @@ angular
                 '$state',
                 '$window',
                 'GameService',
-                'rStats',
-                'threeStats',
-                'browserStats',
-                'glStats',
-                function($rootWorld, IB_CONSTANTS, $state, $window, GameService, rStats, threeStats, browserStats, glStats) {
+                function($rootWorld, IB_CONSTANTS, $state, $window, GameService) {
                     $rootWorld.renderer.setSize($window.innerWidth, $window.innerHeight);
                     document.body.appendChild($rootWorld.renderer.domElement);
                     $rootWorld.renderer.setClearColor(0xd3fff8);

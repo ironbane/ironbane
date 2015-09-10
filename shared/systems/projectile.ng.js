@@ -28,7 +28,6 @@ angular
             var result;
 
             if (sqrt < 0) {
-                $log.log('out of range');
                 result = Math.PI * 0.15;
             } else {
                 sqrt = Math.sqrt(sqrt);

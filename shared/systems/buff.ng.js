@@ -15,7 +15,7 @@ angular
 
                         buffComponent.timer = buffComponent.interval;
 
-                        console.log('buff added!');
+                        // console.log('buff added!');
 
                     });
                 },

@@ -42,7 +42,6 @@ angular
                 'Input',
                 'Sound',
                 'Script',
-                'ProcTree',
                 'Pickup',
                 'Sprite',
                 'Light',
@@ -51,7 +50,6 @@ angular
                 'MouseHelper',
                 'Shadow',
                 'Particle',
-                'Trigger',
                 'Camera'
             ];
 

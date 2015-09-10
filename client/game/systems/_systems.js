@@ -9,7 +9,6 @@ angular
         'game.systems.network',
         'game.systems.mouseHelper',
         'game.systems.particles',
-        'game.systems.proctree',
         'game.systems.quad',
         'game.systems.rigidBody',
         'game.systems.octree',

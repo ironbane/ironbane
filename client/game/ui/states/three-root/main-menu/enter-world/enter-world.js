@@ -33,7 +33,7 @@ angular
                             var currentChar = $scope.characters[$scope.currentCharIndex],
                                 charOptions = {};
 
-                            $log.debug('char preview: ', currentChar);
+                            // $log.debug('char preview: ', currentChar);
 
                             if (currentChar.components && currentChar.components.quad) {
                                 charOptions.skin = currentChar.components.quad.charBuildData.skin;

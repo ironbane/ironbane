@@ -43,7 +43,7 @@ angular
             };
 
             var _load = function(name) {
-                $log.debug('[SoundSystem _load] called', name);
+                // $log.debug('[SoundSystem _load] called', name);
 
                 if (cache.get(name)) {
                     return cache.get(name);
@@ -115,7 +115,7 @@ angular
 
                         component.sound = _load(component.asset);
 
-                        $log.debug('sound entity added: ', component);
+                        // $log.debug('sound entity added: ', component);
 
                         if (component.sound && component.is3d) {
                             component.sound.pos3d(entity.position.x, entity.position.y, entity.position.z);

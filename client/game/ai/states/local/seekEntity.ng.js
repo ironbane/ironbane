@@ -1,6 +1,6 @@
 angular
     .module('game.ai.states.local')
-    .factory('SeekEntity', function(Class, THREE, IbUtils, Patrol, BaseState, $rootWorld) {
+    .factory('SeekEntity', function(Class, THREE, IbUtils, Patrol, BaseState, $rootWorld, Debugger) {
             'use strict';
 
             return BaseState.extend({
@@ -16,7 +16,7 @@ angular
                         targetEntity.position.clone(), this.entity.level)
                         .then(function (path) {
                             me.calculatedPath = path;
-                            //debug.drawPath(me.entity.uuid + 'seekEntity', me.calculatedPath);
+                            //Debugger.drawPath(me.entity.uuid + 'seekEntity', me.calculatedPath);
                         });
 
                 },
@@ -53,7 +53,7 @@ angular
                     }
                 },
                 destroy: function() {
-                    debug.clearPath(this.entity.uuid + 'seekEntity');
+                    Debugger.clearPath(this.entity.uuid + 'seekEntity');
                 },
                 handleMessage: function(message, data) {
 

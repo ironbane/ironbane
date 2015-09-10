@@ -46,7 +46,7 @@ angular
                                 });
                             },
                             escapeHandler = function() {
-                                $log.debug('escape pressed');
+                                // $log.debug('escape pressed');
                                 $state.go('^.main-menu.enter-world');
                             },
                             adminHandler = function() {
@@ -91,7 +91,7 @@ angular
                     function($entityCache, $log, ChatService, $meteor, dialogService) {
                         var mainPlayer = $entityCache.get('mainPlayer');
                         if (mainPlayer) {
-                            $log.debug('mainPlayer', mainPlayer);
+                            // $log.debug('mainPlayer', mainPlayer);
 
                             // the cursor in network should be watching this to remove it from the world
                             $meteor.call('leaveGame')

@@ -46,7 +46,7 @@ angular
 
                             $meteor.call('createChar', options)
                                 .then(function(result) {
-                                    $log.debug('createChar result: ', result);
+                                    // $log.debug('createChar result: ', result);
                                     $scope.currentCharId = result;
                                     $state.go('^.enter-world');
                                 }, function(err) {

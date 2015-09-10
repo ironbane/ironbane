@@ -89,7 +89,6 @@ angular.module('game.ui.dialog', [
 						.then(function () {
 							$modalInstance.dismiss('cancel');
 						});
-						console.log(result);
 					}, function (result) {
 						if (result.error === 'not-enough-ironblood') {
 							self.confirm('You don\'t have enough Ironblood. Would you like to buy some?')

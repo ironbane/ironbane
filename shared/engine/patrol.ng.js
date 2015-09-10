@@ -39,7 +39,7 @@ angular
                             // console.log(arguments);
                         // recastPromises[zone] = recast;
 
-                            console.log('Init recast for zone ' + zone);
+                            // console.log('Init recast for zone ' + zone);
 
                             // setInterval(function () {
                             recast.getRandomPoint(recast.cb(function(pt1x, pt1y, pt1z) {

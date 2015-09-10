@@ -82,7 +82,7 @@ angular
                                 scenePath = meteorBuildPublicPath + 'scene/',
                                 filePath = scenePath + sceneName + '/scene.json';
 
-                            $log.log('loading...', filePath);
+                            // $log.log('loading...', filePath);
 
                             fs.readFile(filePath, 'utf8', function(err, data) {
                                 //$log.log(sceneName, ': [err]', err, ' [data]: ', !!data);

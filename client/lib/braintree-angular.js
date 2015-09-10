@@ -87,12 +87,12 @@ braingular.directive('braintreePaypal', function() {
       options: '='
     },
     template: '<div id="bt-paypal"></div>',
-    controller: function($scope, $braintree) {
+    controller: ['$scope', '$braintree', function($scope, $braintree) {
       var options = $scope.options || {};
       options.container = 'bt-paypal';
 
       $braintree.setupPayPal(options);
-    }
+    }]
   }
 });
 

@@ -2,7 +2,8 @@ angular
     .module('game.game-loop', [
         'engine.timing',
         'game.world-root',
-        'global.constants'
+        'global.constants',
+        'engine.debugger'
     ])
     .run([
         '$timing',
@@ -11,7 +12,8 @@ angular
         'IB_CONSTANTS',
         'Timer',
         '$rootScope',
-        function($timing, $rootWorld, $window, IB_CONSTANTS, Timer, $rootScope) {
+        'Debugger',
+        function($timing, $rootWorld, $window, IB_CONSTANTS, Timer, $rootScope, Debugger) {
             'use strict';
 
             var uiTimer = new Timer(0.5);
@@ -51,9 +53,9 @@ angular
                         $rootWorld.__stats().update();
                     }
 
-                    debug.clear();
+                    Debugger.clear();
 
-                    debug.watch('scene.children.length', $rootWorld.scene.children.length);
+                    Debugger.watch('scene.children.length', $rootWorld.scene.children.length);
                 }
 
                 if (uiTimer.isExpired) {

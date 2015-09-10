@@ -78,7 +78,7 @@ angular
 
                     // a client may request a full state update (typically this should be for bootup, TODO somehow throttle this so that we don't get hammered)
                     this._stream.on('getState', function() {
-                        $log.debug('server getState: ', this.userId, this.subscriptionId);
+                        // $log.debug('server getState: ', this.userId, this.subscriptionId);
                         var netEnts = _.filter(self.world.getEntities('netSend'), function(ent) { return !ent.isLoadedFromJsonFile; });
                         self.sendNetState(this.userId, netEnts);
                     });
@@ -88,7 +88,7 @@ angular
                             netents = world.getEntities('netRecv'),
                             entity = _.findWhere(netents, {uuid: data.entityId});
 
-                        $log.debug('inventory:equipItem', entity.name, data.sourceSlot, data.targetSlot);
+                        // $log.debug('inventory:equipItem', entity.name, data.sourceSlot, data.targetSlot);
 
                         if (entity) {
                             inv.equipItem(entity, data.sourceSlot, data.targetSlot);
@@ -216,7 +216,7 @@ angular
                             world.removeEntity(pickup);
                             inv.addItem(entity, pickupComponent.item);
 
-                            $log.log('picking up item ' + pickupComponent.item.name);
+                            // $log.log('picking up item ' + pickupComponent.item.name);
                         }
                     });
 
@@ -304,7 +304,7 @@ angular
                         // TODO clear when user logs out
                         if (!self._userStreams[userId]) {
                             var userStream = [userId, self.world.name, 'entities'].join('_');
-                            console.log('stream: ' + userStream);
+                            // console.log('stream: ' + userStream);
                             self._userStreams[userId] = new Meteor.Stream(userStream);
                             var stream = self._userStreams[userId];
 
@@ -408,7 +408,7 @@ angular
                 updateComponent: function(entity, componentName) {
                     var component = entity.getComponent(componentName);
 
-                    $log.debug('cupdate: ', entity.uuid, component.serializeNet());
+                    // $log.debug('cupdate: ', entity.uuid, component.serializeNet());
 
                     this._stream.emit('cupdate', entity.uuid, component.serializeNet(), componentName);
                 }

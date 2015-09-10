@@ -79,7 +79,7 @@ angular
                         return; // error?
                     }
 
-                    console.log('addItem', entity, item, slot);
+                    // console.log('addItem', entity, item, slot);
 
                     if (!slot) {
                         // pick first available
@@ -175,9 +175,8 @@ angular
                         var item = inventory[slotName];
                         if (item) {
                             var chance = IbUtils.getRandomInt(0, 100);
-                            console.log(item.dropChance, chance);
+
                             if (item.dropChance > chance) {
-                                console.log('dropping:', item.dropChance, ' > ', chance);
                                 me.dropItem(entity, item);
                             }
                         }
@@ -235,7 +234,7 @@ angular
                             world.removeEntity(dropped);
                         }, 20000);
 
-                        $log.debug('drop item: ', entity.uuid, dropped.name, item);
+                        // $log.debug('drop item: ', entity.uuid, dropped.name, item);
                     }
 
                     this.removeItem(entity, item);
@@ -456,7 +455,7 @@ angular
                                 pickups.forEach(function(pickup) {
                                     //$log.debug('pickup hunting: ', entity, pickups);
                                     if (entity.position.inRangeOf(pickup.position, 1.0)) {
-                                        $log.debug('picking up: ', entity.name, ' -> ', pickup.name);
+                                        // $log.debug('picking up: ', entity.name, ' -> ', pickup.name);
 
                                         me.world.publish('pickup:entity', entity, pickup);
                                         // invSystem.world.removeEntity(pickup);

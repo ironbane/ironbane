@@ -19,7 +19,7 @@ angular
                 },
                 bindToController: true,
                 controllerAs: 'inventoryItem',
-                controller: function($scope) {
+                controller: ['$scope', function($scope) {
                     var ctrl = this;
 
                     $scope.$watch(function() {
@@ -78,7 +78,7 @@ angular
 
                         ctrl.cssClass = item.rarity;
                     });
-                }
+                }]
             };
 
             return config;

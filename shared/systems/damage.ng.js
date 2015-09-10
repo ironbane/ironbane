@@ -245,7 +245,7 @@ angular
                                             me.addDamageParticles('armor', armorDamageDone, entity.position);
                                         }
 
-                                        $log.debug('armor', armorDamageDone, entity.position);
+                                        // $log.debug('armor', armorDamageDone, entity.position);
                                     }
 
                                     if (healthComponent) {
@@ -257,7 +257,7 @@ angular
                                             me.addDamageParticles('health', healthDamageDone, entity.position);
                                         }
 
-                                        $log.debug('health', healthDamageDone, entity.position);
+                                        // $log.debug('health', healthDamageDone, entity.position);
 
                                         if (healthComponent.value <= 0) {
                                             // We died, so add proper particles

@@ -1,6 +1,6 @@
 angular
     .module('game.ai.states.local')
-    .factory('FindPathToPosition', function(Class, THREE, Patrol, BaseState, $rootWorld) {
+    .factory('FindPathToPosition', function(Class, THREE, Patrol, BaseState, $rootWorld, Debugger) {
             'use strict';
 
             return BaseState.extend({
@@ -13,7 +13,7 @@ angular
                         this.targetPosition, this.entity.level)
                         .then(function (path) {
                             me.calculatedPath = path;
-                            //debug.drawPath(me.entity.uuid + 'findPathToPosition', me.calculatedPath);
+                            //Debugger.drawPath(me.entity.uuid + 'findPathToPosition', me.calculatedPath);
                         });
                 },
                 update: function(dTime) {
@@ -35,7 +35,7 @@ angular
                     }
                 },
                 destroy: function() {
-                    debug.clearPath(this.entity.uuid + 'findPathToPosition');
+                    Debugger.clearPath(this.entity.uuid + 'findPathToPosition');
                 },
                 handleMessage: function(message, data) {
 

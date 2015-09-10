@@ -117,7 +117,7 @@ angular
                         });
                     },
                     register: function(action, callback) {
-                        $log.debug('register input: ', action, callback);
+                        // $log.debug('register input: ', action, callback);
                         if (this.actions[action]) {
                             this.actions[action].add(callback);
                         }
