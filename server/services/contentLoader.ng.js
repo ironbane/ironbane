@@ -49,7 +49,10 @@ angular
             }
             else {
                 // On production we load a static file so we're in control of the changes each release
-                Assets.getText(assetsName, function (text) {
+                Assets.getText(assetsName, function (err, text) {
+                    if (err) {
+                        throw err;
+                    }
                     load(text);
                 });
             }
