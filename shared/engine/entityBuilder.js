@@ -105,9 +105,14 @@ angular
                     });
                     textures = objectLoader.parseTextures(json.textures, images);
 
-                    // Fix for some clients getting blurry textures. This shouldn't be set to 16 anyway (needs more GPU power)
+
                     _.each(textures, function (t) {
+                        // Fix for some clients getting blurry textures. This shouldn't be set to 16 anyway (needs more GPU power)
                         t.anisotropy = 1;
+
+                        // Pixelated when nearby, mipmap linear when far (easier on the eyes, especially for pixelated textures)
+                        t.minFilter = THREE.NearestMipMapLinearFilter;
+                        t.magFilter = THREE.NearestFilter;
                     });
 
                     materials = objectLoader.parseMaterials(json.materials, textures);
