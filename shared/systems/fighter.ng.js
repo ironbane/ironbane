@@ -27,9 +27,11 @@ angular
                 });
 
                 world.subscribe('fighter:jump', function(entity) {
-                    var rigidBodySystem = world.getSystem('rigidbody');
-                    rigidBodySystem.applyCentralImpulse(entity, new THREE.Vector3(0,5,0));
-                    GlobalSound.play(_.sample(['jump']), entity.position);
+                    if (Meteor.isClient) {
+                        var rigidBodySystem = world.getSystem('rigidbody');
+                        rigidBodySystem.applyCentralImpulse(entity, new THREE.Vector3(0,5,0));
+                        GlobalSound.play(_.sample(['jump']), entity.position);
+                    }
                 });
 
                 world.entityAdded('fighter').add(function(entity) {

@@ -214,11 +214,9 @@ angular
                         }
                     });
 
-                    world.subscribe('fighter:jump', function(entity, targetVector) {
+                    world.subscribe('fighter:jump', function(entity) {
                         if (entity.hasComponent('netSend') && me._stream) {
-                            me._stream.emit('fighter:jump', {
-                                entityId: entity.uuid
-                            });
+                            me._stream.emit('fighter:jump', entity.uuid);
                         }
                     });
 
@@ -410,11 +408,10 @@ angular
                             }
                         });
 
-                        // this one we'll just pass through
-                        me._stream.on('fighter:jump', function(data) {
+                        me._stream.on('fighter:jump', function(uuid) {
                             var netEnts = world.getEntities('netRecv'),
                                 entity = _.findWhere(netEnts, {
-                                    uuid: data.entityId
+                                    uuid: uuid
                                 });
 
                             if (entity) {

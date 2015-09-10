@@ -49,6 +49,7 @@ angular
                     this._super(world);
 
 
+
                     // this._stream.on('inventory:equipItem', function(data) {
                     //     var inv = world.getSystem('inventory'),
                     //         netents = world.getEntities('netRecv'),
@@ -193,11 +194,6 @@ angular
                     // });
 
 
-                    // this._stream.on('fighter:jump', function(data) {
-                    //     // just send it back out to everyone
-                    //     // self._stream.emit('fighter:jump', data);
-                    // });
-
                     // currently the server does not attack and check vector
                     // this._stream.on('combat:damageEntity', function(data) {
                     //     // victimEntityUuid: victimEntity.uuid,
@@ -258,7 +254,16 @@ angular
                     //     }
                     // });
 
-
+                    world.subscribe('fighter:jump', function(entity, sourceEntity) {
+                        var sendComponent = entity.getComponent('netSend');
+                        if (sendComponent) {
+                            sendComponent.__knownEntities.forEach(function(knownEntity) {
+                                if (knownEntity.hasComponent('player') && knownEntity !== sourceEntity) {
+                                    knownEntity.stream.emit('fighter:jump', entity.uuid);
+                                }
+                            });
+                        }
+                    });
 
                     // Because we're unable to delete streams, we need to cache and reuse them
                     var streams = {};
@@ -338,6 +343,17 @@ angular
                                         // TODO Disconnect? Keep track of cheat count?
                                     }
 
+                                }
+                            });
+                        });
+
+                        entity.stream.on('fighter:jump', function(uuid) {
+                            // Make sure the entity's owner is the same as ours
+                            var netEntities = world.getEntities('netRecv');
+
+                            netEntities.forEach(function(netEntity) {
+                                if (netEntity.uuid === uuid && netEntity.owner === entity.owner) {
+                                    world.publish('fighter:jump', netEntity, entity);
                                 }
                             });
                         });
