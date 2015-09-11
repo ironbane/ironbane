@@ -188,65 +188,34 @@ angular
                     // });
 
 
-                    // currently the server does not attack and check vector
-                    // this._stream.on('combat:damageEntity', function(data) {
-                    //     // victimEntityUuid: victimEntity.uuid,
-                    //     // ownerEntityUuid: ownerEntity.uuid,
-                    //     // damage: damage
-                    //     var damageableEntities = world.getEntities('damageable');
+                    world.subscribe('combat:damageEntity', function(victimEntity, sourceEntity, item) {
+                        var totalList = [];
+                        var sendComponentV = victimEntity.getComponent('netSend');
+                        var sendComponentS = victimEntity.getComponent('netSend');
 
-                    //     var victimEntity = _.findWhere(damageableEntities, {
-                    //         uuid: data.victimEntityUuid
-                    //     });
-                    //     var sourceEntity = _.findWhere(damageableEntities, {
-                    //         uuid: data.sourceEntityUuid
-                    //     });
+                        if (sendComponentV) {
+                            totalList = totalList.concat(sendComponentV.__knownEntities);
+                        }
 
-                    //     var playerEntities = world.getEntities('player');
-                    //     var playerChar = _.findWhere(playerEntities, {
-                    //         owner: this.userId
-                    //     });
+                        if (sendComponentS) {
+                            totalList = totalList.concat(sendComponentV.__knownEntities);
+                        }
 
-                    //     if (!playerChar) {
-                    //         $log.error('player entity not found!');
-                    //         return;
-                    //     }
+                        totalList = _.unique(totalList);
 
-                    //     if (!victimEntity) {
-                    //         $log.error('victim entity not found!');
-                    //         return;
-                    //     }
+                        totalList.forEach(function(knownEntity) {
+                            if (knownEntity.hasComponent('player') &&
+                                knownEntity !== sourceEntity &&
+                                knownEntity !== victimEntity) {
+                                knownEntity.stream.emit('combat:damageEntity', {
+                                    victimEntityUuid: victimEntity.uuid,
+                                    sourceEntityUuid: sourceEntity.uuid,
+                                    itemUuid: item.uuid
+                                });
+                            }
+                        });
 
-                    //     if (!sourceEntity) {
-                    //         $log.error('source entity not found!');
-                    //         return;
-                    //     }
-
-                    //     if (!_.isNumber(data.damage)) {
-                    //         $log.error('data.damage must be a number!');
-                    //     }
-
-                    //     if (data.damage <= 0) {
-                    //         $log.error('data.damage must be > 0!');
-                    //     }
-
-                    //     if (victimEntity === playerChar || sourceEntity === playerChar) {
-                    //         var damageableComponent = victimEntity.getComponent('damageable');
-
-                    //         // TODO very naive! Add anti-cheat measures later
-                    //         if (damageableComponent) {
-                    //             damageableComponent.sources.push({
-                    //                 sourceEntity: sourceEntity,
-                    //                 type: 'damage',
-                    //                 damage: data.damage
-                    //             });
-
-                    //             // TODO for some reason emits *are* being sent even though
-                    //             // they are not being sent here, not sure why
-                    //             //self._stream.emit('combat:damageEntity', data);
-                    //         }
-                    //     }
-                    // });
+                    });
 
                     world.subscribe('fighter:jump', function(entity, sourceEntity) {
                         var sendComponent = entity.getComponent('netSend');
@@ -403,6 +372,49 @@ angular
                                     }
                                 }
                             });
+                        });
+
+                        entity.stream.on('combat:damageEntity', function(data) {
+
+                            if (!_.isObject(data)) {
+                                return;
+                            }
+
+                            var damageableEntities = world.getEntities('damageable');
+
+                            var victimEntity = _.findWhere(damageableEntities, {
+                                uuid: data.victimEntityUuid
+                            });
+
+                            var sourceEntity = _.findWhere(damageableEntities, {
+                                uuid: data.sourceEntityUuid
+                            });
+
+                            if (!victimEntity) {
+                                $log.error('victim entity not found!');
+                                return;
+                            }
+
+                            if (!sourceEntity) {
+                                $log.error('source entity not found!');
+                                return;
+                            }
+
+                            if (sourceEntity.owner !== entity.owner &&
+                                victimEntity.owner !== entity.owner) {
+                                $log.error('sourceEntity has wrong owner!');
+                                return;
+                            }
+
+                            var inventorySystem = world.getSystem('inventory');
+                            var item = inventorySystem.findItemByUuid(sourceEntity, data.itemUuid);
+                            if (!item) {
+                                $log.error('item for damageEntity not found!');
+                                return;
+                            }
+
+                            world.publish('combat:damageEntity', victimEntity, sourceEntity, item);
+
                         });
 
                     });

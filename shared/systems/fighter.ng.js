@@ -92,7 +92,7 @@ angular
                                     speed: item.projectileSpeed || 12,
                                     targetPosition: targetPosition,
                                     ownerUuid: entity.uuid,
-                                    attribute1: item.damage
+                                    itemUuid: item.uuid
                                 },
                                 collisionReporter: {
 

@@ -166,7 +166,7 @@ angular
                     var me = this;
 
                     world.subscribe('inventory:equipItem', function(entity, sourceSlot, targetSlot) {
-                        if (entity.hasComponent('netSend') && me._stream) {
+                        if (entity.hasComponent('netSend')) {
                             // TODO: UUID for items
                             me._stream.emit('inventory:equipItem', {
                                 entityId: entity.uuid,
@@ -177,7 +177,7 @@ angular
                     });
 
                     world.subscribe('inventory:dropItem', function(entity, item) {
-                        if (entity.hasComponent('netSend') && me._stream) {
+                        if (entity.hasComponent('netSend')) {
                             // TODO: UUID for items
                             me._stream.emit('inventory:dropItem', {
                                 entityId: entity.uuid,
@@ -187,7 +187,7 @@ angular
                     });
 
                     world.subscribe('inventory:useItem', function(entity, item) {
-                        if (entity.hasComponent('netSend') && me._stream) {
+                        if (entity.hasComponent('netSend')) {
                             // TODO: UUID for items
                             me._stream.emit('inventory:useItem', {
                                 entityId: entity.uuid,
@@ -197,7 +197,7 @@ angular
                     });
 
                     world.subscribe('pickup:entity', function(entity, pickup) {
-                        if (entity.hasComponent('netSend') && me._stream) {
+                        if (entity.hasComponent('netSend')) {
                             me._stream.emit('pickup:entity', {
                                 entityId: entity.uuid,
                                 pickupId: pickup.uuid
@@ -206,7 +206,7 @@ angular
                     });
 
                     world.subscribe('combat:primaryAttack', function(entity, targetVector) {
-                        if (entity.hasComponent('netSend') && me._stream) {
+                        if (entity.hasComponent('netSend')) {
                             me._stream.emit('combat:primaryAttack', {
                                 entityUuid: entity.uuid,
                                 targetVector: targetVector.toArray()
@@ -215,30 +215,23 @@ angular
                     });
 
                     world.subscribe('fighter:jump', function(entity) {
-                        if (entity.hasComponent('netSend') && me._stream) {
+                        if (entity.hasComponent('netSend')) {
                             me._stream.emit('fighter:jump', {
                                 entityUuid: entity.uuid
                             });
                         }
                     });
 
-                    world.subscribe('combat:damageEntity', function(victimEntity, data) {
-                        // We only tell the server if the event has something to do with the mainPlayer
+                    world.subscribe('combat:damageEntity', function(victimEntity, sourceEntity, item) {
+                        // We only tell the server if the event has something to do with our local client
                         // otherwise it's none of our business
-                        var mainPlayer = $entityCache.get('mainPlayer');
-
-                        if (victimEntity === mainPlayer || data.sourceEntity === mainPlayer) {
-                            if (victimEntity.hasComponent('damageable') && me._stream) {
-                                me._stream.emit('combat:damageEntity', {
-                                    victimEntityUuid: victimEntity.uuid,
-                                    sourceEntityUuid: data.sourceEntity.uuid,
-                                    damage: data.damage
-                                });
-                            }
+                        if (victimEntity.hasComponent('netSend') || sourceEntity.hasComponent('netSend')) {
+                            me._stream.emit('combat:damageEntity', {
+                                victimEntityUuid: victimEntity.uuid,
+                                sourceEntityUuid: sourceEntity.uuid,
+                                itemUuid: item.uuid
+                            });
                         }
-
-                        var damageableComponent = victimEntity.getComponent('damageable');
-                        damageableComponent.sources.push(data);
                     });
 
                     // Set up streams and make sure it reruns everytime we change levels or change user
@@ -414,10 +407,10 @@ angular
                             }
                         });
 
-                        me._stream.on('fighter:jump', function(uuid) {
+                        me._stream.on('fighter:jump', function(data) {
                             var netEnts = world.getEntities('netRecv'),
                                 entity = _.findWhere(netEnts, {
-                                    uuid: uuid
+                                    uuid: data.entityUuid
                                 });
 
                             if (entity) {
@@ -425,7 +418,6 @@ angular
                             }
                         });
 
-                        // this one we'll just pass through
                         me._stream.on('combat:damageEntity', function(data) {
                             var damageableEntities = world.getEntities('damageable');
 
@@ -437,17 +429,14 @@ angular
                                 uuid: data.sourceEntityUuid
                             });
 
-                            var mainPlayer = $entityCache.get('mainPlayer');
-
-                            // Server shouldn't include info if it's the mainPlayer but it does
-                            // so we need to check for it here and ignore it
-                            if (sourceEntity && victimEntity !== mainPlayer && sourceEntity !== mainPlayer) {
-                                me.world.publish('combat:damageEntity', victimEntity, {
-                                    sourceEntity: sourceEntity,
-                                    type: 'damage',
-                                    damage: data.damage
-                                });
+                            if (sourceEntity) {
+                                var inventorySystem = world.getSystem('inventory');
+                                var item = inventorySystem.findItemByUuid(sourceEntity, data.itemUuid);
+                                if (item) {
+                                    me.world.publish('combat:damageEntity', victimEntity, sourceEntity, item);
+                                }
                             }
+
                         });
 
 

@@ -24,6 +24,17 @@ angular
                     damageableComponent.dashTimer = 0.0;
                     damageableComponent.dashDirection = new THREE.Vector3();
                 });
+
+                world.subscribe('combat:damageEntity', function(victimEntity, sourceEntity, item) {
+                    var damageableComponent = victimEntity.getComponent('damageable');
+                    if (damageableComponent) {
+                        damageableComponent.sources.push({
+                            type: 'damage',
+                            sourceEntity: sourceEntity,
+                            damage: item.damage
+                        });
+                    }
+                });
             },
             _spawnParticle: function(indexH, indexV, amount, position) {
                 var me = this;

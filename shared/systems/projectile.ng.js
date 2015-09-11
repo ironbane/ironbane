@@ -54,6 +54,9 @@ angular
                     projectileComponent._canDeliverEffect = true;
                     projectileComponent._owner = world.scene.getObjectByProperty('uuid', projectileComponent.ownerUuid);
 
+                    var inventorySystem = world.getSystem('inventory');
+                    projectileComponent._item = inventorySystem.findItemByUuid(projectileComponent._owner, projectileComponent.itemUuid)                    ;
+
                     if (!projectileComponent._owner) {
                         $log.error('Error fetching projectile owner from uuid! ', projectileComponent);
                     }
@@ -127,7 +130,8 @@ angular
                     if (projectileComponent &&
                         projectileComponent._owner &&
                         projectileComponent._canDeliverEffect) {
-                        if (projectileComponent.type === 'damage') {
+
+                        if (projectileComponent._item && projectileComponent._item.type === 'weapon') {
                             var damageableEntities = me.world.getEntities('damageable');
 
                             damageableEntities.forEach(function(damageableEntity) {
@@ -138,18 +142,13 @@ angular
                                     if ((projectileComponent._owner.hasComponent('player') && !damageableEntity.hasComponent('player')) ||
                                         (!projectileComponent._owner.hasComponent('player') && damageableEntity.hasComponent('player'))) {
 
-                                        // Only publish if the projectile has something to do with the mainPlayer
+                                        // Only publish if the projectile has something to do with the local client's entities (netSend)
                                         // Other projectile hit events will be sent over the network
-                                        var mainPlayer = $entityCache.get('mainPlayer');
 
-                                        if (mainPlayer === damageableEntity ||
-                                            mainPlayer === projectileComponent._owner) {
+                                        if (damageableEntity.hasComponent('netSend') ||
+                                            projectileComponent._owner.hasComponent('netSend')) {
 
-                                            me.world.publish('combat:damageEntity', damageableEntity, {
-                                                sourceEntity: projectileComponent._owner,
-                                                type: 'damage',
-                                                damage: projectileComponent.attribute1
-                                            });
+                                            me.world.publish('combat:damageEntity', damageableEntity, projectileComponent._owner, projectileComponent._item);
                                         }
 
                                         projectileComponent._canDeliverEffect = false;
