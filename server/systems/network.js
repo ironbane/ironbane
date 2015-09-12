@@ -270,6 +270,8 @@ angular
 
                         entity.stream = streams[streamName];
 
+                        entity.stream.resetListeners();
+
                         entity.stream.permissions.write(function() {
                             return this.userId === entity.owner;
                         });

@@ -37,6 +37,10 @@ function _EV() {
   self.removeAllListeners = function removeAllListeners(event) {
     handlers[event] = undefined;
   };
+
+  self.resetListeners = function () {
+    handlers = {};
+  };
 }
 
 EV = _EV;
