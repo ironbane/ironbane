@@ -50,51 +50,6 @@ angular
 
                     this._super(world);
 
-
-
-
-                    // this._stream.on('inventory:useItem', function(data) {
-                    //     var inv = world.getSystem('inventory'),
-                    //         netents = world.getEntities('netSend'),
-                    //         entity = _.findWhere(netents, {uuid: data.entityId})
-
-                    //     if (!entity) {
-                    //         $log.error('[inventory:dropItem] entity not found!');
-                    //         return;
-                    //     }
-
-                    //     if (entity.owner !== this.userId) {
-                    //         $log.error('[inventory:dropItem] entity has wrong owner!');
-                    //         return;
-                    //     }
-
-                    //     var inventoryComponent = entity.getComponent('inventory');
-                    //     if (!inventoryComponent) {
-                    //         $log.error('[inventory:dropItem] entity has no inventory!');
-                    //         return;
-                    //     }
-
-                    //     var item = inv.findItemByUuid(entity, data.itemUuid);
-                    //     if (!item) {
-                    //         $log.error('[inventory:dropItem] uuid not found!');
-                    //         return;
-                    //     }
-
-                    //     inv.useItem(entity, item);
-                    // });
-
-                    // world.subscribe('inventory:equipItem', function(entity, sourceSlot, targetSlot) {
-                    //     if (entity.hasComponent('netSend') && self._stream) {
-                    //         // var inv = entity.getComponent('inventory');
-                    //         // self._stream.emit('inventory:snapshot', {entityId: entity.uuid, snapshot: inv.serializeNet()});
-                    //         // self._stream.emit('inventory:equipItem', {
-                    //         //     entityId: entity.uuid,
-                    //         //     sourceSlot: sourceSlot,
-                    //         //     targetSlot: targetSlot
-                    //         // });
-                    //     }
-                    // });
-
                     // world.subscribe('inventory:onItemAdded', function(entity, item, slot) {
                     //     if (entity.hasComponent('netSend') && self._stream) {
                     //         self._stream.emit('inventory:onItemAdded', {
@@ -105,11 +60,6 @@ angular
                     //     }
                     // });
 
-                    // world.subscribe('inventory:onItemRemoved', function(entity, item) {
-                    //     if (entity.hasComponent('netSend') && self._stream) {
-                    //         self._stream.emit('inventory:onItemRemoved', {entityId: entity.uuid, itemId: item.uuid});
-                    //     }
-                    // });
 
                     // this._stream.on('inventory:dropItem', function(data) {
                     //     var inv = world.getSystem('inventory'),
@@ -250,6 +200,49 @@ angular
                         }
                     });
 
+                    world.subscribe('inventory:useItem', function(entity, item) {
+                        var sendComponent = entity.getComponent('netSend');
+                        if (sendComponent) {
+                            sendComponent.__knownEntities.forEach(function(knownEntity) {
+                                if (knownEntity.hasComponent('player') && knownEntity !== entity) {
+                                    knownEntity.stream.emit('inventory:useItem', {
+                                        entityUuid: entity.uuid,
+                                        itemUuid: item.uuid,
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                    world.subscribe('inventory:onItemRemoved', function(entity, item) {
+                        var sendComponent = entity.getComponent('netSend');
+                        if (sendComponent) {
+                            sendComponent.__knownEntities.concat([entity]).forEach(function(knownEntity) {
+                                if (knownEntity.hasComponent('player')) {
+                                    knownEntity.stream.emit('inventory:onItemRemoved', {
+                                        entityUuid: entity.uuid,
+                                        itemUuid: item.uuid,
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                    world.subscribe('inventory:onItemAdded', function(entity, item, slot) {
+                        var sendComponent = entity.getComponent('netSend');
+                        if (sendComponent) {
+                            sendComponent.__knownEntities.concat([entity]).forEach(function(knownEntity) {
+                                if (knownEntity.hasComponent('player')) {
+                                    knownEntity.stream.emit('inventory:onItemAdded', {
+                                        entityUuid: entity.uuid,
+                                        item: item,
+                                        slot: slot
+                                    });
+                                }
+                            });
+                        }
+                    });
+
                     // Because we're unable to delete streams on the server
                     // we need to cache and reuse them
                     // TODO test disconnect/reconnects
@@ -298,9 +291,7 @@ angular
                         delete serialized.components.netRecv;
                         packet[entity.uuid] = serialized;
 
-                        // setTimeout(function () {
                         entity.stream.emit('add', packet);
-                        // }, 1000);
 
                         ChatService.announce(entity.name + ' has entered the world.', {
                             join: true
@@ -313,11 +304,7 @@ angular
                                 return;
                             }
 
-                            // TODO: might be better instead to just find them by ID? not sure which search is faster
-                            // (and then test they have the netRecv component)
                             netEntities.forEach(function(netEntity) {
-                                var netComponent = entity.getComponent('netRecv');
-
                                 // most likely this should be one per client, however perhaps other player owned things
                                 // may come
                                 if (packet[netEntity.uuid] && netEntity.owner === entity.owner) {
@@ -458,6 +445,36 @@ angular
                             world.publish('inventory:equipItem', netEntity, data.sourceSlot, data.targetSlot);
                         });
 
+                        entity.stream.on('inventory:useItem', function(data) {
+                            var inventorySystem = world.getSystem('inventory');
+                            var netEntities = world.getEntities('netSend');
+                            var netEntity = _.findWhere(netEntities, {uuid: data.entityUuid});
+
+                            if (!netEntity) {
+                                $log.error('[inventory:useItem] netEntity not found!');
+                                return;
+                            }
+
+                            if (netEntity.owner !== entity.owner) {
+                                $log.error('[inventory:useItem] netEntity has wrong owner!');
+                                return;
+                            }
+
+                            var inventoryComponent = netEntity.getComponent('inventory');
+                            if (!inventoryComponent) {
+                                $log.error('[inventory:useItem] netEntity has no inventory!');
+                                return;
+                            }
+
+                            var item = inventorySystem.findItemByUuid(netEntity, data.itemUuid);
+                            if (!item) {
+                                $log.error('[inventory:useItem] uuid not found!');
+                                return;
+                            }
+
+                            world.publish('inventory:useItem', netEntity, item);
+                        });
+
                     });
 
                     world.entityRemoved('netSend', 'player').add(function (entity) {
@@ -473,6 +490,9 @@ angular
                         // entity.stream.close();
                         // delete entity.stream;
                     });
+
+
+
 
                     world.entityAdded('netSend').add(onNetSendEntityAdded.bind(this));
                     world.entityRemoved('netSend').add(onNetSendEntityRemoved.bind(this));
@@ -572,7 +592,7 @@ angular
                     var component = entity.getComponent(componentName);
 
                     var sendComponent = entity.getComponent('netSend');
-                    sendComponent.__knownEntities.forEach(function(knownEntity) {
+                    sendComponent.__knownEntities.concat([entity]).forEach(function(knownEntity) {
                         if (knownEntity.hasComponent('player')) {
                             console.log('SEND cadd to', knownEntity.name, component.serializeNet());
                             knownEntity.stream.emit('cadd', entity.uuid, component.serializeNet());
@@ -584,7 +604,7 @@ angular
                     var component = entity.getComponent(componentName);
 
                     var sendComponent = entity.getComponent('netSend');
-                    sendComponent.__knownEntities.forEach(function(knownEntity) {
+                    sendComponent.__knownEntities.concat([entity]).forEach(function(knownEntity) {
                         if (knownEntity.hasComponent('player')) {
                             console.log('SEND cremove to', knownEntity.name, componentName);
                             knownEntity.stream.emit('cremove', entity.uuid, componentName);
@@ -595,7 +615,7 @@ angular
                     var component = entity.getComponent(componentName);
 
                     var sendComponent = entity.getComponent('netSend');
-                    sendComponent.__knownEntities.forEach(function(knownEntity) {
+                    sendComponent.__knownEntities.concat([entity]).forEach(function(knownEntity) {
                         if (knownEntity.hasComponent('player')) {
                             knownEntity.stream.emit('cupdate', entity.uuid, component.serializeNet(), componentName);
                         }

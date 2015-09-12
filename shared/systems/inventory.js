@@ -56,6 +56,10 @@ angular
                     world.subscribe('inventory:equipItem', function(entity, sourceSlot, targetSlot) {
                         me.equipItem(entity, sourceSlot, targetSlot);
                     });
+
+                    world.subscribe('inventory:useItem', function(entity, item) {
+                        me.useItem(entity, item);
+                    });
                 },
                 findEmptySlot: function(entity) {
                     var inventory = entity.getComponent('inventory'),
@@ -340,7 +344,6 @@ angular
                             if (entity.hasComponent('netSend')) {
                                 GlobalSound.play(_.sample(['use']), entity.position);
                             }
-                            this.world.publish('inventory:useItem', entity, item);
                         }
                     }
 

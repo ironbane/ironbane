@@ -159,7 +159,7 @@ angular
 
                             slot.use = function() {
                                 if (!isDragging) {
-                                    inventorySystem.useItem(ctrl.entity, slot.item);
+                                    $rootWorld.publish('inventory:useItem', ctrl.entity, slot.item);
                                 }
                                 isDragging = false;
                             };

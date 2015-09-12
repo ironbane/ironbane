@@ -180,7 +180,7 @@ angular
                         if (entity.hasComponent('netSend')) {
                             // TODO: UUID for items
                             me._stream.emit('inventory:dropItem', {
-                                entityId: entity.uuid,
+                                entityUuid: entity.uuid,
                                 itemUuid: item.uuid
                             });
                         }
@@ -190,7 +190,7 @@ angular
                         if (entity.hasComponent('netSend')) {
                             // TODO: UUID for items
                             me._stream.emit('inventory:useItem', {
-                                entityId: entity.uuid,
+                                entityUuid: entity.uuid,
                                 itemUuid: item.uuid
                             });
                         }
@@ -199,7 +199,7 @@ angular
                     world.subscribe('pickup:entity', function(entity, pickup) {
                         if (entity.hasComponent('netSend')) {
                             me._stream.emit('pickup:entity', {
-                                entityId: entity.uuid,
+                                entityUuid: entity.uuid,
                                 pickupId: pickup.uuid
                             });
                         }
@@ -305,9 +305,9 @@ angular
                         // this for any adds (even first boot)
                         me._stream.on('add', onStreamAdd.bind(me));
 
-                        me._stream.on('remove', function(entityId) {
-                            $log.debug('[NetworkSystem : remove]', entityId);
-                            var obj = world.scene.getObjectByProperty('uuid', entityId);
+                        me._stream.on('remove', function(entityUuid) {
+                            $log.debug('[NetworkSystem : remove]', entityUuid);
+                            var obj = world.scene.getObjectByProperty('uuid', entityUuid);
                             // test if instanceof Entity?
                             if (obj) {
                                 world.removeEntity(obj);
@@ -337,30 +337,29 @@ angular
 
 
 
-                        me._stream.on('inventory:snapshot', function(data) {
-                            var inventorySystem = world.getSystem('inventory'),
-                                netents = world.getEntities('netSend'),
-                                entity = _.findWhere(netents, {
-                                    uuid: data.entityId
-                                });
+                        // me._stream.on('inventory:snapshot', function(data) {
+                        //     var inventorySystem = world.getSystem('inventory'),
+                        //         netents = world.getEntities('netSend'),
+                        //         entity = _.findWhere(netents, {
+                        //             uuid: data.entityUuid
+                        //         });
 
-                            if (entity) {
-                                var inventoryComponent = entity.getComponent('inventory');
-                                if (inventoryComponent) {
-                                    console.log('inv snapshot', data.snapshot);
-                                    angular.extend(inventoryComponent, data.snapshot);
-                                    inventorySystem.refresh.emit(entity);
-                                }
-                            }
-                            //$log.debug('inventory:onEquipItem', data, entity.uuid);
-
-                        });
+                        //     if (entity) {
+                        //         var inventoryComponent = entity.getComponent('inventory');
+                        //         if (inventoryComponent) {
+                        //             console.log('inv snapshot', data.snapshot);
+                        //             angular.extend(inventoryComponent, data.snapshot);
+                        //             inventorySystem.refresh.emit(entity);
+                        //         }
+                        //     }
+                        //     //$log.debug('inventory:onEquipItem', data, entity.uuid);
+                        // });
 
                         me._stream.on('inventory:onItemAdded', function(data) {
                             var inv = world.getSystem('inventory'),
                                 netents = world.getEntities('netSend'),
                                 entity = _.findWhere(netents, {
-                                    uuid: data.entityId
+                                    uuid: data.entityUuid
                                 });
 
                             if (entity) {
@@ -372,11 +371,11 @@ angular
                             var inv = world.getSystem('inventory'),
                                 netents = world.getEntities('netSend'),
                                 entity = _.findWhere(netents, {
-                                    uuid: data.entityId
+                                    uuid: data.entityUuid
                                 });
 
                             if (entity) {
-                                var item = inv.findItemByUuid(entity, data.itemId);
+                                var item = inv.findItemByUuid(entity, data.itemUuid);
                                 if (item) {
                                     inv.removeItem(entity, item);
                                 }
