@@ -126,7 +126,10 @@ angular
         };
 
         this.spriteSheetIdToXY = function (id, size) {
-            size = size || 16;
+            if (!size) {
+                console.error('no size given!');
+                size = 16;
+            }
             return {
                 h: (id%size),
                 v: (Math.floor(id/size))

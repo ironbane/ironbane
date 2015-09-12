@@ -201,8 +201,8 @@ angular
                                     numberOfSpritesV: 128,
                                     width: 0.5,
                                     height: 0.5,
-                                    indexH: IbUtils.spriteSheetIdToXY(image).h,
-                                    indexV: IbUtils.spriteSheetIdToXY(image).v
+                                    indexH: IbUtils.spriteSheetIdToXY(image, 16).h,
+                                    indexV: IbUtils.spriteSheetIdToXY(image, 16).v
                                 },
                                 shadow: {
                                     simple: true,

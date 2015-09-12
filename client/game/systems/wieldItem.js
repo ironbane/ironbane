@@ -30,8 +30,8 @@ angular
                 mesh.visible = false;
 
                 CharBuilder.getSpriteSheetTile('images/spritesheets/items.png',
-                    IbUtils.spriteSheetIdToXY(image).h,
-                    IbUtils.spriteSheetIdToXY(image).v,
+                    IbUtils.spriteSheetIdToXY(image, 16).h,
+                    IbUtils.spriteSheetIdToXY(image, 16).v,
                     16, 128)
                     .then(function(url) {
                         return TextureLoader.load(url);
