@@ -299,6 +299,17 @@ angular
                             }
                         }
                     }
+
+                    var mouseHelper = this.entity.getComponent('mouseHelper');
+                    if (mouseHelper) {
+                        var maxRange = 100;
+                        inventorySystem.loopItems(this.entity, function (item, slot) {
+                            if (slot === 'rhand' || slot === 'lhand') {
+                                maxRange = Math.min(item.range, maxRange);
+                            }
+                        })
+                        mouseHelper.range = maxRange;
+                    }
                 }
 
                 if (rigidBodyComponent) {
