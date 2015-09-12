@@ -128,6 +128,8 @@ angular
                     components: {
                         inventory: ContentLoader.buildInventory([
                             'Dull Sword',
+                            'Potion',
+                            'Potion',
                             'Peasant Shirt',
                             'Dirty Dishcloth Bandana',
                             'Old Pants'

@@ -250,7 +250,7 @@ angular
                     }
 
                     // TODO Maybe add a isUsable flag to items instead?
-                    if (['food'].indexOf(item.type) === -1) {
+                    if (['food','potion','poison'].indexOf(item.type) === -1) {
                         var equipSlot = null;
                         if (item.type === 'weapon') {
                             if (item.handedness === 'r') { // specifically weapon must be right hand
@@ -310,6 +310,24 @@ angular
 
                                 entity.addComponent('buff', {
                                     type: 'heal',
+                                    amountPerInterval: 0.5,
+                                    duration: item.damage * 2
+                                });
+                            }
+                            if (item.type === 'potion') {
+                                this.removeItem(entity, item);
+
+                                entity.addComponent('buff', {
+                                    type: 'heal',
+                                    amountPerInterval: item.damage,
+                                    duration: 1.0
+                                });
+                            }
+                            if (item.type === 'poison') {
+                                this.removeItem(entity, item);
+
+                                entity.addComponent('buff', {
+                                    type: 'poison',
                                     amountPerInterval: 0.5,
                                     duration: item.damage * 2
                                 });

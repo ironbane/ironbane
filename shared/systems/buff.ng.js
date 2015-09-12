@@ -49,6 +49,18 @@ angular
                                         }
                                     }
                                 }
+                                if (buffComponent.type === 'poison') {
+                                    var healthComponent = entity.getComponent('health');
+
+                                    if (healthComponent) {
+                                        if (healthComponent.value > 0.5) {
+                                            healthComponent.value -= buffComponent.amountPerInterval;
+
+                                            // Don't die, that would suck
+                                            healthComponent.value = Math.max(healthComponent.value, 0.5);
+                                        }
+                                    }
+                                }
                             }
                         }
 
