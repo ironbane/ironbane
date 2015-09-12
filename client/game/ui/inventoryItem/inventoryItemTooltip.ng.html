@@ -1,14 +1,41 @@
 
-<p ng-class="item.rarity">{{ item.name }}</p>
+
 <p ng-switch="item.type">
+    <span ng-class="item.rarity">{{ item.name }}</span>
     <span ng-switch-when="cash">{{ item.qty }} Gold</span>
-    <span ng-switch-when="head" ng-if="item.armor > 0"><img ng-src="{{armorUrl}}"> &#10006; {{ item.armor }}</span>
-    <span ng-switch-when="body" ng-if="item.armor > 0"><img ng-src="{{armorUrl}}"> &#10006; {{ item.armor }}</span>
-    <span ng-switch-when="feet" ng-if="item.armor > 0"><img ng-src="{{armorUrl}}"> &#10006; {{ item.armor }}</span>
-    <span ng-switch-when="weapon" ng-if="item.damage > 0"><img ng-src="{{damageUrl}}"><img ng-src="{{healthUrl}}"> &#10006; {{ item.damage }}</span>
-    <span ng-switch-when="weapon" ng-if="item.handedness === '1h'">One-handed</span>
-    <span ng-switch-when="weapon" ng-if="item.handedness === '2h'">Two-handed</span>
-    <span ng-switch-when="weapon" ng-if="item.handedness === 'l'">Left Hand</span>
-    <span ng-switch-when="weapon" ng-if="item.handedness === 'r'">Right Hand</span>
-    <span ng-switch-when="food" ng-if="item.damage > 0"><img ng-src="{{healthUrl}}"> &#10006; {{ item.damage }}</span>
+
+    <div ng-if="item.type == 'weapon'">
+        <span ng-if="item.handedness === '1h'">One-handed</span>
+        <span ng-if="item.handedness === '2h'">Two-handed</span>
+        <span ng-if="item.handedness === 'l'">Left Hand</span>
+        <span ng-if="item.handedness === 'r'">Right Hand</span>
+
+        <span ng-if="item.damage > 0">
+            <spritesheet-image sheet="items" id="1416" scale="2"></spritesheet-image>
+            <span class="stat">{{ item.damage }}</span>
+        </span>
+        <span ng-if="item.range > 0">
+            <spritesheet-image sheet="items" id="1873" scale="2"></spritesheet-image>
+            <span class="stat">{{ item.range }}</span>
+        </span>
+        <span ng-if="item.attackCooldown > 0">
+            <spritesheet-image sheet="items" id="1413" scale="2"></spritesheet-image>
+            <span class="stat">{{ 1 / item.attackCooldown }}</span>
+        </span>
+    </div>
+
+    <span ng-if="item.armor > 0">
+        <spritesheet-image sheet="stats" id="5" scale="2"></spritesheet-image>
+        <span class="stat">{{ item.armor }}</span>
+    </span>
+
+    <span ng-if="item.type == 'food' || item.type == 'potion'">
+        <spritesheet-image sheet="stats" id="16" scale="2"></spritesheet-image>
+        <span class="stat">{{ item.damage }}</span>
+    </span>
+
+    <span ng-if="item.type == 'poison'">
+        <spritesheet-image sheet="stats" id="17" scale="2"></spritesheet-image>
+        <span class="stat">{{ item.damage }}</span>
+    </span>
 </p>

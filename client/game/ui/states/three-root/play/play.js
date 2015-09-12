@@ -12,6 +12,7 @@ angular
         'game.ui.statBar',
         'game.ui.inventoryBar',
         'game.ui.inventoryItem',
+        'game.ui.spritesheetImage',
         'game.ui.bigMessages.bigMessagesBox',
         'game.ui.dropZone',
         'game.clientSettings'
