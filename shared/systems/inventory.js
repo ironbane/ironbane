@@ -60,6 +60,12 @@ angular
                     world.subscribe('inventory:useItem', function(entity, item) {
                         me.useItem(entity, item);
                     });
+
+                    world.subscribe('inventory:dropItem', function(entity, item) {
+                        if (Meteor.isServer) {
+                            me.dropItem(entity, item);
+                        }
+                    });
                 },
                 findEmptySlot: function(entity) {
                     var inventory = entity.getComponent('inventory'),
@@ -190,7 +196,7 @@ angular
                     });
 
                 },
-                dropItem: function(entity, item, dropStyle) {
+                dropItem: function(entity, item) {
                     // $log.debug('inventory.dropItem', entity.uuid, item);
 
                     var world = this.world,
@@ -234,7 +240,13 @@ angular
                         dropped._droppedBy = entity.uuid;
                         dropped.position.copy(entity.position);
 
+                        dropped.level = world.name;
+
                         world.addEntity(dropped);
+
+                        setTimeout(function () {
+                            dropped.removeComponent('teleport');
+                        }, 1000);
 
                         // Remove the item after a while
                         setTimeout(function () {

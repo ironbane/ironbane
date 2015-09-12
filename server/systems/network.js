@@ -61,35 +61,7 @@ angular
                     // });
 
 
-                    // this._stream.on('inventory:dropItem', function(data) {
-                    //     var inv = world.getSystem('inventory'),
-                    //         netents = world.getEntities('netSend'),
-                    //         entity = _.findWhere(netents, {uuid: data.entityId})
 
-                    //     if (!entity) {
-                    //         $log.error('[inventory:dropItem] entity not found!');
-                    //         return;
-                    //     }
-
-                    //     if (entity.owner !== this.userId) {
-                    //         $log.error('[inventory:dropItem] entity has wrong owner!');
-                    //         return;
-                    //     }
-
-                    //     var inventoryComponent = entity.getComponent('inventory');
-                    //     if (!inventoryComponent) {
-                    //         $log.error('[inventory:dropItem] entity has no inventory!');
-                    //         return;
-                    //     }
-
-                    //     var item = inv.findItemByUuid(entity, data.itemUuid);
-                    //     if (!item) {
-                    //         $log.error('[inventory:dropItem] uuid not found!');
-                    //         return;
-                    //     }
-
-                    //     inv.dropItem(entity, item);
-                    // });
 
                     // this._stream.on('pickup:entity', function(data) {
                     //     var inv = world.getSystem('inventory'),
@@ -470,11 +442,41 @@ angular
 
                             var item = inventorySystem.findItemByUuid(netEntity, data.itemUuid);
                             if (!item) {
-                                $log.error('[inventory:useItem] uuid not found!');
+                                $log.error('[inventory:useItem] item not found!');
                                 return;
                             }
 
                             world.publish('inventory:useItem', netEntity, item);
+                        });
+
+                        entity.stream.on('inventory:dropItem', function(data) {
+                            var inventorySystem = world.getSystem('inventory');
+                            var netEntities = world.getEntities('netSend');
+                            var netEntity = _.findWhere(netEntities, {uuid: data.entityUuid});
+
+                            if (!netEntity) {
+                                $log.error('[inventory:dropItem] netEntity not found!');
+                                return;
+                            }
+
+                            if (netEntity.owner !== entity.owner) {
+                                $log.error('[inventory:dropItem] netEntity has wrong owner!');
+                                return;
+                            }
+
+                            var inventoryComponent = netEntity.getComponent('inventory');
+                            if (!inventoryComponent) {
+                                $log.error('[inventory:dropItem] netEntity has no inventory!');
+                                return;
+                            }
+
+                            var item = inventorySystem.findItemByUuid(netEntity, data.itemUuid);
+                            if (!item) {
+                                $log.error('[inventory:dropItem] item not found!');
+                                return;
+                            }
+
+                            world.publish('inventory:dropItem', netEntity, item);
                         });
 
                     });
@@ -485,16 +487,8 @@ angular
                             leave: true
                         });
 
-                        // setTimeout(function () {
                         entity.stream.emit('remove', entity.uuid);
-                        // }, 1000);
-
-                        // entity.stream.close();
-                        // delete entity.stream;
                     });
-
-
-
 
                     world.entityAdded('netSend').add(onNetSendEntityAdded.bind(this));
                     world.entityRemoved('netSend').add(onNetSendEntityRemoved.bind(this));
