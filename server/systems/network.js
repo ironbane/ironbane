@@ -50,57 +50,6 @@ angular
 
                     this._super(world);
 
-                    // world.subscribe('inventory:onItemAdded', function(entity, item, slot) {
-                    //     if (entity.hasComponent('netSend') && self._stream) {
-                    //         self._stream.emit('inventory:onItemAdded', {
-                    //             entityId: entity.uuid,
-                    //             item: item,
-                    //             slot: slot
-                    //         });
-                    //     }
-                    // });
-
-
-
-
-                    // this._stream.on('pickup:entity', function(data) {
-                    //     var inv = world.getSystem('inventory'),
-                    //         netents = world.getEntities('netSend'),
-                    //         pickupents = world.getEntities('pickup'),
-                    //         entity = _.findWhere(netents, {uuid: data.entityId}),
-                    //         pickup = _.findWhere(pickupents, {uuid: data.pickupId});
-
-                    //     if (!entity) {
-                    //         $log.error('[pickup:entity] entity not found!');
-                    //         return;
-                    //     }
-
-                    //     if (entity.owner !== this.userId) {
-                    //         $log.error('[pickup:entity] entity has wrong owner');
-                    //         return;
-                    //     }
-
-                    //     var freeSlot = inv.findEmptySlot(entity);
-                    //     if (!freeSlot) {
-                    //         return;
-                    //     }
-
-                    //     if (!pickup) {
-                    //         $log.error('[pickup:entity] pickup not found!');
-                    //         return;
-                    //     }
-
-                    //     var pickupComponent = pickup.getComponent('pickup');
-
-                    //     if (pickupComponent) {
-                    //         world.removeEntity(pickup);
-                    //         inv.addItem(entity, pickupComponent.item);
-
-                    //         // $log.log('picking up item ' + pickupComponent.item.name);
-                    //     }
-                    // });
-
-
                     world.subscribe('combat:damageEntity', function(victimEntity, sourceEntity, item) {
                         var totalList = [];
                         var sendComponentV = victimEntity.getComponent('netSend');
@@ -420,6 +369,10 @@ angular
                         });
 
                         entity.stream.on('inventory:useItem', function(data) {
+                            if (!_.isObject(data)) {
+                                return;
+                            }
+
                             var inventorySystem = world.getSystem('inventory');
                             var netEntities = world.getEntities('netSend');
                             var netEntity = _.findWhere(netEntities, {uuid: data.entityUuid});
@@ -450,6 +403,10 @@ angular
                         });
 
                         entity.stream.on('inventory:dropItem', function(data) {
+                            if (!_.isObject(data)) {
+                                return;
+                            }
+
                             var inventorySystem = world.getSystem('inventory');
                             var netEntities = world.getEntities('netSend');
                             var netEntity = _.findWhere(netEntities, {uuid: data.entityUuid});
@@ -478,6 +435,50 @@ angular
 
                             world.publish('inventory:dropItem', netEntity, item);
                         });
+
+
+                        entity.stream.on('pickup:entity', function(data) {
+                            if (!_.isObject(data)) {
+                                return;
+                            }
+
+                            var inventorySystem = world.getSystem('inventory');
+                            var netEntities = world.getEntities('netSend');
+                            var netEntity = _.findWhere(netEntities, {uuid: data.entityUuid});
+
+                            var pickupEntities = world.getEntities('pickup');
+                            var pickupEntity = _.findWhere(pickupEntities, {uuid: data.pickupUuid});
+
+                            if (!netEntity) {
+                                $log.error('[pickup:entity] netEntity not found!');
+                                return;
+                            }
+
+                            if (netEntity.owner !== this.userId) {
+                                $log.error('[pickup:entity] netEntity has wrong owner');
+                                return;
+                            }
+
+                            var freeSlot = inventorySystem.findEmptySlot(netEntity);
+                            if (!freeSlot) {
+                                return;
+                            }
+
+                            if (!pickupEntity) {
+                                $log.error('[pickup:entity] pickupEntity not found!');
+                                return;
+                            }
+
+                            var pickupComponent = pickupEntity.getComponent('pickup');
+
+                            if (pickupComponent) {
+                                world.removeEntity(pickupEntity);
+                                inventorySystem.addItem(netEntity, pickupComponent.item);
+
+                                // $log.log('picking up item ' + pickupComponent.item.name);
+                            }
+                        });
+
 
                     });
 

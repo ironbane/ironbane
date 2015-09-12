@@ -200,7 +200,7 @@ angular
                         if (entity.hasComponent('netSend')) {
                             me._stream.emit('pickup:entity', {
                                 entityUuid: entity.uuid,
-                                pickupId: pickup.uuid
+                                pickupUuid: pickup.uuid
                             });
                         }
                     });
