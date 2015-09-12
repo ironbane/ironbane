@@ -354,13 +354,13 @@ angular
 
                         if (inventory['lhand'] || inventory['rhand']) {
                             if (['rhand','lhand'].indexOf(targetSlot) !== -1) {
-                                if (sourceItem.handedness === '2h') {
+                                if (sourceItem && sourceItem.handedness === '2h') {
                                     return false;
                                 }
                             }
                             if ((inventory['lhand'] && inventory['lhand'].handedness === '2h') ||
                                 (inventory['rhand'] && inventory['rhand'].handedness === '2h')) {
-                                if (sourceItem.handedness === '1h') {
+                                if (sourceItem && sourceItem.handedness === '1h') {
                                     return false;
                                 }
                             }
