@@ -169,7 +169,7 @@ angular
                         if (entity.hasComponent('netSend')) {
                             // TODO: UUID for items
                             me._stream.emit('inventory:equipItem', {
-                                entityId: entity.uuid,
+                                entityUuid: entity.uuid,
                                 sourceSlot: sourceSlot,
                                 targetSlot: targetSlot
                             });
@@ -336,19 +336,6 @@ angular
                         });
 
 
-                        me._stream.on('inventory:equipItem', function(data) {
-                            var inv = world.getSystem('inventory'),
-                                netents = world.getEntities('netRecv'),
-                                entity = _.findWhere(netents, {
-                                    uuid: data.entityId
-                                });
-
-                            //$log.debug('inventory:onEquipItem', data, entity.uuid);
-
-                            if (entity) {
-                                inv.equipItem(entity, data.sourceSlot, data.targetSlot);
-                            }
-                        });
 
                         me._stream.on('inventory:snapshot', function(data) {
                             var inventorySystem = world.getSystem('inventory'),
@@ -437,6 +424,19 @@ angular
                                 }
                             }
 
+                        });
+
+
+                        me._stream.on('inventory:equipItem', function(data) {
+                            var inv = world.getSystem('inventory'),
+                                netents = world.getEntities('netRecv'),
+                                entity = _.findWhere(netents, {
+                                    uuid: data.entityUuid
+                                });
+
+                            if (entity) {
+                                me.world.publish('inventory:equipItem', entity, data.sourceSlot, data.targetSlot);
+                            }
                         });
 
 

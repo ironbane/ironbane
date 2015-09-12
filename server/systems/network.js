@@ -2,14 +2,16 @@ angular
     .module('server.systems.network', [
         'ces',
         'three',
-        'server.services.chat'
+        'server.services.chat',
+        'global.constants.inv'
     ])
     .factory('NetworkSystem', [
         'System',
         '$log',
         'ChatService',
         'THREE',
-        function(System, $log, ChatService, THREE) {
+        'INV_SLOTS',
+        function(System, $log, ChatService, THREE, INV_SLOTS) {
             'use strict';
 
             function arraysAreEqual(a1, a2) {
@@ -50,17 +52,6 @@ angular
 
 
 
-                    // this._stream.on('inventory:equipItem', function(data) {
-                    //     var inv = world.getSystem('inventory'),
-                    //         netents = world.getEntities('netRecv'),
-                    //         entity = _.findWhere(netents, {uuid: data.entityId});
-
-                    //     // $log.debug('inventory:equipItem', entity.name, data.sourceSlot, data.targetSlot);
-
-                    //     if (entity) {
-                    //         inv.equipItem(entity, data.sourceSlot, data.targetSlot);
-                    //     }
-                    // });
 
                     // this._stream.on('inventory:useItem', function(data) {
                     //     var inv = world.getSystem('inventory'),
@@ -244,6 +235,21 @@ angular
                         }
                     });
 
+                    world.subscribe('inventory:equipItem', function(entity, sourceSlot, targetSlot) {
+                        var sendComponent = entity.getComponent('netSend');
+                        if (sendComponent) {
+                            sendComponent.__knownEntities.forEach(function(knownEntity) {
+                                if (knownEntity.hasComponent('player') && knownEntity !== entity) {
+                                    knownEntity.stream.emit('inventory:equipItem', {
+                                        entityUuid: entity.uuid,
+                                        sourceSlot: sourceSlot,
+                                        targetSlot: targetSlot
+                                    });
+                                }
+                            });
+                        }
+                    });
+
                     // Because we're unable to delete streams on the server
                     // we need to cache and reuse them
                     // TODO test disconnect/reconnects
@@ -415,6 +421,41 @@ angular
 
                             world.publish('combat:damageEntity', victimEntity, sourceEntity, item);
 
+                        });
+
+                        entity.stream.on('inventory:equipItem', function(data) {
+                            if (!_.isObject(data)) {
+                                return;
+                            }
+
+                            var armorList = INV_SLOTS.armorList;
+                            var slotList = INV_SLOTS.slotList;
+                            var invSlotList = armorList.concat(slotList);
+
+                            if (!_.contains(invSlotList, data.sourceSlot)) {
+                                $log.error('[inventory:equipItem] bad sourceSlot!');
+                                return;
+                            }
+
+                            if (!_.contains(invSlotList, data.targetSlot)) {
+                                $log.error('[inventory:equipItem] bad targetSlot!');
+                                return;
+                            }
+
+                            var netEntities = world.getEntities('netRecv');
+                            var netEntity = _.findWhere(netEntities, {uuid: data.entityUuid});
+
+                            if (!netEntity) {
+                                $log.error('[inventory:equipItem] netEntity not found!');
+                                return;
+                            }
+
+                            if (netEntity.owner !== entity.owner) {
+                                $log.error('[inventory:equipItem] netEntity has wrong owner!');
+                                return;
+                            }
+
+                            world.publish('inventory:equipItem', netEntity, data.sourceSlot, data.targetSlot);
                         });
 
                     });

@@ -131,7 +131,7 @@ angular
                             if (obj.draggable) {
                                 var targetSlot = slot.name;
                                 var sourceSlot = obj.draggable.context.attributes['data-slot'].value;
-                                var result = inventorySystem.equipItem(ctrl.entity, sourceSlot, targetSlot);
+                                $rootWorld.publish('inventory:equipItem', ctrl.entity, sourceSlot, targetSlot);
                             }
 
                             deferred.reject();

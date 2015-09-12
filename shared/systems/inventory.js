@@ -45,13 +45,16 @@ angular
                 addedToWorld: function(world) {
                     this._super(world);
 
-                    var inventory = this;
+                    var me = this;
 
-                    // world.subscribe('inventory:drop', inventory.dropItem.bind(inventory));
 
                     world.entityAdded('inventory').add(function(entity) {
                         var inventoryComponent = entity.getComponent('inventory');
                         world.publish('inventory:load', entity);
+                    });
+
+                    world.subscribe('inventory:equipItem', function(entity, sourceSlot, targetSlot) {
+                        me.equipItem(entity, sourceSlot, targetSlot);
                     });
                 },
                 findEmptySlot: function(entity) {
@@ -299,7 +302,7 @@ angular
                         });
 
                         if (sourceSlot && equipSlot) {
-                            var result = this.equipItem(entity, sourceSlot, equipSlot);
+                            this.world.publish('inventory:equipItem', entity, sourceSlot, equipSlot);
                         }
 
                     }
@@ -433,7 +436,6 @@ angular
                             GlobalSound.play(_.sample(['bag1']), entity.position);
                         }
 
-                        this.world.publish('inventory:equipItem', entity, sourceSlot, targetSlot);
                         this.onEquipItem.emit(entity, sourceSlot, targetSlot);
 
                         return true;
