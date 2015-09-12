@@ -290,12 +290,12 @@ angular
                     for (var i = 0; i <= 7; i++) {
                         if (playMap.test('hotKeySecondRowToggle') && playMap.test('hotKey' + (i+1))) {
                             // if (inventoryComponent[INV_SLOTS.armorList[i]]) {
-                            //     inventorySystem.useItem(this.entity, inventoryComponent[INV_SLOTS.armorList[i]]);
+
                             // }
                         }
                         else if (playMap.test('hotKey' + (i+1))) {
                             if (inventoryComponent['slot' + i]) {
-                                inventorySystem.useItem(this.entity, inventoryComponent['slot' + i]);
+                                this.world.publish('inventory:useItem', this.entity, inventoryComponent['slot' + i]);
                             }
                         }
                     }
