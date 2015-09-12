@@ -37,6 +37,22 @@ angular
                 // this._stream.emit('remove', entity.uuid);
             }
 
+            // Because we're unable to delete streams on the server
+            // we need to cache and reuse them
+            var streams = {};
+
+            Meteor.users.find({
+                'status.online': true
+            }).observe({
+                added: function(user) {
+                    var streamName = [user._id, 'entities'].join('_');
+
+                    if (!streams[streamName]) {
+                        streams[streamName] = new Meteor.Stream(streamName);
+                    }
+                }
+            });
+
             var NetworkSystem = System.extend({
                 init: function() {
                     this._super();
@@ -161,23 +177,6 @@ angular
                                     });
                                 }
                             });
-                        }
-                    });
-
-                    // Because we're unable to delete streams on the server
-                    // we need to cache and reuse them
-                    // TODO test disconnect/reconnects
-                    var streams = {};
-
-                    Meteor.users.find({
-                        'status.online': true
-                    }).observe({
-                        added: function(user) {
-                            var streamName = [user._id, 'entities'].join('_');
-
-                            if (!streams[streamName]) {
-                                streams[streamName] = new Meteor.Stream(streamName);
-                            }
                         }
                     });
 
@@ -510,7 +509,7 @@ angular
                             }
 
                             if (entity.level === otherEntity.level &&
-                                entity.position.distanceToSquared(otherEntity.position) < 20 * 20) {
+                                entity.position.distanceToSquared(otherEntity.position) < 40 * 40) {
                                 knownEntities.push(otherEntity);
                             }
                         });
@@ -527,7 +526,7 @@ angular
                             _.each(sendComponent.__knownEntities, function (knownEntity) {
                                 if (!_.contains(knownEntities, knownEntity)) {
                                     entity.stream.emit('remove', knownEntity.uuid);
-                                    console.log('SEND remove to', entity.name, knownEntity.name);
+                                    // console.log('SEND remove to', entity.name, knownEntity.name);
                                 }
                             });
 
@@ -546,7 +545,7 @@ angular
                                     packet[knownEntity.uuid] = serialized;
 
                                     entity.stream.emit('add', packet);
-                                    console.log('SEND add to', entity.name, serialized.name);
+                                    // console.log('SEND add to', entity.name, serialized.name);
                                 }
                             });
                         }
@@ -585,25 +584,25 @@ angular
                     });
                 },
                 _entityCAH: function(entity, componentName) {
-                    console.log('cadd', entity.name, componentName);
+                    // console.log('cadd', entity.name, componentName);
                     var component = entity.getComponent(componentName);
 
                     var sendComponent = entity.getComponent('netSend');
                     sendComponent.__knownEntities.concat([entity]).forEach(function(knownEntity) {
                         if (knownEntity.hasComponent('player')) {
-                            console.log('SEND cadd to', knownEntity.name, component.serializeNet());
+                            // console.log('SEND cadd to', knownEntity.name, component.serializeNet());
                             knownEntity.stream.emit('cadd', entity.uuid, component.serializeNet());
                         }
                     });
                 },
                 _entityCRH: function(entity, componentName) {
-                    console.log('cremove', entity.name, componentName);
+                    // console.log('cremove', entity.name, componentName);
                     var component = entity.getComponent(componentName);
 
                     var sendComponent = entity.getComponent('netSend');
                     sendComponent.__knownEntities.concat([entity]).forEach(function(knownEntity) {
                         if (knownEntity.hasComponent('player')) {
-                            console.log('SEND cremove to', knownEntity.name, componentName);
+                            // console.log('SEND cremove to', knownEntity.name, componentName);
                             knownEntity.stream.emit('cremove', entity.uuid, componentName);
                         }
                     });
