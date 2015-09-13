@@ -4,8 +4,8 @@ angular
         serverAnnouncementsTimeout: 300,
         GAME_VERSION: '0.5 alpha',
         world: {
-            mainMenuLevel: 'ravenwood',
-            startLevel: 'ravenwood',
+            mainMenuLevel: 'dev-zone',
+            startLevel: 'dev-zone',
             startPosition: [-15, 2, 12],
             startRotation: [0, Math.PI - 0.3, 0]
         },
@@ -21,6 +21,7 @@ angular
                 eyes: [1010, 1011, 1012, 1013, 1014, 1015, 1016, 1017, 1018, 1019]
             }
         },
+        deathWords: 'slaughtered butchered crushed defeated destroyed exterminated finished massacred mutilated slayed vanquished killed'.split(' '),
         collisionMasks: {
             nothing: 0,
             level: 1,

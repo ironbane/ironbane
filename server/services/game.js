@@ -3,14 +3,16 @@ angular
         'models',
         'server.services.activeWorlds',
         'engine.entity-builder',
-        'global.constants'
+        'global.constants',
+        'server.services.chat'
     ])
     .service('GameService', [
         'EntitiesCollection',
         '$activeWorlds',
         'IB_CONSTANTS',
         'EntityBuilder',
-        function(EntitiesCollection, $activeWorlds, IB_CONSTANTS, EntityBuilder) {
+        'ChatService',
+        function(EntitiesCollection, $activeWorlds, IB_CONSTANTS, EntityBuilder, ChatService) {
             'use strict';
 
             this.enterGame = function(charId) {
@@ -60,39 +62,44 @@ angular
                         // TODO: decorate entity with other components, such as "player", etc. like the client does
                         $activeWorlds[doc.level]._ownerCache[doc.owner] = ent.uuid;
                         $activeWorlds[doc.level].addEntity(ent);
+
+                        ChatService.announce(ent.name + ' has entered the world.', {
+                            join: true
+                        });
                     } else {
                         $log.log('error building entity for: ', doc);
                     }
                     //$log.log('adding entity: ', doc.name, ' to ', doc.level, ' count: ', $activeWorlds[doc.level].getEntities().length);
                 }
+
+
+            };
+
+            var userExit = function (userId) {
+                _.each($activeWorlds, function (world) {
+                    var playerEntities = world.getEntities('player');
+                    playerEntities.forEach(function (player) {
+                        if (player.owner === userId) {
+                            world.removeEntity(player);
+
+                            ChatService.announce(player.name + ' has left the world.', {
+                                leave: true
+                            });
+                        }
+                    });
+                });
             };
 
             Meteor.users.find({
                 'status.online': true
             }).observe({
                 removed: function(user) {
-                    _.each($activeWorlds, function (world) {
-                        var playerEntities = world.getEntities('player');
-                        playerEntities.forEach(function (player) {
-                            if (player.owner === user._id) {
-                                world.removeEntity(player);
-                            }
-                        });
-                    });
+                    userExit(user._id);
                 }
             });
 
             this.leaveGame = function() {
-                var me = this;
-
-                _.each($activeWorlds, function (world) {
-                    var playerEntities = world.getEntities('player');
-                    playerEntities.forEach(function (player) {
-                        if (player.owner === me.userId) {
-                            world.removeEntity(player);
-                        }
-                    });
-                });
+                userExit(this.userId);
             };
 
             this.resetPlayer = function() {

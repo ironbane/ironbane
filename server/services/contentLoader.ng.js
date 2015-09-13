@@ -158,6 +158,8 @@ angular
                     components: {
                         quad: {
                             transparent: true,
+                            width: getValue(npc, npcHeaders, 'size'),
+                            height: getValue(npc, npcHeaders, 'size'),
                             charBuildData: charBuildData ? JSON.parse(charBuildData) : {}
                         },
                         rigidBody: {
@@ -191,6 +193,7 @@ angular
                             ]
                         },
                         fighter: {
+                            prefix: getValue(npc, npcHeaders, 'prefix'),
                             faction: getValue(npc, npcHeaders, 'faction')
                         },
                         shadow: {
@@ -206,7 +209,10 @@ angular
                         },
                         damageable: {},
                         globalState: {
-                            state: getValue(npc, npcHeaders, 'scriptType')
+                            state: getValue(npc, npcHeaders, 'scriptType'),
+                            config: {
+                                aggroRadius: getValue(npc, npcHeaders, 'aggroRadius')
+                            }
                         },
                         steeringBehaviour: {}
                     }

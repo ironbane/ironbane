@@ -3,7 +3,8 @@ angular
         'ces',
         'three',
         'server.services.chat',
-        'global.constants.inv'
+        'global.constants.inv',
+        'global.constants.game',
     ])
     .factory('NetworkSystem', [
         'System',
@@ -11,7 +12,8 @@ angular
         'ChatService',
         'THREE',
         'INV_SLOTS',
-        function(System, $log, ChatService, THREE, INV_SLOTS) {
+        'IB_CONSTANTS',
+        function(System, $log, ChatService, THREE, INV_SLOTS, IB_CONSTANTS) {
             'use strict';
 
             function arraysAreEqual(a1, a2) {
@@ -214,10 +216,6 @@ angular
                         packet[entity.uuid] = serialized;
 
                         entity.stream.emit('add', packet);
-
-                        ChatService.announce(entity.name + ' has entered the world.', {
-                            join: true
-                        });
 
                         entity.stream.on('transforms', function (packet) {
                             var netEntities = world.getEntities('netRecv');
@@ -482,13 +480,26 @@ angular
                     });
 
                     world.entityRemoved('netSend', 'player').add(function (entity) {
-
-                        ChatService.announce(entity.name + ' has left the world.', {
-                            leave: true
-                        });
-
                         entity.stream.emit('remove', entity.uuid);
                     });
+
+                    world.subscribe('fighter:die', Meteor.bindEnvironment(function (victim, killer) {
+                        var fighterComponent = killer.getComponent('fighter');
+
+                        if (!victim.hasComponent('player')) {
+                            return;
+                        }
+
+                        var name = killer.name;
+
+                        if (fighterComponent) {
+                            name = fighterComponent.prefix + ' ' + name;
+                        }
+
+                        ChatService.announce(victim.name + ' was ' + _.sample(IB_CONSTANTS.deathWords) + ' by ' + name + '.', {
+                            kill: true
+                        });
+                    }));
 
                     world.entityAdded('netSend').add(onNetSendEntityAdded.bind(this));
                     world.entityRemoved('netSend').add(onNetSendEntityRemoved.bind(this));

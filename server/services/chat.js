@@ -1,7 +1,8 @@
 /*global check: true*/
 angular
     .module('server.services.chat', [
-        'models'
+        'models',
+        'server.services.activeWorlds'
     ])
     .service('ChatService', [
         'ChatMessagesCollection',
@@ -20,12 +21,14 @@ angular
                     announcement: true
                 });
 
+
                 ChatMessagesCollection.insert({
                     room: 'global',
                     ts: new Date(),
                     msg: msg,
                     flags: flags
                 });
+
             };
         }
     ])
@@ -33,7 +36,8 @@ angular
         'ChatService',
         'ChatMessagesCollection',
         'ChatRoomsCollection',
-        function(ChatService, ChatMessagesCollection, ChatRoomsCollection) {
+        '$activeWorlds',
+        function(ChatService, ChatMessagesCollection, ChatRoomsCollection, $activeWorlds) {
             'use strict';
 
             Meteor.methods({
@@ -46,42 +50,40 @@ angular
                 roomname: 'global'
             });
 
-            // setup collection permissions for server
-            ChatRoomsCollection.deny({
-                insert: function(userId, doc) {
-                    return true;
-                },
-                update: function(userId, doc, fieldNames, modifier) {
-                    return true;
-                },
-                remove: function(userId, doc) {
-                    return true;
-                }
-            });
+            Meteor.methods({
+                chat: function(msg) {
 
-            ChatMessagesCollection.deny({
-                insert: function(userId, doc) {
-                    return (userId === null);
-                },
-                update: function(userId, doc, fieldNames, modifier) {
-                    return true;
-                },
-                remove: function(userId, doc) {
-                    return true;
-                }
-            });
+                    if (!_.isString(msg)) {
+                        return;
+                    }
 
-            ChatMessagesCollection.allow({
-                insert: function(userId, doc) {
-                    if (doc.msg.length <= 0) {
+                    if (msg.length <= 0) {
                         return false;
                     }
 
-                    doc.msg = doc.msg.substr(0, 255);
-                    doc.ts = new Date();
-                    // TODO do checks for character name, pos, level etc
+                    var me = this;
 
-                    return (userId !== null);
+                    msg = msg.substr(0, 255);
+
+                    _.each($activeWorlds, function (world) {
+                        var playerEntities = world.getEntities('player');
+                        playerEntities.forEach(function (player) {
+                            if (player.owner === me.userId) {
+                                ChatMessagesCollection.insert({
+                                    room: 'global',
+                                    // room: player.level
+                                    ts: new Date(),
+                                    msg: msg,
+                                    // flags: flags,
+                                    user: {
+                                        name: player.name
+                                    },
+                                    pos: player.position
+                                });
+                            }
+                        });
+                    });
+
                 }
             });
 

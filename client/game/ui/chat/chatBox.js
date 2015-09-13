@@ -29,9 +29,9 @@ angular.module('game.ui.chat.chatBoxDirective', [
                                 event.stopPropagation();
 
                                 if (event.keyCode === 13) {
-                                    $meteor.call('chat', {
-                                          msg: ctrl.newmsg
-                                    });
+                                    $meteor.call('chat', ctrl.newmsg);
+                                    ctrl.showInput = false;
+                                    ctrl.newmsg = '';
                                 }
                             };
 

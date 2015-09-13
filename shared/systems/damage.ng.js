@@ -3,11 +3,12 @@ angular
         'engine.entity-builder',
         'engine.util',
         'game.ui.bigMessages.bigMessagesService',
+        'engine.timing',
         'three',
         'ces',
         'game.services.globalsound'
     ])
-    .factory('DamageSystem', function($log, System, EntityBuilder, IbUtils, THREE, BigMessagesService, GlobalSound) {
+    .factory('DamageSystem', function($log, System, EntityBuilder, IbUtils, THREE, BigMessagesService, GlobalSound, Timer) {
         'use strict';
 
         var DASH_TIME = 0.2;
@@ -23,6 +24,7 @@ angular
                     damageableComponent.dashType = 'receiveDamage';
                     damageableComponent.dashTimer = 0.0;
                     damageableComponent.dashDirection = new THREE.Vector3();
+                    damageableComponent.spawnGuardTimer = new Timer(5);
                 });
 
                 world.subscribe('combat:damageEntity', function(victimEntity, sourceEntity, item) {
@@ -50,7 +52,7 @@ angular
                                         h: indexH,
                                         v: indexV,
                                         nH: 4,
-                                        nV: 3
+                                        nV: 5
                                     }
                                 }
                             },
@@ -295,6 +297,8 @@ angular
                                                     BigMessagesService.add('You died!');
                                                 }
                                             }
+
+                                            me.world.publish('fighter:die', entity, source.sourceEntity);
                                         }
                                     }
                                     break;
