@@ -118,6 +118,7 @@ angular
                                 var handMesh = attackType === 'lhand' ? '_lItem' : '_rItem';
 
                                 if (wieldItemComponent[handMesh] &&
+                                    wieldItemComponent[attackType] &&
                                     fighterComponent.attackCooldownTimer[attackType] <= 0) {
                                     fighterComponent.attackCooldownTimer[attackType] = wieldItemComponent[attackType].attackCooldown || 3;
 
