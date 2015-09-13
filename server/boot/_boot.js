@@ -3,5 +3,6 @@ angular
         'server.boot.checkUserProfile',
         'server.boot.createAdmins',
         'server.boot.removeOldGuests',
-        'server.boot.onCreateUser'
+        'server.boot.onCreateUser',
+        'server.boot.periodicStats'
     ]);
