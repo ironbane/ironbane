@@ -47,6 +47,9 @@ angular
                             var otherHealthComponent = entity.getComponent('health');
                             if (otherHealthComponent.value <= 0) return false;
 
+                            // For now only attack players
+                            if (!entity.getComponent('player')) return false;
+
                             var otherDamagableComponent = entity.getComponent('damageable');
 
                             if (otherDamagableComponent) {

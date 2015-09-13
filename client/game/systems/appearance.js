@@ -33,6 +33,10 @@ angular
                 options.skin = quad.charBuildData.skin;
                 options.hair = quad.charBuildData.hair;
                 options.eyes = quad.charBuildData.eyes;
+                options.body = quad.charBuildData.body;
+                options.feet = quad.charBuildData.feet;
+                options.head = quad.charBuildData.head;
+
                 if (inventory.head) {
                     options.head = inventory.head.image;
                 }

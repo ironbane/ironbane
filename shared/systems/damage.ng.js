@@ -233,6 +233,13 @@ angular
                                 }
                             }
 
+                            var fighterComponent = entity.getComponent('fighter');
+
+                            // Don't hurt human faction NPC
+                            if (fighterComponent && fighterComponent.faction === 'human') {
+                                return;
+                            }
+
                             if (!source.sourceEntity) {
                                 // Possible that a request was sent when the entity was already removed from the world
                                 return;

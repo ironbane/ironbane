@@ -135,12 +135,20 @@ angular
                             var damageableEntities = me.world.getEntities('damageable');
 
                             damageableEntities.forEach(function(damageableEntity) {
+
+                                var fighterComponent = damageableEntity.getComponent('fighter');
+
                                 if (damageableEntity !== projectileComponent._owner &&
                                     damageableEntity.position.inRangeOf(entity.position, 1.0)) {
 
                                     // Only allow hits if an NPC + player is involved
                                     if ((projectileComponent._owner.hasComponent('player') && !damageableEntity.hasComponent('player')) ||
                                         (!projectileComponent._owner.hasComponent('player') && damageableEntity.hasComponent('player'))) {
+
+                                        // Don't attack human faction NPC
+                                        if (fighterComponent && fighterComponent.faction === 'human') {
+                                            return;
+                                        }
 
                                         // Only publish if the projectile has something to do with the local client's entities (netSend)
                                         // Other projectile hit events will be sent over the network

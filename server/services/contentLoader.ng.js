@@ -252,9 +252,49 @@ angular
         };
 
         this.getNPCPrefab = function (prefabName) {
-            var prefab = _.clone(npcPrefabs[prefabName]);
+            var prefab = JSON.parse(JSON.stringify(npcPrefabs[prefabName]));
+
+            if (prefab.components.quad.charBuildData.special === 'villager') {
+
+
+                var hairList = _.filter(IB_CONSTANTS.charImages.hair, function (img) {
+                    return img >= 1000 && img <= 1015;
+                });
+                var eyesList = _.filter(IB_CONSTANTS.charImages.eyes, function (img) {
+                    return img >= 1000 && img <= 1015;
+                });
+                var skinList = _.filter(IB_CONSTANTS.charImages.skin, function (img) {
+                    return img >= 1000 && img <= 1015;
+                });
+
+                prefab.components.quad.charBuildData = {
+                    body: _.sample([1,10,102,12,16,19,2,23,3,4,81,82,83,95,97,99]),
+                    feet: _.sample(IB_CONSTANTS.charImages.feet),
+                    head: _.sample([0,0,0,0,0,0,0,1,2,4,5,6,7,8]),
+                    hair: _.sample(hairList),
+                    eyes: _.sample(eyesList),
+                    skin: _.sample(skinList)
+                }
+
+                // console.log(prefab.components.quad.charBuildData);
+
+                delete prefab.components.inventory;
+
+                prefab.components.steeringBehaviour.speed = IbUtils.getRandomInt(1,2);
+
+                // prefab.itemNames = [];
+
+                // for (var i = 0; i < IbUtils.getRandomInt(0, 7); i++) {
+                //     var rawItem = _.sample(rawItems);
+                //     var name = getValue(rawItem, itemHeaders, 'Name');
+
+                //     prefab.itemNames.push(name);
+                // }
+            }
+
             prefab.components.inventory = this.buildInventory(prefab.itemNames);
             delete prefab.itemNames;
+
             return prefab;
         };
 
