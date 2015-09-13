@@ -70,6 +70,13 @@ angular
 
                     // test if this is the "main" player so we can enhance
                     if ($rootScope.currentUser._id === entity.owner) {
+
+                        // Remove all existing entities that were sent using streams
+                        var entities = world.getEntities('netRecv').concat(world.getEntities('netSend'));
+                        entities.forEach(function(entity) {
+                            world.removeEntity(entity);
+                        });
+
                         var scriptComponent = builtEntity.getComponent('script');
                         builtEntity.addComponent('mouseHelper');
                         builtEntity.addComponent('collisionReporter');
