@@ -18,7 +18,7 @@
             <button class="ibutton attention" click-sound ng-click="play()">Enter Ironbane</button>
         </div>
         <div ng-if="currentCharIndex === characters.length">
-            <button class="ibutton" click-sound ng-click="buyCharSlot()" ng-disabled="freeSlots <= 0" style="margin-top: 10px">Buy Character Slot</button>
+            <button class="ibutton" click-sound ng-click="buyCharSlot()" ng-show="freeSlots <= 0" style="margin-top: 10px">Buy Character Slot</button>
             <button class="ibutton attention" click-sound ng-click="createChar()" ng-disabled="freeSlots <= 0" style="margin-top: 10px">Create Character</button>
         </div>
     </div>
