@@ -57,7 +57,7 @@ angular
 
                 angular.forEach(packet, function(entity, uuid) {
 
-                    $log.debug('[NetworkSystem : add]', uuid);
+                    // $log.debug('[NetworkSystem : add]', uuid);
 
                     // var exists = world.scene.getObjectByProperty('uuid', uuid);
                     // if (exists) {
@@ -310,7 +310,7 @@ angular
                         me._stream.on('add', onStreamAdd.bind(me));
 
                         me._stream.on('remove', function(entityUuid) {
-                            $log.debug('[NetworkSystem : remove]', entityUuid);
+                            // $log.debug('[NetworkSystem : remove]', entityUuid);
                             var obj = world.scene.getObjectByProperty('uuid', entityUuid);
                             // test if instanceof Entity?
                             if (obj) {
