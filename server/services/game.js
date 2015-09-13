@@ -46,7 +46,7 @@ angular
                         // it's unlikely that the server will not want to send an entity
                         ent.addComponent('persisted', {_id: doc._id});
                         ent.addComponent('steeringBehaviour', {
-                            speed: 10,
+                            speed: 2.5,
                             maxSpeed: 10
                         });
                         ent.addComponent('fighter', {

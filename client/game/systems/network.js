@@ -19,10 +19,10 @@ angular
         '$entityCache',
         'THREE',
         'Ammo',
-        '$timing',
+        'Timer',
         '$timeout',
         'IbUtils',
-        function(System, EntityBuilder, $log, $rootScope, $components, $rootWorld, $entityCache, THREE, Ammo, $timing, $timeout, IbUtils) {
+        function(System, EntityBuilder, $log, $rootScope, $components, $rootWorld, $entityCache, THREE, Ammo, Timer, $timeout, IbUtils) {
             'use strict';
 
             function arraysAreEqual(a1, a2) {
@@ -159,13 +159,10 @@ angular
             }
 
             var NetworkSystem = System.extend({
-                init: function(updateFrequency) {
+                init: function() {
                     this._super();
 
-                    this.updateFrequency = updateFrequency || 0.2;
-
-                    // instead of reacting on every event, queue up the updates for the update loop
-                    this._updates = [];
+                    this.updateFrequencyTimer = new Timer(0.5);
                 },
                 addedToWorld: function(world) {
                     this._super(world);
@@ -449,14 +446,18 @@ angular
                     });
                 },
                 update: function() {
+
+                    if (!this.updateFrequencyTimer.isExpired) {
+                        return;
+                    }
+
+                    this.updateFrequencyTimer.reset();
+
                     // for now just send transform
                     var entities = this.world.getEntities('netSend'),
                         packet = {};
 
-                    while (this._updates.length) {
-                        var apply = this._updates.pop();
-                        apply();
-                    }
+
 
                     // on the client, this will be low, like the main player mostly?
                     entities.forEach(function(entity) {

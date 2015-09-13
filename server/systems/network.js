@@ -5,6 +5,7 @@ angular
         'server.services.chat',
         'global.constants.inv',
         'global.constants.game',
+        'engine.timing'
     ])
     .factory('NetworkSystem', [
         'System',
@@ -13,7 +14,8 @@ angular
         'THREE',
         'INV_SLOTS',
         'IB_CONSTANTS',
-        function(System, $log, ChatService, THREE, INV_SLOTS, IB_CONSTANTS) {
+        'Timer',
+        function(System, $log, ChatService, THREE, INV_SLOTS, IB_CONSTANTS, Timer) {
             'use strict';
 
             function arraysAreEqual(a1, a2) {
@@ -62,6 +64,8 @@ angular
                     // we want to get a bound ref so that it can be removed
                     this.entityComponentAddedHandler = this._entityCAH.bind(this);
                     this.entityComponentRemovedHandler = this._entityCRH.bind(this);
+
+                    this.updateFrequencyTimer = new Timer(0.5);
                 },
                 addedToWorld: function(world) {
                     var self = this;
@@ -237,7 +241,7 @@ angular
                                     var newPos = new THREE.Vector3().fromArray(data.pos);
 
                                     // Some anti-cheat
-                                    if (newPos.distanceToSquared(netEntity.position) < 5*5) {
+                                    if (newPos.distanceToSquared(netEntity.position) < 10*10) {
                                         netEntity.position.copy(newPos);
                                         netEntity.rotation.y = data.rot;
                                     }
@@ -506,6 +510,12 @@ angular
 
                 },
                 update: function() {
+
+                    if (!this.updateFrequencyTimer.isExpired) {
+                        return;
+                    }
+
+                    this.updateFrequencyTimer.reset();
 
                     // for now just send transform
                     var entities = this.world.getEntities('netSend');
