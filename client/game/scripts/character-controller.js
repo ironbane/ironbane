@@ -341,7 +341,9 @@ angular
 
 
 
-                    if (inputVector.lengthSq() > 0.01 && !playMap.test('attack')) {
+                    if (inputVector.lengthSq() > 0.01 &&
+                        currentVel.lengthSq() > 0.1 &&
+                        !playMap.test('attack')) {
                         this.entity.rotation.y = IbUtils.vecToEuler(currentVel) - Math.PI / 2;
                     }
 
