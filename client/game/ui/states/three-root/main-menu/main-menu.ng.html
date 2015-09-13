@@ -6,17 +6,17 @@
 </div>
 <div class="ib-ui-window ib-ui-login-box login-info" ng-if="!$root.currentUser.profile.guest">
 
-	<div style="width:145px;float:left">
-		<div style="float:left;padding-right:10px;text-overflow: ellipsis;max-width: 90px;overflow: hidden;" class="label">{{ $root.currentUser.username }}</div>
-		<button class="ibutton" click-sound ng-click="logout()" style="width:40px;float:left">⇤</button>
+	<div style="width:300px">
+		<div style="float:left;padding-right:10px;text-overflow: ellipsis;max-width: 250px;overflow: hidden;" class="label">{{ $root.currentUser.username }}</div>
+		<button class="ibutton" click-sound ng-click="logout()" style="width:40px;display:inline-block">⇤</button>
 	</div>
 
-	<div class="ironblood-label" style="width:65px;float:left">
+<!-- 	<div class="ironblood-label" style="width:65px;float:left">
 		<div class="label">{{ $root.currentUser.profile.ironblood }} &#10006;</div>
 		<inventory-item item="{image: 1836, name: 'Ironblood'}"></inventory-item>
 	</div>
 
-	<button class="ibutton" click-sound ng-click="buy()" style="width:60px">Buy</button>
+	<button class="ibutton" click-sound ng-click="buy()" style="width:60px">Buy</button> -->
 </div>
 <div ui-view class="sub-menu"></div>
 <button class="ibutton sound-toggle" ng-class="{disabled: !currentUser.profile.enableSound}" click-sound ng-click="toggleSound()">♫</button>
