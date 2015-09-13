@@ -45,7 +45,7 @@ angular
                     var currentVel = this.rigidBody.getLinearVelocity().toTHREEVector3();
                     currentVel.multiplyScalar(-amount);
 
-                    btVec3.setValue(currentVel.x, currentVel.y, currentVel.z);
+                    btVec3.setValue(currentVel.x, 0, currentVel.z);
                     this.rigidBody.applyCentralImpulse(btVec3);
                 },
                 seek: function(targetPos) {
