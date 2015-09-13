@@ -111,8 +111,10 @@ angular
                         t.anisotropy = 1;
 
                         // Pixelated when nearby, mipmap linear when far (easier on the eyes, especially for pixelated textures)
-                        t.minFilter = THREE.NearestMipMapLinearFilter;
-                        t.magFilter = THREE.NearestFilter;
+                        if (t.name.indexOf('Lightmap') === -1) {
+                            t.minFilter = THREE.NearestMipMapLinearFilter;
+                            t.magFilter = THREE.NearestFilter;
+                        }
                     });
 
                     materials = objectLoader.parseMaterials(json.materials, textures);
