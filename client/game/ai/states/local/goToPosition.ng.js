@@ -10,14 +10,14 @@ angular
                 update: function(dTime) {
                     this._super.apply(this, arguments);
 
-                    // if (this.entity.position.distanceToSquared(this.targetPosition) > 0.2 * 0.2) {
-                    //     this.steeringBehaviour.arrive(this.targetPosition);
-                    // }
-                    // else {
-                    //     this.steeringBehaviour.brake(1.0);
-                    // }
+                    if (this.entity.position.distanceToSquared(this.targetPosition) > 0.2 * 0.2) {
+                        this.steeringBehaviour.seek(this.targetPosition);
+                    }
+                    else {
+                        this.steeringBehaviour.brake(1.0);
+                    }
 
-                    this.steeringBehaviour.arrive(this.targetPosition);
+                    // this.steeringBehaviour.arrive(this.targetPosition);
                 },
                 destroy: function() {
 
