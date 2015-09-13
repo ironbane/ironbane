@@ -272,7 +272,7 @@ angular
 
                                         // $log.debug('health', healthDamageDone, entity.position);
 
-                                        if (healthComponent.value <= 0) {
+                                        if (healthComponent.value <= 0 && !healthComponent.__hasDied) {
                                             // We died, so add proper particles
                                             // and remove ourselves from the world
                                             if (Meteor.isClient) {
