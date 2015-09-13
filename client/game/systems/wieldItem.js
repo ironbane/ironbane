@@ -392,15 +392,17 @@ angular
 
                         var component = entity.getComponent('wieldItem');
 
-                        if (sourceSlot === 'rhand') {
-                            world.scene.remove(component._rItem);
-                            component.rhand = null;
-                            component._rItem = null;
-                        }
-                        if (sourceSlot === 'lhand') {
-                            world.scene.remove(component._lItem);
-                            component.lhand = null;
-                            component._lItem = null;
+                        if (component) {
+                            if (sourceSlot === 'rhand') {
+                                world.scene.remove(component._rItem);
+                                component.rhand = null;
+                                component._rItem = null;
+                            }
+                            if (sourceSlot === 'lhand') {
+                                world.scene.remove(component._lItem);
+                                component.lhand = null;
+                                component._lItem = null;
+                            }
                         }
 
                         // we could keep the component around, but removing it lowers loop checks
