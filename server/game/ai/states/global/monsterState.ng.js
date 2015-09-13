@@ -9,9 +9,9 @@ angular
             // We just tell the client the state of the monster and trust the client to take care of the rest.
             // Prone to cheating but in a co-op environment this should be managable. The big advantage is speed.
 
-            var DEFAULT_SPAWN_RADIUS = 30;
+            var DEFAULT_AGGRO_RADIUS = 10;
             var DEFAULT_WANDER_WAYPOINT_CHANGE_TIMEOUT = 7.5;
-            var DEFAULT_WANDER_RANGE = 30.0;
+            var DEFAULT_WANDER_RANGE = 10.0;
 
             return Class.extend({
                 init: function(entity, config, world) {
@@ -47,7 +47,15 @@ angular
                             var otherHealthComponent = entity.getComponent('health');
                             if (otherHealthComponent.value <= 0) return false;
 
-                            return entity.position.distanceToSquared(me.entity.position) < Math.pow(10 || DEFAULT_SPAWN_RADIUS, 2)
+                            var otherDamagableComponent = entity.getComponent('damageable');
+
+                            if (otherDamagableComponent) {
+                                if (!otherDamagableComponent.spawnGuardTimer.isExpired) {
+                                    return false;
+                                }
+                            }
+
+                            return entity.position.distanceToSquared(me.entity.position) < Math.pow((me.aggroRadius || DEFAULT_AGGRO_RADIUS) + (me.wanderRange || DEFAULT_WANDER_RANGE), 2)
                         });
 
                     // Find nearest hostile target
