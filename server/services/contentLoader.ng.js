@@ -281,6 +281,7 @@ angular
                 delete prefab.components.inventory;
 
                 prefab.components.steeringBehaviour.speed = IbUtils.getRandomInt(1,2);
+                prefab.components.steeringBehaviour.maxSpeed = IbUtils.getRandomInt(1,2);
 
                 // prefab.itemNames = [];
 
