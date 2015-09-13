@@ -10,8 +10,8 @@ angular
                         components: {
                             speed: {},
                             health: {
-                                max: customs.health || 3,
-                                value: customs.health || 3
+                                max: customs.health || 5,
+                                value: customs.health || 5
                             },
                             damageable: {},
                             armorRegen: {}, // we don't start with armor, but when we do it self repairs
