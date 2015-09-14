@@ -94,7 +94,7 @@ angular
                     $rootWorld.addEntity(MainMenuPanningCamera);
 
                     $timeout(function () {
-                        GlobalSound.play('theme', 5);
+                        GlobalSound.play('theme', null, 5);
                     }, 1000);
                 }
             ],

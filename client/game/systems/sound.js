@@ -1,7 +1,8 @@
 angular
     .module('game.systems.sound', [
         'howler',
-        'ces'
+        'ces',
+        'engine.entity-cache'
     ])
     .provider('SoundSystem', function() {
         'use strict';
@@ -16,7 +17,7 @@ angular
             audioLibraryData[name] = data;
         };
 
-        this.$get = ['Howler', 'Howl', '$cacheFactory', '$log', 'System', function(Howler, Howl, $cacheFactory, $log, System) {
+        this.$get = ['Howler', 'Howl', '$cacheFactory', '$log', 'System', '$entityCache', function(Howler, Howl, $cacheFactory, $log, System, $entityCache) {
             var cache = $cacheFactory('soundCache'),
                 cacheKeys = [],
                 soundVolume = 1,
@@ -165,7 +166,7 @@ angular
                 load: function(name) {
                     return _load(name);
                 },
-                play: function(name, time) {
+                play: function (name, vector3d, time) {
                     var sound = _getSound(name, true);
 
                     if (!sound) {
@@ -182,11 +183,25 @@ angular
 
                     playTimes[name] = now;
 
-                    if (time !== undefined) {
+                    if (time) {
                         sound.pos(time);
                     }
+
+                    var vol = _getVolume(name);
+
+                    if (vector3d) {
+                        var mainPlayer = $entityCache.get('mainPlayer');
+                        if (mainPlayer) {
+                            var distance = mainPlayer.position.distanceToSquared(vector3d);
+                            // sound.pos3d(0, distance, 0);
+
+                            vol *= (1.0 - Math.min(distance / (40*40), 1));
+                        }
+
+                    }
+
                     sound.play();
-                    sound.volume(_getVolume(name));
+                    sound.volume(vol);
                 },
                 pause: function(name) {
                     var sound = _getSound(name);
