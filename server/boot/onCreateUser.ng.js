@@ -15,7 +15,7 @@ angular
 
                 _.extend(user.profile, REQUIRED_PROFILE_FIELDS);
 
-                console.log('New user ', user);
+                // console.log('New user ', user);
 
                 user.emails.forEach(function (email) {
                     if (_.contains(ADMIN_EMAIL_LIST, email.address)) {
