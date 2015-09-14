@@ -110,14 +110,14 @@ angular
                     if (builtEntity.hasComponent('player')) {
                         builtEntity.addComponent('rigidBody', {
                             shape: {
-                                type: 'capsule',
-                                width: 0.5,
-                                height: 1.0,
-                                depth: 0.5,
-                                radius: 0.5
-
-                                // type: 'sphere',
+                                // type: 'capsule',
+                                // width: 0.5,
+                                // height: 1.0,
+                                // depth: 0.5,
                                 // radius: 0.5
+
+                                type: 'sphere',
+                                radius: 0.5
                             },
                             mass: 1,
                             friction: 0.0,
