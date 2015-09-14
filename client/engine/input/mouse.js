@@ -30,7 +30,7 @@ angular
         Mouse.prototype._onMouseDown = function(event) {
             // Only allow the mouse to be triggered on the canvas
             // Maybe this could be moved somewhere else
-            if (event.target.nodeName.toLowerCase() !== 'canvas') {
+            if (['canvas','input','a','button'].indexOf(event.target.nodeName.toLowerCase()) === -1) {
                 event.preventDefault();
                 return;
             }
