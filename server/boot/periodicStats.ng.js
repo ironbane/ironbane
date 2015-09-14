@@ -7,6 +7,12 @@ angular
     .run(function(IB_CONSTANTS, StatsCollection, HipChat) {
             'use strict';
 
+            Meteor.setTimeout(function () {
+                if (!IB_CONSTANTS.isDev) {
+                    HipChat.postMessage('Ironbane Chillout', 'Production server started!');
+                }
+            }, 30 * 1000);
+
             Meteor.setInterval(function () {
                 if (!IB_CONSTANTS.isDev) {
                     var messages = [];
