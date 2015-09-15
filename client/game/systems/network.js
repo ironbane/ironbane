@@ -242,13 +242,7 @@ angular
                     // $meteor.autorun is linked to $scope which we don't have here,
                     // so Meteor.autorun is the only way AFAIK
 
-                    var streams = {};
-
                     Meteor.autorun(function() {
-
-                        if (me._stream) {
-                            me._stream.close();
-                        }
 
                         if (!Meteor.user()) {
                             return;
@@ -256,13 +250,8 @@ angular
 
                         var streamName = [Meteor.userId(), 'entities'].join('_');
 
-                        if (streams[streamName]) {
-                            me._stream = streams[streamName]
-                        }
-                        else {
-                            me._stream = new Meteor.Stream(streamName);
-                            streams[streamName] = me._stream;
-                        }
+                        me._stream = new Meteor.Stream(streamName);
+                        me._stream.resetListeners();
 
                         me._stream.on('transforms', function (packet) {
                             var netEntities = world.getEntities('netRecv');

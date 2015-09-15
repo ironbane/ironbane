@@ -67,6 +67,10 @@ angular
                     };
 
                     var charRefresh = function () {
+                        if (!$scope.currentUser || !$scope.currentUser.profile) {
+                            return;
+                        }
+
                         updateCharacterPreview();
 
                         $scope.freeSlots = $scope.currentUser.profile.maxCharactersAllowed - $scope.characters.length;
