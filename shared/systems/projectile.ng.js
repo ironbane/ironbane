@@ -138,8 +138,16 @@ angular
 
                                 var fighterComponent = damageableEntity.getComponent('fighter');
 
+                                var hitSize = 1.0;
+
+                                var quadComponent = entity.getComponent('quad');
+
+                                if (quadComponent) {
+                                    hitSize = (quadComponent.width + quadComponent.height) / 2;
+                                }
+
                                 if (damageableEntity !== projectileComponent._owner &&
-                                    damageableEntity.position.inRangeOf(entity.position, 1.0)) {
+                                    damageableEntity.position.inRangeOf(entity.position, hitSize)) {
 
                                     // Only allow hits if an NPC + player is involved
                                     if ((projectileComponent._owner.hasComponent('player') && !damageableEntity.hasComponent('player')) ||
