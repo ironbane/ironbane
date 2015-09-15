@@ -86,8 +86,17 @@ angular
                                         }
                                     });
                             });
-
                         };
+
+                        Meteor.autorun(function () {
+                            var status = Meteor.status();
+
+                            if (!status.connected) {
+                                $state.go('^.main-menu.enter-world');
+                                dialogService.alert('Connection lost.');
+                            }
+                        });
+
                     }
                 ]
             });

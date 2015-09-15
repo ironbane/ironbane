@@ -241,6 +241,17 @@ angular
                     // Set up streams and make sure it reruns everytime we change levels or change user
                     // $meteor.autorun is linked to $scope which we don't have here,
                     // so Meteor.autorun is the only way AFAIK
+                    Meteor.autorun(function () {
+                        var status = Meteor.status();
+
+                        if (!status.connected) {
+                            // Remove all existing entities that were sent using streams
+                            var entities = world.getEntities('netRecv').concat(world.getEntities('netSend'));
+                            entities.forEach(function(entity) {
+                                world.removeEntity(entity);
+                            });
+                        }
+                    })
 
                     Meteor.autorun(function() {
 
