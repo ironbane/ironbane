@@ -60,83 +60,109 @@ angular
             return deferred.promise;
         };
 
-        this.buildInventory = function (carriedItemNames) {
+        this.buildInventory = function (inventoryItemNames, equipmentItemNames) {
+
+            inventoryItemNames = inventoryItemNames || [];
+            equipmentItemNames = equipmentItemNames || [];
 
             var inventory = {};
             var slotCount = 0;
             var handSlotCount = 0;
             var relicCount = 1; // Relics apparently start count from 1 while slots start from 0 :P
-            carriedItemNames.forEach(function (itemName) {
-                itemName = itemName.trim();
-                rawItems.forEach(function (item) {
-                    var name = getValue(item, itemHeaders, 'Name');
-                    if (name === itemName) {
-                        var type = getValue(item, itemHeaders, 'Type');
 
-                        var slot = null;
+            var addItemToInventory = function (addToEquipment) {
+                return function (itemName) {
+                    itemName = itemName.trim();
 
-                        // TODO what about monsters that have a dashing attack but still want to have
-                        // melee weapons in their inventory? Perhaps bosses?
+                    var regex = /%[0-9]+/;
+                    var regexResult = itemName.match(regex);
 
-                        if ((type === 'weapon' || type === 'shield') && handSlotCount <= 1) {
-                            if (handSlotCount === 0) {
-                                slot = 'rhand';
-                            }
-                            else if (handSlotCount === 1) {
-                                slot = 'lhand';
-                            }
-                            handSlotCount++;
-                        }
-                        else if (type === 'relic' && relicCount <= 4) {
-                            slot = 'relic' + relicCount;
-                            relicCount++;
-                        }
-                        else if (type === 'body' && !inventory['body']) {
-                            slot = 'body';
-                        }
-                        else if (type === 'feet' && !inventory['feet']) {
-                            slot = 'feet';
-                        }
-                        else if (type === 'head' && !inventory['head']) {
-                            slot = 'head';
-                        }
-                        else if (slotCount <= 7) {
-                            slot = 'slot' + slotCount;
-                            slotCount++;
-                        }
-
-                        if (slot) {
-                            inventory[slot] = {
-                                name: name,
-                                type: type,
-                                uuid: IbUtils.generateUuid()
-                            };
-
-                            var mapping = {
-                                image: 'Image',
-                                invImage: 'Inventory Image',
-                                damage: 'Damage',
-                                armor: 'Armor',
-                                rarity: 'Rarity',
-                                range: 'Range',
-                                projectileSpeed: 'Projectile Speed',
-                                attackCooldown: 'Attack Cooldown',
-                                handedness: 'Handedness',
-                                price: 'Buy Price',
-                                dropChance: 'Drop Chance %'
-                            };
-
-                            _.each(mapping, function (val, key) {
-                                var mappedValue = getValue(item, itemHeaders, val);
-                                if (mappedValue || mappedValue === 0) {
-                                    inventory[slot][key] = mappedValue;
-                                }
-                            });
-                        }
-
+                    if (regexResult) {
+                        itemName = itemName.replace(regexResult, '').trim();
                     }
-                });
-            });
+
+                    rawItems.forEach(function (item) {
+                        var name = getValue(item, itemHeaders, 'Name');
+
+                        if (name === itemName) {
+                            var type = getValue(item, itemHeaders, 'Type');
+
+                            var slot = null;
+
+                            if (addToEquipment) {
+                                if ((type === 'weapon' || type === 'shield') && handSlotCount <= 1) {
+                                    if (handSlotCount === 0) {
+                                        slot = 'rhand';
+                                    }
+                                    else if (handSlotCount === 1) {
+                                        slot = 'lhand';
+                                    }
+                                    handSlotCount++;
+                                }
+                                else if (type === 'relic' && relicCount <= 4) {
+                                    slot = 'relic' + relicCount;
+                                    relicCount++;
+                                }
+                                else if (type === 'body' && !inventory['body']) {
+                                    slot = 'body';
+                                }
+                                else if (type === 'feet' && !inventory['feet']) {
+                                    slot = 'feet';
+                                }
+                                else if (type === 'head' && !inventory['head']) {
+                                    slot = 'head';
+                                }
+                            }
+                            else {
+                                if (slotCount <= 7) {
+                                    slot = 'slot' + slotCount;
+                                    slotCount++;
+                                }
+                            }
+
+                            if (slot) {
+                                inventory[slot] = {
+                                    name: name,
+                                    type: type,
+                                    uuid: IbUtils.generateUuid()
+                                };
+
+                                var mapping = {
+                                    image: 'Image',
+                                    invImage: 'Inventory Image',
+                                    damage: 'Damage',
+                                    armor: 'Armor',
+                                    rarity: 'Rarity',
+                                    range: 'Range',
+                                    projectileSpeed: 'Projectile Speed',
+                                    attackCooldown: 'Attack Cooldown',
+                                    handedness: 'Handedness',
+                                    price: 'Buy Price',
+                                    dropChance: 'Drop Chance %'
+                                };
+
+                                _.each(mapping, function (val, key) {
+                                    var mappedValue = getValue(item, itemHeaders, val);
+                                    if (mappedValue || mappedValue === 0) {
+                                        inventory[slot][key] = mappedValue;
+                                    }
+                                });
+
+
+                                if (regexResult) {
+                                    inventory[slot].dropChance = parseInt(regexResult.join().substr(1), 10);
+                                    // console.log('new', 'test', itemName, ', dropChance ', inventory[slot].dropChance);
+                                }
+
+                            }
+
+                        }
+                    });
+                }
+            }
+
+            equipmentItemNames.forEach(addItemToInventory(true));
+            inventoryItemNames.forEach(addItemToInventory(false));
 
             return inventory;
         };
@@ -148,13 +174,15 @@ angular
 
                 // For now only set the names
                 // We'll build the inventory when fetching the prefab to ensure unique uuid's
-                var itemNames = getValue(npc, npcHeaders, 'inventory').split(',');
+                var inventoryItemNames = getValue(npc, npcHeaders, 'inventory').split(',');
+                var equipmentItemNames = getValue(npc, npcHeaders, 'equipment').split(',');
 
                 var charBuildData = getValue(npc, npcHeaders, 'imageData');
 
                 // Build a list of NPCS with all their components
                 var npcPrefab = {
-                    itemNames: itemNames,
+                    inventoryItemNames: inventoryItemNames,
+                    equipmentItemNames: equipmentItemNames,
                     components: {
                         quad: {
                             transparent: true,
@@ -293,8 +321,10 @@ angular
                 // }
             }
 
-            prefab.components.inventory = this.buildInventory(prefab.itemNames);
-            delete prefab.itemNames;
+            prefab.components.inventory = this.buildInventory(prefab.inventoryItemNames, prefab.equipmentItemNames);
+
+            delete prefab.inventoryItemNames;
+            delete prefab.equipmentItemNames;
 
             return prefab;
         };
