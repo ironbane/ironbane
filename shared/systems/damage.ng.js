@@ -37,6 +37,35 @@ angular
                         });
                     }
                 });
+
+                var me = this;
+
+                world.subscribe('fighter:die', function (entity) {
+                    // We died, so add proper particles
+                    // and remove ourselves from the world
+                    if (Meteor.isClient) {
+                        me.addDeathParticles(entity, entity.position);
+
+                        GlobalSound.play(_.sample(['die1','die2','die3']), entity.position);
+
+                        entity.removeComponent('quad');
+                        entity.removeComponent('wieldItem');
+                        entity.removeComponent('fighter');
+                        entity.removeComponent('shadow');
+                        entity.removeComponent('health');
+                        entity.removeComponent('damageable');
+                        entity.removeComponent('armor');
+                        entity.removeComponent('rigidBody');
+                        entity.removeComponent('script');
+
+                        if (!entity.hasComponent('player')) {
+                            // me.world.removeEntity(entity);
+                        }
+                        else if (entity.hasComponent('netSend')) {
+                            BigMessagesService.add('You died!');
+                        }
+                    }
+                });
             },
             _spawnParticle: function(indexH, indexV, amount, position) {
                 var me = this;
@@ -258,8 +287,11 @@ angular
 
                                     if (armorComponent) {
                                         var armorDamageDone = Math.min(armorComponent.value, damage);
-                                        damage -= armorDamageDone;
-                                        armorComponent.value -= armorDamageDone;
+
+                                        if (Meteor.isServer) {
+                                            damage -= armorDamageDone;
+                                            armorComponent.value -= armorDamageDone;
+                                        }
 
                                         if (Meteor.isClient) {
                                             me.addDamageParticles('armor', armorDamageDone, entity.position);
@@ -270,8 +302,11 @@ angular
 
                                     if (healthComponent) {
                                         var healthDamageDone = Math.min(healthComponent.value, damage);
-                                        damage -= healthDamageDone;
-                                        healthComponent.value -= healthDamageDone;
+
+                                        if (Meteor.isServer) {
+                                            damage -= healthDamageDone;
+                                            healthComponent.value -= healthDamageDone;
+                                        }
 
                                         if (Meteor.isClient) {
                                             me.addDamageParticles('health', healthDamageDone, entity.position);
@@ -282,32 +317,16 @@ angular
                                         if (healthComponent.value <= 0 && !healthComponent.__hasDied) {
                                             // We died, so add proper particles
                                             // and remove ourselves from the world
-                                            if (Meteor.isClient) {
-                                                me.addDeathParticles(entity, entity.position);
-
-                                                GlobalSound.play(_.sample(['die1','die2','die3']), entity.position);
-
-                                                entity.removeComponent('quad');
-                                                entity.removeComponent('wieldItem');
-                                                entity.removeComponent('fighter');
-                                                entity.removeComponent('shadow');
-                                                entity.removeComponent('health');
-                                                entity.removeComponent('damageable');
-                                                entity.removeComponent('armor');
-                                                entity.removeComponent('rigidBody');
-                                                entity.removeComponent('script');
-
-                                                if (!entity.hasComponent('player')) {
-                                                    // me.world.removeEntity(entity);
-                                                }
-                                                else if (entity.hasComponent('netSend')) {
-                                                    BigMessagesService.add('You died!');
-                                                }
+                                            if (Meteor.isServer) {
+                                                me.world.publish('fighter:die', entity, source.sourceEntity);
                                             }
 
-                                            me.world.publish('fighter:die', entity, source.sourceEntity);
+
                                         }
                                     }
+
+                                    me.world.publish('fighter:updateStats', entity);
+
                                     break;
                             }
                         });

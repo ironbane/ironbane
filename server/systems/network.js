@@ -101,6 +101,31 @@ angular
 
                     });
 
+                    world.subscribe('fighter:updateStats', function(entity) {
+
+                        var healthComponent = entity.getComponent('health');
+                        var armorComponent = entity.getComponent('armor');
+
+                        var sendComponent = entity.getComponent('netSend');
+                        if (sendComponent) {
+                            sendComponent.__knownEntities.concat([entity]).forEach(function(knownEntity) {
+                                if (knownEntity.hasComponent('player')) {
+                                    var data = {
+                                        entityUuid: entity.uuid
+                                    };
+                                    if (healthComponent) {
+                                        data.health = healthComponent.value;
+                                    }
+                                    if (armorComponent) {
+                                        data.armor = armorComponent.value;
+                                    }
+                                    knownEntity.stream.emit('fighter:updateStats', data);
+                                }
+                            });
+                        }
+
+                    });
+
                     world.subscribe('fighter:jump', function(entity, sourceEntity) {
                         var sendComponent = entity.getComponent('netSend');
                         if (sendComponent) {

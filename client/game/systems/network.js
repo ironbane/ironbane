@@ -59,11 +59,10 @@ angular
 
                     // $log.debug('[NetworkSystem : add]', uuid);
 
-                    // var exists = world.scene.getObjectByProperty('uuid', uuid);
-                    // if (exists) {
-                        // we should update the object from the server in case of like a moving platform
-                        // return;
-                    // }
+                    var exists = world.scene.getObjectByProperty('uuid', uuid);
+                    if (exists) {
+                        world.removeEntity(exists);
+                    }
 
                     // ok let's see what happens when we build it
                     var builtEntity = EntityBuilder.build(entity);
@@ -405,6 +404,30 @@ angular
 
                             if (entity) {
                                 world.publish('fighter:jump', entity);
+                            }
+                        });
+
+                        me._stream.on('fighter:updateStats', function(data) {
+                            var netEnts = world.getEntities('netRecv').concat(world.getEntities('netSend')),
+                                entity = _.findWhere(netEnts, {
+                                    uuid: data.entityUuid
+                                });
+
+                            if (entity) {
+                                var healthComponent = entity.getComponent('health');
+                                var armorComponent = entity.getComponent('armor');
+
+                                if (healthComponent && !_.isUndefined(data.health)) {
+                                    healthComponent.value = data.health;
+                                }
+
+                                if (armorComponent && !_.isUndefined(data.armor)) {
+                                    armorComponent.value = data.armor;
+                                }
+
+                                if (healthComponent.value <= 0) {
+                                    me.world.publish('fighter:die', entity);
+                                }
                             }
                         });
 
