@@ -32,62 +32,63 @@ angular
                     spawnZoneEntities.forEach(function(entity) {
                         var spawnZoneComponent = entity.getComponent('spawnZone');
 
-                        if (spawnZoneComponent.spawnTimer <= dTime &&
-                            spawnZoneComponent.spawnList.length < spawnZoneComponent.amountOfEntitiesToHaveAtAllTimes) {
-                            spawnZoneComponent.spawnTimer = spawnZoneComponent.spawnDelay;
+                        if (spawnZoneComponent.spawnList.length < spawnZoneComponent.amountOfEntitiesToHaveAtAllTimes) {
+                            if (spawnZoneComponent.spawnTimer <= dTime) {
+                                spawnZoneComponent.spawnTimer = spawnZoneComponent.spawnDelay;
 
-                            entity.children.forEach(function(child) {
+                                entity.children.forEach(function(child) {
 
-                                var meshComponent = child.getComponent('mesh');
-                                if (meshComponent && meshComponent._meshLoadTask) {
-                                    meshComponent._meshLoadTask.then(function(mesh) {
+                                    var meshComponent = child.getComponent('mesh');
+                                    if (meshComponent && meshComponent._meshLoadTask) {
+                                        meshComponent._meshLoadTask.then(function(mesh) {
 
-                                        var randomPrefabName = _.sample(spawnZoneComponent.entitiesToSpawnSeparatedByCommas.split(','));
+                                            var randomPrefabName = _.sample(spawnZoneComponent.entitiesToSpawnSeparatedByCommas.split(','));
 
-                                        var builtEntity = EntityBuilder.build({
-                                            userData: {
-                                                prefab: randomPrefabName
-                                            },
-                                            level: world.name
-                                        });
+                                            var builtEntity = EntityBuilder.build({
+                                                userData: {
+                                                    prefab: randomPrefabName
+                                                },
+                                                level: world.name
+                                            });
 
-                                        if (!mesh.geometry.boundingBox) {
-                                            mesh.geometry.computeBoundingBox();
-                                        }
-
-                                        var randomPosition = new THREE.Vector3(
-                                            IbUtils.getRandomFloat(mesh.geometry.boundingBox.min.x, mesh.geometry.boundingBox.max.x),
-                                            IbUtils.getRandomFloat(mesh.geometry.boundingBox.min.y, mesh.geometry.boundingBox.max.y),
-                                            IbUtils.getRandomFloat(mesh.geometry.boundingBox.min.z, mesh.geometry.boundingBox.max.z)
-                                        );
-
-                                        randomPosition.applyMatrix4(mesh.matrixWorld);
-
-                                        builtEntity.position.copy(randomPosition);
-
-                                        builtEntity.name = randomPrefabName;
-
-                                        world.addEntity(builtEntity);
-
-                                        spawnZoneComponent.spawnList.push(builtEntity);
-
-                                        var listener = function (entity) {
-                                            if (entity === builtEntity) {
-                                                spawnZoneComponent.spawnList = _.without(spawnZoneComponent.spawnList, builtEntity);
-                                                setTimeout(function () {
-                                                    world.singleEntityRemoved.remove(listener);
-                                                }, 0);
+                                            if (!mesh.geometry.boundingBox) {
+                                                mesh.geometry.computeBoundingBox();
                                             }
-                                        };
-                                        world.singleEntityRemoved.add(listener);
 
-                                    })
-                                    .then(null, function (err) {console.error(err.stack)});
-                                }
-                            });
-                        }
-                        else {
-                            spawnZoneComponent.spawnTimer -= dTime;
+                                            var randomPosition = new THREE.Vector3(
+                                                IbUtils.getRandomFloat(mesh.geometry.boundingBox.min.x, mesh.geometry.boundingBox.max.x),
+                                                IbUtils.getRandomFloat(mesh.geometry.boundingBox.min.y, mesh.geometry.boundingBox.max.y),
+                                                IbUtils.getRandomFloat(mesh.geometry.boundingBox.min.z, mesh.geometry.boundingBox.max.z)
+                                            );
+
+                                            randomPosition.applyMatrix4(mesh.matrixWorld);
+
+                                            builtEntity.position.copy(randomPosition);
+
+                                            builtEntity.name = randomPrefabName;
+
+                                            world.addEntity(builtEntity);
+
+                                            spawnZoneComponent.spawnList.push(builtEntity);
+
+                                            var listener = function (entity) {
+                                                if (entity === builtEntity) {
+                                                    spawnZoneComponent.spawnList = _.without(spawnZoneComponent.spawnList, builtEntity);
+                                                    setTimeout(function () {
+                                                        world.singleEntityRemoved.remove(listener);
+                                                    }, 0);
+                                                }
+                                            };
+                                            world.singleEntityRemoved.add(listener);
+
+                                        })
+                                        .then(null, function (err) {console.error(err.stack)});
+                                    }
+                                });
+                            }
+                            else {
+                                spawnZoneComponent.spawnTimer -= dTime;
+                            }
                         }
 
                     });
