@@ -68,6 +68,10 @@ angular
                     return this._entities.toArray();
                 },
 
+                forEach: function(callback, reversed) {
+                    this._entities.forEach(callback, reversed);
+                },
+
                 /**
                  * Add the entity into the family if match.
                  * @public

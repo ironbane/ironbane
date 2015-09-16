@@ -30,13 +30,14 @@ angular
                 },
                 update: function(dt, elapsed, timestamp) {
                     var system = this,
-                        world = this.world;
-
-                    world.getEntities.apply(world, this._familyConfig)
-                        .forEach(function(entity) {
+                        world = this.world,
+                        callback = function(entity) {
                             var timing = {dt: dt, elapsed: elapsed, timestamp: timestamp};
                             system.updateEntity(timing, entity);
-                        });
+                        },
+                        args = [callback].concat(this._familyConfig);
+
+                    world.forEachEntity.apply(world, args);
                 },
                 updateEntity: function(timing, entity) {
                     // should be subclassed

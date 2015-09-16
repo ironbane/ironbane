@@ -193,6 +193,41 @@ angular
                     return this._families[familyId].getEntities();
                 },
 
+                getFamily: function( /* componentNames */ ) {
+                    var familyId;
+
+                    familyId = this._getFamilyId(arguments);
+                    this._ensureFamilyExists(arguments);
+
+                    return this._families[familyId];
+                },
+
+                forEachEntity: function( /* componentNames */ ) {
+                    var familyId,
+                        family,
+                        args = Array.prototype.slice.call(arguments),
+                        components = args.filter(function(argv) {
+                            return typeof(argv) === 'string';
+                        }),
+                        callbacks = args.filter(function(argv) {
+                            return typeof(argv) === 'function';
+                        });
+
+                    // at the moment only support one, tho can be anywhere
+                    if (callbacks.length !== 1) {
+                        return false;
+                    }
+
+                    family = this.getFamily.apply(this, components);
+                    family.forEach(callbacks[0]);
+
+                    // will run a sequence, tho likely not used
+                    /*callbacks.forEach(function(callback) {
+                        // TODO: bubble break using false?
+                        family.forEach(callback);
+                    });*/
+                },
+
                 getEntityById: function(id, components) {
                     return _.findWhere(this.getEntities(components), {uuid: id});
                 },
