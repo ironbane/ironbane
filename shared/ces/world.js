@@ -203,23 +203,16 @@ angular
                 },
 
                 forEachEntity: function( /* componentNames */ ) {
-                    var familyId,
-                        family,
+                    var family,
                         args = Array.prototype.slice.call(arguments),
-                        components = args.filter(function(argv) {
-                            return typeof(argv) === 'string';
-                        }),
-                        callbacks = args.filter(function(argv) {
-                            return typeof(argv) === 'function';
-                        });
+                        callback = args.pop();
 
-                    // at the moment only support one, tho can be anywhere
-                    if (callbacks.length !== 1) {
+                    if (typeof(callback) !== 'function') {
                         return false;
                     }
 
-                    family = this.getFamily.apply(this, components);
-                    family.forEach(callbacks[0]);
+                    family = this.getFamily.apply(this, args);
+                    family.forEach(callback);
 
                     // will run a sequence, tho likely not used
                     /*callbacks.forEach(function(callback) {

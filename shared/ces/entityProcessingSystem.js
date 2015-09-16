@@ -35,7 +35,7 @@ angular
                             var timing = {dt: dt, elapsed: elapsed, timestamp: timestamp};
                             system.updateEntity(timing, entity);
                         },
-                        args = [callback].concat(this._familyConfig);
+                        args = this._familyConfig.concat([callback]);
 
                     world.forEachEntity.apply(world, args);
                 },
