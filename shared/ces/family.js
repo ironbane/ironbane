@@ -1,133 +1,159 @@
-angular.module('ces.family', [
-    'ces.class',
-    'ces.entitylist',
-    'ces.signal'
-])
-    .factory('Family', ['Class', 'EntityList', 'Signal', function (Class, EntityList, Signal) {
-        'use strict';
-        /**
-         * The family is a collection of entities having all the specified components.
-         * @class
-         */
-        var Family = Class.extend({
+angular
+    .module('ces.family', [
+        'ces.class',
+        'ces.entitylist',
+        'ces.signal'
+    ])
+    .factory('Family', [
+        'Class',
+        'EntityList',
+        'Signal',
+        function(Class, EntityList, Signal) {
+            'use strict';
             /**
-             * @constructor
-             * @param {Array} componentNames
+             * The family is a collection of entities having all the specified components.
+             * @class
              */
-            init: function (componentNames) {
+            var Family = Class.extend({
                 /**
-                 * @private
+                 * @constructor
+                 * @param {Array} componentNames
                  */
-                this._componentNames = componentNames;
+                init: function(componentNames) {
+                    /**
+                     * @private
+                     */
+                    this._componentNames = componentNames;
+
+                    // split into 3 types of criteria
+                    this._allOfComponents = componentNames.filter(function(name) {
+                        return (name.substr(0, 1) !== '!' && name.substr(0, 1) !== '?');
+                    });
+                    this._noneOfComponents = componentNames.filter(function(name) {
+                        return (name.substr(0, 1) === '!');
+                    }).map(function(name) {
+                        return name.substr(1);
+                    });
+                    this._anyOfComponents = componentNames.filter(function(name) {
+                        return (name.substr(0, 1) === '?');
+                    }).map(function(name) {
+                        return name.substr(1);
+                    });
+
+                    /**
+                     * A linked list holding the entities;
+                     * @private
+                     */
+                    this._entities = new EntityList();
+
+                    /**
+                     * @public
+                     * @readonly
+                     */
+                    this.entityAdded = new Signal();
+
+                    /**
+                     * @public
+                     * @readonly
+                     */
+                    this.entityRemoved = new Signal();
+                },
 
                 /**
-                 * A linked list holding the entities;
-                 * @private
-                 */
-                this._entities = new EntityList();
-
-                /**
+                 * Get the entities of this family.
                  * @public
-                 * @readonly
+                 * @return {Array}
                  */
-                this.entityAdded = new Signal();
+                getEntities: function() {
+                    return this._entities.toArray();
+                },
 
                 /**
+                 * Add the entity into the family if match.
                  * @public
-                 * @readonly
+                 * @param {Entity} entity
                  */
-                this.entityRemoved = new Signal();
-            },
+                addEntityIfMatch: function(entity) {
+                    return this._checkEntity(entity);
+                },
 
-            /**
-             * Get the entities of this family.
-             * @public
-             * @return {Array}
-             */
-            getEntities: function () {
-                return this._entities.toArray();
-            },
+                addEntity: function(entity) {
+                    if (!this._entities.has(entity)) {
+                        this._entities.add(entity);
+                        this.entityAdded.emit(entity);
+                    }
+                },
 
-            /**
-             * Add the entity into the family if match.
-             * @public
-             * @param {Entity} entity
-             */
-            addEntityIfMatch: function (entity) {
-                if (!this._entities.has(entity) && this._matchEntity(entity)) {
-                    this._entities.add(entity);
-                    this.entityAdded.emit(entity);
-                }
-            },
-
-            /**
-             * Remove the entity into the family if match.
-             * @public
-             * @function
-             * @param {Entity} entity
-             */
-            removeEntity: function (entity) {
-                if (this._entities.has(entity)) {
-                    this._entities.remove(entity);
-                    this.entityRemoved.emit(entity);
-                }
-            },
-
-            /**
-             * Handler to be called when a component is added to an entity.
-             * @public
-             * @param {Entity} entity
-             * @param {String} componentName
-             */
-            onComponentAdded: function (entity, componentName) {
-                this.addEntityIfMatch(entity);
-            },
-
-            /**
-             * Handler to be called when a component is removed from an entity.
-             * @public
-             * @param {Entity} entity
-             * @param {String} componentName
-             */
-            onComponentRemoved: function (entity, componentName) {
-                var names, i, len;
-
-                // return if the entity is not in this family
-                if (!this._entities.has(entity)) {
-                    return;
-                }
-
-                // remove the node if the removed component is required by this family
-                names = this._componentNames;
-                for (i = 0, len = names.length; i < len; ++i) {
-                    if (names[i] === componentName) {
+                /**
+                 * Remove the entity into the family if match.
+                 * @public
+                 * @function
+                 * @param {Entity} entity
+                 */
+                removeEntity: function(entity) {
+                    if (this._entities.has(entity)) {
                         this._entities.remove(entity);
                         this.entityRemoved.emit(entity);
                     }
-                }
-            },
+                },
 
-            /**
-             * Check if an entity belongs to this family.
-             * @private
-             * @param {Entity} entity
-             * @return {Boolean}
-             */
-            _matchEntity: function (entity) {
-                var componentNames, i, len;
+                /**
+                 * Handler to be called when a component is added to an entity.
+                 * @public
+                 * @param {Entity} entity
+                 */
+                onComponentAdded: function(entity) {
+                    this._checkEntity(entity);
+                },
 
-                componentNames = this._componentNames;
+                /**
+                 * Handler to be called when a component is removed from an entity.
+                 * @public
+                 * @param {Entity} entity
+                 */
+                onComponentRemoved: function(entity) {
+                    this._checkEntity(entity);
+                },
 
-                for (i = 0, len = componentNames.length; i < len; ++i) {
-                    if (!entity.hasComponent(componentNames[i])) {
-                        return false;
+                /**
+                 * Check if an entity belongs to this family.
+                 * @private
+                 * @param {Entity} entity
+                 * @return {Boolean}
+                 */
+                _checkEntity: function(entity) {
+                    var contains = this._entities.has(entity),
+                        interested = true;
+
+                    if (this._allOfComponents.length > 0) {
+                        interested = this._allOfComponents.every(function(component) {
+                            return entity.hasComponent(component);
+                        });
                     }
+
+                    if (this._noneOfComponents.length > 0 && interested) {
+                        interested = this._noneOfComponents.every(function(component) {
+                            return !entity.hasComponent(component);
+                        });
+                    }
+
+                    if (this._anyOfComponents.length > 0 && interested) {
+                        interested = this._anyOfComponents.some(function(component) {
+                            return entity.hasComponent(component);
+                        });
+                    }
+
+                    if (contains && !interested) {
+                        this.removeEntity(entity);
+                    } else if (!contains && interested) {
+                        this.addEntity(entity);
+                    }
+
+                    return interested;
                 }
+            });
 
-                return true;
-            }
-        });
+            return Family;
 
-        return Family;
-
-    }]);
+        }
+    ]);
