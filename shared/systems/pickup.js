@@ -1,27 +1,24 @@
 angular
     .module('systems.pickup', [
-        'ces',
-        'three'
+        'ces.entityProcessingSystem'
     ])
     .factory('PickupSystem', [
-        '$log',
-        'System',
-        'THREE',
-        function($log, System, THREE) {
+        'EntityProcessingSystem',
+        function(EntityProcessingSystem) {
             'use strict';
 
-            var PickupSystem = System.extend({
-                update: function(dt, elapsed) {
-                    var pickups = this.world.getEntities('pickup', 'quad');
+            var PickupSystem = EntityProcessingSystem.extend({
+                init: function() {
+                    this._super('pickup', 'quad');
+                },
+                updateEntity: function(timing, entity) {
+                    var pickupComponent = entity.getComponent('pickup'),
+                        quadComponent = entity.getComponent('quad');
 
-                    pickups.forEach(function(entity) {
-                        var pickupComponent = entity.getComponent('pickup');
-                        var quadComponent = entity.getComponent('quad');
-                        // animate hover
-                        if (pickupComponent.hover) {
-                            quadComponent.offsetPosition.y = pickupComponent.hover.amplitude * (Math.sin(elapsed * pickupComponent.hover.speed));
-                        }
-                    });
+                    // animate hover
+                    if (pickupComponent.hover) {
+                        quadComponent.offsetPosition.y = pickupComponent.hover.amplitude * (Math.sin(timing.elapsed * pickupComponent.hover.speed));
+                    }
                 }
             });
 

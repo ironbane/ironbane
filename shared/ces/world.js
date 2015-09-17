@@ -193,6 +193,34 @@ angular
                     return this._families[familyId].getEntities();
                 },
 
+                getFamily: function( /* componentNames */ ) {
+                    var familyId;
+
+                    familyId = this._getFamilyId(arguments);
+                    this._ensureFamilyExists(arguments);
+
+                    return this._families[familyId];
+                },
+
+                forEachEntity: function( /* componentNames */ ) {
+                    var family,
+                        args = Array.prototype.slice.call(arguments),
+                        callback = args.pop();
+
+                    if (typeof(callback) !== 'function') {
+                        return false;
+                    }
+
+                    family = this.getFamily.apply(this, args);
+                    family.forEach(callback);
+
+                    // will run a sequence, tho likely not used
+                    /*callbacks.forEach(function(callback) {
+                        // TODO: bubble break using false?
+                        family.forEach(callback);
+                    });*/
+                },
+
                 getEntityById: function(id, components) {
                     return _.findWhere(this.getEntities(components), {uuid: id});
                 },

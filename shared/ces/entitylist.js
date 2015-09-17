@@ -1,7 +1,7 @@
 angular.module('ces.entitylist', [
-    'ces.class'
-])
-    .factory('EntityList', ['Class', function (Class) {
+        'ces.class'
+    ])
+    .factory('EntityList', ['Class', function(Class) {
         'use strict';
         /**
          * The entity node is a wrapper around an entity, to be added into
@@ -9,7 +9,7 @@ angular.module('ces.entitylist', [
          * @class
          */
         var EntityNode = Class.extend({
-            init: function (entity) {
+            init: function(entity) {
                 this.entity = entity;
                 this.prev = null;
                 this.next = null;
@@ -25,7 +25,7 @@ angular.module('ces.entitylist', [
             /**
              * @constructor
              */
-            init: function () {
+            init: function() {
                 /**
                  * @public
                  * @readonly
@@ -57,7 +57,7 @@ angular.module('ces.entitylist', [
              * @public
              * @param {Entity} entity
              */
-            add: function (entity) {
+            add: function(entity) {
                 var node = new EntityNode(entity);
 
                 if (this.head === null) {
@@ -77,7 +77,7 @@ angular.module('ces.entitylist', [
              * @public
              * @param {Entity} entity
              */
-            remove: function (entity) {
+            remove: function(entity) {
                 var node = this._entities[entity.id];
 
                 if (node === undefined) {
@@ -105,7 +105,7 @@ angular.module('ces.entitylist', [
              * @param {Entity} entity
              * @return {Boolean}
              */
-            has: function (entity) {
+            has: function(entity) {
                 return this._entities[entity.id] !== undefined;
             },
 
@@ -113,7 +113,7 @@ angular.module('ces.entitylist', [
              * Remove all the entities from this list.
              * @public
              */
-            clear: function () {
+            clear: function() {
                 this.head = this.tail = null;
                 this.length = 0;
                 this._entities = {};
@@ -124,7 +124,7 @@ angular.module('ces.entitylist', [
              * @public
              * @return {Array}
              */
-            toArray: function () {
+            toArray: function() {
                 var array, node;
 
                 array = [];
@@ -133,6 +133,16 @@ angular.module('ces.entitylist', [
                 }
 
                 return array;
+            },
+
+            forEach: function(callback, reversed) {
+                var currentNode = reversed ? this.tail : this.head;
+                while (currentNode !== null) {
+                    if (callback(currentNode.entity) === false) {
+                        break;
+                    }
+                    currentNode = reversed ? currentNode.prev : currentNode.next;
+                }
             }
         });
 

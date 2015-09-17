@@ -6,10 +6,8 @@ angular
             'use strict';
 
             // this one is pretty much just a tag for filtering
-            $componentsProvider.register({
-                'player': {
-                    handle: ''
-                }
+            $componentsProvider.registerStacked({
+                'player': {}
             });
         }
     ]);
