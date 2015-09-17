@@ -115,8 +115,13 @@ angular
                  * @public
                  * @param {Entity} entity
                  */
-                onComponentRemoved: function(entity) {
-                    this._checkEntity(entity);
+                onComponentRemoved: function(entity, componentName) {
+                    var components = entity.getComponentNames()
+                        .filter(function(name) {
+                            return name !== componentName;
+                        });
+
+                    this._checkEntity(entity, components);
                 },
 
                 /**
@@ -125,25 +130,27 @@ angular
                  * @param {Entity} entity
                  * @return {Boolean}
                  */
-                _checkEntity: function(entity) {
+                _checkEntity: function(entity, components) {
                     var contains = this._entities.has(entity),
                         interested = true;
 
+                    components = components || entity.getComponentNames();
+
                     if (this._allOfComponents.length > 0) {
                         interested = this._allOfComponents.every(function(component) {
-                            return entity.hasComponent(component);
+                            return components.indexOf(component) >= 0;
                         });
                     }
 
                     if (this._noneOfComponents.length > 0 && interested) {
                         interested = this._noneOfComponents.every(function(component) {
-                            return !entity.hasComponent(component);
+                            return components.indexOf(component) < 0;
                         });
                     }
 
                     if (this._anyOfComponents.length > 0 && interested) {
                         interested = this._anyOfComponents.some(function(component) {
-                            return entity.hasComponent(component);
+                            return components.indexOf(component) >= 0;
                         });
                     }
 

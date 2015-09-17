@@ -213,12 +213,6 @@ angular
 
                     family = this.getFamily.apply(this, args);
                     family.forEach(callback);
-
-                    // will run a sequence, tho likely not used
-                    /*callbacks.forEach(function(callback) {
-                        // TODO: bubble break using false?
-                        family.forEach(callback);
-                    });*/
                 },
 
                 getEntityById: function(id, components) {

@@ -6,7 +6,7 @@ angular
             'use strict';
 
             // this one is pretty much just a tag for filtering
-            $componentsProvider.registerStacked({
+            $componentsProvider.registerShared({
                 'player': {}
             });
         }

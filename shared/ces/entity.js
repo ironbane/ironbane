@@ -88,6 +88,13 @@ angular.module('ces.entity', [
                 return components;
             };
 
+            Entity.prototype.getComponentNames = function() {
+                return Object.keys(this._components)
+                    .map(function(name) {
+                        return name.substr(1);
+                    });
+            };
+
             /**
              * Add a component to this entity.
              * @public
