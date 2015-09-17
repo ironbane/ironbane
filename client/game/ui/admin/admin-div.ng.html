@@ -18,9 +18,9 @@
         <h1>Skin/Armor IDs</h1>
         <p>This page allows you to view image ID's for the various skin and armor types.</p>
         <h2 class="itemid">{{ $parent.imageId }}</h2>
-        <div ng-repeat="(name, list) in charImages" style="display:inline-block">
+        <div ng-repeat="(name, list) in charImages" style="display:block">
             <h1>{{ name }}</h1>
-            <div ng-repeat="img in list" style="display:inline-block;padding-bottom:30px;">
+            <div ng-repeat="img in list" style="display:inline-block;padding-bottom:30px;" ng-if="img">
                 <div style="position:absolute">{{ img }}</div>
                 <img ng-src="images/characters/{{ name }}/{{ img }}.png" ng-style="{ 'width': name == 'head' || name == 'hair' ? '32px' : '96px'}">
             </div>
