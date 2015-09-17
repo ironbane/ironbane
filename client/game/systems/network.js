@@ -425,7 +425,7 @@ angular
                                     armorComponent.value = data.armor;
                                 }
 
-                                if (healthComponent.value <= 0) {
+                                if (healthComponent && healthComponent.value <= 0) {
                                     me.world.publish('fighter:die', entity);
                                 }
                             }
