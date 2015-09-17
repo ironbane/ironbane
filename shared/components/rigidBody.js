@@ -25,6 +25,11 @@ angular
                             z: false
                         }
                     },
+                    launchVelocity: {
+                        x: 0,
+                        y: 0,
+                        z: 0
+                    },
                     offset: {
                         x: 0,
                         y: 0,

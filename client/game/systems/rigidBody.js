@@ -399,6 +399,10 @@ angular
                                 return btVec3a;
                             };
 
+                            var lv = rigidBodyData.launchVelocity;
+                            btVec3a.setValue(lv.x, lv.y, lv.z);
+                            rigidBody.applyCentralImpulse(btVec3a);
+
                         });
 
                     });
