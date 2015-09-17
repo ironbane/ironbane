@@ -205,6 +205,9 @@ angular
 
                     function buildPickup(item) {
                         var image = item.invImage ? item.invImage : item.image;
+                        var launchVelocity = IbUtils.getRandomVector3(new THREE.Vector3(), new THREE.Vector3(1, 1, 1));
+                        launchVelocity.y = Math.abs(launchVelocity.y);
+                        launchVelocity.normalize().multiplyScalar(5);
                         var pickup = EntityBuilder.build('pickup: ' + item.name, {
                             components: {
                                 quad: {
@@ -216,6 +219,34 @@ angular
                                     height: 0.5,
                                     indexH: IbUtils.spriteSheetIdToXY(image, 16).h,
                                     indexV: IbUtils.spriteSheetIdToXY(image, 16).v
+                                },
+                                rigidBody: {
+                                    shape: {
+                                        type: 'sphere',
+                                        radius: 0.5
+                                    },
+                                    mass: 1,
+                                    friction: 1.0,
+                                    restitution: 0,
+                                    allowSleep: false,
+                                    lock: {
+                                        position: {
+                                            x: false,
+                                            y: false,
+                                            z: false
+                                        },
+                                        rotation: {
+                                            x: true,
+                                            y: true,
+                                            z: true
+                                        }
+                                    },
+                                    launchVelocity: {
+                                        x: launchVelocity.x,
+                                        y: launchVelocity.y,
+                                        z: launchVelocity.z
+                                    },
+                                    collidesWith: ['level']
                                 },
                                 shadow: {
                                     simple: true,
