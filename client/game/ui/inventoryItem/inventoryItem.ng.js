@@ -38,8 +38,8 @@ angular
                             row = Math.floor(image / 16);
 
                         ctrl.cssStyle = {
-                            'background-position': -col * 32 + 'px ' +
-                                -row * 32 + 'px'
+                            'background-position': -col * 32 * 1.5 + 'px ' +
+                                -row * 32 * 1.5 + 'px'
                         };
 
                         ctrl.cssClass = item.rarity;

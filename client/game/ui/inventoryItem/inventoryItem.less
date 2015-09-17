@@ -1,9 +1,11 @@
 
+@import "../../../less/variables.import.less";
+
 .inventory-item {
-	width: 32px;
-	height: 32px;	
+	width: @inv-item-size;
+	height: @inv-item-size;
 	background-image: url(images/spritesheets/items.png);
 	background-repeat: no-repeat;
-    background-size: 512px 4096px;
-    image-rendering: pixelated;	
+    background-size: (512px * @inv-item-size-multiplier) (4096px * @inv-item-size-multiplier);
+    image-rendering: pixelated;
 }

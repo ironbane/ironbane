@@ -118,8 +118,8 @@ angular
                     slotDefs = _.map(slotDefs, function(slot) {
                         var cssBackgrounds = [];
                         slot.backgrounds.forEach(function (bg) {
-                            bg[0] *= -32;
-                            bg[1] *= -32;
+                            bg[0] *= -32 * 1.5;
+                            bg[1] *= -32 * 1.5;
                             cssBackgrounds.push(bg.join('px ') + 'px');
                         });
                         slot.cssStyle = {

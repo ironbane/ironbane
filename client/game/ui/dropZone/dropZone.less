@@ -8,11 +8,22 @@ drop-zone {
         border: 2px dashed @primary1;
 
         height: 76px;
-        width: 256px;
+
+        width: 8 * @inv-item-size;
+        margin-left: -4 * @inv-item-size;
+
+        bottom: 3 * @inv-item-size;
+
+        @media only screen and (min-width: 768px) {
+            width: 16 * @inv-item-size;
+            margin-left: -8 * @inv-item-size;
+            bottom: 2 * @inv-item-size;
+        }
+
         position: fixed;
-        bottom: 76px;
+
         left: 50%;
-        margin-left: -128px;
+
 
         font-size: 20px;
         box-sizing: border-box;
