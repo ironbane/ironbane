@@ -1,9 +1,9 @@
 angular
     .module('game.ai.states.local')
-    .factory('SearchAndDestroyEntity', function(Class, THREE, IbUtils, Patrol, SeekEntity, $rootWorld) {
+    .factory('SearchAndDestroyEntity', function(Class, THREE, IbUtils, Patrol, SeekEntitySimple, $rootWorld) {
             'use strict';
 
-            return SeekEntity.extend({
+            return SeekEntitySimple.extend({
                 init: function(entity, config, world) {
                     this._super.apply(this, arguments);
 
