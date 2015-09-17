@@ -140,7 +140,7 @@ angular
 
                                 var hitSize = 1.0;
 
-                                var quadComponent = entity.getComponent('quad');
+                                var quadComponent = damageableEntity.getComponent('quad');
 
                                 if (quadComponent) {
                                     hitSize = (quadComponent.width + quadComponent.height) / 2;
