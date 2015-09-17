@@ -17,9 +17,13 @@ angular
                         var stateComponent = entity.getComponent(stateName);
                         stateComponent._state = new States.get(stateComponent.state, entity, stateComponent.config, world);
                     });
+
                     world.entityRemoved(stateName).add(function(entity) {
                         var stateComponent = entity.getComponent(stateName);
-                        stateComponent._state.destroy();
+                        if (stateComponent._state) {
+                            // TODO: if this doesn't happen, there some race condition?
+                            stateComponent._state.destroy();
+                        }
                     });
                 });
             },
