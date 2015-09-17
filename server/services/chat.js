@@ -65,6 +65,12 @@ angular
 
                     msg = msg.substr(0, 255);
 
+                    var flags = [];
+
+                    if (Roles.userIsInRole(me.userId, ['game-master'])) {
+                        flags.push('gm');
+                    }
+
                     _.each($activeWorlds, function (world) {
                         var playerEntities = world.getEntities('player');
                         playerEntities.forEach(function (player) {
@@ -76,7 +82,8 @@ angular
                                     msg: msg,
                                     // flags: flags,
                                     user: {
-                                        name: player.name
+                                        name: player.name,
+                                        flags: flags
                                     },
                                     pos: player.position
                                 });

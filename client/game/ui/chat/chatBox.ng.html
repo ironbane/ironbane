@@ -1,7 +1,7 @@
 <div>
     <ul scroll-glue>
         <li ng-repeat="message in chatBox.messages | orderBy:'+ts'" class="chat-message" ng-class="message.flags">
-            <span class="char-name" ng-class="message.user.flags" ng-if="message.user.name">[{{ message.user.name }}]:</span> {{ message.msg }}
+            <span class="char-name" ng-class="message.user.flags" ng-if="message.user.name">[{{ message.user.name }}]</span> {{ message.msg }}
         </li>
     </ul>
     <input class="iinput" ng-show="chatBox.showInput" ib-focus="chatBox.showInput" ng-model="chatBox.newmsg" ng-focus="chatBox.trapKeys()" ng-blur="chatBox.untrapKeys()" maxlength="255" />
