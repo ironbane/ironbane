@@ -348,7 +348,7 @@ angular
                             }
                         });
 
-                        if (sourceSlot && equipSlot) {
+                        if (Meteor.isClient && sourceSlot && equipSlot) {
                             this.world.publish('inventory:equipItem', entity, sourceSlot, equipSlot);
                         }
 
