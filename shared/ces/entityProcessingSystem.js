@@ -29,6 +29,10 @@ angular
                     // optional subclass
                 },
                 update: function(dt, elapsed, timestamp) {
+                    if (!this.isActive()) {
+                        return;
+                    }
+
                     var system = this,
                         world = this.world,
                         callback = function(entity) {

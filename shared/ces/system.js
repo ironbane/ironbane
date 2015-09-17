@@ -1,42 +1,51 @@
-angular.module('ces.system', [
-    'ces.class'
-])
-    .factory('System', ['Class', function (Class) {
-        'use strict';
-        /**
-         * The system is responsible for updating the entities.
-         * @class
-         */
-        var System = Class.extend({
+angular
+    .module('ces.system', [
+        'ces.class'
+    ])
+    .factory('System', [
+        'Class',
+        function(Class) {
+            'use strict';
             /**
-             * @constructor
+             * The system is responsible for updating the entities.
+             * @class
              */
-            init: function () {
+            var System = Class.extend({
                 /**
-                 * This property will be set when the system is added to a world.
-                 * @public
+                 * @constructor
                  */
-                this.world = null;
-            },
+                init: function() {
+                    /**
+                     * This property will be set when the system is added to a world.
+                     * @public
+                     */
+                    this.world = null;
+                },
 
-            addedToWorld: function (world) {
-                this.world = world;
-            },
+                addedToWorld: function(world) {
+                    this.world = world;
+                },
 
-            removedFromWorld: function (world) {
-                this.world = null;
-            },
+                removedFromWorld: function(world) {
+                    this.world = null;
+                },
 
-            /**
-             * Update the entities.
-             * @public
-             * @param {Number} dt time interval between updates
-             */
-            update: function (dt) {
-                throw new Error('Subclassed should override this method');
-            }
-        });
+                // should override and use in update loop
+                isActive: function() {
+                    return true;
+                },
 
-        return System;
+                /**
+                 * Update the entities.
+                 * @public
+                 * @param {Number} dt time interval between updates
+                 */
+                update: function(dt) {
+                    throw new Error('Subclassed should override this method');
+                }
+            });
 
-    }]);
+            return System;
+
+        }
+    ]);
