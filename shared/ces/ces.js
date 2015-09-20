@@ -1,6 +1,9 @@
 angular.module('ces', [
     'ces.class',
+    'ces.linkedList',
+    'ces.objectPool',
     'ces.component',
+    'ces.pooledComponent',
     'ces.entity',
     'ces.entitylist',
     'ces.family',
