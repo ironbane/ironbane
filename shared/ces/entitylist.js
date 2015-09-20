@@ -26,6 +26,10 @@ angular
             };
 
             EntityList.prototype.has = function(entity) {
+                if (!entity) {
+                    // TODO: find out what is passing undefined into here
+                    return false;
+                }
                 return this._entities[entity.id] !== undefined;
             };
 
