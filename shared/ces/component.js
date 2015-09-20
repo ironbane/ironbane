@@ -1,37 +1,31 @@
-angular.module('ces.component', ['ces.class'])
-    .factory('Component', ['Class', function (Class) {
-        'use strict';
+angular
+    .module('ces.component', [])
+    .factory('Component', [
+        function() {
+            'use strict';
 
-        /**
-         * The components is the container of some properties that
-         * the entity possesses.
-         * @class
-         */
-        var Component = Class.extend({
-            init: function(name, props) {
-                var component = this;
+            function Component(name, props) {
+                this.name = name;
 
-                component.name = name;
-
-                component.__properties = {};
+                this.__properties = {};
                 for (var field in props) {
                     // don't track any designated private variables
                     if (field.substr(2) === '__') {
-                        component[field] = props[field];
+                        this[field] = props[field];
                     } else {
-                        component.trackProperty(field, props[field]);
+                        this.trackProperty(field, props[field]);
                     }
                 }
-            },
+            }
 
-            // tracks a property so that the component dirty flag can be tested (for serialization)
-            trackProperty: function(prop, initialValue) {
+            Component.prototype.trackProperty = function(prop, initialValue) {
                 if (angular.isDefined(initialValue)) {
                     this.__properties[prop] = initialValue;
                 }
 
                 Object.defineProperty(this, prop, {
                     enumerable: true,
+                    configurable: true,
                     get: function() {
                         return this.__properties[prop];
                     },
@@ -40,54 +34,44 @@ angular.module('ces.component', ['ces.class'])
                         this.__dirty = true;
                     }
                 });
-            },
+            };
 
-            /**
-             * Name of this component. It is expected to be overriden and
-             * should be unique.
-             * @public
-             * @readonly
-             * @property {String} name
-             */
-            name: '',
-
-            isDirty: function() {
+            Component.prototype.isDirty = function() {
                 return !!this.__dirty;
-            },
+            };
 
-            setIsDirty: function(isDirty) {
+            Component.prototype.setIsDirty = function(isDirty) {
                 this.__dirty = !!isDirty;
-            },
+            };
 
-            toJSON: function() {
+            Component.prototype.toJSON = function() {
                 // for serialization, we ONLY capture the state based on the tracked properties
                 var json = {},
                     component = this;
 
                 json.name = component.name;
 
-                for(var key in component.__properties) {
+                for (var key in component.__properties) {
                     json[key] = component[key];
                 }
 
                 return json;
-            },
+            };
 
-            fromJSON: function(json) {
+            Component.prototype.fromJSON = function(json) {
                 // deep?
                 _.extend(this, json);
-            },
+            };
 
-            serializeNet: function() {
-                // this is the default, individual components can define their own net behavior
+            Component.prototype.serializeNet = function() {
                 return this.toJSON();
-            },
+            };
 
-            deserializeNet: function(data) {
+            Component.prototype.deserializeNet = function(data) {
                 this.fromJSON(data);
-            }
-        });
+            };
 
-        return Component;
+            return Component;
 
-    }]);
+        }
+    ]);
