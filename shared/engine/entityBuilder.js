@@ -10,14 +10,13 @@ angular
     .service('EntityBuilder', [
         'Entity',
         'THREE',
-        '$components',
         '$geometryCache',
         '$materialCache',
         '$injector',
         '$log',
         '$q',
         'ContentLoader',
-        function(Entity, THREE, $components, $geometryCache, $materialCache, $injector, $log, $q, ContentLoader) {
+        function(Entity, THREE, $geometryCache, $materialCache, $injector, $log, $q, ContentLoader) {
             'use strict';
 
             var objectLoader = new THREE.ObjectLoader();
@@ -55,19 +54,14 @@ angular
 
                     // now actually add the components
                     angular.forEach(componentData.components, function(cData, componentName) {
-                        var component = $components.get(componentName, cData);
-                        // might not find, could be bad/old db data
-                        if (component) {
-                            // console.log('add component:', component)
-                            entity.addComponent(component);
-                        }
+                        entity.addComponent(componentName, cData);
                     });
 
                     // Because it has a prefab attached, it's dynamic.
                     // Make sure the server will send information to the clients
                     // about this entity.
                     if (Meteor.isServer && ['SpawnZone'].indexOf(prefabName) === -1) {
-                        entity.addComponent($components.get('netSend'));
+                        entity.addComponent('netSend');
                     }
                 }
             }
@@ -182,11 +176,7 @@ angular
                 }
 
                 angular.forEach(data.components, function(componentData, componentName) {
-                    var component = $components.get(componentName, componentData);
-                    // might not find, could be bad/old db data
-                    if (component) {
-                        entity.addComponent(component);
-                    }
+                    entity.addComponent(componentName, componentData);
                 });
 
                 addPrefabToEntity((data.userData.entity || data.userData.prefab), entity, data);
@@ -273,22 +263,22 @@ angular
 
                 switch (data.type) {
                     case 'Scene':
-                        entity.addComponent($components.get('scene'));
+                        entity.addComponent('scene');
                         break;
 
                     case 'PerspectiveCamera':
-                        entity.addComponent($components.get('camera', {
+                        entity.addComponent('camera', {
                             projection: 'perspective',
                             fov: data.fov,
                             aspect: data.aspect,
                             near: data.near,
                             far: data.far,
                             visible: angular.isDefined(data.visible) ? data.visible : true
-                        }));
+                        });
                         break;
 
                     case 'OrthographicCamera':
-                        entity.addComponent($components.get('camera', {
+                        entity.addComponent('camera', {
                             projection: 'orthographic',
                             left: data.left,
                             right: data.right,
@@ -297,38 +287,38 @@ angular
                             near: data.near,
                             far: data.far,
                             visible: angular.isDefined(data.visible) ? data.visible : true
-                        }));
+                        });
                         break;
 
                     case 'AmbientLight':
-                        entity.addComponent($components.get('light', {
+                        entity.addComponent('light', {
                             type: 'AmbientLight',
                             color: data.color,
                             visible: angular.isDefined(data.visible) ? data.visible : true
-                        }));
+                        });
                         break;
 
                     case 'DirectionalLight':
-                        entity.addComponent($components.get('light', {
+                        entity.addComponent('light', {
                             type: 'DirectionalLight',
                             color: data.color,
                             intensity: data.intensity,
                             visible: angular.isDefined(data.visible) ? data.visible : true
-                        }));
+                        });
                         break;
 
                     case 'PointLight':
-                        entity.addComponent($components.get('light', {
+                        entity.addComponent('light', {
                             type: 'PointLight',
                             color: data.color,
                             intensity: data.intensity,
                             distance: data.distance,
                             visible: angular.isDefined(data.visible) ? data.visible : true
-                        }));
+                        });
                         break;
 
                     case 'SpotLight':
-                        entity.addComponent($components.get('light', {
+                        entity.addComponent('light', {
                             type: 'SpotLight',
                             color: data.color,
                             intensity: data.intensity,
@@ -336,17 +326,17 @@ angular
                             angle: data.angle,
                             exponent: data.exponent,
                             visible: angular.isDefined(data.visible) ? data.visible : true
-                        }));
+                        });
                         break;
 
                     case 'HemisphereLight':
-                        entity.addComponent($components.get('light', {
+                        entity.addComponent('light', {
                             type: 'HemisphereLight',
                             color: data.color,
                             groundColor: data.groundColor,
                             intensity: data.intensity,
                             visible: angular.isDefined(data.visible) ? data.visible : true
-                        }));
+                        });
                         break;
 
                     case 'Mesh':
@@ -363,23 +353,23 @@ angular
                             $materialCache.put(data.material, materials[data.material]);
                         }
 
-                        entity.addComponent($components.get('mesh', {
+                        entity.addComponent('mesh', {
                             geometry: data.geometry,
                             material: data.material
-                        }));
+                        });
 
                         // If the mesh contains a collider, also add an octree
                         entity.parent.children.forEach(function(child) {
                             if (child.data.userData.type && child.data.userData.type.indexOf('Collider') !== -1) {
-                                entity.addComponent($components.get('octree', {}));
+                                entity.addComponent('octree');
                             }
                         });
 
                         // Check if it's a navigation mesh
                         if (entity.parent.name === 'NavMesh') {
-                            entity.addComponent($components.get('navMesh', {
+                            entity.addComponent('navMesh', {
                                 sceneName: sceneName
-                            }));
+                            });
                         }
 
                         break;
@@ -391,9 +381,9 @@ angular
                             $materialCache.put(data.material, materials[data.material]);
                         }
 
-                        entity.addComponent($components.get('sprite', {
+                        entity.addComponent('sprite', {
                             material: data.material
-                        }));
+                        });
                         break;
                 }
 
@@ -414,14 +404,14 @@ angular
 
                         entity.parent.children.forEach(function(child) {
                             if (child.data.type && child.data.type === 'Mesh') {
-                                child.addComponent($components.get('rigidBody', {
+                                child.addComponent('rigidBody', {
                                     shape: {
                                         type: 'concave'
                                     },
                                     mass: 0,
                                     group: 'level',
                                     collidesWith: ['all']
-                                }));
+                                });
                             }
                         });
 
@@ -434,7 +424,7 @@ angular
                         // scale. Due to our exporter exporting the objects in a
                         // flattened matter this should be fine for now.
 
-                        entity.parent.addComponent($components.get('rigidBody', {
+                        entity.parent.addComponent('rigidBody', {
                             shape: {
                                 type: 'box',
                                 width: data.userData.size[0]*entity.parent.scale.x,
@@ -445,7 +435,7 @@ angular
                             mass: 0,
                             group: 'level',
                             collidesWith: ['all']
-                        }));
+                        });
 
                         break;
                     case 'Script':
