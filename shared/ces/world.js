@@ -281,16 +281,15 @@ angular
                  * @param {Array.<String>} components
                  */
                 _ensureFamilyExists: function(components) {
-                    var families = this._families;
-                    var familyId = this._getFamilyId(components);
+                    var families = this._families,
+                        familyId = this._getFamilyId(components),
+                        family = families[familyId];
 
-                    if (!families[familyId]) {
-                        families[familyId] = new Family(
-                            Array.prototype.slice.call(components)
-                        );
-                        for (var node = this._entities.head; node; node = node.next) {
-                            families[familyId].addEntityIfMatch(node.entity);
-                        }
+                    if (!family) {
+                        family = families[familyId] = new Family(Array.prototype.slice.call(components));
+                        this._entities.forEach(function(entity) {
+                            family.addEntityIfMatch(entity);
+                        });
                     }
                 },
 
