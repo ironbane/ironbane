@@ -86,6 +86,7 @@ angular
                             this.entity.addComponent($components.get('localState', {
                                 state: 'searchAndDestroyEntity',
                                 config: {
+                                    monsterBehaviour: this.config.monsterBehaviour,
                                     targetEntityUuid: this.lastFollowingEntity.uuid
                                 }
                             }));

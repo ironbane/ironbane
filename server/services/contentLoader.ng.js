@@ -177,6 +177,17 @@ angular
                 var inventoryItemNames = getValue(npc, npcHeaders, 'inventory').split(',');
                 var equipmentItemNames = getValue(npc, npcHeaders, 'equipment').split(',');
 
+                var monsterBehaviour = getValue(npc, npcHeaders, 'behaviour').split(',');
+                monsterBehaviour = monsterBehaviour.map(function (p) {
+                    return p.trim();
+                });
+                var monsterBehaviourHash = {};
+                _.each(monsterBehaviour, function (p) {
+                    if (p) {
+                        monsterBehaviourHash[p] = true;
+                    }
+                });
+
                 var charBuildData = getValue(npc, npcHeaders, 'imageData');
 
                 // Build a list of NPCS with all their components
@@ -239,10 +250,14 @@ angular
                         globalState: {
                             state: getValue(npc, npcHeaders, 'scriptType'),
                             config: {
-                                aggroRadius: getValue(npc, npcHeaders, 'aggroRadius')
+                                aggroRadius: 10,
+                                monsterBehaviour: monsterBehaviourHash
                             }
                         },
-                        steeringBehaviour: {}
+                        steeringBehaviour: {
+                            speed: monsterBehaviourHash['Fast Movement'] ? 3 : 2,
+                            maxSpeed: 5
+                        }
                     }
                 };
 
