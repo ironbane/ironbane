@@ -58,7 +58,7 @@ angular
                                 }
                             }
 
-                            return entity.position.distanceToSquared(me.entity.position) < Math.pow((me.aggroRadius || DEFAULT_AGGRO_RADIUS) + (me.wanderRange || DEFAULT_WANDER_RANGE), 2)
+                            return entity.position.distanceToSquared(me.entity.position) < Math.pow((me.config.aggroRadius || DEFAULT_AGGRO_RADIUS) + (me.config.wanderRange || DEFAULT_WANDER_RANGE), 2)
                         });
 
                     // Find nearest hostile target
@@ -108,7 +108,7 @@ angular
                         if (this.wanderWaypointChangeTimer < 0) {
                             this.wanderWaypointChangeTimer = this.wanderWaypointChangeTimeout || DEFAULT_WANDER_WAYPOINT_CHANGE_TIMEOUT;
 
-                            var targetPosition = IbUtils.getRandomVector3(this.entity.position, new THREE.Vector3(this.wanderRange || DEFAULT_WANDER_RANGE, 0, this.wanderRange || DEFAULT_WANDER_RANGE));
+                            var targetPosition = IbUtils.getRandomVector3(this.entity.position, new THREE.Vector3(this.config.wanderRange || DEFAULT_WANDER_RANGE, 0, this.config.wanderRange || DEFAULT_WANDER_RANGE));
 
                             // console.log(this.entity.name + ' changed position');
                             // console.log('position: ', this.entity.position);

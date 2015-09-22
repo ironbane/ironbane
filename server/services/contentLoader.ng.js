@@ -250,7 +250,7 @@ angular
                         globalState: {
                             state: getValue(npc, npcHeaders, 'scriptType'),
                             config: {
-                                aggroRadius: 10,
+                                aggroRadius: 20,
                                 monsterBehaviour: monsterBehaviourHash
                             }
                         },
