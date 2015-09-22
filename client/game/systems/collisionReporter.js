@@ -351,8 +351,6 @@ angular
                 },
                 update: function(dt) {
 
-                    PhysicsWorld.stepSimulation(dt);
-
                     this.checkCollisions();
 
 

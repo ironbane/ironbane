@@ -496,7 +496,7 @@ angular
                     }
                 },
                 update: function(dt) {
-                    PhysicsWorld.stepSimulation(dt);
+                    PhysicsWorld.stepSimulation(dt * 2, 7);
 
                     this.syncEntities();
                 }
