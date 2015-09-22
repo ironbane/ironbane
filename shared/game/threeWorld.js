@@ -29,8 +29,9 @@ angular
 
                     if (Meteor.isClient) {
                         this.renderer = new THREE.WebGLRenderer({
-                        	devicePixelRatio: 1.0
+                            precision: 'lowp'
                         });
+                        this.renderer.setPixelRatio(1.0);
                         this.stats = new Stats();
                     } else {
                         this.renderer = null;
