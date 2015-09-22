@@ -10,5 +10,6 @@ angular
         'prefabs.spawnPoint',
         'prefabs.proctree',
         'prefabs.waterFountain',
-        'prefabs.worldMesh'
+        'prefabs.worldMesh',
+        'prefabs.mediumFire'
     ]);
