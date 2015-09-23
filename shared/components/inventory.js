@@ -7,6 +7,7 @@ angular
 
             $componentsProvider.register({
                 'inventory': {
+                    gold: 0,
                     head: null,
                     body: null,
                     feet: null,

@@ -63,12 +63,14 @@ angular
             return deferred.promise;
         };
 
-        this.buildInventory = function(inventoryItemNames, equipmentItemNames) {
-
+        this.buildInventory = function(inventoryItemNames, equipmentItemNames, gold) {
+            gold = gold || 0;
             inventoryItemNames = inventoryItemNames || [];
             equipmentItemNames = equipmentItemNames || [];
 
-            var inventory = {};
+            var inventory = {
+                gold: gold
+            };
             var slotCount = 0;
             var handSlotCount = 0;
             var relicCount = 1; // Relics apparently start count from 1 while slots start from 0 :P
@@ -187,6 +189,7 @@ angular
 
                 // Build a list of NPCS with all their components
                 var npcPrefab = {
+                    gold: getValue(npc, npcHeaders, 'gold'),
                     inventoryItemNames: inventoryItemNames,
                     equipmentItemNames: equipmentItemNames,
                     components: {
@@ -349,7 +352,7 @@ angular
                 // }
             }
 
-            prefab.components.inventory = this.buildInventory(prefab.inventoryItemNames, prefab.equipmentItemNames);
+            prefab.components.inventory = this.buildInventory(prefab.inventoryItemNames, prefab.equipmentItemNames, prefab.gold);
 
             delete prefab.inventoryItemNames;
             delete prefab.equipmentItemNames;
