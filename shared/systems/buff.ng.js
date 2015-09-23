@@ -22,6 +22,8 @@ angular
                 update: function(dTime) {
                     var entities = this.world.getEntities('buff');
 
+                    var damageSystem = this.world.getSystem('damage');
+
                     entities.forEach(function(entity) {
                         var buffComponent = entity.getComponent('buff');
 
@@ -43,6 +45,7 @@ angular
                                     if (healthComponent) {
                                         if (healthComponent.value < healthComponent.max) {
                                             healthComponent.value += buffComponent.amountPerInterval;
+                                            damageSystem.addDamageParticles('healthRegen', buffComponent.amountPerInterval, entity.position);
                                             if (healthComponent.value > healthComponent.max) {
                                                 healthComponent.value = healthComponent.max;
                                             }
@@ -55,6 +58,8 @@ angular
                                     if (healthComponent) {
                                         if (healthComponent.value > 0.5) {
                                             healthComponent.value -= buffComponent.amountPerInterval;
+
+                                            damageSystem.addDamageParticles('health', buffComponent.amountPerInterval, entity.position);
 
                                             // Don't die, that would suck
                                             healthComponent.value = Math.max(healthComponent.value, 0.5);

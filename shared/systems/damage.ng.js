@@ -124,15 +124,27 @@ angular
 
                 switch (type) {
                     case 'health':
-                        this._spawnParticle(3, 1, amount, position);
+                        this._spawnParticle(1, 4, amount, position);
                         if (halfParticle) {
-                            this._spawnParticle(3, 2, 1, position);
+                            this._spawnParticle(3, 4, 1, position);
+                        }
+                        break;
+                    case 'healthRegen':
+                        this._spawnParticle(0, 4, amount, position);
+                        if (halfParticle) {
+                            this._spawnParticle(2, 4, 1, position);
                         }
                         break;
                     case 'armor':
-                        this._spawnParticle(1, 1, amount, position);
+                        this._spawnParticle(0, 3, amount, position);
                         if (halfParticle) {
-                            this._spawnParticle(2, 1, 1, position);
+                            this._spawnParticle(3, 3, 1, position);
+                        }
+                        break;
+                    case 'armorRegen':
+                        this._spawnParticle(1, 3, amount, position);
+                        if (halfParticle) {
+                            this._spawnParticle(2, 3, 1, position);
                         }
                         break;
                 }
@@ -288,8 +300,9 @@ angular
                                     if (armorComponent) {
                                         var armorDamageDone = Math.min(armorComponent.value, damage);
 
+                                        damage -= armorDamageDone;
+
                                         if (Meteor.isServer) {
-                                            damage -= armorDamageDone;
                                             armorComponent.value -= armorDamageDone;
                                         }
 
@@ -303,8 +316,9 @@ angular
                                     if (healthComponent) {
                                         var healthDamageDone = Math.min(healthComponent.value, damage);
 
+                                        damage -= healthDamageDone;
+
                                         if (Meteor.isServer) {
-                                            damage -= healthDamageDone;
                                             healthComponent.value -= healthDamageDone;
                                         }
 

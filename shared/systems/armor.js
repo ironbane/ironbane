@@ -38,6 +38,7 @@ angular
                     };
 
                     world.subscribe('inventory:equipItem', buildArmor);
+                    world.subscribe('inventory:onItemRemoved', buildArmor);
                     world.subscribe('inventory:load', buildArmor);
 
                     world.entityAdded('armorRegen').add(function(entity) {
@@ -49,6 +50,8 @@ angular
                 update: function() {
                     var entities = this.world.getEntities('armorRegen', 'armor');
 
+                    var damageSystem = this.world.getSystem('damage');
+
                     entities.forEach(function(entity) {
                         var armor = entity.getComponent('armor'),
                             regen = entity.getComponent('armorRegen');
@@ -58,6 +61,8 @@ angular
                                 regen._regenTimer.unpause(); // will check again next tick
                             } else if (regen._regenTimer.isExpired) {
                                 armor.value += regen.amount;
+
+                                damageSystem.addDamageParticles('armorRegen', regen.amount, entity.position);
 
                                 if (armor.value < armor.max) {
                                     regen._regenTimer.reset();
