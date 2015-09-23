@@ -2,3 +2,4 @@ private/clara.json
 private/workshop
 deploy.sh
 private/*.csv
+settings.json
