@@ -29,6 +29,7 @@ angular
             otherPlayers: 4,
             npcs: 8,
             projectiles: 16,
+            pickups: 32,
             all: 65535
         },
         rules: {

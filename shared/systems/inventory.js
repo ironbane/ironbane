@@ -246,6 +246,7 @@ angular
                                         y: launchVelocity.y,
                                         z: launchVelocity.z
                                     },
+                                    group: 'pickups',
                                     collidesWith: ['level']
                                 },
                                 shadow: {
