@@ -10,6 +10,7 @@ angular
             // Prone to cheating but in a co-op environment this should be managable. The big advantage is speed.
 
             var DEFAULT_AGGRO_RADIUS = 10;
+            var DEFAULT_DEFEND_RADIUS = 30;
             var DEFAULT_WANDER_WAYPOINT_CHANGE_TIMEOUT = 7.5;
             var DEFAULT_WANDER_RANGE = 10.0;
 
@@ -39,7 +40,7 @@ angular
 
                     var fighterComponent = this.entity.getComponent('fighter');
 
-                    var fighterEntities = this.world.getEntities('fighter', 'health')
+                    var potentialTargets = this.world.getEntities('fighter', 'health')
                         .filter(function (entity) {
                             var otherFighterComponent = entity.getComponent('fighter');
                             if (fighterComponent.faction === otherFighterComponent.faction) return false;
@@ -58,17 +59,22 @@ angular
                                 }
                             }
 
-                            return entity.position.distanceToSquared(me.entity.position) < Math.pow((me.config.aggroRadius || DEFAULT_AGGRO_RADIUS) + (me.config.wanderRange || DEFAULT_WANDER_RANGE), 2)
+                            return entity.position.distanceToSquared(me.entity.position) < Math.pow(me.config.defendRadius || DEFAULT_DEFEND_RADIUS, 2)
                         });
 
                     // Find nearest hostile target
-                    fighterEntities.sort(function(a, b) {
+                    potentialTargets.sort(function(a, b) {
                         return a.position.distanceToSquared(me.entity.position) - b.position.distanceToSquared(me.entity.position);
                     });
 
+                    var inAggroRadiusTargets = potentialTargets
+                        .filter(function (entity) {
+                            return entity.position.distanceToSquared(me.entity.position) < Math.pow(me.config.aggroRadius || DEFAULT_AGGRO_RADIUS, 2)
+                        });
+
                     var foundTarget = null;
-                    if (fighterEntities.length) {
-                        foundTarget = fighterEntities[0];
+                    if (inAggroRadiusTargets.length) {
+                        foundTarget = inAggroRadiusTargets[0];
                     }
 
 
@@ -95,7 +101,7 @@ angular
 
                     if (this.lastFollowingEntity) {
                         // Stop pursuing if they are no longer in our target list
-                        if (!_.contains(fighterEntities, this.lastFollowingEntity)) {
+                        if (!_.contains(potentialTargets, this.lastFollowingEntity)) {
                             if (this.entity.hasComponent('localState')) {
                                 this.entity.removeComponent('localState');
                             }
@@ -103,7 +109,7 @@ angular
                         }
                     }
 
-                    if (!foundTarget) {
+                    if (!potentialTargets.length) {
 
                         if (this.wanderWaypointChangeTimer < 0) {
                             this.wanderWaypointChangeTimer = this.wanderWaypointChangeTimeout || DEFAULT_WANDER_WAYPOINT_CHANGE_TIMEOUT;

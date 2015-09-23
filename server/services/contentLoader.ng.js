@@ -246,11 +246,13 @@ angular
                             max: getValue(npc, npcHeaders, 'armor'),
                             value: getValue(npc, npcHeaders, 'armor')
                         },
+                        armorRegen: {},
                         damageable: {},
                         globalState: {
                             state: getValue(npc, npcHeaders, 'scriptType'),
                             config: {
-                                aggroRadius: 20,
+                                aggroRadius: 15,
+                                defendRadius: 30,
                                 monsterBehaviour: monsterBehaviourHash
                             }
                         },
