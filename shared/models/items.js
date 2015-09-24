@@ -6,6 +6,10 @@ angular
         var _collection = new Mongo.Collection('items');
 
         this.$get = [function() {
+            if (Meteor.isClient) {
+                Meteor.subscribe('items');
+            }
+
             return _collection;
         }];
     });
