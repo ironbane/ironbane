@@ -11,7 +11,7 @@ angular.module('ces.entity', [
         function(THREE, Signal, $components, $log) {
             'use strict';
 
-            var Entity = function() {
+            function Entity() {
                 THREE.Object3D.call(this);
 
                 this._components = {};
@@ -20,7 +20,7 @@ angular.module('ces.entity', [
 
                 this.onChildAdded = new Signal();
                 this.onChildRemoved = new Signal();
-            };
+            }
 
             Entity.prototype = Object.create(THREE.Object3D.prototype);
             Entity.prototype.constructor = Entity;
