@@ -1,49 +1,55 @@
 angular
     .module('server.systems.spawn', [
+        'underscore',
         'ces',
         'three',
+        'engine.timing',
         'engine.util',
         'engine.entity-builder',
         'server.services.activeWorlds'
     ])
-    .factory('SpawnSystem', function(System, IbUtils, EntityBuilder, THREE, $activeWorlds) {
-            'use strict';
+    .factory('SpawnSystem', function(_, $log, System, IbUtils, EntityBuilder, THREE, $activeWorlds, Timer) {
+        'use strict';
 
-            return System.extend({
-                addedToWorld: function(world) {
-                    var system = this;
-                    system._super(world);
+        return System.extend({
+            addedToWorld: function(world) {
+                var system = this;
+                system._super(world);
 
-                    world.entityAdded('spawnZone').add(function (entity) {
-                        var spawnZoneComponent = entity.getComponent('spawnZone');
+                world.entityAdded('spawnZone').add(function(entity) {
+                    var spawnZoneComponent = entity.getComponent('spawnZone');
 
-                        spawnZoneComponent.spawnTimer = 0.0;
-                        spawnZoneComponent.spawnList = [];
+                    spawnZoneComponent.spawnTimer = new Timer();
+                    spawnZoneComponent.spawnList = [];
 
-                    });
+                });
 
-                    this.world = world;
+                this.world = world;
 
-                },
-                update: function(dTime) {
-                    var world = this.world;
+            },
+            update: function(dTime) {
+                var world = this.world;
 
-                    var spawnZoneEntities = this.world.getEntities('spawnZone');
-                    spawnZoneEntities.forEach(function(entity) {
-                        var spawnZoneComponent = entity.getComponent('spawnZone');
+                var spawnZoneEntities = this.world.getEntities('spawnZone');
+                spawnZoneEntities.forEach(function(entity) {
+                    var spawnZoneComponent = entity.getComponent('spawnZone');
 
-                        if (spawnZoneComponent.spawnList.length < spawnZoneComponent.amountOfEntitiesToHaveAtAllTimes) {
-                            if (spawnZoneComponent.spawnTimer <= dTime) {
-                                spawnZoneComponent.spawnTimer = spawnZoneComponent.spawnDelay;
+                    var timer = spawnZoneComponent.spawnTimer,
+                        currentCount = spawnZoneComponent.spawnList.length,
+                        maxCount = spawnZoneComponent.amountOfEntitiesToHaveAtAllTimes,
+                        delay = spawnZoneComponent.spawnDelay,
+                        spawnTypes = spawnZoneComponent.entitiesToSpawnSeparatedByCommas.split(',');
 
-                                entity.children.forEach(function(child) {
+                    if (timer.isExpired) {
+                        if (currentCount < maxCount) {
+                            timer.set(delay);
 
-                                    var meshComponent = child.getComponent('mesh');
-                                    if (meshComponent && meshComponent._meshLoadTask) {
-                                        meshComponent._meshLoadTask.then(function(mesh) {
-
-                                            var randomPrefabName = _.sample(spawnZoneComponent.entitiesToSpawnSeparatedByCommas.split(','));
-
+                            entity.children.forEach(function(child) {
+                                var meshComponent = child.getComponent('mesh');
+                                if (meshComponent && meshComponent._meshLoadTask) {
+                                    $log.debug('spawn(' + delay + '): ', entity.name, ' ', currentCount + 1, ' / ', maxCount);
+                                    meshComponent._meshLoadTask.then(function(mesh) {
+                                            var randomPrefabName = _.sample(spawnTypes);
                                             var builtEntity = EntityBuilder.build({
                                                 userData: {
                                                     prefab: randomPrefabName
@@ -71,10 +77,10 @@ angular
 
                                             spawnZoneComponent.spawnList.push(builtEntity);
 
-                                            var listener = function (entity) {
+                                            var listener = function(entity) {
                                                 if (entity === builtEntity) {
                                                     spawnZoneComponent.spawnList = _.without(spawnZoneComponent.spawnList, builtEntity);
-                                                    setTimeout(function () {
+                                                    setTimeout(function() {
                                                         world.singleEntityRemoved.remove(listener);
                                                     }, 0);
                                                 }
@@ -82,77 +88,74 @@ angular
                                             world.singleEntityRemoved.add(listener);
 
                                         })
-                                        .then(null, function (err) {console.error(err.stack)});
-                                    }
-                                });
-                            }
-                            else {
-                                spawnZoneComponent.spawnTimer -= dTime;
-                            }
-                        }
-
-                    });
-
-
-                    // Check if we're able to respawn players
-                    var healthEntities = world.getEntities('health');
-                    healthEntities.forEach(function(entity) {
-                        var healthComponent = entity.getComponent('health');
-                        if (healthComponent) {
-                            if (healthComponent.value <= 0 && !healthComponent.__hasDied) {
-
-                                healthComponent.__hasDied = true;
-
-                                if (entity.hasComponent('player')) {
-                                    // entity.removeComponent('quad');
-                                    // entity.removeComponent('wieldItem');
-                                    // entity.removeComponent('fighter');
-                                    // entity.removeComponent('shadow');
-
-
-                                    Meteor.setTimeout(function () {
-
-                                        // Make sure the player is still online!
-                                        var user = Meteor.users.findOne(entity.owner);
-                                        if (user.status.online) {
-
-                                            delete healthComponent.__hasDied;
-                                            healthComponent.value = healthComponent.max;
-
-                                            if ($activeWorlds[entity.level]) {
-                                                // if not we have a problem!
-                                                var spawns = $activeWorlds[entity.level].getEntities('spawnPoint');
-                                                if (spawns.length === 0) {
-                                                    $log.log(entity.level, ' has no spawn points defined!');
-                                                }
-                                                // Just pick one of them
-                                                // Having multiple spawns is useful against AFK players so
-                                                // we don't have players spawning in/on top of eachother too much.
-                                                (function(spawn) {
-                                                    var component = spawn.getComponent('spawnPoint');
-
-                                                    if (component.tag === 'playerStart') {
-                                                        entity.position.copy(spawn.position);
-                                                        entity.rotation.copy(spawn.rotation);
-                                                    }
-                                                })(_.sample(spawns));
-                                            }
-
-                                            world.addEntity(entity);
-
-                                        }
-                                    }, 5000);
+                                        .then(null, function(err) {
+                                            $log.error(err.stack);
+                                        });
                                 }
-
-                                setTimeout(function () {
-                                    world.removeEntity(entity);
-                                }, 1000);
-
-                            }
+                            });
                         }
-                    });
+                    }
+                });
 
-                }
-            });
-        }
-    );
+
+                // Check if we're able to respawn players
+                var healthEntities = world.getEntities('health');
+                healthEntities.forEach(function(entity) {
+                    var healthComponent = entity.getComponent('health');
+                    if (healthComponent) {
+                        if (healthComponent.value <= 0 && !healthComponent.__hasDied) {
+
+                            healthComponent.__hasDied = true;
+
+                            if (entity.hasComponent('player')) {
+                                // entity.removeComponent('quad');
+                                // entity.removeComponent('wieldItem');
+                                // entity.removeComponent('fighter');
+                                // entity.removeComponent('shadow');
+
+
+                                Meteor.setTimeout(function() {
+
+                                    // Make sure the player is still online!
+                                    var user = Meteor.users.findOne(entity.owner);
+                                    if (user.status.online) {
+
+                                        delete healthComponent.__hasDied;
+                                        healthComponent.value = healthComponent.max;
+
+                                        if ($activeWorlds[entity.level]) {
+                                            // if not we have a problem!
+                                            var spawns = $activeWorlds[entity.level].getEntities('spawnPoint');
+                                            if (spawns.length === 0) {
+                                                $log.log(entity.level, ' has no spawn points defined!');
+                                            }
+                                            // Just pick one of them
+                                            // Having multiple spawns is useful against AFK players so
+                                            // we don't have players spawning in/on top of eachother too much.
+                                            (function(spawn) {
+                                                var component = spawn.getComponent('spawnPoint');
+
+                                                if (component.tag === 'playerStart') {
+                                                    entity.position.copy(spawn.position);
+                                                    entity.rotation.copy(spawn.rotation);
+                                                }
+                                            })(_.sample(spawns));
+                                        }
+
+                                        world.addEntity(entity);
+
+                                    }
+                                }, 5000);
+                            }
+
+                            setTimeout(function() {
+                                world.removeEntity(entity);
+                            }, 1000);
+
+                        }
+                    }
+                });
+
+            }
+        });
+    });
