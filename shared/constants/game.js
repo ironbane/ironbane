@@ -2,6 +2,7 @@ angular
     .module('global.constants.game', [])
     .constant('IB_CONSTANTS', {
         serverAnnouncementsTimeout: 300,
+        realm: Meteor.isServer && process.env.LOCATION ? process.env.LOCATION : 'US East',
         GAME_VERSION: '0.5 alpha',
         world: {
             mainMenuLevel: 'ravenwood',
@@ -84,5 +85,6 @@ angular
         function(IB_CONSTANTS, $log) {
             'use strict';
             $log.debug('You are running in ' + (IB_CONSTANTS.isDev ? 'development' : 'production') + ' mode.');
+            $log.debug('Server location: ' + IB_CONSTANTS.realm);
         }
     ]);

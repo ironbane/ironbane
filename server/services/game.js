@@ -27,6 +27,16 @@ angular
                     throw new Meteor.Error('char-not-found', 'Character not found!');
                 }
 
+                var user = Meteor.users.findOne(this.userId);
+                if (user.profile.server !== IB_CONSTANTS.realm) {
+                    Meteor.users.update(this.userId, {
+                        $set: {
+                            'profile.server': IB_CONSTANTS.realm
+                        }
+                    });
+                    throw new Meteor.Error('server-mismatch', 'Server mismatch!');
+                }
+
                 _.each($activeWorlds, function (world) {
                     var playerEntities = world.getEntities('player');
                     playerEntities.forEach(function (player) {
@@ -91,7 +101,8 @@ angular
             };
 
             Meteor.users.find({
-                'status.online': true
+                'status.online': true,
+                'profile.server': IB_CONSTANTS.realm
             }).observe({
                 removed: function(user) {
                     userExit(user._id);

@@ -19,4 +19,5 @@
 	<button class="ibutton" click-sound ng-click="buy()" style="width:60px">Buy</button> -->
 </div>
 <div ui-view class="sub-menu"></div>
+<button class="ibutton switch-server" click-sound ng-click="goToSwitchServerScreen()">{{ $root.currentUser.profile.server }}</button>
 <button class="ibutton sound-toggle" ng-class="{disabled: !currentUser.profile.enableSound}" click-sound ng-click="toggleSound()">♫</button>

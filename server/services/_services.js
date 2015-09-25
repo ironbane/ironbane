@@ -11,5 +11,6 @@ angular
         'server.services.hipchat',
         'server.services.items',
         'server.services.ironblood',
+        'server.services.servers',
         'server.services.zones'
     ]);

@@ -43,6 +43,8 @@ angular
                 function($meteor, $scope, $log, IB_CONSTANTS, $rootWorld, $state, $timeout, GlobalSound) {
                     this.IB_CONSTANTS = IB_CONSTANTS;
 
+                    $meteor.subscribe('servers');
+
                     // make this an object so we keep the reference
                     $scope.currentChar = {
                         id: localStorage.getItem('lastCharId')
@@ -86,6 +88,9 @@ angular
                         }
                     });
 
+                    $scope.goToSwitchServerScreen = function() {
+                        $state.go('three-root.main-menu.switch-server');
+                    };
 
                     $scope.toggleSound = function() {
                         var user = Meteor.user();

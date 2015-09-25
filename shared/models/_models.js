@@ -7,6 +7,7 @@ angular
         'models.entities',
         'models.items',
         'models.inventory',
+        'models.servers',
         'models.roles',
         'models.zones'
     ]);

@@ -46,7 +46,8 @@ angular
             var streams = {};
 
             Meteor.users.find({
-                'status.online': true
+                'status.online': true,
+                'profile.server': IB_CONSTANTS.realm
             }).observe({
                 added: function(user) {
                     var streamName = [user._id, 'entities'].join('_');
@@ -66,6 +67,13 @@ angular
                     this.entityComponentRemovedHandler = this._entityCRH.bind(this);
 
                     this.updateFrequencyTimer = new Timer(0.5);
+                },
+                addStream: function (user) {
+                    var streamName = [user._id, 'entities'].join('_');
+
+                    if (!streams[streamName]) {
+                        streams[streamName] = new Meteor.Stream(streamName);
+                    }
                 },
                 addedToWorld: function(world) {
                     var self = this;
