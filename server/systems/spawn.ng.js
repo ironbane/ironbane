@@ -40,8 +40,9 @@ angular
                         delay = spawnZoneComponent.spawnDelay,
                         spawnTypes = spawnZoneComponent.entitiesToSpawnSeparatedByCommas.split(',');
 
-                    if (timer.isExpired) {
-                        if (currentCount < maxCount) {
+                    if (currentCount < maxCount) {
+                        timer.unpause();
+                        if (timer.isExpired) {
                             timer.set(delay);
 
                             entity.children.forEach(function(child) {
@@ -94,6 +95,8 @@ angular
                                 }
                             });
                         }
+                    } else {
+                        timer.pause();
                     }
                 });
 
