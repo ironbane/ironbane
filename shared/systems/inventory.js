@@ -67,24 +67,53 @@ angular
                         }
                     });
                 },
-                findEmptySlot: function(entity) {
-                    var inventory = entity.getComponent('inventory'),
-                        slot = null;
+                findEmptySlot: function(entity, slotBank) {
+                    if (!angular.isObject(entity)) {
+                        return null;
+                    }
+
+                    // allow us to pass in an inventory-like object, not just an entity
+                    // this is so that we can pass in a raw object for building a component config, or just test the biz logic
+                    var inventory = (Object.getPrototypeOf(entity).constructor.name === 'Entity') ? entity.getComponent('inventory') : entity,
+                        slot = null,
+                        // optionally pass in an array of slots to test (relicX, slotX, etc.)
+                        slots = slotBank || INV_SLOTS.slotList;
 
                     if (!inventory) {
                         return slot; // error?
                     }
 
                     // pick first available
-                    var slots = invSlotList;
                     for (var s = 0, slen = slots.length; s < slen; s++) {
-                        if (slots[s].search(/slot/) === 0 && inventory[slots[s]] === null) {
+                        if (!inventory[slots[s]]) {
                             slot = slots[s];
                             break;
                         }
                     }
 
                     return slot;
+                },
+                pickupItem: function(entity, item) {
+                    var inv = entity.getComponent('inventory');
+                    if (!inv) {
+                        return false;
+                    }
+
+                    if (item.type === 'cash') {
+                        inv.gold += item.price;
+                        if (Meteor.isClient) {
+                            GlobalSound.play('coins', entity.position);
+                            $log.debug('coin pickup');
+                        }
+                        this.world.publish('inventory:onPickupGold', entity, item);
+                    } else {
+                        if (!this.findEmptySlot(entity)) {
+                            return false;
+                        }
+                        this.addItem(entity, item);
+                    }
+
+                    return true;
                 },
                 addItem: function(entity, item, slot) {
                     var inventory = entity.getComponent('inventory');

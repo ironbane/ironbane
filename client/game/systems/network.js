@@ -358,6 +358,18 @@ angular
                         //     //$log.debug('inventory:onEquipItem', data, entity.uuid);
                         // });
 
+                        me._stream.on('inventory:onPickupGold', function(data) {
+                            var inv = world.getSystem('inventory'),
+                                netents = world.getEntities('netSend'),
+                                entity = _.findWhere(netents, {
+                                    uuid: data.entityUuid
+                                });
+
+                            if (entity) {
+                                inv.pickupItem(entity, data.item);
+                            }
+                        });
+
                         me._stream.on('inventory:onItemAdded', function(data) {
                             var inv = world.getSystem('inventory'),
                                 netents = world.getEntities('netSend'),

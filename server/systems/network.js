@@ -211,6 +211,20 @@ angular
                         }
                     });
 
+                    world.subscribe('inventory:onPickupGold', function(entity, item) {
+                        var sendComponent = entity.getComponent('netSend');
+                        if (sendComponent) {
+                            sendComponent.__knownEntities.concat([entity]).forEach(function(knownEntity) {
+                                if (knownEntity.hasComponent('player')) {
+                                    knownEntity.stream.emit('inventory:onPickupGold', {
+                                        entityUuid: entity.uuid,
+                                        item: item
+                                    });
+                                }
+                            });
+                        }
+                    });
+
                     world.entityAdded('netSend', 'player').add(function (entity) {
                         var streamName = [entity.owner, 'entities'].join('_');
 
@@ -485,11 +499,6 @@ angular
                                 return;
                             }
 
-                            var freeSlot = inventorySystem.findEmptySlot(netEntity);
-                            if (!freeSlot) {
-                                return;
-                            }
-
                             if (!pickupEntity) {
                                 $log.error('[pickup:entity] pickupEntity not found!');
                                 return;
@@ -498,9 +507,10 @@ angular
                             var pickupComponent = pickupEntity.getComponent('pickup');
 
                             if (pickupComponent) {
-                                world.removeEntity(pickupEntity);
-                                inventorySystem.addItem(netEntity, pickupComponent.item);
-
+                                // pickup will check for free slots as appropriate
+                                if(inventorySystem.pickupItem(netEntity, pickupComponent.item)) {
+                                    world.removeEntity(pickupEntity);
+                                }
                                 // $log.log('picking up item ' + pickupComponent.item.name);
                             }
                         });

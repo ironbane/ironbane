@@ -55,7 +55,7 @@ angular
                     return;
                 }
 
-                var files = [config.path + '.ogg', config.path + '.mp3'],
+                var files = [config.path + '.ogg', config.path + '.mp3', config.path + '.wav'],
                     volume = _getVolume(name),
                     sound = new Howl({
                         urls: files,
@@ -168,7 +168,6 @@ angular
                 },
                 play: function (name, vector3d, time) {
                     var sound = _getSound(name, true);
-
                     if (!sound) {
                         return;
                     }
