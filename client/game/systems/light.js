@@ -84,8 +84,8 @@ angular
                         if (lightComponent) {
                             if (lightComponent.flicker && lightComponent.flickerTimer.isExpired) {
                                 lightComponent.flickerTimer.reset();
-                                lightComponent.flickerTimer.set(IbUtils.getRandomFloat(0, 0.5));
-                                lightComponent._light.intensity = lightComponent.intensity + IbUtils.getRandomFloat(-0.2, 0.2);
+                                lightComponent.flickerTimer.set(IbUtils.getRandomFloat(0, 0.2));
+                                lightComponent._light.intensity = lightComponent.intensity + IbUtils.getRandomFloat(-lightComponent.intensity*0.2, lightComponent.intensity*0.2);
                             }
                         }
 

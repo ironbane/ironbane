@@ -34,6 +34,7 @@ angular
                                 type: 'PointLight',
                                 color: 0xff8442,
                                 distance: 10.5,
+                                intensity: 2,
                                 flicker: true
                             }
                         }
