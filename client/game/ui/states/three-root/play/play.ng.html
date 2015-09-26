@@ -4,6 +4,7 @@
 <div class="stats-container">
     <stat-bar id="healthBar" stat-component="mainPlayer.getComponent('health')"></stat-bar>
     <stat-bar id="armorBar" stat-component="mainPlayer.getComponent('armor')"></stat-bar>
+    <div id="playerGold"><i class="gold-icon"></i> {{ mainPlayer.getComponent('inventory').gold }}</div>
 </div>
 <big-messages-box></big-messages-box>
 <drop-zone entity="mainPlayer"></drop-zone>
