@@ -1,8 +1,7 @@
 
 
-<p ng-switch="item.type">
+<p>
     <span ng-class="item.rarity">{{ item.name }}</span>
-    <span ng-switch-when="cash">{{ item.qty }} Gold</span>
 
     <div ng-if="item.type == 'weapon'">
         <span ng-if="item.handedness === '1h'">One-handed</span>
@@ -37,5 +36,10 @@
     <span ng-if="item.type == 'poison'">
         <spritesheet-image sheet="stats" id="17" scale="2"></spritesheet-image>
         <span class="stat">{{ item.damage }}</span>
+    </span>
+
+    <span ng-if="item.price > 0">
+        <spritesheet-image sheet="items" id="517" scale="2"></spritesheet-image>
+        <span class="stat">{{ item.price }}</span>
     </span>
 </p>
