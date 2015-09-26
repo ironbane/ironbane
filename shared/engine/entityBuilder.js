@@ -231,15 +231,21 @@ angular
                             // defer loading them to the network stream
                             var canAdd = true;
 
-                            if (Meteor.isClient) {
-                                if (child.children) {
-                                    var foundPrefab = _.some(child.children, function(child) {
-                                        return child.userData && child.userData.prefab;
-                                    });
-                                    if (foundPrefab) {
-                                        canAdd = false;
+                            if (child.children) {
+                                _.each(child.children, function(child) {
+                                    if (child.userData && child.userData.prefab) {
+                                        if (!child.userData.loadOnClientOnly) {
+                                            if (Meteor.isClient) {
+                                                canAdd = false;
+                                            }
+                                        }
+                                        else {
+                                            if (Meteor.isServer) {
+                                                canAdd = false;
+                                            }
+                                        }
                                     }
-                                }
+                                });
                             }
 
                             if (canAdd) {
