@@ -3,6 +3,8 @@ angular
         'prefabs.achievementTrigger',
         'prefabs.character',
         'prefabs.crystal',
+        'prefabs.mediumFire',
+        'prefabs.mediumSmoke',
         'prefabs.movingPlatform',
         'prefabs.torch',
         'prefabs.bunny',
@@ -10,6 +12,5 @@ angular
         'prefabs.spawnPoint',
         'prefabs.proctree',
         'prefabs.waterFountain',
-        'prefabs.worldMesh',
-        'prefabs.mediumFire'
+        'prefabs.worldMesh'
     ]);
