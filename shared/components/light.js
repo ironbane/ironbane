@@ -15,7 +15,8 @@ angular
                     exponent: 10,
                     skyColor: 0x00aaff,
                     groundColor: 0xffaa00,
-                    visible: true
+                    visible: true,
+                    flicker: false
                 }
             });
         }

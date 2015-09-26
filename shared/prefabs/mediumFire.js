@@ -29,6 +29,12 @@ angular
                                     colorStart: '#ff4800',
                                     particleCount: 500
                                 }
+                            },
+                            light: {
+                                type: 'PointLight',
+                                color: 0xff8442,
+                                distance: 10.5,
+                                flicker: true
                             }
                         }
                     };

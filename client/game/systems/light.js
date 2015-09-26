@@ -1,13 +1,17 @@
 angular
     .module('game.systems.light', [
         'ces',
-        'three'
+        'three',
+        'engine.util',
+        'engine.timing'
     ])
     .factory('LightSystem', [
         'System',
         'THREE',
         '$log',
-        function(System, THREE, $log) {
+        'IbUtils',
+        'Timer',
+        function(System, THREE, $log, IbUtils, Timer) {
             'use strict';
 
             var LIGHTS = ['PointLight', 'DirectionalLight', 'SpotLight', 'AmbientLight', 'HemisphereLight'];
@@ -61,6 +65,10 @@ angular
                             light.visible = false;
                         }
 
+                        if (lightData.flicker) {
+                            lightData.flickerTimer = new Timer(0.2);
+                        }
+
                         lightData._light = light;
                         //$log.debug('building light: ', lightData, light);
                         entity.add(light);
@@ -68,6 +76,20 @@ angular
                 },
                 update: function() {
                     // nothing
+
+                    var lightEntities = this.world.getEntities('light');
+                    lightEntities.forEach(function(entity) {
+                        var lightComponent = entity.getComponent('light');
+
+                        if (lightComponent) {
+                            if (lightComponent.flicker && lightComponent.flickerTimer.isExpired) {
+                                lightComponent.flickerTimer.reset();
+                                lightComponent.flickerTimer.set(IbUtils.getRandomFloat(0, 0.5));
+                                lightComponent._light.intensity = lightComponent.intensity + IbUtils.getRandomFloat(-0.2, 0.2);
+                            }
+                        }
+
+                    });
                 }
             });
 
