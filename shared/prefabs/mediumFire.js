@@ -19,7 +19,7 @@ angular
                                     acceleration: [0, 0, 0],
                                     accelerationSpread: [0.15, 0.25, 0.15],
                                     positionSpread: [0.5, 0, 0.5],
-                                    velocity: [0, 0.1, 0],
+                                    velocity: [0, 0.5, 0],
                                     velocitySpread: [0, 0, 0],
                                     particlesPerSecond: 10,
                                     sizeStart: 1,
@@ -27,7 +27,7 @@ angular
                                     opacityStart: 1,
                                     opacityEnd: 0,
                                     colorStart: '#ff4800',
-                                    particleCount: 500
+                                    particleCount: 50
                                 }
                             },
                             light: {
