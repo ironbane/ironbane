@@ -279,7 +279,7 @@ angular
                 'https://docs.google.com/spreadsheets/d/1a_dtZT1dUZnA3DlFTWbGKBCUZIAhuy2NQ6Hj8wtZJdU/pub?output=csv', // npcs
                 'https://docs.google.com/spreadsheets/d/1ZC-ydW7if6Ci0TytsSLaio0LMoCntQwaUkXAOwjn7Y8/pub?output=csv' // items
             ],
-            filesToLoad = IB_CONSTANTS.isDev ? defaultDevFiles : defaultProdFiles;
+            filesToLoad = IB_CONSTANTS.isDev && !process.env.LOCAL ? defaultDevFiles : defaultProdFiles;
 
             // allow override via commandline or env variable
             if (Meteor.settings.content) {
