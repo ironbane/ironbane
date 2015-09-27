@@ -25,8 +25,16 @@ angular
                 //var magic = 35;
                 var magic = 2;
 
-                cameraComponent._camera.position.set(Math.sin(elapsed * multiplier / 20) * -18, 30 + (magic + 2) + Math.cos(elapsed * multiplier / 20) * magic, Math.cos(elapsed * multiplier / 20) * 18);
-                cameraComponent._camera.rotation.set(0, -elapsed * multiplier / 20, 0);
+                var activeLevel = Session.get('activeLevel');
+
+                if (activeLevel === 'dev-zone') {
+                    cameraComponent._camera.position.set(Math.sin(elapsed * multiplier / 20) * -18, 5, Math.cos(elapsed * multiplier / 20) * 18);
+                    cameraComponent._camera.lookAt(new THREE.Vector3());
+                }
+                else {
+                    cameraComponent._camera.position.set(Math.sin(elapsed * multiplier / 20) * -18, 30 + (magic + 2) + Math.cos(elapsed * multiplier / 20) * magic, Math.cos(elapsed * multiplier / 20) * 18);
+                    cameraComponent._camera.rotation.set(0, -elapsed * multiplier / 20, 0);
+                }
             };
 
             ScriptBank.add('/scripts/built-in/camera-pan.js', PanScript);
