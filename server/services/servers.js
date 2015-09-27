@@ -13,37 +13,35 @@ angular
 
                 Meteor.users.update(this.userId, {
                     $set: {
-                        'profile.server': IB_CONSTANTS.realm
+                        'profile.server.id': Meteor.settings.server.id,
+                        'profile.server.name': Meteor.settings.server.name
                     }
                 });
 
-                return ServersCollection.find({});
+                return ServersCollection.find({
+                    lastUpdate: {
+                        $gt: (new Date().getTime()) - 60
+                    }
+                });
             });
 
             Meteor.setInterval(function () {
 
-                var servers = ServersCollection.find({}).fetch();
-                // console.log(servers);
+                var playersOnline = Meteor.users.find({
+                    'status.online': true,
+                    'profile.server.id': Meteor.settings.server.id
+                }).count();
 
-                // var players = Meteor.users.find({
-                //     'status.online': true
-                //     // 'profile.server': server.name
-                // }).fetch();
-                // console.log(players);
-
-                servers.forEach(function (server) {
-                    var playersOnline = Meteor.users.find({
-                        'status.online': true,
-                        'profile.server': server.name
-                    }).count();
-
-                    ServersCollection.update(server._id, {
-                        $set: {
-                            playersOnline: playersOnline
-                        }
-                    })
-                });
-
+                ServersCollection.upsert({
+                    'id': Meteor.settings.server.id
+                }, {
+                    $set: {
+                        name: Meteor.settings.server.name,
+                        capacity: Meteor.settings.server.capacity,
+                        playersOnline: playersOnline,
+                        lastUpdate: new Date().getTime()
+                    }
+                })
 
             }, 10000);
         }

@@ -45,18 +45,22 @@ angular
             // we need to cache and reuse them
             var streams = {};
 
-            Meteor.users.find({
-                'status.online': true,
-                'profile.server': IB_CONSTANTS.realm
-            }).observe({
-                added: function(user) {
-                    var streamName = [user._id, 'entities'].join('_');
+            // For some reason, if we don't use setTimeout here
+            // a circular dependency error is thrown
+            Meteor.setTimeout(function () {
+                Meteor.users.find({
+                    'status.online': true,
+                    'profile.server.id': Meteor.settings.server.id
+                }).observe({
+                    added: function(user) {
+                        var streamName = [user._id, 'entities'].join('_');
 
-                    if (!streams[streamName]) {
-                        streams[streamName] = new Meteor.Stream(streamName);
+                        if (!streams[streamName]) {
+                            streams[streamName] = new Meteor.Stream(streamName);
+                        }
                     }
-                }
-            });
+                });
+            }, 0);
 
             var NetworkSystem = System.extend({
                 init: function() {

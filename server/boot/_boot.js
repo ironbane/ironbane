@@ -4,6 +4,5 @@ angular
         'server.boot.createAdmins',
         'server.boot.removeOldGuests',
         'server.boot.onCreateUser',
-        'server.boot.makeServers',
         'server.boot.periodicStats'
     ]);

@@ -5,5 +5,5 @@ angular
     	dollarsSpent: 0,
         ironblood: 0,
         enableSound: true,
-        server: 'US East'
+        server: {}
     });

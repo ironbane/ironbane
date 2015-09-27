@@ -5,7 +5,7 @@ angular
         'server.services.character',
         'server.boot.adminEmailList'
     ])
-    .run(function(IB_CONSTANTS, AccountsCollection, RolesCollection, ZonesCollection, CharacterService, InventoryCollection, ADMIN_EMAIL_LIST) {
+    .run(function(IB_CONSTANTS, AccountsCollection, RolesCollection, CharacterService, InventoryCollection, ADMIN_EMAIL_LIST) {
             'use strict';
 
             if (IB_CONSTANTS.isDev) {

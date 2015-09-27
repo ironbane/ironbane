@@ -84,8 +84,8 @@ angular
                 }
 
                 var startLevel = IB_CONSTANTS.world.startLevel,
-                    initialPosition = IB_CONSTANTS.world.startPosition,
-                    initialRotation = IB_CONSTANTS.world.startRotation;
+                    initialPosition = [0,0,0],
+                    initialRotation = [0,0,0];
 
                 if ($activeWorlds[startLevel]) {
                     // if not we have a problem!

@@ -15,7 +15,8 @@ angular
                 $scope.servers = $meteor.collection(ServersCollection);
 
                 $scope.switchServer = function (server) {
-
+                    Cookies.set('SERVERID', server.id);
+                    location.reload();
                 };
 
                 $scope.cancel = function() {

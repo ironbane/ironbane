@@ -1,13 +1,33 @@
 angular
     .module('server.services.zones', [
         'models',
-        'services.contentLoader'
+        'services.contentLoader',
+        'global.constants.game',
+        'server.services',
+        'game.threeWorld'
     ])
     .run([
         'ZonesCollection',
         'ContentLoader',
-        function(ZonesCollection, ContentLoader) {
+        'ThreeWorld',
+        '$injector',
+        '$activeWorlds',
+        function(ZonesCollection, ContentLoader, ThreeWorld, $injector, $activeWorlds) {
             'use strict';
+
+            var systemsForWorlds = [ // order matters
+                'Network',
+                'Persistence',
+                'Damage',
+                'Mesh',
+                'Spawn',
+                'Buff',
+                'Trigger',
+                'Movers',
+                'Actor',
+                'Inventory',
+                'Armor'
+            ];
 
             var path = Meteor.npmRequire('path');
             var walk = Meteor.npmRequire('walkdir');
@@ -16,8 +36,6 @@ angular
             var meteorBuildPublicPath = meteorBuildPath + '../web.browser/app/';
             var scenePath = meteorBuildPublicPath + 'scene';
 
-            // clear out available zones before reload
-            ZonesCollection.remove({});
 
             ContentLoader.load().then(Meteor.bindEnvironment(function () {
 
@@ -25,14 +43,32 @@ angular
                     'no_recurse': true,
                 }, Meteor.bindEnvironment(function(filePath) {
                     var sceneId = path.basename(filePath);
-                    // add to zones TODO: perhaps load some zone metadata from ib_world?
-                    ZonesCollection.insert({
-                        name: sceneId
+
+                    var world = $activeWorlds[sceneId] = new ThreeWorld(sceneId);
+                    console.log('adding zone: ', world.name);
+                    // TODO: prolly track this elsewhere
+                    world._ownerCache = {};
+
+                    angular.forEach(systemsForWorlds, function(system) {
+                        var registeredSystemName = system + 'System';
+                        if ($injector.has(registeredSystemName)) {
+                            var Sys = $injector.get(registeredSystemName);
+                            world.addSystem(new Sys(), angular.lowercase(system));
+                        } else {
+                            console.error(registeredSystemName + ' was not found!');
+                        }
                     });
+
+                    // load the initial zone data from the world file
+                    Meteor.setTimeout(function() { world.load(sceneId); }, 10);
                 }));
 
             }), function (err) {
                 console.log(err.stack);
+            })
+            .then(function () {}, function (err) {
+                console.log(err.stack);
             });
+
         }
     ]);

@@ -28,10 +28,11 @@ angular
                 }
 
                 var user = Meteor.users.findOne(this.userId);
-                if (user.profile.server !== IB_CONSTANTS.realm) {
+                if (user.profile.server.id !== Meteor.settings.server.id) {
                     Meteor.users.update(this.userId, {
                         $set: {
-                            'profile.server': IB_CONSTANTS.realm
+                            'profile.server.id': Meteor.settings.server.id,
+                            'profile.server.name': Meteor.settings.server.name
                         }
                     });
                     throw new Meteor.Error('server-mismatch', 'Server mismatch!');
@@ -102,7 +103,7 @@ angular
 
             Meteor.users.find({
                 'status.online': true,
-                'profile.server': IB_CONSTANTS.realm
+                'profile.server.id': Meteor.settings.server.id
             }).observe({
                 removed: function(user) {
                     userExit(user._id);

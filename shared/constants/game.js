@@ -2,13 +2,12 @@ angular
     .module('global.constants.game', [])
     .constant('IB_CONSTANTS', {
         serverAnnouncementsTimeout: 300,
-        realm: Meteor.isServer && process.env.LOCATION ? process.env.LOCATION : 'US East',
         GAME_VERSION: '0.5 alpha',
         world: {
-            mainMenuLevel: 'ravenwood',
-            startLevel: 'ravenwood',
-            startPosition: [-15, 2, 12],
-            startRotation: [0, Math.PI - 0.3, 0]
+            mainMenuLevel: Meteor.isServer &&
+                Meteor.settings.useDevZone ? 'dev-zone' : 'ravenwood',
+            startLevel: Meteor.isServer &&
+                Meteor.settings.useDevZone ? 'dev-zone' : 'ravenwood'
         },
         characterParts: {
             male: {
@@ -81,10 +80,11 @@ angular
     })
     .run([
         'IB_CONSTANTS',
-        '$log',
-        function(IB_CONSTANTS, $log) {
+        function(IB_CONSTANTS) {
             'use strict';
-            $log.debug('You are running in ' + (IB_CONSTANTS.isDev ? 'development' : 'production') + ' mode.');
-            $log.debug('Server location: ' + IB_CONSTANTS.realm);
+            if (Meteor.isServer) {
+                console.log('You are running in ' + (IB_CONSTANTS.isDev ? 'development' : 'production') + ' mode.');
+                console.log('Server location: ' + Meteor.settings.server.name);
+            }
         }
     ]);

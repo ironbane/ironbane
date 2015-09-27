@@ -2,9 +2,9 @@
 <div class="ib-ui-window ib-ui-login-box switch-server-box" style="z-index: 1050;">
     <p>Select a server.</p>
     <div class="server" ng-repeat="server in servers">
-        <button class="ibutton attention" click-sound ng-click="$parent.switchServer(server)">{{ server.name }}</button>
+        <button class="ibutton attention" click-sound ng-click="switchServer(server)">{{ server.name }}</button>
         <!-- <div class="stats" style="width:220px;"> -->
-            <div class="label">{{ server.playersOnline }} / 100</div>
+            <div class="label">{{ server.playersOnline }} / {{ server.capacity }}</div>
         <!-- </div> -->
     </div>
     <button class="ibutton" click-sound ng-click="cancel()" style="width:100px">Cancel</button>

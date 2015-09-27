@@ -30,48 +30,6 @@ angular
 
             // on the server the rootWorld isn't actually tied to any scene
             $rootWorld.addSystem(new AutoAnnounceSystem());
-
-            var systemsForWorlds = [ // order matters
-                'Network',
-                'Persistence',
-                'Damage',
-                'Mesh',
-                'Spawn',
-                'Buff',
-                'Trigger',
-                'Movers',
-                'Actor',
-                'Inventory',
-                'Armor'
-            ];
-
-            // populate all the worlds (zones)
-            var zonesCursor = ZonesCollection.find({});
-            zonesCursor.observe({
-                added: function(doc) {
-                    var world = $activeWorlds[doc.name] = new ThreeWorld(doc.name);
-                    $log.log('adding zone: ', world.name);
-                    // TODO: prolly track this elsewhere
-                    world._ownerCache = {};
-
-                    angular.forEach(systemsForWorlds, function(system) {
-                        var registeredSystemName = system + 'System';
-                        if ($injector.has(registeredSystemName)) {
-                            var Sys = $injector.get(registeredSystemName);
-                            world.addSystem(new Sys(), angular.lowercase(system));
-                        } else {
-                            $log.debug(registeredSystemName + ' was not found!');
-                        }
-                    });
-
-                    // load the initial zone data from the world file
-                    Meteor.setTimeout(function() { world.load(doc.name); }, 10);
-                },
-                removed: function(doc) {
-                    // TODO: add some shutdown code for the zone (persist to db, etc)
-                    delete $activeWorlds[doc.name];
-                }
-            });
         }
     ])
     .run([
