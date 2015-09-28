@@ -29,22 +29,24 @@ angular
                 mesh.geometry.dynamic = true;
                 mesh.visible = false;
 
-                CharBuilder.getSpriteSheetTile('images/spritesheets/items.png',
-                    IbUtils.spriteSheetIdToXY(image, 16).h,
-                    IbUtils.spriteSheetIdToXY(image, 16).v,
-                    16, 128)
-                    .then(function(url) {
-                        return TextureLoader.load(url);
-                    })
-                    .then(function(texture) {
-                        // texture.needsUpdate = true;
-                        mesh.material.map = texture;
-                        mesh.material.needsUpdate = true;
-                        mesh.geometry.buffersNeedUpdate = true;
-                        mesh.geometry.uvsNeedUpdate = true;
-                        mesh.material.transparent = true;
-                        mesh.visible = true;
-                    });
+                if (image) {
+                    CharBuilder.getSpriteSheetTile('images/spritesheets/items.png',
+                        IbUtils.spriteSheetIdToXY(image, 16).h,
+                        IbUtils.spriteSheetIdToXY(image, 16).v,
+                        16, 128)
+                        .then(function(url) {
+                            return TextureLoader.load(url);
+                        })
+                        .then(function(texture) {
+                            // texture.needsUpdate = true;
+                            mesh.material.map = texture;
+                            mesh.material.needsUpdate = true;
+                            mesh.geometry.buffersNeedUpdate = true;
+                            mesh.geometry.uvsNeedUpdate = true;
+                            mesh.material.transparent = true;
+                            mesh.visible = true;
+                        });
+                }
 
                 item.walkSwingTimer = 0.0;
                 item.attackSwingTimer = 0.0;
@@ -136,7 +138,7 @@ angular
                 if (direction === 0 || direction === 4) {
                     wp.position.x = 0.3;
                     wp.position.y = -0.24;
-                    wp.position.z = -0.01;
+                    wp.position.z = -0.1;
 
                     if (wieldItemComponent.type === 'weapon') {
                         wp.position.z -= 0.15;
@@ -167,7 +169,7 @@ angular
 
                     wp.position.x = 0.25 + -walkIndex * 0.04;
                     wp.position.y = -0.18 + -walkIndex * 0.04;
-                    wp.position.z = -0.01;
+                    wp.position.z = -0.1;
 
                     if (switchHand) {
                         wp.position.z -= 0.01;
@@ -202,10 +204,10 @@ angular
                         wp.position.x = -0.2 + walkIndex * 0.1;
                     }
                     wp.position.y = -0.25;
-                    wp.position.z = 0.05;
+                    wp.position.z = 0.15;
 
                     if (switchHand) {
-                        wp.position.z = -0.05;
+                        wp.position.z = -0.15;
                     } else {
                     }
 
@@ -231,7 +233,7 @@ angular
 
                     wp.position.x = 0.25 - walkIndex * 0.04;
                     wp.position.y = -0.24 + walkIndex * 0.04;
-                    wp.position.z = 0.05;
+                    wp.position.z = 0.15;
 
                     if (switchHand) {
                         wp.position.z += 0.05;
@@ -249,7 +251,7 @@ angular
 
                     if (wieldItemComponent.type === 'shield' && direction === 3) {
                         wp.position.x = 0.15 + walkIndex * 0.04;
-                        wp.position.z -= 0.15;
+                        wp.position.z -= 0.3;
                     }
 
                     if (switchHand) {
