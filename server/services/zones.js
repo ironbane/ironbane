@@ -44,6 +44,10 @@ angular
                 }, Meteor.bindEnvironment(function(filePath) {
                     var sceneId = path.basename(filePath);
 
+                    if (Meteor.settings.public.useDevZone && sceneId !== 'dev-zone') {
+                        return;
+                    }
+
                     var world = $activeWorlds[sceneId] = new ThreeWorld(sceneId);
                     console.log('adding zone: ', world.name);
                     // TODO: prolly track this elsewhere
