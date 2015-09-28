@@ -26,6 +26,10 @@ angular
 
                     var slotDefs = [
                         {
+                            name: 'costume',
+                            backgrounds: [[3,1],[0,0]]
+                        },
+                        {
                             name: 'head',
                             backgrounds: [[0,2],[0,0]]
                         },
@@ -103,7 +107,7 @@ angular
                             backgrounds: [[1,5], [2,0]]
                         },
                     ],
-                    validSlotNames = /head|body|feet|rhand|lhand|relic*|slot*/;
+                    validSlotNames = /costume|head|body|feet|rhand|lhand|relic*|slot*/;
 
                     var isDragging = false;
                     $scope.onStart = function () {

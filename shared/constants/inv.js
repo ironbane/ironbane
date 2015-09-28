@@ -10,6 +10,7 @@ angular
             'relic3'
         ],
         armorList: [
+            'costume',
             'head',
             'body',
             'feet',

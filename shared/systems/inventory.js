@@ -22,11 +22,6 @@ angular
         function($log, System, Signal, EntityBuilder, IbUtils, Timer, $components, THREE, GlobalSound, INV_SLOTS) {
             'use strict';
 
-            var isEquipable = function(item) {
-                return item.type === 'head' || item.type === 'body' || item.type === 'feet' || item.type === 'relic' ||
-                    item.type.search(/weapon/ig) >= 0 || item.type === 'shield';
-            };
-
             var armorList = INV_SLOTS.armorList;
             var slotList = INV_SLOTS.slotList;
 
@@ -470,6 +465,11 @@ angular
                             }
                             else if (item.type === 'relic') {
                                 if (slotList.concat(['relic1','relic2','relic3']).indexOf(slot) === -1) {
+                                    return false;
+                                }
+                            }
+                            else if (item.type === 'costume') {
+                                if (slotList.concat(['costume']).indexOf(slot) === -1) {
                                     return false;
                                 }
                             }

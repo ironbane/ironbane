@@ -37,14 +37,20 @@ angular
                 options.feet = quad.charBuildData.feet;
                 options.head = quad.charBuildData.head;
 
-                if (inventory.head) {
-                    options.head = inventory.head.image;
+                if (inventory.costume) {
+                    options = {};
+                    options.skin = inventory.costume.image;
                 }
-                if (inventory.body) {
-                    options.body = inventory.body.image;
-                }
-                if (inventory.feet) {
-                    options.feet = inventory.feet.image;
+                else {
+                    if (inventory.head) {
+                        options.head = inventory.head.image;
+                    }
+                    if (inventory.body) {
+                        options.body = inventory.body.image;
+                    }
+                    if (inventory.feet) {
+                        options.feet = inventory.feet.image;
+                    }
                 }
 
                 quad.__loadPromise.then(function () {

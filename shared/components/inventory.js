@@ -8,6 +8,7 @@ angular
             $componentsProvider.register({
                 'inventory': {
                     gold: 0,
+                    costume: null,
                     head: null,
                     body: null,
                     feet: null,

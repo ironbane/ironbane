@@ -3,6 +3,8 @@
 <p>
     <span ng-class="item.rarity">{{ item.name }}</span>
 
+    <span ng-if="item.type === 'costume'">Costume</span>
+
     <div ng-if="item.type == 'weapon'">
         <span ng-if="item.handedness === '1h'">One-handed</span>
         <span ng-if="item.handedness === '2h'">Two-handed</span>
