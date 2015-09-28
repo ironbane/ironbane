@@ -86,15 +86,12 @@ angular
 
                         quadWrapper.add(quad1);
 
-                        quad1.renderOrder = quadData.renderOrder;
-
                         if (quadData.style === 'projectile') {
                             quad1.rotation.y = Math.PI / 2;
                             quad1.rotation.z = Math.PI / 4;
                             quad2 = new THREE.Mesh(quad1.geometry, quad1.material);
                             quad2.rotation.x = Math.PI / 2;
                             quad2.rotation.z -= Math.PI / 4;
-                            quad2.renderOrder = quadData.renderOrder;
                             quadWrapper.add(quad2);
                         }
 

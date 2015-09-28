@@ -20,7 +20,6 @@ angular
                     numberOfSpritesV: 1,
                     mirror: false,
                     setVisibleOnLoad: true,
-                    renderOrder: 1,
                     offsetPosition: {
                         x: 0,
                         y: 0,

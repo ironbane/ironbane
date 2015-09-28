@@ -43,7 +43,6 @@ angular
                         mesh.geometry.buffersNeedUpdate = true;
                         mesh.geometry.uvsNeedUpdate = true;
                         mesh.material.transparent = true;
-                        mesh.renderOrder = 1;
                         mesh.visible = true;
                     });
 
@@ -77,9 +76,6 @@ angular
                 // itemPivot.add(sphere2);
                 // mesh.add(sphere3);
 
-                // item.renderOrder = 2;
-                // itemPivot.renderOrder = 2;
-                // mesh.renderOrder = 2;
 
 
                 return item;
@@ -131,7 +127,6 @@ angular
                 wi.rotation.set(0, 0, 0);
                 wi.scale.set(0.55, 0.55, 0.55);
 
-                wi.renderOrder = 1;
 
                 if (wieldItemComponent.type === 'weapon') {
                     wi.position.x = 0.15;
@@ -142,7 +137,6 @@ angular
                     wp.position.x = 0.3;
                     wp.position.y = -0.24;
                     wp.position.z = -0.01;
-                    wi.renderOrder = 0.5;
 
                     if (wieldItemComponent.type === 'weapon') {
                         wp.position.z -= 0.15;
@@ -159,7 +153,6 @@ angular
 
                     if (direction === 4) {
                         wp.position.z *= -1;
-                        wi.renderOrder = 1.5;
                         wo.scale.x *= -1;
                     }
                 }
@@ -178,9 +171,7 @@ angular
 
                     if (switchHand) {
                         wp.position.z -= 0.01;
-                        wi.renderOrder = 0.8;
                     } else {
-                        wi.renderOrder = 0.9;
                     }
 
                     wp.rotation.z += dtr(Math.cos(item.walkSwingTimer) * 10);
@@ -214,10 +205,8 @@ angular
                     wp.position.z = 0.05;
 
                     if (switchHand) {
-                        wi.renderOrder = 0.5;
                         wp.position.z = -0.05;
                     } else {
-                        wi.renderOrder = 1.5;
                     }
 
                     if (direction === 6) {
@@ -248,7 +237,6 @@ angular
                         wp.position.z += 0.05;
                     }
 
-                    wi.renderOrder = 1.5;
 
                     wp.rotation.z += dtr(Math.cos(item.walkSwingTimer) * 10);
 
@@ -262,7 +250,6 @@ angular
                     if (wieldItemComponent.type === 'shield' && direction === 3) {
                         wp.position.x = 0.15 + walkIndex * 0.04;
                         wp.position.z -= 0.15;
-                        wi.renderOrder = 0.5;
                     }
 
                     if (switchHand) {
