@@ -23,6 +23,7 @@ angular
 
 
                 ChatMessagesCollection.insert({
+                    server: Meteor.settings.server.id,
                     room: 'global',
                     ts: new Date(),
                     msg: msg,
@@ -76,6 +77,7 @@ angular
                         playerEntities.forEach(function (player) {
                             if (player.owner === me.userId) {
                                 ChatMessagesCollection.insert({
+                                    server: Meteor.settings.server.id,
                                     room: 'global',
                                     // room: player.level
                                     ts: new Date(),
@@ -95,7 +97,9 @@ angular
             });
 
             Meteor.publish('chatMessages', function() {
-                return ChatMessagesCollection.find({}, {
+                return ChatMessagesCollection.find({
+                    server: Meteor.settings.server.id
+                }, {
                     sort: {
                         ts: -1
                     },
