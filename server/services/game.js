@@ -29,13 +29,7 @@ angular
 
                 var user = Meteor.users.findOne(this.userId);
                 if (user.profile.server.id !== Meteor.settings.server.id) {
-                    Meteor.users.update(this.userId, {
-                        $set: {
-                            'profile.server.id': Meteor.settings.server.id,
-                            'profile.server.name': Meteor.settings.server.name
-                        }
-                    });
-                    throw new Meteor.Error('server-mismatch', 'Server mismatch!');
+                    throw new Meteor.Error('server-mismatch', 'You are already in-game on another server!');
                 }
 
                 _.each($activeWorlds, function (world) {
