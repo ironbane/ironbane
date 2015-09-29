@@ -281,7 +281,7 @@ angular
                                     item: item
                                 },
                                 netSend: {},
-                                teleport: {
+                                teleportSelf: {
                                     targetEntityUuid: entity.uuid,
                                     offsetPosition: IbUtils.getRandomVector3(new THREE.Vector3(), new THREE.Vector3(2, 0, 2)).normalize().multiplyScalar(1.1)
                                 }

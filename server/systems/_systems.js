@@ -12,5 +12,6 @@ angular
         'systems.buff',
         'systems.inventory',
         'systems.damage',
+        'systems.teleporter',
         'systems.mesh'
     ]);

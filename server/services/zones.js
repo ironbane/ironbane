@@ -26,7 +26,8 @@ angular
                 'Movers',
                 'Actor',
                 'Inventory',
-                'Armor'
+                'Armor',
+                'Teleporter'
             ];
 
             var path = Meteor.npmRequire('path');

@@ -7,6 +7,8 @@ angular
         'prefabs.mediumSmoke',
         'prefabs.movingPlatform',
         'prefabs.torch',
+        'prefabs.teleportEntrance',
+        'prefabs.teleportExit',
         'prefabs.bunny',
         'prefabs.spawnZone',
         'prefabs.spawnPoint',

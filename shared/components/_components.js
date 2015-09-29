@@ -39,7 +39,8 @@ angular.module('components', [
     'components.speed',
     'components.sprite',
     'components.steeringBehaviour',
-    'components.teleport',
+    'components.teleportSelf',
+    'components.teleporter',
     'components.trigger',
     'components.wieldItem'
 ]);

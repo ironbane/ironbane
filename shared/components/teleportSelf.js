@@ -1,12 +1,12 @@
 angular
-    .module('components.teleport', ['ces'])
+    .module('components.teleportSelf', ['ces'])
     .config([
         '$componentsProvider',
         function($componentsProvider) {
             'use strict';
 
             $componentsProvider.register({
-                'teleport': {
+                'teleportSelf': {
                     targetEntityUuid: null,
                     offsetPosition: {
                         x: 0,

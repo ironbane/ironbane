@@ -10,6 +10,7 @@ angular
         'systems.fighter',
         'systems.inventory',
         'systems.damage',
+        'systems.teleporter',
         'systems.mesh',
         'systems.projectile',
         'systems.steering',
@@ -50,6 +51,7 @@ angular
                 'MouseHelper',
                 'Shadow',
                 'Particle',
+                'Teleporter',
                 'Camera'
             ];
 
