@@ -45,7 +45,7 @@ angular
                 }, Meteor.bindEnvironment(function(filePath) {
                     var sceneId = path.basename(filePath);
 
-                    if (Meteor.settings.public.useDevZone && sceneId !== 'dev-zone') {
+                    if (Meteor.settings.public.useDevZone && sceneId.indexOf('dev-') === -1) {
                         return;
                     }
 
