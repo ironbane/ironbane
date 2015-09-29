@@ -180,7 +180,7 @@ angular
             randomVelocityVector3OnSphere: function(base, position, speed, speedSpread, scale) {
                 var direction = new THREE.Vector3().subVectors(base, position);
 
-                direction.normalize().multiplyScalar(Math.abs(this._randomFloat(speed, speedSpread)));
+                direction.normalize().multiplyScalar(this._randomFloat(speed, speedSpread));
 
                 if (scale) {
                     direction.multiply(scale);
@@ -300,7 +300,7 @@ angular
                 v.copy(position)
                     .sub(base)
                     .normalize()
-                    .multiplyScalar(Math.abs(this._randomFloat(speed, speedSpread)));
+                    .multiplyScalar(this._randomFloat(speed, speedSpread));
             },
 
             generateID: function() {
@@ -529,7 +529,13 @@ angular
                         velocity[i] = that._randomVector3(emitter.velocity, emitter.velocitySpread);
                     }
 
-                    acceleration[i] = that._randomVector3(emitter.acceleration, emitter.accelerationSpread);
+                    if (emitter.type === 'sphere') {
+                        acceleration[i] = velocity[i].clone().multiply(emitter.acceleration);
+                    }
+                    else {
+                        acceleration[i] = that._randomVector3(emitter.acceleration, emitter.accelerationSpread);
+                    }
+
 
                     size[i] = new THREE.Vector3(
                         Math.abs(that._randomFloat(emitter.sizeStart, emitter.sizeStartSpread)),
@@ -554,9 +560,9 @@ angular
                     age[i] = 0.0;
                     alive[i] = emitter.isStatic ? 1.0 : 0.0;
 
-                    colorStart[i] = that._randomColor(emitter.colorStart, emitter.colorStartSpread);
-                    colorMiddle[i] = that._randomColor(emitter.colorMiddle, emitter.colorMiddleSpread);
-                    colorEnd[i] = that._randomColor(emitter.colorEnd, emitter.colorEndSpread);
+                    colorStart[i] = emitter.colorStartFn ? emitter.colorStartFn(i) : that._randomColor(emitter.colorStart, emitter.colorStartSpread);
+                    colorMiddle[i] = emitter.colorMiddleFn ? emitter.colorMiddleFn(i) : that._randomColor(emitter.colorMiddle, emitter.colorMiddleSpread);
+                    colorEnd[i] = emitter.colorEndFn ? emitter.colorEndFn(i) : that._randomColor(emitter.colorEnd, emitter.colorEndSpread);
 
                     opacity[i] = new THREE.Vector3(
                         Math.abs(that._randomFloat(emitter.opacityStart, emitter.opacityStartSpread)),
@@ -961,7 +967,7 @@ angular
 
             // And again here; only used when this.type === 'sphere' or 'disk'
             that.speed = parseFloat(typeof options.speed === 'number' ? options.speed : 0.0);
-            that.speedSpread = parseFloat(typeof options.speedSpread === 'number' ? options.speedSpread : 0.0);
+            that.speedSpread = parseFloat(typeof options.speedSpread === 'number' ? options.speedSpread : options.speed);
 
 
             // Sizes
@@ -999,16 +1005,18 @@ angular
             // Colors
             that.colorStart = options.colorStart instanceof THREE.Color ? options.colorStart : new THREE.Color('white');
             that.colorStartSpread = options.colorStartSpread instanceof THREE.Vector3 ? options.colorStartSpread : new THREE.Vector3();
+            that.colorStartFn = options.colorStartFn;
 
             that.colorEnd = options.colorEnd instanceof THREE.Color ? options.colorEnd : that.colorStart.clone();
             that.colorEndSpread = options.colorEndSpread instanceof THREE.Vector3 ? options.colorEndSpread : new THREE.Vector3();
+            that.colorEndFn = options.colorEndFn;
 
             that.colorMiddle =
                 options.colorMiddle instanceof THREE.Color ?
                 options.colorMiddle :
                 new THREE.Color().addColors(that.colorStart, that.colorEnd).multiplyScalar(0.5);
             that.colorMiddleSpread = options.colorMiddleSpread instanceof THREE.Vector3 ? options.colorMiddleSpread : new THREE.Vector3();
-
+            that.colorMiddleFn = options.colorMiddleFn;
 
 
             // Opacities
@@ -1098,6 +1106,10 @@ angular
                 } else if (type === 'disk') {
                     that._randomizeExistingVector3OnDisk(particlePosition, that.position, that.radius, that.radiusSpread, that.radiusScale, that.radiusSpreadClamp);
                     that._randomizeExistingVelocityVector3OnSphere(particleVelocity, that.position, particlePosition, that.speed, that.speedSpread);
+                }
+
+                if (type === 'sphere') {
+                    that.attributes.acceleration.value[i].copy(particleVelocity.clone().multiply(that.acceleration));
                 }
 
                 if (typeof that.onParticleSpawn === 'function') {
