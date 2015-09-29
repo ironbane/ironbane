@@ -48,7 +48,7 @@ angular
                             entity.children.forEach(function(child) {
                                 var meshComponent = child.getComponent('mesh');
                                 if (meshComponent && meshComponent._meshLoadTask) {
-                                    $log.debug('spawn(' + delay + '): ', entity.name, ' ', currentCount + 1, ' / ', maxCount);
+                                    // console.log('spawn(' + delay + '): ', entity.name, ' ', currentCount + 1, ' / ', maxCount);
                                     meshComponent._meshLoadTask.then(function(mesh) {
                                             var randomPrefabName = _.sample(spawnTypes);
                                             var builtEntity = EntityBuilder.build({
