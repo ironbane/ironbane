@@ -35,7 +35,7 @@ angular
                         p = CharBuilder.getSpriteSheetTile('images/ui/stats.png',
                             IbUtils.spriteSheetIdToXY(parseInt($attrs.id, 10), 4).h,
                             IbUtils.spriteSheetIdToXY(parseInt($attrs.id, 10), 4).v,
-                            4, 5)
+                            4, 8)
                     }
 
                     if (p) {

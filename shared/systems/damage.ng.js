@@ -81,7 +81,7 @@ angular
                                         h: indexH,
                                         v: indexV,
                                         nH: 4,
-                                        nV: 5
+                                        nV: 8
                                     }
                                 }
                             },
