@@ -424,20 +424,23 @@ angular
                         break;
                     case 'BoxCollider':
 
-                        // Although we're taking the scale of the parent into account
-                        // in a perfect world we'd use the scale of the world matrix
-                        // as there may be more objects in the hierarchy that alter
-                        // scale. Due to our exporter exporting the objects in a
-                        // flattened matter this should be fine for now.
+                        entity.traverseAncestors(function (parent) {
+                            parent.updateMatrixWorld(true);
+                        })
+
+                        var worldScale = entity.parent.getWorldScale();
+                        var worldRotation = entity.parent.getWorldQuaternion();
 
                         entity.parent.addComponent('rigidBody', {
                             shape: {
                                 type: 'box',
-                                width: data.userData.size[0]*entity.parent.scale.x,
-                                height: data.userData.size[1]*entity.parent.scale.y,
-                                depth: data.userData.size[2]*entity.parent.scale.z
+                                width: data.userData.size[0]*worldScale.x,
+                                height: data.userData.size[1]*worldScale.y,
+                                depth: data.userData.size[2]*worldScale.z
                             },
-                            offset: (new THREE.Vector3()).fromArray(data.userData.center),
+                            offset: (new THREE.Vector3()).fromArray(data.userData.center)
+                                .multiply(worldScale)
+                                .applyQuaternion(worldRotation),
                             mass: 0,
                             group: 'level',
                             collidesWith: ['all']
