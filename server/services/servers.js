@@ -13,8 +13,10 @@ angular
 
                 Meteor.users.update(this.userId, {
                     $set: {
-                        'profile.server.id': Meteor.settings.server.id,
-                        'profile.server.name': Meteor.settings.server.name
+                        'profile.server': {
+                            id: Meteor.settings.server.id,
+                            name: Meteor.settings.server.name
+                        }
                     }
                 });
 
