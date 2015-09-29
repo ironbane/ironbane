@@ -9,7 +9,8 @@ angular
             updateProfile: function (field, value) {
 
                 var allowedProfileFieldsToBeEdited = [
-                    'enableSound'
+                    'enableSound',
+                    'cameraType'
                 ];
 
                 if (!_.contains(allowedProfileFieldsToBeEdited, field)) {

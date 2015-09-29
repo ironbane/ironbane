@@ -11,7 +11,8 @@ angular
         'IbConfig',
         'THREE',
         'IbUtils',
-        function($log, ScriptBank, IbConfig, THREE, IbUtils) {
+        '$meteor',
+        function($log, ScriptBank, IbConfig, THREE, IbUtils, $meteor) {
             'use strict';
 
             // The multicam gives you first and third person in one script
@@ -66,7 +67,9 @@ angular
                 this.thirdPersonPosition = originalThirdPersonPosition.clone();
                 this.camDistanceLimit = 0;
                 this.temporarilyDisableAutoCameraCorrection = false;
-                this.cameraType = 'arcade';
+
+                var user = Meteor.user();
+                this.cameraType = (user && user.profile && user.profile.cameraType) ? user.profile.cameraType : 'arcade';
 
                 var cameraComponent = this.entity.getComponent('camera');
 
@@ -120,6 +123,9 @@ angular
                 else {
                     this.cameraType = 'arcade';
                 }
+
+                // is this the best place for this?
+                $meteor.call('updateProfile', 'cameraType', this.cameraType);
             };
 
             MultiCamScript.prototype.update = function(dt, elapsed, timestamp) {
