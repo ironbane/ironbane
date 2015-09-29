@@ -5,7 +5,6 @@ angular
         'game.ui.admin.adminDiv',
         'game.ui.debug.debugDiv',
         'game.ui.chat.chatBoxDirective',
-        'game.ui.chat.chatService',
         'game.ui.dialog',
         'game.ui.clickSound',
         'engine.entity-cache',

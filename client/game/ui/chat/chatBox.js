@@ -2,11 +2,11 @@ angular.module('game.ui.chat.chatBoxDirective', [
         'angular-meteor',
         'luegg.directives',
         'game.ui.directives',
-        'models.chatMessages'
+        'game.ui.chat.chatService',
     ])
     .directive('chatBox', [
-        'ChatMessagesCollection',
-        function(ChatMessagesCollection) {
+        'ChatService',
+        function(ChatService) {
             'use strict';
 
             return {
@@ -18,26 +18,23 @@ angular.module('game.ui.chat.chatBoxDirective', [
                 bindToController: true,
                 controllerAs: 'chatBox',
                 controller: [
-                    '$meteor',
                     '$scope',
                     '$attrs',
                     '$window',
-                    function($meteor, $scope, $attrs, $window) {
+                    function($scope, $attrs, $window) {
                         var ctrl = this,
                             keyTrapHandler = function(event) {
                                 //$log.debug('keyTrapHandler');
                                 event.stopPropagation();
 
                                 if (event.keyCode === 13) {
-                                    $meteor.call('chat', ctrl.newmsg);
+                                    ChatService.parseCommand(ctrl.newmsg);
                                     ctrl.showInput = false;
                                     ctrl.newmsg = '';
                                 }
                             };
 
-                        $meteor.subscribe('chatMessages');
-
-                        ctrl.messages = $meteor.collection(ChatMessagesCollection);
+                        ctrl.messages = ChatService.messages;
 
                         ctrl.trapKeys = function() {
                             $window.addEventListener('keydown', keyTrapHandler, true);

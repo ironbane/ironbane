@@ -274,56 +274,6 @@ debug-div {
 	}
 }
 
-chat-box {
-	position: fixed;
-	right: 0px;
-	top: 0px;
-	width: 400px;
-	height: 200px;
-	// background-color: rgba(60, 240, 176, 0.5);
-	text-shadow: 1px 1px 0 #06452d, -1px 1px 0 #06452d, -1px -1px 0 #06452d, 1px -1px 0 #06452d;
-	padding: 0;
-	font-size: 14px;
-	color: white;
-	text-align: right;
-	ul {
-		padding: 5px;
-		margin: 0;
-		list-style: none;
-		overflow-y: scroll;
-		overflow-x: hidden;
-		height: 160px;
-		.chat-message {
-			&.system {
-				color: yellow;
-			}
-			&.join, &.leave {
-				color: lime;
-			}
-			&.achievement {
-				color: silver;
-			}
-            &.kill {
-                color: #ff9037;
-            }
-			.char-name {
-				color: aqua;
-
-				&.gm {
-					color: #4f87ee;
-				}
-			}
-		}
-	}
-	.iinput {
-		position: absolute;
-		bottom: -10px;
-		left: 0px;
-		height: 30px;
-		font-size: 14px;
-	}
-}
-
 // DEBUG
 .rs-base{
     position: absolute;

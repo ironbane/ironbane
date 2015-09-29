@@ -7,7 +7,8 @@ angular
         'engine.entity-cache',
         'engine.util',
         'ammo',
-        'engine.timing'
+        'engine.timing',
+        'game.ui.chat.chatService'
     ])
     .factory('NetworkSystem', [
         'System',
@@ -22,7 +23,8 @@ angular
         'Timer',
         '$timeout',
         'IbUtils',
-        function(System, EntityBuilder, $log, $rootScope, $components, $rootWorld, $entityCache, THREE, Ammo, Timer, $timeout, IbUtils) {
+        'ChatService',
+        function(System, EntityBuilder, $log, $rootScope, $components, $rootWorld, $entityCache, THREE, Ammo, Timer, $timeout, IbUtils, ChatService) {
             'use strict';
 
             function arraysAreEqual(a1, a2) {
@@ -167,6 +169,14 @@ angular
                     this._super(world);
 
                     var me = this;
+
+                    world.entityAdded('player').add(function(entity) {
+                        ChatService.postClientMsg(entity.name + ' entered the world.', {join: true});
+                    });
+
+                    world.entityRemoved('player').add(function(entity) {
+                        ChatService.postClientMsg(entity.name + ' left the world.', {leave: true});
+                    });
 
                     world.subscribe('inventory:equipItem', function(entity, sourceSlot, targetSlot) {
                         if (entity.hasComponent('netSend')) {
