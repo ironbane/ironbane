@@ -148,12 +148,12 @@ angular
                                         world.addEntity(entity);
 
                                     }
-                                }, 5000);
+                                }, 7000);
                             }
 
                             setTimeout(function() {
                                 world.removeEntity(entity);
-                            }, 1000);
+                            }, 5000);
 
                         }
                     }

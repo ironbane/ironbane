@@ -32,7 +32,8 @@ angular
                     'dialogService',
                     '$meteor',
                     'BigMessagesService',
-                    function($scope, $rootWorld, $log, $state, $clientSettings, dialogService, $meteor, BigMessagesService) {
+                    '$rootScope',
+                    function($scope, $rootWorld, $log, $state, $clientSettings, dialogService, $meteor, BigMessagesService, $rootScope) {
                         $scope.gui = {
                             showChatInput: false,
                             showAdminPanel: false
@@ -49,7 +50,11 @@ angular
                                 // $log.debug('escape pressed');
                                 $meteor.call('leaveGame')
                                     .then(function () {
-                                        $state.go('^.main-menu.enter-world');
+                                        $rootScope.isTransitioning = true;
+                                        setTimeout(function () {
+                                            delete $rootScope.isTransitioning;
+                                            $state.go('^.main-menu.enter-world');
+                                        }, 1000);
                                     }, function(err) {
                                         if (err) {
                                             dialogService.alert(err.reason);
@@ -90,7 +95,8 @@ angular
                         Meteor.autorun(function () {
                             var status = Meteor.status();
 
-                            if (!status.connected) {
+                            if (!status.connected &&
+                                $state.current.name !== 'three-root.main-menu.enter-world') {
                                 $state.go('^.main-menu.enter-world');
                                 dialogService.alert('Connection lost.');
                             }

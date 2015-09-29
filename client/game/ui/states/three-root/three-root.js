@@ -211,8 +211,6 @@ angular
                         // });
                     }
 
-                    Session.set('activeLevel', IB_CONSTANTS.world.mainMenuLevel);
-
                     GameService.start();
                 }
             ]

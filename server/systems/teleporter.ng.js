@@ -66,7 +66,7 @@ angular
 
                             setTimeout(function () {
                                 $activeWorlds[exitEntity.level].addEntity(player);
-                            }, 2000);
+                            }, 1000);
                         }
                     });
                 }

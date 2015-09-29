@@ -119,7 +119,6 @@ angular
 
                             world.removeEntity(player);
 
-                            setTimeout(function () {
                                 if ($activeWorlds[startLevel]) {
                                     // if not we have a problem!
                                     var spawns = $activeWorlds[startLevel].getEntities('spawnPoint');
@@ -142,7 +141,6 @@ angular
                                 $activeWorlds[startLevel].addEntity(player);
 
                                 delete player.__isResetting;
-                            }, 2000);
 
                         }
                     });

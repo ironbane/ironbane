@@ -32,19 +32,6 @@ angular
                 return (a1[0] === a2[0]) && (a1[1] === a2[1]) && (a1[2] === a2[2]);
             }
 
-            var toSimpleRotationY = function(rotation) {
-                var rotVec = new THREE.Vector3(0, 0, 1);
-                rotVec.applyEuler(rotation);
-
-                var simpleRotationY = (Math.atan2(rotVec.z, rotVec.x));
-                if (simpleRotationY < 0) {
-                    simpleRotationY += (Math.PI * 2);
-                }
-                simpleRotationY = (Math.PI * 2) - simpleRotationY;
-
-                return simpleRotationY;
-            };
-
             function onStreamAdd(packet) {
                 var me = this;
                 $rootWorld.getLoadPromise().then(function() {
@@ -100,6 +87,10 @@ angular
                         // this is pretty much the only one we want to netSend
                         builtEntity.addComponent('netSend');
 
+                        builtEntity.inGame = true;
+
+                        Session.set('activeLevel', builtEntity.level);
+
                         $entityCache.put('mainPlayer', builtEntity);
                         // needed somewhere on the scope for the UI, prolly doesn't *need* to be root
                         $rootScope.mainPlayer = builtEntity;
@@ -141,7 +132,7 @@ angular
                         });
                     }
 
-                    var teleportComponent = builtEntity.getComponent('teleport');
+                    var teleportComponent = builtEntity.getComponent('teleportSelf');
                     if (teleportComponent) {
                         if (teleportComponent.targetEntityUuid) {
                             var targetEntity = world.scene.getObjectByProperty('uuid', teleportComponent.targetEntityUuid);
@@ -323,6 +314,11 @@ angular
                             var obj = world.scene.getObjectByProperty('uuid', entityUuid);
                             // test if instanceof Entity?
                             if (obj) {
+
+                                if (obj === $entityCache.get('mainPlayer')) {
+                                    obj.inGame = false;
+                                }
+
                                 world.removeEntity(obj);
                             } else {
                                 $log.debug('not found to remove...');

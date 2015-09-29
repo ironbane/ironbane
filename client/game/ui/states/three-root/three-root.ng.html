@@ -1,4 +1,4 @@
-<div class="ui-mask" ng-class="{ 'hidden': levelLoaded }">
+<div class="ui-mask" ng-class="{ 'hidden': levelLoaded && !$root.isTransitioning && (($root.mainPlayer && $root.mainPlayer.inGame) || !$root.mainPlayer) }">
 	<div class="message">
 		<img src="images/ui/loading.gif">
 	</div>

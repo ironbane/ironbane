@@ -25,8 +25,9 @@ angular
                 'FantasyNameGenerator',
                 'IB_CONSTANTS',
                 '$log',
+                '$rootScope',
                 function($scope, $state, $meteor, CharBuilder, dialogService,
-                    FantasyNameGenerator, IB_CONSTANTS, $log) {
+                    FantasyNameGenerator, IB_CONSTANTS, $log, $rootScope) {
 
                     var updateCharacterPreview = function() {
                         if ($scope.characters.length && $scope.currentCharIndex < $scope.characters.length) {
@@ -79,35 +80,31 @@ angular
                     $scope.$watch('currentUser.profile.maxCharactersAllowed', charRefresh);
 
                     var enterGame = function(charId) {
-                        // We need to first change to playmode so network.js can test whether
-                        // we are already playing, and add the player as a normal entity instead
-                        // of one with special player components. Should this fail (e.g. we are already logged in)
-                        // we'll just go back to our lastState.
-                        var lastState = $state.current.name;
-                        $state.go('three-root.play');
+                        $rootScope.isTransitioning = true;
+                        setTimeout(function () {
+                            $meteor.call('enterGame', charId)
+                                .then(function() {
+                                    var activeChar = _.find($scope.characters, function(character) {
+                                        if (character._id === charId) {
+                                            //$scope.currentCharIndex = index;
+                                            return character;
+                                        }
+                                    });
 
-                        $meteor.call('enterGame', charId)
-                            .then(function() {
-                                var activeChar = _.find($scope.characters, function(character) {
-                                    if (character._id === charId) {
-                                        //$scope.currentCharIndex = index;
-                                        return character;
+                                    delete $rootScope.isTransitioning;
+                                    $state.go('three-root.play');
+
+                                    if (activeChar) {
+                                        $scope.currentChar.id = charId;
+                                    } else {
+                                        $log.error('unable to locate character, not updated yet?');
+                                    }
+                                }, function(err) {
+                                    if (err) {
+                                        dialogService.alert(err.reason);
                                     }
                                 });
-
-                                if (activeChar) {
-                                    $scope.currentChar.id = charId;
-                                    Session.set('activeLevel', activeChar.level);
-                                } else {
-                                    $log.error('unable to locate character, not updated yet?');
-                                }
-                            }, function(err) {
-                                if (err) {
-                                    $state.go(lastState);
-                                    dialogService.alert(err.reason);
-                                }
-                            });
-
+                        }, 1000);
                     };
 
                     $scope.play = function() {

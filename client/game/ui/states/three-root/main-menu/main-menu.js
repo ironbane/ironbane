@@ -90,8 +90,15 @@ angular
                 '$log',
                 'GlobalSound',
                 '$timeout',
-                function($rootWorld, MainMenuPanningCamera, $log, GlobalSound, $timeout) {
-                    $log.debug('mainMenu onEnter: ', this);
+                '$rootScope',
+                'IB_CONSTANTS',
+                function($rootWorld, MainMenuPanningCamera, $log, GlobalSound, $timeout, $rootScope, IB_CONSTANTS) {
+                    $rootScope.mainPlayer = null;
+                    delete $rootScope.isTransitioning;
+
+                    Session.set('activeLevel', IB_CONSTANTS.world.mainMenuLevel);
+
+                    // $log.debug('mainMenu onEnter: ', this);
                     $rootWorld.addEntity(MainMenuPanningCamera);
 
                     $timeout(function () {
