@@ -63,6 +63,12 @@ angular
 
                     world.entityAdded('particleEmitter').add(function(entity) {
                         var emitterData = entity.getComponent('particleEmitter');
+
+                        // Hack until groups are working correctly
+                        // This forces a new group to be created each time as
+                        // _r makes the data unique
+                        emitterData.group._r = Math.random();
+
                         var particleGroup;
                         // determine if we have already created this group
                         var groupIndex = -1;
