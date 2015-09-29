@@ -96,8 +96,8 @@ angular
             };
 
             MultiCamScript.prototype.onMouseMove = function(event) {
-                var movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
-                var movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+                var movementX = event.movementX || event.mozMovementX || 0;
+                var movementY = event.movementY || event.mozMovementY || 0;
 
                 lon += movementX;
                 lat -= movementY;

@@ -33,7 +33,6 @@ angular
 
                     var ctx = canvas.getContext('2d');
                     ctx.imageSmoothingEnabled = false;
-                    ctx.webkitImageSmoothingEnabled = false;
                     ctx.msImageSmoothingEnabled = false;
 
                     var width = 0;
@@ -47,7 +46,6 @@ angular
 
                             var ctx = canvas.getContext('2d');
                             ctx.imageSmoothingEnabled = false;
-                            ctx.webkitImageSmoothingEnabled = false;
                             ctx.msImageSmoothingEnabled = false;
 
                             width = canvas.width;
