@@ -52,7 +52,7 @@ angular
             });
 
             Meteor.methods({
-                chat: function(msg) {
+                chat: function(msg, msgFlags) {
 
                     if (!_.isString(msg)) {
                         return;
@@ -72,18 +72,20 @@ angular
                         flags.push('gm');
                     }
 
-                    _.each($activeWorlds, function (world) {
+                    msgFlags = msgFlags || {};
+
+                    _.each($activeWorlds, function(world) {
                         var playerEntities = world.getEntities('player');
-                        playerEntities.forEach(function (player) {
+                        playerEntities.forEach(function(player) {
                             if (player.owner === me.userId) {
                                 ChatMessagesCollection.insert({
                                     server: Meteor.settings.server.id,
                                     room: 'global',
-                                    // room: player.level
                                     ts: new Date(),
                                     msg: msg,
-                                    // flags: flags,
+                                    flags: msgFlags,
                                     user: {
+                                        userId: me.userId,
                                         name: player.name,
                                         flags: flags
                                     },
@@ -96,9 +98,35 @@ angular
                 }
             });
 
+            ChatMessagesCollection.allow({
+                insert: function(userId, doc) {
+                    var valid = (doc.flags && doc.flags.local && doc.user && doc.user.userId === userId);
+                    //console.log('insert attempt (' + valid + '): ', userId, doc);
+
+                    doc.server = Meteor.settings.server.id;
+
+                    return valid;
+                },
+                remove: function(userId, doc) {
+                    // allow the client to clean its own local history
+                    return (doc.user && doc.user.userId === userId && doc.flags && doc.flags.local);
+                }
+            });
+
             Meteor.publish('chatMessages', function() {
                 return ChatMessagesCollection.find({
-                    server: Meteor.settings.server.id
+                    server: Meteor.settings.server.id,
+                    $or: [{
+                        'flags.local': {
+                            $exists: false
+                        }
+                    }, {
+                        $and: [{
+                            'flags.local': true
+                        }, {
+                            'user.userId': this.userId
+                        }]
+                    }]
                 }, {
                     sort: {
                         ts: -1

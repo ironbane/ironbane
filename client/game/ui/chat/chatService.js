@@ -12,19 +12,23 @@ angular.module('game.ui.chat.chatService', [
 
             $meteor.subscribe('chatMessages');
 
-            this.messages = $meteor.collection(ChatMessagesCollection, false);
+            this.messages = $meteor.collection(ChatMessagesCollection);
 
             this.announce = function(msg) {
                 return $meteor.call('chatAnnounce', msg);
             };
 
             this.postClientMsg = function(msg, flags) {
-                service.messages.push({
-                    _id: new Date(),
+                flags = angular.extend({}, flags, {local: true});
+
+                service.messages.save({
                     room: 'global',
                     ts: new Date(),
                     msg: msg,
-                    flags: flags || {}
+                    flags: flags,
+                    user: {
+                        userId: Meteor.userId()
+                    }
                 });
             };
 
