@@ -11,7 +11,8 @@ angular
         '$activeWorlds',
         'IB_CONSTANTS',
         'EntityBuilder',
-        function(EntitiesCollection, $activeWorlds, IB_CONSTANTS, EntityBuilder) {
+        'ChatService',
+        function(EntitiesCollection, $activeWorlds, IB_CONSTANTS, EntityBuilder, ChatService) {
             'use strict';
 
             this.enterGame = function(charId) {
@@ -66,6 +67,10 @@ angular
                         // TODO: decorate entity with other components, such as "player", etc. like the client does
                         $activeWorlds[doc.level]._ownerCache[doc.owner] = ent.uuid;
                         $activeWorlds[doc.level].addEntity(ent);
+
+                        ChatService.announce(ent.name + ' has entered the world.', {
+                            join: true
+                        });
                     } else {
                         $log.log('error building entity for: ', doc);
                     }
@@ -81,6 +86,10 @@ angular
                     playerEntities.forEach(function (player) {
                         if (player.owner === userId) {
                             world.removeEntity(player);
+
+                            ChatService.announce(player.name + ' has left the world.', {
+                                leave: true
+                            });
                         }
                     });
                 });

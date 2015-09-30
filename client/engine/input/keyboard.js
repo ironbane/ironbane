@@ -16,12 +16,19 @@ angular.module('engine.input.keyboard', [])
             // TODO only preventDefault for specific keys
             // can't access dev tools otherwise
             // e.preventDefault();
+            var code;
 
-            if (!this.keysDown[e.keyCode]) {
-                this.keysDownOnce[e.keyCode] = true;
+            if (e.shiftKey) {
+                code = 'shift+' + e.keyCode;
+            } else {
+                code = e.keyCode;
             }
 
-            this.keysDown[e.keyCode] = true;
+            if (!this.keysDown[code]) {
+                this.keysDownOnce[code] = true;
+            }
+
+            this.keysDown[code] = true;
 
         };
 
@@ -29,8 +36,17 @@ angular.module('engine.input.keyboard', [])
             // TODO only preventDefault for specific keys
             // can't access dev tools otherwise
             // e.preventDefault();
+            //console.debug('keyup', e);
 
-            this.keysDown[e.keyCode] = false;
+            var code;
+
+            if (e.shiftKey) {
+                code = 'shift+' + e.keyCode;
+            } else {
+                code = e.keyCode;
+            }
+
+            this.keysDown[code] = false;
         };
 
         Keyboard.prototype._onBlur = function() {

@@ -161,14 +161,6 @@ angular
 
                     var me = this;
 
-                    world.entityAdded('player').add(function(entity) {
-                        ChatService.postClientMsg(entity.name + ' entered the world.', {join: true});
-                    });
-
-                    world.entityRemoved('player').add(function(entity) {
-                        ChatService.postClientMsg(entity.name + ' left the world.', {leave: true});
-                    });
-
                     world.subscribe('inventory:equipItem', function(entity, sourceSlot, targetSlot) {
                         if (entity.hasComponent('netSend')) {
                             // TODO: UUID for items

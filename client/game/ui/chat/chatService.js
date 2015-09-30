@@ -29,6 +29,10 @@ angular.module('game.ui.chat.chatService', [
             };
 
             this.parseCommand = function parseCommand(msg) {
+                if (!msg) {
+                    return;
+                }
+
                 var parsed;
 
                 if (msg[0] === '/') {
@@ -38,14 +42,22 @@ angular.module('game.ui.chat.chatService', [
                     var args = ((parsed.length > 1) ? parsed[1] : '');
 
                     // just an echo
-                    service.postClientMsg('command: ' + cmd + ' (' + args + ')', {command: true});
+                    service.postClientMsg('command: ' + cmd + ' (' + args + ')', {
+                        command: true
+                    });
 
                     // TODO: support other commands
                     if (cmd === 'announce' && args.length) {
                         // TODO: test response for security? handle on server...
                         this.announce(args);
+                    } else if (cmd === 'warn' && args.length) {
+                        // TODO: security
+                        // call server method
+                        // server post to separate announcments channel?
                     } else {
-                        service.postClientMsg('Invalid command.', {error: true});
+                        service.postClientMsg('Invalid command.', {
+                            error: true
+                        });
                     }
                 } else if (msg[0] === '@') {
                     parsed = msg.replace(/\s+/, '\x01').split('\x01');
@@ -53,7 +65,9 @@ angular.module('game.ui.chat.chatService', [
                     var toWhom = parsed[0].substr(1);
                     var theMsg = parsed[1];
 
-                    service.postClientMsg('<' + toWhom + '> ' + theMsg, {directEcho: true});
+                    service.postClientMsg('<' + toWhom + '> ' + theMsg, {
+                        directEcho: true
+                    });
 
                     // TODO:
                     // $meteor.call('chatDirect', toWhom, theMsg);

@@ -47,6 +47,17 @@ angular
                 keys: ['ENTER'],
                 check: 'pressed'
             }]);
+            InputSystemProvider.setActionMapping('open-chat-command', [{
+                type: 'keyboard',
+                keys: ['FORWARD_SLASH'],
+                check: 'pressed'
+            }]);
+
+            InputSystemProvider.setActionMapping('open-chat-tell', [{
+                type: 'keyboard',
+                keys: ['@'],
+                check: 'pressed'
+            }]);
 
             InputSystemProvider.setActionMapping('escape', [{
                 type: 'keyboard',

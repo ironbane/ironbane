@@ -36,6 +36,14 @@ angular.module('game.ui.chat.chatBoxDirective', [
 
                         ctrl.messages = ChatService.messages;
 
+                        $scope.$on('open-chat-tell', function() {
+                            ctrl.newmsg = '@';
+                        });
+
+                        $scope.$on('open-chat-command', function() {
+                            ctrl.newmsg = '/';
+                        });
+
                         ctrl.trapKeys = function() {
                             $window.addEventListener('keydown', keyTrapHandler, true);
                         };

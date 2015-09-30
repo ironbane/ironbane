@@ -41,8 +41,9 @@ angular
 
                         // player commands that aren't tied to an entity
                         var inputSystem = $rootWorld.getSystem('input'),
-                            openChatHandler = function() {
+                            openChatHandler = function(action) {
                                 $scope.$applyAsync(function() {
+                                    $scope.$broadcast(action);
                                     $scope.gui.showChatInput = true;
                                 });
                             },
@@ -67,6 +68,8 @@ angular
                             };
 
                         inputSystem.register('open-chat', openChatHandler);
+                        inputSystem.register('open-chat-command', openChatHandler);
+                        inputSystem.register('open-chat-tell', openChatHandler);
                         inputSystem.register('escape', escapeHandler);
 
                         if (Roles.userIsInRole(Meteor.user(), ['game-master'])) {
@@ -75,6 +78,8 @@ angular
 
                         $scope.$on('$destroy', function() {
                             inputSystem.unregister('open-chat', openChatHandler);
+                            inputSystem.unregister('open-chat-command', openChatHandler);
+                            inputSystem.unregister('open-chat-tell', openChatHandler);
                             inputSystem.unregister('escape', escapeHandler);
                             inputSystem.unregister('admin-panel', adminHandler);
                         });

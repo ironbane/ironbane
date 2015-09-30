@@ -1,5 +1,11 @@
 angular.module('engine.input.keys', [])
     .constant('KEYS', Object.freeze(Object.create(null, {
+        '@': {
+            value: 'shift+50',
+            configurable: false,
+            enumerable: true,
+            writable: false
+        },
         BACKSPACE: {
             value: 8,
             configurable: false,

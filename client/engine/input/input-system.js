@@ -83,7 +83,7 @@ angular
                                         sys.keyboard.getKeyDown.bind(sys.keyboard) : sys.keyboard.getKey.bind(sys.keyboard);
 
                                     if (testFn(sys.KEYS[mapping.keys[0]])) {
-                                        sys.actions[action].emit();
+                                        sys.actions[action].emit(action);
                                     }
                                 }
 
@@ -92,7 +92,7 @@ angular
                                         sys.mouse.getButtonDown.bind(sys.mouse) : sys.mouse.getButton.bind(sys.mouse);
 
                                     if (testFn(MOUSE_BUTTONS[mapping.keys[0]])) {
-                                        sys.actions[action].emit();
+                                        sys.actions[action].emit(action);
                                     }
                                 }
 
@@ -110,7 +110,7 @@ angular
                                     }
 
                                     if (testFn) {
-                                        sys.actions[action].emit();
+                                        sys.actions[action].emit(action);
                                     }
                                 }
                             });
