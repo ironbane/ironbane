@@ -19,7 +19,7 @@ angular
                 eyes: [1010, 1011, 1012, 1013, 1014, 1015, 1016, 1017, 1018, 1019]
             }
         },
-        deathWords: 'slaughtered butchered crushed defeated destroyed exterminated finished massacred mutilated slayed vanquished killed'.split(' '),
+        deathWords: 'slaughtered butchered crushed defeated destroyed exterminated finished massacred mutilated slain vanquished killed'.split(' '),
         collisionMasks: {
             nothing: 0,
             level: 1,
