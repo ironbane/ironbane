@@ -101,7 +101,6 @@ angular
                     if (collisionReporterComponent) {
                         collisionReporterComponent.collisionStart.add(function() {
                             entity.removeComponent('collisionReporter');
-                            entity.removeComponent('rigidBody');
                             projectileComponent._canDeliverEffect = false;
                         });
                     }
@@ -118,8 +117,10 @@ angular
 
                     if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
                         var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity().toTHREEVector3();
-                        currentVel.normalize();
-                        entity.lookAt(entity.position.clone().add(currentVel));
+                        if (currentVel.lengthSq() > 1.0) {
+                            currentVel.normalize();
+                            entity.lookAt(entity.position.clone().add(currentVel));
+                        }
                     }
 
                     var projectileComponent = entity.getComponent('projectile');

@@ -59,7 +59,7 @@ angular
                                         radius: 0.1
                                     },
                                     mass: 1,
-                                    friction: 0.0,
+                                    friction: 2.0,
                                     restitution: 0,
                                     allowSleep: false,
                                     lock: {
@@ -75,7 +75,7 @@ angular
                                         }
                                     },
                                     group: 'projectiles',
-                                    collidesWith: ['level']
+                                    collidesWith: ['level', 'npcs']
                                 },
                                 quad: {
                                     transparent: true,
