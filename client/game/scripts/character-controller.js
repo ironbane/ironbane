@@ -29,6 +29,7 @@ angular
 
             var CharacterControllerScript = function(entity, world) {
                 Debugger.watch('player.position', entity.position);
+                Debugger.watch('player.rotation', entity.rotation);
 
                 this.entity = entity;
                 this.world = world;
