@@ -98,7 +98,10 @@ angular
                             if (!status.connected &&
                                 $state.current.name !== 'three-root.main-menu.enter-world') {
                                 $state.go('^.main-menu.enter-world');
-                                dialogService.alert('Connection lost.');
+                                dialogService.alert('Connection lost.', 'Reload')
+                                .then(function () {
+                                    location.reload();
+                                });
                             }
                         });
 
