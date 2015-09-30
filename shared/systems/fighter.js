@@ -6,7 +6,7 @@ angular
         'three',
         'game.services.globalsound'
     ])
-    .factory('FighterSystem', function($log, System, States, EntityBuilder, IbUtils, THREE, GlobalSound) {
+    .factory('FighterSystem', ["$log", "System", "States", "EntityBuilder", "IbUtils", "THREE", "GlobalSound", function($log, System, States, EntityBuilder, IbUtils, THREE, GlobalSound) {
         'use strict';
 
         var attackTypes = ['lhand', 'rhand'];
@@ -161,4 +161,4 @@ angular
 
             }
         });
-    });
+    }]);

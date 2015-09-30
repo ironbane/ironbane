@@ -8,7 +8,7 @@ angular
         'ces',
         'game.services.globalsound'
     ])
-    .factory('DamageSystem', function($log, System, EntityBuilder, IbUtils, THREE, BigMessagesService, GlobalSound, Timer) {
+    .factory('DamageSystem', ["$log", "System", "EntityBuilder", "IbUtils", "THREE", "BigMessagesService", "GlobalSound", "Timer", function($log, System, EntityBuilder, IbUtils, THREE, BigMessagesService, GlobalSound, Timer) {
         'use strict';
 
         var DASH_TIME = 0.2;
@@ -349,4 +349,4 @@ angular
                 });
             }
         });
-    });
+    }]);

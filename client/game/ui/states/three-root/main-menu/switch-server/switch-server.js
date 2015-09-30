@@ -5,12 +5,12 @@ angular
         'ui.router',
         'models.accounts'
     ])
-    .config(function($stateProvider) {
+    .config(["$stateProvider", function($stateProvider) {
         'use strict';
 
         $stateProvider.state('three-root.main-menu.switch-server', {
             templateUrl: 'client/game/ui/states/three-root/main-menu/switch-server/switch-server.ng.html',
-            controller: function($scope, $rootScope, $state, dialogService, IB_CONSTANTS, $meteor, ServersCollection) {
+            controller: ["$scope", "$rootScope", "$state", "dialogService", "IB_CONSTANTS", "$meteor", "ServersCollection", function($scope, $rootScope, $state, dialogService, IB_CONSTANTS, $meteor, ServersCollection) {
 
                 $scope.servers = $meteor.collection(ServersCollection);
 
@@ -22,6 +22,6 @@ angular
                 $scope.cancel = function() {
                     $state.go('^.enter-world');
                 };
-            }
+            }]
         });
-    });
+    }]);

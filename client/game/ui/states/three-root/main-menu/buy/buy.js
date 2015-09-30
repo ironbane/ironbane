@@ -7,12 +7,12 @@ angular
         'braintree-angular',
         'engine.char-builder'
     ])
-    .config(function($stateProvider) {
+    .config(["$stateProvider", function($stateProvider) {
         'use strict';
 
         $stateProvider.state('three-root.main-menu.buy', {
             templateUrl: 'client/game/ui/states/three-root/main-menu/buy/buy.ng.html',
-            controller: function($scope, $rootScope, $state, dialogService, IB_CONSTANTS, CharBuilder) {
+            controller: ["$scope", "$rootScope", "$state", "dialogService", "IB_CONSTANTS", "CharBuilder", function($scope, $rootScope, $state, dialogService, IB_CONSTANTS, CharBuilder) {
 
                 $scope.packs = IB_CONSTANTS.ironbloodPacks;
                 $scope.selectedPack = null;
@@ -59,6 +59,6 @@ angular
                     $scope.purchaseStatus = 'idle';
                     $state.go('^.enter-world');
                 };
-            }
+            }]
         });
-    });
+    }]);

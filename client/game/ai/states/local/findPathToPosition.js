@@ -1,6 +1,6 @@
 angular
     .module('game.ai.states.local')
-    .factory('FindPathToPosition', function(Class, THREE, Patrol, BaseState, $rootWorld, Debugger) {
+    .factory('FindPathToPosition', ["Class", "THREE", "Patrol", "BaseState", "$rootWorld", "Debugger", function(Class, THREE, Patrol, BaseState, $rootWorld, Debugger) {
             'use strict';
 
             return BaseState.extend({
@@ -41,5 +41,5 @@ angular
 
                 }
             });
-        }
+        }]
     )

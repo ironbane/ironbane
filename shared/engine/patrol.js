@@ -5,7 +5,7 @@ angular
         'engine.util',
         'util.objexporter'
     ])
-    .service('Patrol', function (THREE, Recast, ObjExporter, IbUtils, $q) {
+    .service('Patrol', ["THREE", "Recast", "ObjExporter", "IbUtils", "$q", function (THREE, Recast, ObjExporter, IbUtils, $q) {
 
         var recastPromises = {};
         var path = null;
@@ -82,4 +82,4 @@ angular
             }
         });
 
-    });
+    }]);

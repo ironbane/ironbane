@@ -9,7 +9,7 @@ angular
         'server.services.activeWorlds',
         'global.constants'
     ])
-    .factory('SpawnSystem', function(_, $log, System, IbUtils, EntityBuilder, THREE, $activeWorlds, Timer, IB_CONSTANTS) {
+    .factory('SpawnSystem', ["_", "$log", "System", "IbUtils", "EntityBuilder", "THREE", "$activeWorlds", "Timer", "IB_CONSTANTS", function(_, $log, System, IbUtils, EntityBuilder, THREE, $activeWorlds, Timer, IB_CONSTANTS) {
         'use strict';
 
         return System.extend({
@@ -163,4 +163,4 @@ angular
 
             }
         });
-    });
+    }]);

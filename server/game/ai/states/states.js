@@ -1,17 +1,16 @@
 angular
     .module('game.ai.states', [
-        'game.ai.states.local',
+        'game.ai.states.global',
         'ces'
     ])
-    .service('States', function(GoToPosition, FindPathToPosition, SearchAndDestroyEntity, $log) {
+    .service('States', ["MonsterState", "WanderState", "$log", function(MonsterState, WanderState, $log) {
             'use strict';
 
             // TODO is there a way to automatically load these?
 
             var states = {
-                'goToPosition': GoToPosition,
-                'findPathToPosition': FindPathToPosition,
-                'searchAndDestroyEntity': SearchAndDestroyEntity
+                'monster': MonsterState,
+                'wanderer': WanderState
             };
 
             this.get = function(name, entity, config, world) {
@@ -23,5 +22,5 @@ angular
                     $log.error('State ' + name + ' not found!');
                 }
             };
-        }
+        }]
     );

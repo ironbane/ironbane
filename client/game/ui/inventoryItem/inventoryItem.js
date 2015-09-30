@@ -5,11 +5,7 @@ angular
         'engine.char-builder',
         'engine.util'
     ])
-    .directive('inventoryItem', [
-        '$log',
-        'CharBuilder',
-        'IbUtils',
-        function($log, CharBuilder, IbUtils) {
+    .directive('inventoryItem', ["$log", "CharBuilder", "IbUtils", function($log, CharBuilder, IbUtils) {
             'use strict';
 
             var config = {
@@ -48,5 +44,4 @@ angular
             };
 
             return config;
-        }
-    ]);
+        }]);

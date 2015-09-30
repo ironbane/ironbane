@@ -4,7 +4,7 @@ angular
         'game.ai.states',
         'game.steeringBehaviour'
     ])
-    .factory('SteeringSystem', function($log, System, States, SteeringBehaviour) {
+    .factory('SteeringSystem', ["$log", "System", "States", "SteeringBehaviour", function($log, System, States, SteeringBehaviour) {
             'use strict';
 
 
@@ -32,5 +32,5 @@ angular
 
                 }
             });
-        }
+        }]
     );

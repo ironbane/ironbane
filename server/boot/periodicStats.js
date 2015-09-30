@@ -4,7 +4,7 @@ angular
         'models.stats',
         'server.services.hipchat'
     ])
-    .run(function(IB_CONSTANTS, StatsCollection, HipChat) {
+    .run(["IB_CONSTANTS", "StatsCollection", "HipChat", function(IB_CONSTANTS, StatsCollection, HipChat) {
         'use strict';
 
         function notifyUserStats(prefix) {
@@ -68,4 +68,4 @@ angular
 
             Meteor.setInterval(notifyUserStats, 3600 * 3 * 1000);
         }
-    });
+    }]);

@@ -2,7 +2,7 @@ angular
     .module('game.steeringBehaviour', [
         'engine.util'
     ])
-    .factory('SteeringBehaviour', function(Class, IbUtils) {
+    .factory('SteeringBehaviour', ["Class", "IbUtils", function(Class, IbUtils) {
             'use strict';
 
             var btVec3 = new Ammo.btVector3();
@@ -164,5 +164,5 @@ angular
                 //     return Arrive(midPoint, Deceleration.FAST);
                 // }
             });
-        }
+        }]
     )

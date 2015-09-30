@@ -1,6 +1,6 @@
 angular
     .module('game.ai.states.global')
-    .factory('WanderState', function(Class, THREE, IbUtils, $components) {
+    .factory('WanderState', ["Class", "THREE", "IbUtils", "$components", function(Class, THREE, IbUtils, $components) {
             'use strict';
 
             var DEFAULT_WANDER_WAYPOINT_CHANGE_TIMEOUT_MIN = 30;
@@ -70,5 +70,5 @@ angular
                     }
                 }
             });
-        }
+        }]
     )

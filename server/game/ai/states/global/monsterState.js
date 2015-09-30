@@ -1,6 +1,6 @@
 angular
     .module('game.ai.states.global')
-    .factory('MonsterState', function(Class, THREE, IbUtils, Patrol, $components) {
+    .factory('MonsterState', ["Class", "THREE", "IbUtils", "Patrol", "$components", function(Class, THREE, IbUtils, Patrol, $components) {
             'use strict';
 
             // We're going for a system where the client executes all of the code
@@ -152,5 +152,5 @@ angular
                     }
                 }
             });
-        }
+        }]
     )

@@ -1,18 +1,16 @@
 angular.module('game.ui.bigMessages.bigMessagesBox', [
     'game.ui.bigMessages.bigMessagesService'
 ])
-.directive('bigMessagesBox', function(BigMessagesService) {
+.directive('bigMessagesBox', ["BigMessagesService", function(BigMessagesService) {
         'use strict';
 
         return {
             restrict: 'EA',
             templateUrl: 'client/game/ui/bigMessages/bigMessagesBox.ng.html',
             controllerAs: 'bigMessagesBox',
-            controller: [
-                function() {
+            controller: function() {
                     this.messages = BigMessagesService.messages;
-                }
-            ],
+                },
             link: function(scope) {
                 // speed this one up to get a more "realtime" feel
                 var boost = setInterval(function() {
@@ -24,5 +22,5 @@ angular.module('game.ui.bigMessages.bigMessagesBox', [
                 });
             }
         };
-    }
+    }]
 );

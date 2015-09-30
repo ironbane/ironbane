@@ -4,7 +4,7 @@ angular
         'three',
         'engine.entity-cache'
     ])
-    .factory('ProjectileSystem', function($log, System, THREE, $entityCache) {
+    .factory('ProjectileSystem', ["$log", "System", "THREE", "$entityCache", function($log, System, THREE, $entityCache) {
         'use strict';
 
         var calculateFiringAngle = function(startPosition, targetPosition, speed, throwHigh) {
@@ -178,4 +178,4 @@ angular
 
             }
         });
-    });
+    }]);

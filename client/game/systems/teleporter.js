@@ -4,7 +4,7 @@ angular
         'ces.entityProcessingSystem',
         'three'
     ])
-    .factory('TeleporterSystem', function(EntityProcessingSystem, EntityBuilder, THREE) {
+    .factory('TeleporterSystem', ["EntityProcessingSystem", "EntityBuilder", "THREE", function(EntityProcessingSystem, EntityBuilder, THREE) {
             'use strict';
 
             return EntityProcessingSystem.extend({
@@ -122,5 +122,5 @@ angular
                     });
                 }
             });
-        }
+        }]
     );

@@ -3,12 +3,7 @@ angular
         'engine.char-builder',
         'engine.util'
     ])
-    .directive('spritesheetImage', [
-        '$log',
-        'CharBuilder',
-        'IbUtils',
-        '$timeout',
-        function($log, CharBuilder, IbUtils, $timeout) {
+    .directive('spritesheetImage', ["$log", "CharBuilder", "IbUtils", "$timeout", function($log, CharBuilder, IbUtils, $timeout) {
             'use strict';
 
             var config = {
@@ -53,5 +48,4 @@ angular
             };
 
             return config;
-        }
-    ]);
+        }]);

@@ -3,7 +3,7 @@ angular
         'ces',
         'game.ai.states'
     ])
-    .factory('ActorSystem', function($log, System, States) {
+    .factory('ActorSystem', ["$log", "System", "States", function($log, System, States) {
         'use strict';
 
         var stateNames = [Meteor.isClient ? 'localState' : 'globalState'];
@@ -43,4 +43,4 @@ angular
                 });
             }
         });
-    });
+    }]);

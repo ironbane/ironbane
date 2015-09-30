@@ -1,6 +1,6 @@
 angular
     .module('game.ai.states.local')
-    .factory('SearchAndDestroyEntity', function(Class, THREE, IbUtils, Patrol, BaseState, Timer, $rootWorld) {
+    .factory('SearchAndDestroyEntity', ["Class", "THREE", "IbUtils", "Patrol", "BaseState", "Timer", "$rootWorld", function(Class, THREE, IbUtils, Patrol, BaseState, Timer, $rootWorld) {
             'use strict';
 
             return BaseState.extend({
@@ -98,5 +98,5 @@ angular
 
                 }
             });
-        }
+        }]
     )

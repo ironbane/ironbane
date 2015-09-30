@@ -2,7 +2,7 @@ angular.module('game.ui.dropZone', [
     'game.world-root',
     'game.services.globalsound'
 ])
-.directive('dropZone', function($rootWorld, $q, GlobalSound) {
+.directive('dropZone', ["$rootWorld", "$q", "GlobalSound", function($rootWorld, $q, GlobalSound) {
         'use strict';
 
         return {
@@ -13,7 +13,7 @@ angular.module('game.ui.dropZone', [
                 entity: '=' // this can be anything with inventory, player, bag, mob, magic hat, etc.
             },
             bindToController: true,
-            controller: function($scope, $rootScope) {
+            controller: ["$scope", "$rootScope", function($scope, $rootScope) {
                 var ctrl = this;
 
                 var inventorySystem = $rootWorld.getSystem('inventory')
@@ -60,7 +60,7 @@ angular.module('game.ui.dropZone', [
                     return deferred.promise;
                 };
 
-            }
+            }]
         };
-    }
+    }]
 );

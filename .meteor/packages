@@ -4,17 +4,31 @@
 # 'meteor add' and 'meteor remove' will edit this file for you,
 # but you can also edit it by hand.
 
-meteor-platform
 less
 angularui:angular-ui-router
 accounts-password
 artwells:accounts-guest
 mizzao:user-status
-urigo:angular
 meteorhacks:npm
 
 
-npm-container
 alanning:roles
 underscore
-msavin:mongol
+standard-minifiers
+meteor-base
+mobile-experience
+mongo
+blaze-html-templates
+session
+jquery
+tracker
+logging
+reload
+random
+ejson
+spacebars
+check
+angular
+
+
+npm-container

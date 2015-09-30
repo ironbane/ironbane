@@ -2,7 +2,7 @@ angular
     .module('game.services.analytics', [
         'global.constants'
     ])
-    .service('GoogleAnalytics', function (IB_CONSTANTS) {
+    .service('GoogleAnalytics', ["IB_CONSTANTS", function (IB_CONSTANTS) {
 
         this.setup = function () {
           (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -17,4 +17,4 @@ angular
           ga('send', 'pageview');
         };
 
-    });
+    }]);

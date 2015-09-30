@@ -3,7 +3,7 @@ angular
         'global.constants',
         'engine.util'
     ])
-    .service('ContentLoader', function(IB_CONSTANTS, $q, IbUtils) {
+    .service('ContentLoader', ["IB_CONSTANTS", "$q", "IbUtils", function(IB_CONSTANTS, $q, IbUtils) {
         'use strict';
 
         var parse = Meteor.npmRequire('csv-parse');
@@ -360,4 +360,4 @@ angular
             return prefab;
         };
 
-    });
+    }]);

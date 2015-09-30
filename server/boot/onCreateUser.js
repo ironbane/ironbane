@@ -4,7 +4,7 @@ angular
         'server.boot.requiredProfileFields',
         'server.boot.adminEmailList'
     ])
-    .run(function(REQUIRED_PROFILE_FIELDS, ADMIN_EMAIL_LIST, RolesCollection) {
+    .run(["REQUIRED_PROFILE_FIELDS", "ADMIN_EMAIL_LIST", "RolesCollection", function(REQUIRED_PROFILE_FIELDS, ADMIN_EMAIL_LIST, RolesCollection) {
             'use strict';
 
             // Default player settings
@@ -29,5 +29,5 @@ angular
                 return user;
             });
 
-        }
+        }]
     );

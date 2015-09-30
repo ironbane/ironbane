@@ -1,6 +1,6 @@
 angular
     .module('game.ai.states.local')
-    .factory('BaseState', function(Class, THREE, IbUtils, Patrol, $rootWorld) {
+    .factory('BaseState', ["Class", "THREE", "IbUtils", "Patrol", "$rootWorld", function(Class, THREE, IbUtils, Patrol, $rootWorld) {
             'use strict';
 
             return Class.extend({
@@ -47,5 +47,5 @@ angular
 
                 }
             });
-        }
+        }]
     )

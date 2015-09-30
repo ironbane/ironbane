@@ -6,7 +6,7 @@ angular
         'engine.util',
         'three'
     ])
-    .factory('TeleporterSystem', function(EntityProcessingSystem, EntityBuilder, $activeWorlds, IbUtils, THREE) {
+    .factory('TeleporterSystem', ["EntityProcessingSystem", "EntityBuilder", "$activeWorlds", "IbUtils", "THREE", function(EntityProcessingSystem, EntityBuilder, $activeWorlds, IbUtils, THREE) {
             'use strict';
 
             return EntityProcessingSystem.extend({
@@ -71,5 +71,5 @@ angular
                     });
                 }
             });
-        }
+        }]
     );

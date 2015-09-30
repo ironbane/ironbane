@@ -2,7 +2,7 @@ angular
     .module('systems.buff', [
         'ces'
     ])
-    .factory('BuffSystem', function($log, System) {
+    .factory('BuffSystem', ["$log", "System", function($log, System) {
             'use strict';
 
             return System.extend({
@@ -72,5 +72,5 @@ angular
                     });
                 }
             });
-        }
+        }]
     );
