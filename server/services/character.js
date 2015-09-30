@@ -66,7 +66,7 @@ angular
                 // Note that this checks NPC's as well! We probably don't want
                 // players to have the same name as an NPC.
                 if (EntitiesCollection.find({
-                        name: charName
+                        name: new RegExp('^' + charName + '$', 'i')
                     }).count() !== 0) {
                     throw new Meteor.Error('charNameTaken', 'Character name already taken.');
                 }
