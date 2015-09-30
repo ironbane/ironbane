@@ -6,9 +6,10 @@ angular
         'engine.timing',
         'engine.util',
         'engine.entity-builder',
-        'server.services.activeWorlds'
+        'server.services.activeWorlds',
+        'global.constants'
     ])
-    .factory('SpawnSystem', function(_, $log, System, IbUtils, EntityBuilder, THREE, $activeWorlds, Timer) {
+    .factory('SpawnSystem', function(_, $log, System, IbUtils, EntityBuilder, THREE, $activeWorlds, Timer, IB_CONSTANTS) {
         'use strict';
 
         return System.extend({
@@ -126,11 +127,11 @@ angular
                                         delete healthComponent.__hasDied;
                                         healthComponent.value = healthComponent.max;
 
-                                        if ($activeWorlds[entity.level]) {
+                                        if ($activeWorlds[IB_CONSTANTS.world.startLevel]) {
                                             // if not we have a problem!
-                                            var spawns = $activeWorlds[entity.level].getEntities('spawnPoint');
+                                            var spawns = $activeWorlds[IB_CONSTANTS.world.startLevel].getEntities('spawnPoint');
                                             if (spawns.length === 0) {
-                                                $log.log(entity.level, ' has no spawn points defined!');
+                                                $log.log(IB_CONSTANTS.world.startLevel, ' has no spawn points defined!');
                                             }
                                             // Just pick one of them
                                             // Having multiple spawns is useful against AFK players so
@@ -139,13 +140,14 @@ angular
                                                 var component = spawn.getComponent('spawnPoint');
 
                                                 if (component.tag === 'playerStart') {
+                                                    entity.level = IB_CONSTANTS.world.startLevel;
                                                     entity.position.copy(spawn.position);
                                                     entity.rotation.copy(spawn.rotation);
                                                 }
                                             })(_.sample(spawns));
-                                        }
 
-                                        world.addEntity(entity);
+                                            $activeWorlds[IB_CONSTANTS.world.startLevel].addEntity(entity);
+                                        }
 
                                     }
                                 }, 7000);
