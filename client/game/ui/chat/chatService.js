@@ -55,9 +55,12 @@ angular.module('game.ui.chat.chatService', [
                         // TODO: test response for security? handle on server...
                         this.announce(args);
                     } else if (cmd === 'warn' && args.length) {
-                        // TODO: security
-                        // call server method
-                        // server post to separate announcments channel?
+                        var warnBits = args.split(' '),
+                            theWarned = warnBits.shift(),
+                            warningLevel = 'warning', // TODO: UI options?
+                            warningMsg = warnBits.join(' ');
+
+                        $meteor.call('warnUser', theWarned, warningLevel, warningMsg);
                     } else {
                         service.postClientMsg('Invalid command.', {
                             error: true
