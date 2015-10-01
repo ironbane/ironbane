@@ -56,11 +56,11 @@ angular
                 });
             };
 
-            this.announce = function(msg) {
-                this.addMessage('system', msg, {
+            this.announce = function(msg, flags) {
+                this.addMessage('system', msg, _.extend({}, flags, {
                     system: true,
                     announcment: true
-                });
+                }));
             };
 
             this.directMessage = function(fromUserId, toUserId, msg, flags) {
@@ -117,8 +117,8 @@ angular
             'use strict';
 
             Meteor.methods({
-                chatAnnounce: function(msg) {
-                    ChatService.announce(msg);
+                chatAnnounce: function(msg, flags) {
+                    ChatService.announce(msg, flags);
                 },
                 chat: function(msg, flags) {
                     if (!angular.isString(msg) || msg.length <= 0) {
@@ -173,9 +173,15 @@ angular
                 return ChatMessagesCollection.find({
                     server: Meteor.settings.server.id,
                     $or: [{
-                        'flags.local': {
-                            $exists: false
-                        }
+                        $and: [{
+                            'flags.local': {
+                                $exists: false
+                            }
+                        }, {
+                            'flags.direct': {
+                                $exists: false
+                            }
+                        }]
                     }, {
                         $and: [{
                             'flags.local': true
