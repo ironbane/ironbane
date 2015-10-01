@@ -150,9 +150,6 @@ angular
                     document.body.appendChild($rootWorld.renderer.domElement);
                     $rootWorld.renderer.setClearColor(0xd3fff8);
 
-                    $rootWorld.renderer.shadowMapEnabled = false;
-                    $rootWorld.renderer.shadowMapType = THREE.PCFShadowMap;
-
                     $window.addEventListener('resize', function() {
                         $rootWorld.renderer.setSize($window.innerWidth, $window.innerHeight);
                     }, false);
