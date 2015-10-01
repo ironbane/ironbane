@@ -76,8 +76,7 @@ angular.module('game.ui.chat.chatService', [
                         directEcho: true
                     });
 
-                    // TODO:
-                    // $meteor.call('chatDirect', toWhom, theMsg);
+                    $meteor.call('chatDirect', toWhom, theMsg);
                 } else {
                     $meteor.call('chat', msg);
                 }
