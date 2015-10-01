@@ -1,35 +1,110 @@
-/*global check: true*/
+/*global check: true,Roles: true*/
 angular
     .module('server.services.chat', [
         'models',
-        'server.services.activeWorlds'
+        'server.services.activeWorlds',
+        'server.services.character'
     ])
     .service('ChatService', [
         'ChatMessagesCollection',
-        function(ChatMessagesCollection) {
+        'CharacterService',
+        function(ChatMessagesCollection, CharacterService) {
             'use strict';
 
-            this.announce = function(msg, flags) {
-                check(msg, String);
+            function getUserFlags(userId) {
+                if (userId === 'system') {
+                    return {
+                        admin: true,
+                        system: true
+                    };
+                }
 
-                flags = flags || {};
+                return {
+                    gm: Roles.userIsInRole(userId, ['game-master']),
+                    admin: Roles.userIsInRole(userId, ['admin'])
+                        // TODO: guest, other
+                };
+            }
 
-                // TODO: some other check that the client should be able to post an announcment!
+            this.addMessage = function(userId, msg, flags) {
+                var character;
 
-                angular.extend(flags, {
-                    system: true,
-                    announcement: true
-                });
+                if (userId === 'system') {
+                    character = {
+                        name: null
+                    };
+                } else {
+                    character = CharacterService.getActiveCharacter(userId);
+                }
 
+                if (!character) {
+                    // can't chat if not logged in
+                    return;
+                }
 
                 ChatMessagesCollection.insert({
                     server: Meteor.settings.server.id,
                     room: 'global',
                     ts: new Date(),
                     msg: msg,
-                    flags: flags
+                    flags: flags,
+                    user: {
+                        userId: userId,
+                        name: character.name,
+                        flags: getUserFlags(userId)
+                    }
+                });
+            };
+
+            this.announce = function(msg) {
+                this.addMessage('system', msg, {
+                    system: true,
+                    announcment: true
+                });
+            };
+
+            this.directMessage = function(fromUserId, toUserId, msg, flags) {
+                var fromChar = null;
+                if (fromUserId === 'system') {
+                    fromChar = {
+                        name: 'system'
+                    };
+                }
+
+                if (!fromChar) {
+                    fromChar = CharacterService.getActiveCharacter(fromUserId);
+                }
+
+                var toChar = CharacterService.getActiveCharacter(toUserId);
+
+                if (!fromChar || !toChar) {
+                    console.log('cant DM: ', fromChar, toChar);
+                    // can't msg offline
+                    // TODO: allow? makes it harder to know which char by userId
+                    return;
+                }
+
+                flags = _.extend({}, flags, {
+                    direct: true
                 });
 
+                ChatMessagesCollection.insert({
+                    server: Meteor.settings.server.id,
+                    room: 'global',
+                    ts: new Date(),
+                    msg: msg,
+                    flags: flags,
+                    user: {
+                        userId: toUserId,
+                        name: toChar.name,
+                        flags: getUserFlags(toUserId)
+                    },
+                    from: {
+                        userId: fromUserId,
+                        name: fromChar.name,
+                        flags: getUserFlags(fromUserId)
+                    }
+                });
             };
         }
     ])
@@ -37,65 +112,46 @@ angular
         'ChatService',
         'ChatMessagesCollection',
         'ChatRoomsCollection',
-        '$activeWorlds',
-        function(ChatService, ChatMessagesCollection, ChatRoomsCollection, $activeWorlds) {
+        'CharacterService',
+        function(ChatService, ChatMessagesCollection, ChatRoomsCollection, CharacterService) {
             'use strict';
 
             Meteor.methods({
-                chatAnnounce: ChatService.announce
+                chatAnnounce: function(msg) {
+                    ChatService.announce(msg);
+                },
+                chat: function(msg, flags) {
+                    if (!angular.isString(msg) || msg.length <= 0) {
+                        return;
+                    }
+
+                    // truncate long msgs
+                    msg = msg.substr(0, 255);
+
+                    ChatService.addMessage(this.userId, msg, flags);
+                },
+                chatDirect: function(toCharName, msg) {
+                    if (!angular.isString(msg) || msg.length <= 0) {
+                        return;
+                    }
+
+                    // truncate long msgs
+                    msg = msg.substr(0, 255);
+
+                    var toChar = CharacterService.getCharacterByName(toCharName);
+
+                    if (!toChar) {
+                        return;
+                    }
+
+                    ChatService.directMessage(this.userId, toChar.owner, msg);
+                }
             });
 
             // clear rooms on boot (for now)
             ChatRoomsCollection.remove({});
             ChatRoomsCollection.insert({
                 roomname: 'global'
-            });
-
-            Meteor.methods({
-                chat: function(msg, msgFlags) {
-
-                    if (!_.isString(msg)) {
-                        return;
-                    }
-
-                    if (msg.length <= 0) {
-                        return false;
-                    }
-
-                    var me = this;
-
-                    msg = msg.substr(0, 255);
-
-                    var flags = [];
-
-                    if (Roles.userIsInRole(me.userId, ['game-master'])) {
-                        flags.push('gm');
-                    }
-
-                    msgFlags = msgFlags || {};
-
-                    _.each($activeWorlds, function(world) {
-                        var playerEntities = world.getEntities('player');
-                        playerEntities.forEach(function(player) {
-                            if (player.owner === me.userId) {
-                                ChatMessagesCollection.insert({
-                                    server: Meteor.settings.server.id,
-                                    room: 'global',
-                                    ts: new Date(),
-                                    msg: msg,
-                                    flags: msgFlags,
-                                    user: {
-                                        userId: me.userId,
-                                        name: player.name,
-                                        flags: flags
-                                    },
-                                    pos: player.position
-                                });
-                            }
-                        });
-                    });
-
-                }
             });
 
             ChatMessagesCollection.allow({
@@ -123,6 +179,12 @@ angular
                     }, {
                         $and: [{
                             'flags.local': true
+                        }, {
+                            'user.userId': this.userId
+                        }]
+                    }, {
+                        $and: [{
+                            'flags.direct': true
                         }, {
                             'user.userId': this.userId
                         }]

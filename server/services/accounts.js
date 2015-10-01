@@ -1,8 +1,9 @@
 angular
     .module('server.services.accounts', [
-        'models'
+        'models',
+        'server.services.character'
     ])
-    .run(function(EntitiesCollection) {
+    .run(function(CharacterService, ChatService) {
         'use strict';
 
         Meteor.methods({
@@ -26,14 +27,12 @@ angular
                     });
                 }
             },
-            warnUser: function(char, warningLevel, message) {
+            warnUser: function(charName, warningLevel, message) {
                 if (!Roles.userIsInRole(this.userId, ['game-master', 'admin'])) {
                     throw new Meteor.Error('insufficient privledges');
                 }
 
-                var character = EntitiesCollection.findOne({
-                    name: char
-                });
+                var character = CharacterService.getCharacterByName(charName);
 
                 if (!character) {
                     throw new Meteor.Error('character not found!');
@@ -50,7 +49,10 @@ angular
                     $push: {warnings: warning}
                 });
 
+                var offender = Meteor.users.findOne({_id: character.owner});
+
                 // TODO: notify user via chat message
+                ChatService.directMessage('system', character.owner, message, {warn: true, warnings: offender.warnings.length});
             }
         });
 

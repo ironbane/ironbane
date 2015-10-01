@@ -15,6 +15,32 @@ angular
         function(_, $activeWorlds, $log, IB_CONSTANTS, EntitiesCollection, ContentLoader) {
             'use strict';
 
+            this.getActiveCharacter = function(userId) {
+                var char, found;
+
+                angular.forEach($activeWorlds, function(world) {
+                    if (found) {
+                        return;
+                    }
+
+                    world.forEachEntity('player', function(player) {
+                        if (player.owner === userId) {
+                            char = player;
+                            found = true;
+                            return;
+                        }
+                    });
+                });
+
+                return char || null;
+            };
+
+            this.getCharacterByName = function(name) {
+                return EntitiesCollection.findOne({
+                    name: new RegExp('^' + name + '$', 'i')
+                });
+            };
+
             this.create = function(options, pUser) {
                 var user = pUser || Meteor.user();
                 var validator = Meteor.npmRequire('validator');
@@ -84,16 +110,15 @@ angular
                 }
 
                 var startLevel = IB_CONSTANTS.world.startLevel,
-                    initialPosition = [0,0,0],
-                    initialRotation = [0,0,0];
+                    initialPosition = [0, 0, 0],
+                    initialRotation = [0, 0, 0];
 
                 if ($activeWorlds[startLevel]) {
                     // if not we have a problem!
                     var spawns = $activeWorlds[startLevel].getEntities('spawnPoint');
                     if (spawns.length === 0) {
                         $log.log(startLevel, ' has no spawn points defined!');
-                    }
-                    else {
+                    } else {
                         // Just pick one of them
                         // Having multiple spawns is useful against AFK players so
                         // we don't have players spawning in/on top of eachother too much.
