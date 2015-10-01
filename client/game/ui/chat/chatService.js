@@ -1,11 +1,15 @@
 angular.module('game.ui.chat.chatService', [
         'angular-meteor',
         'models.chatMessages',
+        'game.ui.bigMessages.bigMessagesService',
+        'game.ui.dialog'
     ])
     .service('ChatService', [
         '$meteor',
         'ChatMessagesCollection',
-        function($meteor, ChatMessagesCollection) {
+        'BigMessagesService',
+        'dialogService',
+        function($meteor, ChatMessagesCollection, BigMessagesService, dialogService) {
             'use strict';
 
             var service = this;
@@ -54,6 +58,15 @@ angular.module('game.ui.chat.chatService', [
                     if (cmd === 'announce' && args.length) {
                         // TODO: test response for security? handle on server...
                         this.announce(args);
+                    } else if (cmd === 'stuck') {
+                        $meteor.call('resetPlayer')
+                            .then(function () {
+                                BigMessagesService.add('Teleporting home...');
+                            }, function(err) {
+                                if (err) {
+                                    dialogService.alert(err.reason);
+                                }
+                            });
                     } else if (cmd === 'warn' && args.length) {
                         var warnBits = args.split(' '),
                             theWarned = warnBits.shift(),
