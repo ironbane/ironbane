@@ -7,6 +7,8 @@ angular
     .run(["IB_CONSTANTS", "StatsCollection", "HipChat", function(IB_CONSTANTS, StatsCollection, HipChat) {
         'use strict';
 
+        var alexa = Meteor.npmRequire('alexarank');
+
         function notifyUserStats(prefix) {
             var messages = [];
 
@@ -48,6 +50,17 @@ angular
             HipChat.postMessage('Ironbane Chillout', message);
         }
 
+        function notifyAlexaRank () {
+            var reportSite = function (site) {
+                alexa(site, function(error, result) {
+                    var message = 'Alexa rank for ' + site + ': #' + result.rank;
+                    HipChat.postMessage('Ironbane Chillout', message);
+                    console.log(message);
+                });
+            };
+            reportSite('ironbane.com');
+        }
+
         Meteor.methods({
             onlineStats: function(prefixMessage) {
                 // this can force it to happen outside of the normal schedule
@@ -61,11 +74,10 @@ angular
 
         if (!IB_CONSTANTS.isDev) {
             Meteor.setTimeout(function() {
-                if (!IB_CONSTANTS.isDev) {
-                    HipChat.postMessage('Ironbane Chillout', 'Production server started!');
-                }
-            }, 30 * 1000);
+                HipChat.postMessage('Ironbane Chillout', 'Production server started!');
+            }, 5 * 1000);
 
             Meteor.setInterval(notifyUserStats, 3600 * 3 * 1000);
+            Meteor.setInterval(notifyAlexaRank, 3600 * 24 * 1000);
         }
     }]);
