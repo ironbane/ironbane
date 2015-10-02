@@ -82,22 +82,22 @@
               }
             },
             "oauth-sign": {
-              "version": "0.3.0"
+              "version": "http://registry.npmjs.org/oauth-sign/-/oauth-sign-0.3.0.tgz"
             },
             "hawk": {
               "version": "1.0.0",
               "dependencies": {
                 "hoek": {
-                  "version": "0.9.1"
+                  "version": "http://registry.npmjs.org/hoek/-/hoek-0.9.1.tgz"
                 },
                 "boom": {
-                  "version": "0.4.2"
+                  "version": "http://registry.npmjs.org/boom/-/boom-0.4.2.tgz"
                 },
                 "cryptiles": {
                   "version": "http://registry.npmjs.org/cryptiles/-/cryptiles-0.2.2.tgz"
                 },
                 "sntp": {
-                  "version": "0.2.4"
+                  "version": "http://registry.npmjs.org/sntp/-/sntp-0.2.4.tgz"
                 }
               }
             },
@@ -105,32 +105,6 @@
               "version": "http://registry.npmjs.org/aws-sign2/-/aws-sign2-0.5.0.tgz"
             }
           }
-        }
-      }
-    },
-    "appdynamics": {
-      "version": "4.1.4",
-      "dependencies": {
-        "appdynamics-zmq": {
-          "version": "http://packages.appdynamics.com/npm/4.1.4.0/appdynamics-zmq.tgz"
-        },
-        "appdynamics-protobuf": {
-          "version": "http://packages.appdynamics.com/npm/4.1.4.0/appdynamics-protobuf.tgz"
-        },
-        "appdynamics-jre": {
-          "version": "http://packages.appdynamics.com/npm/4.1.4.0/appdynamics-jre.tgz"
-        },
-        "appdynamics-proxy": {
-          "version": "http://packages.appdynamics.com/npm/4.1.4.0/appdynamics-proxy.tgz"
-        },
-        "appdynamics-native": {
-          "version": "http://packages.appdynamics.com/npm/4.1.4.0/appdynamics-native.tgz"
-        },
-        "node-uuid": {
-          "version": "1.4.1"
-        },
-        "set-immediate": {
-          "version": "0.1.1"
         }
       }
     },
