@@ -3,9 +3,12 @@ angular
         'ui.bootstrap',
         'game.ui.spritesheetImage',
         'engine.char-builder',
-        'engine.util'
+        'engine.util',
+        'models.items'
     ])
-    .directive('inventoryItem', ["$log", "CharBuilder", "IbUtils", function($log, CharBuilder, IbUtils) {
+    .directive('inventoryItem', [
+        'ItemsCollection',
+        function(ItemsCollection) {
             'use strict';
 
             var config = {
@@ -24,6 +27,11 @@ angular
                     }, function(item) {
                         if (!item) {
                             return;
+                        }
+
+                        var itemTemplate = ItemsCollection.findOne({name: item.name});
+                        if (itemTemplate && itemTemplate.displayNotes) {
+                            item.displayNotes = itemTemplate.displayNotes;
                         }
 
                         $scope.item = item; // for tooltip?

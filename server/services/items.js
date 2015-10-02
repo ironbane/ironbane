@@ -77,6 +77,8 @@ angular
                 handedness: 'Handedness',
                 price: 'Buy Price',
                 dropChance: 'Drop Chance %',
+                displayNotes: 'Display Notes',
+                devNotes: 'Special Powers & Notes',
                 onEquip: 'onEquip',
                 onUnEquip: 'onUnEquip'
             };
