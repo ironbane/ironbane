@@ -51,11 +51,9 @@ angular
                     world.update($timing.frameTime, $timing.elapsed, $timing.timestamp);
                 });
 
-                $window.requestAnimationFrame(onRequestedFrame);
             }
 
-            $log.log('Ironbane booting up game world...');
-            $window.requestAnimationFrame(onRequestedFrame);
             $log.log('Booting up game world');
+            Meteor.setInterval(onRequestedFrame, 200);
         }
     ]);

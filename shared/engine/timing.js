@@ -77,7 +77,7 @@ angular
 
             var _scale = 1.0;
             var _last = 0;
-            var _maxStep = 0.05;
+            var _maxStep = Meteor.isServer ? 1.0 : 0.05;
 
             this.startTime = new Date();
 
