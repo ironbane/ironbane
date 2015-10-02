@@ -36,7 +36,7 @@ angular
                     };
 
                     if (!isExit) {
-                        setTimeout(findExit, 1000)
+                        setTimeout(findExit, 5000);
                     }
                 },
                 updateEntity: function(timing, entity) {
