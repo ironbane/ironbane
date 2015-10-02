@@ -5,6 +5,7 @@
     <stat-bar id="healthBar" stat-component="mainPlayer.getComponent('health')"></stat-bar>
     <stat-bar id="armorBar" stat-component="mainPlayer.getComponent('armor')"></stat-bar>
     <div id="playerGold"><i class="gold-icon"></i><span>{{ mainPlayer.getComponent('inventory').gold }}</span></div>
+    <div id="playerIronblood"><i class="ironblood-icon"></i><span>{{ $root.currentUser.profile.ironblood }}</span></div>
 </div>
 <big-messages-box></big-messages-box>
 <drop-zone entity="mainPlayer"></drop-zone>

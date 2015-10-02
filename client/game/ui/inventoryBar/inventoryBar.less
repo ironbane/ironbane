@@ -40,24 +40,47 @@ inventory-bar {
     }
 }
 
-#playerGold {
-    margin-left: 5px;
-    // background: red;
-    i.gold-icon {
-        width: 16px * 1.5;
-        height: 16px * 1.5;
-        background-image: url(images/ui/stats.png);
+#playerIronblood {
+    margin-top: 6px;
+    margin-left: 2px;
+    i.ironblood-icon {
+        width: 16px * 2.0;
+        height: 16px * 2.0;
+        background-image: url(images/spritesheets/items.png);
         background-repeat: no-repeat;
-        background-size: (64px * 1.5) (128px * 1.5);
+        background-size: (256px * 2.0) (2048px * 2.0);
         image-rendering: pixelated;
         display: inline-block;
-        background-position: (0 * -16px * 1.5) (5 * -16px * 1.5);
+        background-position: (12 * -16px * 2.0) (114 * -16px * 2.0);
     }
     span {
         position: relative;
         color: @primary4;
         left: 5px;
-        top: -3px;
-        text-shadow: 1px 1px 0px @primary2, -1px 1px 0px @primary2, 1px -1px 0px @primary2, -1px -1px 0px @primary2;
+        top: -7px;
+        text-shadow: 1px 1px 0px spin(@primary1, 140%), -1px 1px 0px spin(@primary1, 140%), 1px -1px 0px spin(@primary1, 140%), -1px -1px 0px spin(@primary1, 140%);
+    }
+}
+
+
+#playerGold {
+    margin-top: 6px;
+    margin-left: 2px;
+    i.gold-icon {
+        width: 16px * 2.0;
+        height: 16px * 2.0;
+        background-image: url(images/ui/stats.png);
+        background-repeat: no-repeat;
+        background-size: (64px * 2.0) (128px * 2.0);
+        image-rendering: pixelated;
+        display: inline-block;
+        background-position: (0 * -16px * 2.0) (5 * -16px * 2.0);
+    }
+    span {
+        position: relative;
+        color: @primary4;
+        left: 5px;
+        top: -7px;
+        text-shadow: 1px 1px 0px spin(@primary1, 260%), -1px 1px 0px spin(@primary1, 260%), 1px -1px 0px spin(@primary1, 260%), -1px -1px 0px spin(@primary1, 260%);
     }
 }
