@@ -7,10 +7,9 @@
 <div class="ib-ui-window ib-ui-login-box login-info" ng-if="!$root.currentUser.profile.guest">
 
 	<div style="width:300px">
-		<div style="float:left;padding-right:10px;text-overflow: ellipsis;max-width: 250px;overflow: hidden;" class="label">{{ $root.currentUser.username }}</div>
-		<button class="ibutton" click-sound ng-click="logout()" style="width:40px;display:inline-block">⇤</button>
+		<div style="float:left;padding-right:10px;text-overflow: ellipsis;width: 180px;overflow: hidden;" class="label">{{ $root.currentUser.username }}</div>
+        <button class="ibutton" click-sound ng-click="logout()" style="width:110px;display:inline-block">Log out</button>
 	</div>
-
 <!-- 	<div class="ironblood-label" style="width:65px;float:left">
 		<div class="label">{{ $root.currentUser.profile.ironblood }} &#10006;</div>
 		<inventory-item item="{image: 1836, name: 'Ironblood'}"></inventory-item>
