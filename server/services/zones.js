@@ -27,6 +27,7 @@ angular
                 'Actor',
                 'Inventory',
                 'Armor',
+                'Health',
                 'Teleporter'
             ];
 

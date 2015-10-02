@@ -8,6 +8,7 @@ angular.module('components', [
     'components.fighter',
     'components.globalState',
     'components.health',
+    'components.healthRegen',
     'components.helper',
     'components.inventory',
     'components.localState',

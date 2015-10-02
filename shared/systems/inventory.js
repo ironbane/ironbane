@@ -6,7 +6,8 @@ angular
         'engine.util',
         'engine.timing',
         'game.services.globalsound',
-        'global.constants.inv'
+        'global.constants.inv',
+        'models.items'
     ])
     .factory('InventorySystem', [
         '$log',
@@ -19,7 +20,8 @@ angular
         'THREE',
         'GlobalSound',
         'INV_SLOTS',
-        function($log, System, Signal, EntityBuilder, IbUtils, Timer, $components, THREE, GlobalSound, INV_SLOTS) {
+        'ItemsCollection',
+        function($log, System, Signal, EntityBuilder, IbUtils, Timer, $components, THREE, GlobalSound, INV_SLOTS, ItemsCollection) {
             'use strict';
 
             var armorList = INV_SLOTS.armorList;
@@ -417,7 +419,9 @@ angular
 
                 },
                 equipItem: function(entity, sourceSlot, targetSlot) {
-                    if (sourceSlot === targetSlot) return false;
+                    if (sourceSlot === targetSlot) {
+                        return false;
+                    }
 
                     var inventory = entity.getComponent('inventory');
                     //$log.debug('equipItem: ', entity.uuid, inventory, slot);
@@ -425,9 +429,8 @@ angular
                         var sourceItem = inventory[sourceSlot];
                         var targetItem = inventory[targetSlot];
 
-
                         if (inventory['lhand'] || inventory['rhand']) {
-                            if (['rhand','lhand'].indexOf(targetSlot) !== -1) {
+                            if (['rhand', 'lhand'].indexOf(targetSlot) !== -1) {
                                 if (sourceItem && sourceItem.handedness === '2h') {
                                     return false;
                                 }
@@ -440,55 +443,44 @@ angular
                             }
                         }
 
-
-                        var checkSwitch = function (item, slot) {
-                            if (!item) return true;
-
-
+                        var checkSwitch = function(item, slot) {
+                            if (!item) {
+                                return true;
+                            }
 
                             // Check that the change is valid
                             if (item.type === 'weapon') {
-                                if (slotList.concat(['lhand','rhand']).indexOf(slot) === -1) {
+                                if (slotList.concat(['lhand', 'rhand']).indexOf(slot) === -1) {
                                     return false;
                                 }
-
 
                                 // ['rhand','lhand'].indexOf(targetSlot) !== -1 &&
                                 // sourceItem) {
-
-
-                            }
-                            else if (item.type === 'shield') {
-                                if (slotList.concat(['lhand','rhand']).indexOf(slot) === -1) {
+                            } else if (item.type === 'shield') {
+                                if (slotList.concat(['lhand', 'rhand']).indexOf(slot) === -1) {
                                     return false;
                                 }
-                            }
-                            else if (item.type === 'relic') {
-                                if (slotList.concat(['relic1','relic2','relic3']).indexOf(slot) === -1) {
+                            } else if (item.type === 'relic') {
+                                if (slotList.concat(['relic1', 'relic2', 'relic3']).indexOf(slot) === -1) {
                                     return false;
                                 }
-                            }
-                            else if (item.type === 'costume') {
+                            } else if (item.type === 'costume') {
                                 if (slotList.concat(['costume']).indexOf(slot) === -1) {
                                     return false;
                                 }
-                            }
-                            else if (item.type === 'head') {
+                            } else if (item.type === 'head') {
                                 if (slotList.concat(['head']).indexOf(slot) === -1) {
                                     return false;
                                 }
-                            }
-                            else if (item.type === 'body') {
+                            } else if (item.type === 'body') {
                                 if (slotList.concat(['body']).indexOf(slot) === -1) {
                                     return false;
                                 }
-                            }
-                            else if (item.type === 'feet') {
+                            } else if (item.type === 'feet') {
                                 if (slotList.concat(['feet']).indexOf(slot) === -1) {
                                     return false;
                                 }
-                            }
-                            else {
+                            } else {
                                 // All other stuff can only be moved between slots
                                 if (slotList.indexOf(slot) === -1) {
                                     return false;
@@ -496,17 +488,35 @@ angular
                             }
 
                             return true;
-                        }
+                        };
 
                         if (!checkSwitch(sourceItem, targetSlot) ||
                             !checkSwitch(targetItem, sourceSlot)) {
                             return false;
                         }
 
-
                         var temp = inventory[targetSlot];
                         inventory[targetSlot] = inventory[sourceSlot];
                         inventory[sourceSlot] = temp;
+
+                        // find item template for special powers
+                        var itemTemplate = ItemsCollection.findOne({name: inventory[targetSlot].name});
+                        if (itemTemplate) {
+                            if (armorList.indexOf(targetSlot) >= 0) {
+                                // we are equipping
+                                if (itemTemplate.onEquip) {
+                                    var _equipFn = new Function('item', 'entity', 'return (' + itemTemplate.onEquip + ').call(item, entity);');
+                                    _equipFn(inventory[targetSlot], entity);
+                                }
+                            }
+                            if (armorList.indexOf(sourceSlot) >= 0) {
+                                // we are unequipping
+                                if (itemTemplate.onUnEquip) {
+                                    var _unEquipFn = new Function('item', 'entity', 'return (' + itemTemplate.onUnEquip + ').call(item, entity);');
+                                    _unEquipFn(inventory[targetSlot], entity);
+                                }
+                            }
+                        }
 
                         if (entity.hasComponent('netSend')) {
                             GlobalSound.play(_.sample(['bag1']), entity.position);

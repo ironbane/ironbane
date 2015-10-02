@@ -76,7 +76,9 @@ angular
                 attackCooldown: 'Attack Cooldown',
                 handedness: 'Handedness',
                 price: 'Buy Price',
-                dropChance: 'Drop Chance %'
+                dropChance: 'Drop Chance %',
+                onEquip: 'onEquip',
+                onUnEquip: 'onUnEquip'
             };
 
             var contentFile = (Meteor.settings.content && Meteor.settings.content.items) ? Meteor.settings.content.items :

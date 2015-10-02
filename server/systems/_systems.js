@@ -9,6 +9,7 @@ angular
 
         'systems.actor',
         'systems.armor',
+        'systems.health',
         'systems.buff',
         'systems.inventory',
         'systems.damage',
