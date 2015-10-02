@@ -146,7 +146,11 @@ angular
 
                     }
 
-                    world.addEntity(builtEntity);
+                    setTimeout(function () {
+                        $rootWorld.getLoadPromise().then(function() {
+                            world.addEntity(builtEntity);
+                        });
+                    }, 100);
                 });
             }
 
