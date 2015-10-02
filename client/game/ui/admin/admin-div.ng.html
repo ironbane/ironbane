@@ -4,6 +4,7 @@
         <button class="ibutton" click-sound ng-click="$parent.mode = 'itemids'" style="width:145px;">Item IDs</button>
         <button class="ibutton" click-sound ng-click="$parent.mode = 'skinids'" style="width:145px;">Skin/Armor IDs</button>
         <button class="ibutton" click-sound ng-click="$parent.mode = 'npcbuilder'" style="width:145px;">NPC Builder</button>
+        <button class="ibutton" click-sound ng-click="$parent.mode = 'cheats'" style="width:145px;">Cheats</button>
     </div>
     <div ng-if="mode">
         <button class="ibutton" click-sound ng-click="$parent.mode = ''" style="width:145px;">Back</button>
@@ -74,7 +75,9 @@
                 <div class="char-preview" ng-style="{ 'background-image': 'url(' + charPrevImg + ')' }"></div>
                 <img ng-src="{{charSpritesheetImg}}">
             </div>
-
-
+    </div>
+    <div ng-if="mode == 'cheats'">
+        <p><input type="checkbox" ng-model="cheats.fastWalk"> Fast Walk</p>
+        <p><input type="checkbox" ng-model="cheats.fly"> Fly</p>
     </div>
 </div>

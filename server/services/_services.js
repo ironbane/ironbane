@@ -6,6 +6,7 @@ angular
         'server.services.braintree',
         'server.services.character',
         'server.services.chat',
+        'server.services.cheats',
         'server.services.entities',
         'server.services.game',
         'server.services.hipchat',

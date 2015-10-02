@@ -103,12 +103,6 @@ angular
                     throw new Meteor.Error('charAppearance', 'Invalid character appearance.');
                 }
 
-                var cheats = {};
-
-                if (Roles.userIsInRole(user, ['game-master'])) {
-                    cheats.jump = true;
-                }
-
                 var startLevel = IB_CONSTANTS.world.startLevel,
                     initialPosition = [0, 0, 0],
                     initialRotation = [0, 0, 0];
@@ -142,7 +136,6 @@ angular
                     position: initialPosition,
                     rotation: initialRotation,
                     level: startLevel,
-                    cheats: cheats,
                     userData: {
                         prefab: 'Character',
                         skin: options.skin,

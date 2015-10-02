@@ -173,10 +173,6 @@ angular.module('ces.entity', [
                         data.metadata = {};
                     }
 
-                    if (entity.metadata) {
-                        data.metadata.cheats = entity.metadata.cheats;
-                    }
-
                     data.level = entity.level;
                 }
 

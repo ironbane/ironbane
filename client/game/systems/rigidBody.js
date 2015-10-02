@@ -6,7 +6,8 @@ angular
         'global.constants',
         'ammo',
         'ammo.physics-world',
-        'game.world-root'
+        'game.world-root',
+        'game.clientSettings'
     ])
     .factory('RigidBodySystem', [
         'System',
@@ -17,7 +18,8 @@ angular
         '$log',
         '$rootWorld',
         'IB_CONSTANTS',
-        function(System, THREE, Ammo, $q, PhysicsWorld, $log, $rootWorld, IB_CONSTANTS) {
+        '$clientSettings',
+        function(System, THREE, Ammo, $q, PhysicsWorld, $log, $rootWorld, IB_CONSTANTS, $clientSettings) {
             'use strict';
 
             // A lot of code here is based on Chandler Prall's Physijs
@@ -496,6 +498,10 @@ angular
                     }
                 },
                 update: function(dt) {
+                    if ($clientSettings.get('isAdminPanelOpen')) {
+                        return;
+                    }
+
                     PhysicsWorld.stepSimulation(dt * 2, 7);
 
                     this.syncEntities();

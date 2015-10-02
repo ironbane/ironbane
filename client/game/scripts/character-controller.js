@@ -203,9 +203,17 @@ angular
                     });
                 }
 
-                if (this.entity.metadata.cheats && this.entity.metadata.cheats.jump) {
-                    this.canJump = true;
-                    this.jumpTimer = minimumJumpDelay * 2;
+                var cheatComponent = this.entity.getComponent('cheats');
+
+                if (cheatComponent) {
+                    if (cheatComponent.fly) {
+                        this.canJump = true;
+                        this.jumpTimer = minimumJumpDelay * 2;
+                    }
+                    if (cheatComponent.fastWalk) {
+                        speedComponent.acceleration = 2;
+                        speedComponent.maxSpeed = 16;
+                    }
                 }
 
                 // virtual gamepad (touch ipad) controls
@@ -321,8 +329,7 @@ angular
                         .applyEuler(new THREE.Euler(0, IbUtils.vecToEuler(multiCamComponent.thirdPersonPosition) + Math.PI / 2, 0));
                     v1.multiplyScalar(speedComponent.acceleration);
 
-                    var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity();
-                    currentVel = currentVel.toTHREEVector3();
+                    var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity().toTHREEVector3();
 
                     if (this.jump && this.canJump && currentVel.y < 1 && this.jumpTimer > minimumJumpDelay) {
                         this.jumpTimer = 0.0;
@@ -340,6 +347,15 @@ angular
                     btVec3.setValue(invertedVelocity.x, 0, invertedVelocity.z);
                     rigidBodyComponent.rigidBody.applyCentralImpulse(btVec3);
 
+                    if (cheatComponent.fly) {
+                        btVec3.setValue(0, 10, 0);
+                        rigidBodyComponent.rigidBody.applyCentralForce(btVec3);
+
+                        currentVel = rigidBodyComponent.rigidBody.getLinearVelocity().toTHREEVector3();
+                        invertedVelocity = currentVel.clone().multiplyScalar(-0.2);
+                        btVec3.setValue(0, invertedVelocity.y, 0);
+                        rigidBodyComponent.rigidBody.applyCentralImpulse(btVec3);
+                    }
 
 
                     if (inputVector.lengthSq() > 0.01 &&

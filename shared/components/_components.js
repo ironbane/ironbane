@@ -3,6 +3,7 @@ angular.module('components', [
     'components.armorRegen',
     'components.buff',
     'components.camera',
+    'components.cheats',
     'components.collisionReporter',
     'components.damageable',
     'components.fighter',

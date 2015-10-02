@@ -1,6 +1,7 @@
 angular.module('game.ui.admin.adminDiv', [
         'game.clientSettings',
-        'global.constants'
+        'global.constants',
+        'angular-meteor'
     ])
     .directive('adminDiv', function() {
             'use strict';
@@ -9,7 +10,12 @@ angular.module('game.ui.admin.adminDiv', [
                 restrict: 'EA',
                 templateUrl: 'client/game/ui/admin/admin-div.ng.html',
                 controllerAs: 'adminDiv',
-                controller: ["$scope", "$clientSettings", "CharBuilder", "IB_CONSTANTS", function($scope, $clientSettings, CharBuilder, IB_CONSTANTS) {
+                scope: {
+                    cheats: '='
+                },
+                controller: ["$scope", "$clientSettings", "CharBuilder", "IB_CONSTANTS", '$meteor', function($scope, $clientSettings, CharBuilder, IB_CONSTANTS, $meteor) {
+
+                    var ctrl = this;
 
                     $scope.getImageID = function (e) {
                         $scope.imageId = (Math.floor(e.offsetX / 32)) + ((0+Math.floor(e.offsetY / 32))*16)
@@ -73,6 +79,20 @@ angular.module('game.ui.admin.adminDiv', [
                             updateCharacterPreview();
                         };
                     });
+
+                   // $scope.$watch('cheats', function(component, old) {
+
+                   //      if (!component) {
+                   //          return;
+                   //      }
+
+                   //      console.log(JSON.stringify(component));
+
+                   //      $meteor.call('updateCheats', function () {
+
+                   //      });
+
+                   //  });
 
                 }]
             };

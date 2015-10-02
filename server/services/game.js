@@ -57,12 +57,13 @@ angular
                         ent.addComponent('fighter', {
                             faction: 'ravenwood'
                         });
-                        ent.owner = doc.owner;
 
-                        // Used to access metadata like cheats later on
-                        ent.metadata = {
-                            cheats: doc.cheats
-                        };
+
+                        if (Roles.userIsInRole(doc.owner, ['game-master'])) {
+                            ent.addComponent('cheats');
+                        }
+
+                        ent.owner = doc.owner;
 
                         // TODO: decorate entity with other components, such as "player", etc. like the client does
                         $activeWorlds[doc.level]._ownerCache[doc.owner] = ent.uuid;
