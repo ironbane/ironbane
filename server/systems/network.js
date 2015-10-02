@@ -291,8 +291,11 @@ angular
 
                                     var newPos = new THREE.Vector3().fromArray(data.pos);
 
+                                    var checkPos = newPos.clone().setY(netEntity.position.y);
+
                                     // Some anti-cheat
-                                    if (newPos.distanceToSquared(netEntity.position) < 10*10) {
+                                    if (checkPos.distanceToSquared(netEntity.position) < 10*10 ||
+                                        Roles.userIsInRole(netEntity.owner, ['game-master'])) {
                                         netEntity.position.copy(newPos);
                                         netEntity.rotation.y = data.rot;
                                     }
