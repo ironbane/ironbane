@@ -1,5 +1,5 @@
 <div class="modal-header" ng-if="headerText">{{ headerText }}</div>
-<div class="modal-body">{{ content }}</div>
+<div class="modal-body" ng-bind-html="content"></div>
 <div class="modal-footer">
     <button class="ibutton attention" click-sound ng-click="ok()" style="width:145px;margin: 0 auto">{{ okText }}</button>
 </div>

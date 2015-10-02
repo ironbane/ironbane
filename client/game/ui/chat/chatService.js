@@ -9,7 +9,8 @@ angular.module('game.ui.chat.chatService', [
         'ChatMessagesCollection',
         'BigMessagesService',
         'dialogService',
-        function($meteor, ChatMessagesCollection, BigMessagesService, dialogService) {
+        '$rootWorld',
+        function($meteor, ChatMessagesCollection, BigMessagesService, dialogService, $rootWorld) {
             'use strict';
 
             var service = this;
@@ -73,10 +74,29 @@ angular.module('game.ui.chat.chatService', [
                             '<p><u>Chat commands</u></p>',
                             '<p><strong>/stuck</strong> Teleport home</p>',
                             '<p><strong>@name</strong> Direct message</p>',
+                            '<p><strong>/who</strong> Show who\'s online</p>',
+                            '<p><strong>/help</strong> Show this help</p>',
                             '<p><u>Controls</u></p>',
-                            '<p><strong>C</strong> Change camera</p>'
+                            '<p><strong>C</strong> Change camera</p>',
+                            '<p><strong>1 - 8</strong> Use item in slot #</p>',
+                            '<p><strong>Left Click or F</strong> Attack</p>',
+                            '<p><strong>Space</strong> Jump</p>',
+                            '<p><strong>WASD</strong> Move</p>',
                         ].join('');
-                        dialogService.info(helpText);
+                        dialogService.alert(helpText, '', 'Help');
+                    } else if (cmd === 'who') {
+                        var online = $rootWorld.getEntities('player');
+                        var onlineText = [
+                            '<ul>'
+                        ];
+                        online.map(function(user) {
+                            return user.name;
+                        }).forEach(function(name) {
+                            onlineText.push('<li>' + name + '</li>');
+                        });
+                        onlineText.push('</ul>');
+
+                        dialogService.alert(onlineText.join(''), '', online.length + ' Users Online');
                     } else if (cmd === 'warn' && args.length) {
                         var warnBits = args.split(' '),
                             theWarned = warnBits.shift(),

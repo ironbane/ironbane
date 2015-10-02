@@ -28,26 +28,6 @@ angular
 
             var self = this;
 
-            self.info = function(content, headerText) {
-                return $modal.open({
-                    template: [
-                        headerText ? '<div class="modal-header" ng-if="headerText">{{ headerText }}</div>' : '',
-                        '<div class="modal-body" ng-bind-html="content"></div>',
-                        '<div class="modal-footer"><button class="ibutton attention" click-sound ng-click="ok()" style="width:145px;margin: 0 auto">{{ okText }}</button></div>'
-                    ].join(''),
-                    controller: ['$scope', '$modalInstance', function($scope, $modalInstance) {
-                        $scope.content = content;
-                        $scope.okText = 'Okay';
-                        $scope.headerText = headerText;
-
-                        $scope.ok = function() {
-                            $modalInstance.close(true);
-                        };
-                    }],
-                    size: 'sm'
-                }).result;
-            };
-
             self.alert = function(content, okText, headerText) {
                 return $modal.open({
                     templateUrl: 'client/game/ui/dialog/alertDialog.ng.html',

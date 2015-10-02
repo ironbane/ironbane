@@ -47,6 +47,7 @@ angular
                                     // TODO implement /stuck
                                     [
                                         'Are you stuck? Use the Home button on the right side to teleport home.',
+                                        'Try /help in the chat for more.'
                                     ],
 
                                     [
