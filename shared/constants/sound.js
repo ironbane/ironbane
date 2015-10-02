@@ -8,6 +8,13 @@ angular
             type: 'music'
         },
 
+        atmos_day: {
+            path: 'music/atmos_day',
+            volume: 0.55,
+            loop: false,
+            type: 'music'
+        },
+
         click: {
             path: 'sound/click',
             volume: 1,
