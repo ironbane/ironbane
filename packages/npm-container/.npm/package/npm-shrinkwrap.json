@@ -3,6 +3,32 @@
     "adm-zip": {
       "version": "0.4.4"
     },
+    "appdynamics": {
+      "version": "4.1.4",
+      "dependencies": {
+        "appdynamics-zmq": {
+          "version": "http://packages.appdynamics.com/npm/4.1.4.0/appdynamics-zmq.tgz"
+        },
+        "appdynamics-protobuf": {
+          "version": "http://packages.appdynamics.com/npm/4.1.4.0/appdynamics-protobuf.tgz"
+        },
+        "appdynamics-jre": {
+          "version": "http://packages.appdynamics.com/npm/4.1.4.0/appdynamics-jre.tgz"
+        },
+        "appdynamics-proxy": {
+          "version": "http://packages.appdynamics.com/npm/4.1.4.0/appdynamics-proxy.tgz"
+        },
+        "appdynamics-native": {
+          "version": "http://packages.appdynamics.com/npm/4.1.4.0/appdynamics-native.tgz"
+        },
+        "node-uuid": {
+          "version": "1.4.1"
+        },
+        "set-immediate": {
+          "version": "0.1.1"
+        }
+      }
+    },
     "braintree": {
       "version": "1.23.0",
       "dependencies": {

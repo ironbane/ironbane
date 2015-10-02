@@ -10,5 +10,6 @@
 	"braintree": "1.23.0",
 	"node-hipchat": "0.4.5",
 	"csv-parse": "1.0.0",
-	"request": "2.61.0"
+	"request": "2.61.0",
+	"appdynamics": "4.1.4"
 }
