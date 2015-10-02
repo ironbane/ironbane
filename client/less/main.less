@@ -14,7 +14,7 @@ body {
     font-weight:bold;
     font-size:20px;
     color: @textColor;
-    /*     text-shadow:2px 2px 1px #06452d; */
+    /*     text-shadow:2px 2px 1px @borderColor; */
     background-color: #051d1c;
     background-image : url(images/ui/bg.png);
 }
@@ -27,7 +27,9 @@ a {
     }
 }
 
-
+strong {
+    color: #f9d6fd;
+}
 
 	.ibutton, .levelbox {
 		border: 3px solid #255449;
@@ -38,7 +40,7 @@ a {
 		font-weight: bold;
 		padding: 5px 0;
 		text-decoration: none;
-		text-shadow: 2px 1px 0 #06452d;
+		text-shadow: 2px 1px 0 @borderColor;
 		// width: 200px;
 		background: #357768;
 		// margin: 25px auto;
@@ -57,7 +59,7 @@ a {
 		&:disabled {
 			background-color: #677874;
 			border: 3px solid #33423e;
-			color: #06452d;
+			color: @borderColor;
 			font-weight: normal;
 			text-shadow: 1px 1px 0px #abe0cc;
 		}
@@ -78,7 +80,7 @@ a {
 		font-weight: bold;
 		padding: 5px 0px 5px 5px;
 		text-decoration: none;
-		text-shadow: 2px 1px 0 #06452d;
+		text-shadow: 2px 1px 0 @borderColor;
 		// width: 200px;
 		background: lighten(#357768, 10%);
 		// margin: 25px auto;
@@ -170,8 +172,7 @@ a {
 .ib-ui-window {
 	background: rgba(60, 240, 176, 0.5);
 	margin: 0 auto;
-	outline: 3px solid #1f7d5b;
-	outline: 3px solid #06452d;
+	outline: 3px solid @borderColor;
     background-color: @bgc1_75;
 
     p {

@@ -70,13 +70,13 @@ angular.module('game.ui.chat.chatService', [
                     } else if (cmd === 'help') {
                         // TODO: load remotely
                         var helpText = [
-                            '<h4>Chat Commands</h4>',
-                            '<p><strong>/stuck</strong> - teleport home</p>',
-                            '<p><strong>@name - direct message to name</p>',
-                            '<h4>Other Keys</h4>',
-                            '<ul><li>C - change camera</li></ul>'
+                            '<p><u>Chat commands</u></p>',
+                            '<p><strong>/stuck</strong> Teleport home</p>',
+                            '<p><strong>@name</strong> Direct message</p>',
+                            '<p><u>Controls</u></p>',
+                            '<p><strong>C</strong> Change camera</p>'
                         ].join('');
-                        dialogService.info(helpText, 'Help');
+                        dialogService.info(helpText);
                     } else if (cmd === 'warn' && args.length) {
                         var warnBits = args.split(' '),
                             theWarned = warnBits.shift(),

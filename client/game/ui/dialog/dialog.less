@@ -1,9 +1,11 @@
+@import "../../../less/variables.import.less";
+
 //** Unit-less `line-height` for use in components like buttons.
 @line-height-base:        1.428571429; // 20/14
 
-@border-radius-base:        4px;
-@border-radius-large:       6px;
-@border-radius-small:       3px;
+@border-radius-base:        0px;
+@border-radius-large:       0px;
+@border-radius-small:       0px;
 
 @zindex-modal-background:  1040;
 @zindex-modal:             1050;
@@ -27,7 +29,7 @@
 //##
 
 //** Padding applied to the modal body
-@modal-inner-padding:         15px;
+@modal-inner-padding:         10px;
 
 //** Padding applied to the modal title
 @modal-title-padding:         15px;
@@ -35,24 +37,22 @@
 @modal-title-line-height:     @line-height-base;
 
 //** Background color of modal content area
-@modal-content-bg:                             rgba(16, 60, 50, 1.0);
+@modal-content-bg:                             @primary4;
 //** Modal content border color
-@modal-content-border-color:                   rgba(0,0,0,.2);
-//** Modal content border color **for IE8**
-@modal-content-fallback-border-color:          #999;
+@modal-content-border-color:                   lighten(@borderColor, 15%);
 
 //** Modal backdrop background color
-@modal-backdrop-bg:           rgba(16, 60, 50, 0.75);
+@modal-backdrop-bg:           @primary4;
 //** Modal backdrop opacity
-@modal-backdrop-opacity:      .5;
+@modal-backdrop-opacity:      .7;
 //** Modal header border color
 @modal-header-border-color:   #086741;
 //** Modal footer border color
 @modal-footer-border-color:   @modal-header-border-color;
 
-@modal-lg:                    900px;
-@modal-md:                    600px;
-@modal-sm:                    300px;
+@modal-lg:                    920px;
+@modal-md:                    620px;
+@modal-sm:                    320px;
 
 .box-shadow(@shadow) {
   -webkit-box-shadow: @shadow; // iOS <4.3 & Android <4.1
@@ -132,13 +132,13 @@
 .modal-content {
     position: relative;
     background-color: @modal-content-bg;
-    border: 1px solid @modal-content-fallback-border-color; //old browsers fallback (ie8 etc)
-    border: 1px solid @modal-content-border-color;
-    border-radius: @border-radius-large;
-    .box-shadow(0 3px 9px rgba(0,0,0,.5));
-    background-clip: padding-box;
+
+    // border-radius: @border-radius-large;
+    // .box-shadow(0 3px 9px rgba(0,0,0,.5));
+    // background-clip: padding-box;
     // Remove focus outline from opened modal
-    outline: 0;
+    // outline: 0;
+    outline: 3px solid @modal-content-border-color;
 }
 
 // Modal background
@@ -186,7 +186,7 @@
 .modal-footer {
     padding: @modal-inner-padding;
     text-align: right; // right align buttons
-    border-top: 1px solid @modal-footer-border-color;
+    // border-top: 1px solid @modal-footer-border-color;
     &:extend(.clearfix all); // clear it in case folks use .pull-* classes on buttons
 
     // Properly space out buttons
@@ -221,7 +221,7 @@
         margin: 120px auto;
     }
     .modal-content {
-        .box-shadow(0 5px 15px rgba(0,0,0,.5));
+        // .box-shadow(0 5px 15px rgba(0,0,0,.5));
     }
 
     // Modal sizes

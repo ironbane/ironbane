@@ -31,7 +31,7 @@ angular
             self.info = function(content, headerText) {
                 return $modal.open({
                     template: [
-                        '<div class="modal-header" ng-if="headerText">{{ headerText }}</div>',
+                        headerText ? '<div class="modal-header" ng-if="headerText">{{ headerText }}</div>' : '',
                         '<div class="modal-body" ng-bind-html="content"></div>',
                         '<div class="modal-footer"><button class="ibutton attention" click-sound ng-click="ok()" style="width:145px;margin: 0 auto">{{ okText }}</button></div>'
                     ].join(''),
@@ -44,8 +44,7 @@ angular
                             $modalInstance.close(true);
                         };
                     }],
-                    backdrop: false,
-                    size: 'lg'
+                    size: 'sm'
                 }).result;
             };
 
@@ -61,7 +60,7 @@ angular
                             $modalInstance.close(true);
                         };
                     }],
-                    backdrop: 'static'
+                    size: 'sm'
                 }).result;
             };
 
@@ -78,7 +77,8 @@ angular
                         $scope.cancel = function() {
                             $modalInstance.dismiss('cancel');
                         };
-                    }]
+                    }],
+                    size: 'sm'
                 }).result;
             };
 
