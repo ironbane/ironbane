@@ -72,9 +72,9 @@ angular
                             join: true
                         });
                     } else {
-                        $log.log('error building entity for: ', doc);
+                        console.log('error building entity for: ', doc);
                     }
-                    //$log.log('adding entity: ', doc.name, ' to ', doc.level, ' count: ', $activeWorlds[doc.level].getEntities().length);
+                    //console.log('adding entity: ', doc.name, ' to ', doc.level, ' count: ', $activeWorlds[doc.level].getEntities().length);
                 }
 
 
@@ -116,7 +116,6 @@ angular
 
                 var startLevel = IB_CONSTANTS.world.startLevel;
 
-
                 var me = this;
 
                 _.each($activeWorlds, function (world) {
@@ -133,7 +132,7 @@ angular
                                     // if not we have a problem!
                                     var spawns = $activeWorlds[startLevel].getEntities('spawnPoint');
                                     if (spawns.length === 0) {
-                                        $log.log(startLevel, ' has no spawn points defined!');
+                                        console.log(startLevel, ' has no spawn points defined!');
                                     }
                                     // Just pick one of them
                                     // Having multiple spawns is useful against AFK players so

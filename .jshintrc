@@ -41,6 +41,8 @@
 		"window": true,
 		"document": true,
 		"Meteor": true,
-		"Mongo": true
+		"Mongo": true,
+	    "_": true,
+	    "Roles": true
 	}
 }
