@@ -82,7 +82,7 @@ angular
             var contentFile = (Meteor.settings.content && Meteor.settings.content.items) ? Meteor.settings.content.items :
                 (IB_CONSTANTS.isDev ? 'https://docs.google.com/spreadsheets/d/1ZC-ydW7if6Ci0TytsSLaio0LMoCntQwaUkXAOwjn7Y8/pub?output=csv' : 'items.csv');
 
-            $log.debug('loading items db...');
+            console.log('Loading items from spreadsheet');
 
             loadData(contentFile).then(Meteor.bindEnvironment(function(data) {
                 var headers, rows;
@@ -99,9 +99,9 @@ angular
                     item.id = ItemsCollection.insert(item);
                 });
 
-                $log.debug('loaded ' + rows.length + ' items into collection.');
+                console.log('Loaded ' + rows.length + ' items into Meteor collection');
             }), function(err) {
-                $log.debug('Error loading items! ', err.message);
+                console.log('Error loading items! ', err.message);
             });
 
             Meteor.publish('items', function() {

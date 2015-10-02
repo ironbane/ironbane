@@ -56,5 +56,6 @@ angular
 
             $log.log('Ironbane booting up game world...');
             $window.requestAnimationFrame(onRequestedFrame);
+            $log.log('Booting up game world');
         }
     ]);

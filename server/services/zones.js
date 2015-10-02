@@ -50,7 +50,7 @@ angular
                     }
 
                     var world = $activeWorlds[sceneId] = new ThreeWorld(sceneId);
-                    console.log('adding zone: ', world.name);
+                    console.log('Adding zone:', world.name);
                     // TODO: prolly track this elsewhere
                     world._ownerCache = {};
 
