@@ -1,6 +1,7 @@
 
-<div class="content">Buy {{ itemLabel }}?<br>Cost: {{ price }} &#10006;<inventory-item item="{image: 1836, name: 'Ironblood'}"></inventory-item></div>
+<div class="modal-body">Buy {{ itemLabel }}?<br>Cost: {{ price }} &#10006;<inventory-item item="{image: 1836, name: 'Ironblood'}"></inventory-item></div>
 
-<button class="ibutton attention" click-sound ng-click="buy()" ng-disabled="transactionInProgress" style="width:145px;float:left;margin-right:10px">Buy</button>
-<button class="ibutton" click-sound ng-click="cancel()" ng-disabled="transactionInProgress" style="width:145px">Cancel</button>
-
+<div class="modal-footer">
+    <button class="ibutton attention" click-sound ng-click="buy()" ng-disabled="transactionInProgress" style="width:145px;float:left;margin-right:10px">Buy</button>
+    <button class="ibutton" click-sound ng-click="cancel()" ng-disabled="transactionInProgress" style="width:145px">Cancel</button>
+</div>

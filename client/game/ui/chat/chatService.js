@@ -67,6 +67,16 @@ angular.module('game.ui.chat.chatService', [
                                     dialogService.alert(err.reason);
                                 }
                             });
+                    } else if (cmd === 'help') {
+                        // TODO: load remotely
+                        var helpText = [
+                            '<h4>Chat Commands</h4>',
+                            '<p><strong>/stuck</strong> - teleport home</p>',
+                            '<p><strong>@name - direct message to name</p>',
+                            '<h4>Other Keys</h4>',
+                            '<ul><li>C - change camera</li></ul>'
+                        ].join('');
+                        dialogService.info(helpText, 'Help');
                     } else if (cmd === 'warn' && args.length) {
                         var warnBits = args.split(' '),
                             theWarned = warnBits.shift(),
