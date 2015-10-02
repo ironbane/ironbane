@@ -86,14 +86,17 @@ angular
 
                         $scope.resetPlayer = function () {
                             dialogService.confirm('Teleport home?').then(function () {
-                                $meteor.call('resetPlayer')
-                                    .then(function () {
-                                        BigMessagesService.add('Teleporting home...');
-                                    }, function(err) {
-                                        if (err) {
-                                            dialogService.alert(err.reason);
-                                        }
-                                    });
+                                BigMessagesService.add('Teleporting home...');
+                                setTimeout(function () {
+                                    $meteor.call('resetPlayer')
+                                        .then(function () {
+
+                                        }, function(err) {
+                                            if (err) {
+                                                dialogService.alert(err.reason);
+                                            }
+                                        });
+                                }, 2000);
                             });
                         };
 
