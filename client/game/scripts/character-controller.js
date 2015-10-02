@@ -206,13 +206,23 @@ angular
                 var cheatComponent = this.entity.getComponent('cheats');
 
                 if (cheatComponent) {
+                    // TODO: move this to a cheat system that tracks and modifies components
+                    // move jump to a component for this as well and/or fly
                     if (cheatComponent.fly) {
                         this.canJump = true;
                         this.jumpTimer = minimumJumpDelay * 2;
                     }
                     if (cheatComponent.fastWalk) {
+                        if (!speedComponent._cheated) {
+                            speedComponent._cheated = {acc: speedComponent.acceleration, maxSpeed: speedComponent.maxSpeed};
+                        }
                         speedComponent.acceleration = 2;
                         speedComponent.maxSpeed = 16;
+                    } else if (speedComponent && speedComponent._cheated) {
+                        //console.log('restore speed');
+                        speedComponent.acceleration = speedComponent._cheated.acc;
+                        speedComponent.maxSpeed = speedComponent._cheated.maxSpeed;
+                        speedComponent._cheated = null;
                     }
                 }
 
@@ -347,7 +357,7 @@ angular
                     btVec3.setValue(invertedVelocity.x, 0, invertedVelocity.z);
                     rigidBodyComponent.rigidBody.applyCentralImpulse(btVec3);
 
-                    if (cheatComponent.fly) {
+                    if (cheatComponent && cheatComponent.fly) {
                         btVec3.setValue(0, 10, 0);
                         rigidBodyComponent.rigidBody.applyCentralForce(btVec3);
 
