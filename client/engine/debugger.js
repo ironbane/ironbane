@@ -83,7 +83,18 @@ angular
             this.clear = function () {
                 for (var i = 0; i < this.arrowHelpers.length; i++) {
                     $rootWorld.scene.remove(this.arrowHelpers[i]);
-                };
+                }
+            };
+
+            this.inspect = function (body) {
+                Meteor.call('inspect', body, function (err, obj) {
+                    if (err) {
+                        throw err;
+                    }
+                    else {
+                        console.log(obj);
+                    }
+                });
             };
 
             this.$rootWorld = $rootWorld;

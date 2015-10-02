@@ -9,6 +9,7 @@ angular
         'server.services.entities',
         'server.services.game',
         'server.services.hipchat',
+        'server.services.inspect',
         'server.services.items',
         'server.services.ironblood',
         'server.services.profiler',

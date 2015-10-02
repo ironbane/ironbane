@@ -86,9 +86,7 @@ angular
         'EntitiesCollection',
         function($window, Debugger, IB_CONSTANTS, $rootScope, $meteor, $state, $log, IbUtils, GlobalSound, GoogleAnalytics, EntitiesCollection) {
             // for convenience
-            if (IB_CONSTANTS.isDev) {
-                $window.debug = Debugger;
-            }
+            $window.debug = Debugger;
 
             var entities = EntitiesCollection;
 
