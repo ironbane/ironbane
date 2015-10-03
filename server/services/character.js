@@ -151,7 +151,7 @@ angular
                             'Dull Sword',
                             'Peasant Shirt',
                             'Dirty Dishcloth Bandana',
-                            'Old Pants'
+                            'Old Shoes'
                         ])
                     }
                 }, function(err) {
