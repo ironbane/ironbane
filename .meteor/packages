@@ -33,3 +33,5 @@ angular
 
 npm-container
 angular:angular-sanitize
+ecmascript
+es5-shim
