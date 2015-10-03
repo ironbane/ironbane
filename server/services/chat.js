@@ -59,7 +59,7 @@ angular
             this.announce = function(msg, flags) {
                 this.addMessage('system', msg, _.extend({}, flags, {
                     system: true,
-                    announcment: true
+                    announcement: true
                 }));
             };
 

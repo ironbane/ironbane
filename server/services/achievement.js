@@ -66,16 +66,16 @@ angular
                 var entity = getAchievementEntity(data.name, data.level);
                 // TODO check for distance
 
-                var hasAnnouncment = (entity.userData && entity.userData.message);
+                var hasAnnouncement = (entity.userData && entity.userData.message);
                 var achievementData = {
                     charId: character._id,
                     achievementId: data.name,
                     level: data.level,
                     charName: character.name,
-                    message: hasAnnouncment ? entity.userData.message : null
+                    message: hasAnnouncement ? entity.userData.message : null
                 };
 
-                addAchievement(achievementData, hasAnnouncment);
+                addAchievement(achievementData, hasAnnouncement);
             };
 
             this.give = function(achievementId, level, charId, announce) {
@@ -93,16 +93,16 @@ angular
                     _id: charId
                 });
 
-                var doAnnouncment = announce && (entity.userData && entity.userData.message);
+                var doAnnouncement = announce && (entity.userData && entity.userData.message);
                 var achievementData = {
                     charId: character._id,
                     name: achievementId,
                     level: level,
                     charName: character.name,
-                    message: doAnnouncment ? entity.userData.message : null
+                    message: doAnnouncement ? entity.userData.message : null
                 };
 
-                addAchievement(achievementData, doAnnouncment);
+                addAchievement(achievementData, doAnnouncement);
             };
 
             this.take = function(achievementId, level, charId) {
