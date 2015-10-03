@@ -7,7 +7,7 @@ angular
         'engine.timing',
         'game.services.globalsound',
         'global.constants.inv',
-        'models.items'
+        'services.items'
     ])
     .factory('InventorySystem', [
         '$log',
@@ -20,8 +20,8 @@ angular
         'THREE',
         'GlobalSound',
         'INV_SLOTS',
-        'ItemsCollection',
-        function($log, System, Signal, EntityBuilder, IbUtils, Timer, $components, THREE, GlobalSound, INV_SLOTS, ItemsCollection) {
+        'ItemService',
+        function($log, System, Signal, EntityBuilder, IbUtils, Timer, $components, THREE, GlobalSound, INV_SLOTS, ItemService) {
             'use strict';
 
             var armorList = INV_SLOTS.armorList;
@@ -495,26 +495,49 @@ angular
                             return false;
                         }
 
-                        var temp = inventory[targetSlot];
-                        inventory[targetSlot] = inventory[sourceSlot];
-                        inventory[sourceSlot] = temp;
-
-                        // find item template for special powers
-                        var itemTemplate = ItemsCollection.findOne({name: inventory[targetSlot].name});
-                        if (itemTemplate) {
-                            if (armorList.indexOf(targetSlot) >= 0) {
-                                // we are equipping
-                                if (itemTemplate.onEquip) {
-                                    var _equipFn = new Function('item', 'entity', 'return (' + itemTemplate.onEquip + ').call(item, entity);');
-                                    _equipFn(inventory[targetSlot], entity);
-                                }
+                        // test if we're actually "equipping" since this function is currently ambiguous about it
+                        if (targetItem && armorList.indexOf(sourceSlot) >= 0 && armorList.indexOf(targetSlot) >= 0) {
+                            if (!ItemService.onBeforeEquipItem(targetItem, entity)) {
+                                return false;
                             }
-                            if (armorList.indexOf(sourceSlot) >= 0) {
-                                // we are unequipping
-                                if (itemTemplate.onUnEquip) {
-                                    var _unEquipFn = new Function('item', 'entity', 'return (' + itemTemplate.onUnEquip + ').call(item, entity);');
-                                    _unEquipFn(inventory[targetSlot], entity);
-                                }
+                        }
+                        if (sourceItem && armorList.indexOf(targetSlot) >= 0) {
+                            if (!ItemService.onBeforeEquipItem(sourceItem, entity)) {
+                                return false;
+                            }
+                        }
+
+                        // now test if we're unequipping something
+                        if (sourceItem && armorList.indexOf(sourceSlot) >= 0) {
+                            if (!ItemService.onUnEquipItem(sourceItem, entity)) {
+                                return false;
+                            }
+                        }
+                        if (targetItem && armorList.indexOf(targetSlot) >= 0) {
+                            if (!ItemService.onUnEquipItem(targetItem, entity)) {
+                                return false;
+                            }
+                        }
+
+                        // now do the actual data exchange
+                        inventory[targetSlot] = sourceItem;
+                        inventory[sourceSlot] = targetItem;
+
+                        // apply behavior, revert if needed
+                        if (sourceItem && armorList.indexOf(targetSlot) >= 0) {
+                            if (!ItemService.onEquipItem(sourceItem, entity)) {
+                                // revert!
+                                inventory[targetSlot] = targetItem;
+                                inventory[sourceSlot] = sourceItem;
+                                return false;
+                            }
+                        }
+                        if (targetItem && armorList.indexOf(sourceSlot) >= 0) {
+                            if (!ItemService.onEquipItem(targetItem, entity)) {
+                                // revert!
+                                inventory[targetSlot] = targetItem;
+                                inventory[sourceSlot] = sourceItem;
+                                return false;
                             }
                         }
 

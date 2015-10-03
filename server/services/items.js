@@ -79,8 +79,7 @@ angular
                 dropChance: 'Drop Chance %',
                 displayNotes: 'Display Notes',
                 devNotes: 'Special Powers & Notes',
-                onEquip: 'onEquip',
-                onUnEquip: 'onUnEquip'
+                behavior: 'Behavior'
             };
 
             var contentFile = (Meteor.settings.content && Meteor.settings.content.items) ? Meteor.settings.content.items :
@@ -97,7 +96,13 @@ angular
                 rows.forEach(function(row) {
                     var item = {};
                     for(var key in mapping) {
-                        item[key] = getValue(row, headers, mapping[key]);
+                        let value = getValue(row, headers, mapping[key]);
+
+                        if (key === 'behavior') {
+                            value = value.split(',').map(v => v.trim());
+                        }
+
+                        item[key] = value;
                     }
 
                     item.id = ItemsCollection.insert(item);
