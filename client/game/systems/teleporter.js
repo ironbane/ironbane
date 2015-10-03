@@ -62,9 +62,11 @@ angular
                         }
                     });
 
-                    particle.position.copy(entity.position);
-                    this.world.addEntity(particle);
-                    teleporterComponent._particleEntities.push(particle);
+                    if (!isExit) {
+                        particle.position.copy(entity.position);
+                        this.world.addEntity(particle);
+                        teleporterComponent._particleEntities.push(particle);
+                    }
 
                     particle = EntityBuilder.build('particle', {
                         components: {
@@ -107,9 +109,11 @@ angular
                         }
                     });
 
-                    particle.position.copy(entity.position);
-                    this.world.addEntity(particle);
-                    teleporterComponent._particleEntities.push(particle);
+                    if (!isExit) {
+                        particle.position.copy(entity.position);
+                        this.world.addEntity(particle);
+                        teleporterComponent._particleEntities.push(particle);
+                    }
 
                 },
                 onEntityRemoved: function (entity) {

@@ -60,9 +60,9 @@ angular
                             // console.log(exitEntity.matrixWorld, exitEntity.matrix);
 
                             var forward = new THREE.Vector3(0, 0, 1).applyQuaternion(exitEntity.quaternion);
-                            console.log(forward);
+                            // console.log(forward);
                             player.rotation.y = IbUtils.vecToEuler(forward) - Math.PI / 2;
-                            console.log(player.rotation);
+                            // console.log(player.rotation);
 
                             setTimeout(function () {
                                 $activeWorlds[exitEntity.level].addEntity(player);
