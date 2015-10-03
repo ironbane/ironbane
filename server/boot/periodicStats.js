@@ -72,7 +72,7 @@ angular
             }
         });
 
-        if (!IB_CONSTANTS.isDev) {
+        if (!IB_CONSTANTS.isDev && Meteor.settings.doPeriodicStats) {
             Meteor.setTimeout(function() {
                 HipChat.postMessage('Ironbane Chillout', 'Production server started!');
             }, 5 * 1000);
