@@ -84,7 +84,8 @@ angular
                             inputSystem.unregister('admin-panel', adminHandler);
                         });
 
-                        $scope.resetPlayer = function () {
+                        $scope.resetPlayer = function ($event) {
+                            $event.target.blur();
                             dialogService.confirm('Teleport home?').then(function () {
                                 BigMessagesService.add('Teleporting home...');
                                 setTimeout(function () {
@@ -97,7 +98,7 @@ angular
                                             }
                                         });
                                 }, 2000);
-                            });
+                            })
                         };
 
                         Meteor.autorun(function () {
