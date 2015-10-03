@@ -40,7 +40,7 @@ angular
                             if (this.strafeTimer.isExpired ||
                                 this.entity.position.inRangeOf(this.randomStrafeTarget, 1.0)) {
                                 this.isStrafing = !this.isStrafing;
-                                this.strafeTimer.set(IbUtils.getRandomFloat(0.1, 1.0));
+                                this.strafeTimer.set(IbUtils.getRandomFloat(0.2, 0.5));
                                 this.strafeTimer.reset();
 
                                 var offset;
