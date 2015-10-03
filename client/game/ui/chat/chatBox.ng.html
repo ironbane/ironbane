@@ -7,5 +7,5 @@
             <p ng-if="message.flags.warn && message.flags.warnings">{{ message.flags.warnings }} warnings</p>
         </li>
     </ul>
-    <input class="iinput" ng-show="chatBox.showInput" ib-focus="chatBox.showInput" ng-model="chatBox.newmsg" ng-focus="chatBox.trapKeys()" ng-blur="chatBox.untrapKeys()" maxlength="255" />
+    <input class="iinput" ng-if="chatBox.showInput" ib-focus="chatBox.showInput" ng-model="chatBox.newmsg" ng-focus="chatBox.trapKeys()" ng-blur="chatBox.untrapKeys()" maxlength="255" />
 </div>

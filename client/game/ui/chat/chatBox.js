@@ -31,6 +31,9 @@ angular.module('game.ui.chat.chatBoxDirective', [
                                     ChatService.parseCommand(ctrl.newmsg);
                                     ctrl.showInput = false;
                                     ctrl.newmsg = '';
+                                    setTimeout(function () {
+                                        ctrl.untrapKeys();
+                                    }, 100);
                                 }
                             };
 
