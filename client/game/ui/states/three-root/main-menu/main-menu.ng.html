@@ -1,7 +1,19 @@
 <div>
     <div class="ib-ui-logo">
-        <div class="ib-ui-version">{{ IB_CONSTANTS.GAME_VERSION }}</div>
         <img ng-src="images/ui/logo.png">
+    </div>
+    <div class="ib-ui-version">{{ IB_CONSTANTS.GAME_VERSION }}</div>
+    <div class="ib-ui-window ib-ui-info">
+        <ul>
+            <li><a href="http://ironbane.com" target="_blank">Ironbane Forum</a></li>
+            <li><a href="http://ironbane.com/category/6/bugs" target="_blank">Report a Bug</a></li>
+            <li><a href="https://trello.com/b/oOKHz1H8/roadmap" target="_blank">Roadmap</a></li>
+            <li><a href="http://eepurl.com/bzeGlz" target="_blank">Newsletter</a></li>
+            <li><a href="mailto:support@ironbane.com" target="_blank">Contact Support</a></li>
+            <li>&nbsp;</li>
+            <li><a href="http://legal.ironbane.com/termsandconditions.html" target="_blank">Terms and Conditions</a></li>
+            <li><a href="http://legal.ironbane.com/privacypolicy.html" target="_blank">Privacy Policy</a></li>
+        </ul>
     </div>
 </div>
 <div class="ib-ui-window ib-ui-login-box login-info" ng-if="!$root.currentUser.profile.guest">
