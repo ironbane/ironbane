@@ -6,6 +6,7 @@ angular.module('components', [
     'components.cheats',
     'components.collisionReporter',
     'components.damageable',
+    'components.damageZone',
     'components.fighter',
     'components.globalState',
     'components.health',

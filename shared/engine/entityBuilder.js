@@ -60,7 +60,7 @@ angular
                     // Because it has a prefab attached, it's dynamic.
                     // Make sure the server will send information to the clients
                     // about this entity.
-                    if (Meteor.isServer && ['SpawnZone'].indexOf(prefabName) === -1) {
+                    if (Meteor.isServer && ['SpawnZone', 'DamageZone'].indexOf(prefabName) === -1) {
                         entity.addComponent('netSend');
                     }
                 }

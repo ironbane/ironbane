@@ -6,9 +6,10 @@ angular
         'engine.timing',
         'three',
         'ces',
-        'game.services.globalsound'
+        'game.services.globalsound',
+        'game.world-root'
     ])
-    .factory('DamageSystem', ["$log", "System", "EntityBuilder", "IbUtils", "THREE", "BigMessagesService", "GlobalSound", "Timer", function($log, System, EntityBuilder, IbUtils, THREE, BigMessagesService, GlobalSound, Timer) {
+    .factory('DamageSystem', ["$log", "System", "EntityBuilder", "IbUtils", "THREE", "BigMessagesService", "GlobalSound", "Timer", "$rootWorld", function($log, System, EntityBuilder, IbUtils, THREE, BigMessagesService, GlobalSound, Timer, $rootWorld) {
         'use strict';
 
         var DASH_TIME = 0.2;
@@ -25,6 +26,14 @@ angular
                     damageableComponent.dashTimer = 0.0;
                     damageableComponent.dashDirection = new THREE.Vector3();
                     damageableComponent.spawnGuardTimer = new Timer(5);
+                });
+
+                world.entityAdded('damageZone').add(function(entity) {
+                    var damageZoneComponent = entity.getComponent('damageZone');
+
+                    damageZoneComponent._damageTimer = new Timer(1.0);
+
+                    entity.visible = false;
                 });
 
                 world.subscribe('combat:damageEntity', function(victimEntity, sourceEntity, item) {
@@ -262,6 +271,61 @@ angular
                     }
 
                     if (damageableComponent) {
+
+
+                        var damageZoneEntities = me.world.getEntities('damageZone');
+                        damageZoneEntities.forEach(function(damageZoneEntity) {
+                            var damageZoneComponent = damageZoneEntity.getComponent('damageZone');
+
+                            var timer = damageZoneComponent._damageTimer,
+                                damagePerSecond = damageZoneComponent.damagePerSecond;
+
+
+                                if (timer.isExpired) {
+                                    timer.reset();
+
+                                    damageZoneEntity.children.forEach(function(child) {
+                                        var meshComponent = child.getComponent('mesh');
+                                        if (meshComponent && meshComponent._meshLoadTask) {
+                                            // console.log('spawn(' + delay + '): ', damageZoneEntity.name, ' ', currentCount + 1, ' / ', maxCount);
+                                            meshComponent._meshLoadTask.then(function(mesh) {
+                                                    if (!mesh.geometry.boundingBox) {
+                                                        mesh.geometry.computeBoundingBox();
+                                                    }
+
+                                                    var box = mesh.geometry.boundingBox.clone();
+
+                                                    var worldScale = damageZoneEntity.getWorldScale();
+                                                    box.min.multiply(worldScale);
+                                                    box.max.multiply(worldScale);
+
+                                                    box.min.add(child.position);
+                                                    box.max.add(child.position);
+
+                                                    var pos = entity.position;
+
+                                                    if ( pos.x < box.max.x && pos.x > box.min.x &&
+                                                        pos.y < box.max.y && pos.y > box.min.y &&
+                                                        pos.z < box.max.z && pos.z > box.min.z ) {
+
+                                                        damageableComponent.sources.push({
+                                                            type: 'damage',
+                                                            sourceEntity: damageZoneEntity,
+                                                            damage: damagePerSecond
+                                                        });
+                                                    }
+
+                                                })
+                                                .then(null, function(err) {
+                                                    $log.error(err.stack);
+                                                });
+                                        }
+                                    });
+                                }
+
+                        });
+
+
                         damageableComponent.sources.forEach(function(source) {
                             if (entity.hasComponent('player')) {
                                 // if the victim of damage is a player, make sure that it was not inflicted by another player (no pvp)

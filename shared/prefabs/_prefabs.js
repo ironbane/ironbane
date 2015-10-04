@@ -3,6 +3,7 @@ angular
         'prefabs.achievementTrigger',
         'prefabs.character',
         'prefabs.crystal',
+        'prefabs.damageZone',
         'prefabs.mediumFire',
         'prefabs.mediumSmoke',
         'prefabs.movingPlatform',
