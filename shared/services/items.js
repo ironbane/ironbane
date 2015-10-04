@@ -75,5 +75,13 @@ angular
             this.onUnEquipItem = function onUnEquipItem(item, entity) {
                 return this.executeBehaviorScript('onUnEquip', item, entity);
             };
+            
+            this.onBeforeUseItem = function onEquipItem(item, entity) {
+                return this.executeBehaviorScript('onBeforeUse', item, entity);
+            };
+
+            this.onUseItem = function onUnEquipItem(item, entity) {
+                return this.executeBehaviorScript('onUse', item, entity);
+            };
         }
     ]);

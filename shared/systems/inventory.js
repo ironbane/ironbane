@@ -378,7 +378,7 @@ angular
                         }
                     } else if (INV_TYPES.consumable.indexOf(item.type) >= 0) {
                         if (Meteor.isServer) {
-                            if (!ItemService.onBeforeUse(item, entity)) {
+                            if (!ItemService.onBeforeUseItem(item, entity)) {
                                 return;
                             }
 
@@ -413,7 +413,7 @@ angular
                                 });
                             }
 
-                            if (!ItemService.onUse(item, entity)) {
+                            if (!ItemService.onUseItem(item, entity)) {
                                 return;
                             }
                         } else {
