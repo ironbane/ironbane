@@ -12,6 +12,9 @@ angular
                 constructor(strength) {
                     super();
 
+                    if (!strength) {
+                        strength = 'normal';
+                    }
                     this._strength = strength;
 
                     this._config = {};
@@ -53,17 +56,12 @@ angular
                 }
 
                 onEquip(item, entity) {
-                    console.log('onEquip', item.name);
-                    // TODO: check if already has from something else, and then what?
-
                     entity.addComponent('healthRegen', this._config);
 
                     return true;
                 }
 
                 onUnEquip(item, entity) {
-                    console.log('onUnEquip', item.name);
-
                     entity.removeComponent('healthRegen');
 
                     return true;

@@ -21,7 +21,8 @@ angular
         'GlobalSound',
         'INV_SLOTS',
         'ItemService',
-        function($log, System, Signal, EntityBuilder, IbUtils, Timer, $components, THREE, GlobalSound, INV_SLOTS, ItemService) {
+        'INV_TYPES',
+        function($log, System, Signal, EntityBuilder, IbUtils, Timer, $components, THREE, GlobalSound, INV_SLOTS, ItemService, INV_TYPES) {
             'use strict';
 
             var armorList = INV_SLOTS.armorList;
@@ -319,15 +320,13 @@ angular
 
                 },
                 useItem: function(entity, item) {
-
                     var inventoryComponent = entity.getComponent('inventory');
 
                     if (!inventoryComponent) {
                         return;
                     }
 
-                    // TODO Maybe add a isUsable flag to items instead?
-                    if (['food','potion','poison'].indexOf(item.type) === -1) {
+                    if (INV_TYPES.equipable.indexOf(item.type) >= 0) {
                         var equipSlot = null;
                         if (item.type === 'weapon') {
                             if (item.handedness === 'r') { // specifically weapon must be right hand
@@ -346,8 +345,7 @@ angular
                                     equipSlot = 'rhand';
                                 }
                             }
-                        }
-                        else {
+                        } else {
                             equipSlot = item.type;
                         }
 
@@ -369,7 +367,7 @@ angular
                         }
 
                         var sourceSlot = null;
-                        this.loopItems(entity, function (loopItem, loopSlot) {
+                        this.loopItems(entity, function(loopItem, loopSlot) {
                             if (loopItem === item) {
                                 sourceSlot = loopSlot;
                             }
@@ -378,10 +376,13 @@ angular
                         if (Meteor.isClient && sourceSlot && equipSlot) {
                             this.world.publish('inventory:equipItem', entity, sourceSlot, equipSlot);
                         }
-
-                    }
-                    else {
+                    } else if (INV_TYPES.consumable.indexOf(item.type) >= 0) {
                         if (Meteor.isServer) {
+                            if (!ItemService.onBeforeUse(item, entity)) {
+                                return;
+                            }
+
+                            // TODO: turn these effects into behaviors?
                             if (item.type === 'food') {
                                 this.removeItem(entity, item);
 
@@ -391,6 +392,7 @@ angular
                                     duration: item.damage * 2
                                 });
                             }
+
                             if (item.type === 'potion') {
                                 this.removeItem(entity, item);
 
@@ -400,6 +402,7 @@ angular
                                     duration: 1.0
                                 });
                             }
+
                             if (item.type === 'poison') {
                                 this.removeItem(entity, item);
 
@@ -409,14 +412,16 @@ angular
                                     duration: item.damage * 2
                                 });
                             }
-                        }
-                        else {
+
+                            if (!ItemService.onUse(item, entity)) {
+                                return;
+                            }
+                        } else {
                             if (entity.hasComponent('netSend')) {
                                 GlobalSound.play(_.sample(['use']), entity.position);
                             }
                         }
                     }
-
                 },
                 equipItem: function(entity, sourceSlot, targetSlot) {
                     if (sourceSlot === targetSlot) {

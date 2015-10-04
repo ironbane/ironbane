@@ -1,5 +1,16 @@
 angular
     .module('global.constants.inv', [])
+    .constant('INV_TYPES', {
+        weapon: ['weapon'],
+        armor: ['head', 'body', 'feet'],
+        relic: ['relic'],
+        cash: ['cash'],
+        ingredient: ['ingredient'],
+        misc: ['misc'],
+        shield: ['shield'],
+        consumable: ['food', 'potion', 'poison'],
+        equipable: ['weapon', 'head', 'body', 'feet', 'relic', 'shield']
+    })
     .constant('INV_SLOTS', {
         vanityList: [
             'vanity0'
