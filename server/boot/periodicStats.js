@@ -72,12 +72,14 @@ angular
             }
         });
 
-        if (!IB_CONSTANTS.isDev && Meteor.settings.doPeriodicStats) {
+        if (!IB_CONSTANTS.isDev) {
             Meteor.setTimeout(function() {
-                HipChat.postMessage('Ironbane Chillout', 'Production server started!');
+                HipChat.postMessage('Ironbane Chillout', Meteor.settings.server.name + ' server (' + Meteor.settings.server.id + ') started!');
             }, 5 * 1000);
 
-            Meteor.setInterval(notifyUserStats, 3600 * 3 * 1000);
-            Meteor.setInterval(notifyAlexaRank, 3600 * 24 * 1000);
+            if (Meteor.settings.doPeriodicStats) {
+                Meteor.setInterval(notifyUserStats, 3600 * 3 * 1000);
+                Meteor.setInterval(notifyAlexaRank, 3600 * 24 * 1000);
+            }
         }
     }]);
