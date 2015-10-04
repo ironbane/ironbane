@@ -234,12 +234,12 @@ angular
                             if (child.children) {
                                 _.each(child.children, function(child) {
                                     if (child.userData && child.userData.prefab) {
-                                        if (!child.userData.loadOnClientOnly) {
+                                        if (!_.isUndefined(child.userData.loadOnClient) && child.userData.loadOnClient === false) {
                                             if (Meteor.isClient) {
                                                 canAdd = false;
                                             }
                                         }
-                                        else {
+                                        if (!_.isUndefined(child.userData.loadOnServer) && child.userData.loadOnServer === false) {
                                             if (Meteor.isServer) {
                                                 canAdd = false;
                                             }
