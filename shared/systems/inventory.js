@@ -140,9 +140,7 @@ angular
                         GlobalSound.play(_.sample(['pickup']), entity.position);
                     }
 
-                    // if (Meteor.isServer) {
-                        this.world.publish('inventory:onItemAdded', entity, item, slot);
-                    // }
+                    this.world.publish('inventory:onItemAdded', entity, item, slot);
 
                     this.onItemAdded.emit(entity, item, slot);
                 },
@@ -155,7 +153,7 @@ angular
                     var me = this;
 
                     var found = null;
-                    _.each(invSlotList, function (slotName) {
+                    _.each(invSlotList, function(slotName) {
                         var slotItem = inventory[slotName];
                         if (slotItem && slotItem.uuid === uuid) {
                             found = slotItem;
@@ -174,7 +172,7 @@ angular
 
                     var me = this;
 
-                    _.each(invSlotList, function (slotName) {
+                    _.each(invSlotList, function(slotName) {
                         var slotItem = inventory[slotName];
                         if (slotItem && slotItem.uuid === item.uuid) {
                             inventory[slotName] = null;
@@ -195,7 +193,7 @@ angular
                     }
                     var inventoryComponent = entity.getComponent('inventory');
                     if (inventoryComponent) {
-                        _.each(slotNames, function (slotName) {
+                        _.each(slotNames, function(slotName) {
                             var slotItem = inventoryComponent[slotName];
                             if (slotItem) {
                                 fn(slotItem, slotName);
@@ -211,7 +209,7 @@ angular
 
                     var me = this;
 
-                    _.each(invSlotList, function (slotName) {
+                    _.each(invSlotList, function(slotName) {
                         var item = inventory[slotName];
                         if (item) {
                             var chance = IbUtils.getRandomInt(0, 100);
@@ -303,12 +301,12 @@ angular
 
                         world.addEntity(dropped);
 
-                        setTimeout(function () {
+                        setTimeout(function() {
                             dropped.removeComponent('teleport');
                         }, 1000);
 
                         // Remove the item after a while
-                        setTimeout(function () {
+                        setTimeout(function() {
                             world.removeEntity(dropped);
                         }, 20000);
 
@@ -377,15 +375,14 @@ angular
                             this.world.publish('inventory:equipItem', entity, sourceSlot, equipSlot);
                         }
                     } else if (INV_TYPES.consumable.indexOf(item.type) >= 0) {
-                        if (Meteor.isServer) {
-                            if (!ItemService.onBeforeUseItem(item, entity)) {
-                                return;
-                            }
+                        if (!ItemService.onBeforeUseItem(item, entity)) {
+                            return;
+                        }
 
+                        if (Meteor.isServer) {
+                            this.removeItem(entity, item);
                             // TODO: turn these effects into behaviors?
                             if (item.type === 'food') {
-                                this.removeItem(entity, item);
-
                                 entity.addComponent('buff', {
                                     type: 'heal',
                                     amountPerInterval: 0.5,
@@ -394,8 +391,6 @@ angular
                             }
 
                             if (item.type === 'potion') {
-                                this.removeItem(entity, item);
-
                                 entity.addComponent('buff', {
                                     type: 'heal',
                                     amountPerInterval: item.damage,
@@ -404,22 +399,20 @@ angular
                             }
 
                             if (item.type === 'poison') {
-                                this.removeItem(entity, item);
-
                                 entity.addComponent('buff', {
                                     type: 'poison',
                                     amountPerInterval: 0.5,
                                     duration: item.damage * 2
                                 });
                             }
-
-                            if (!ItemService.onUseItem(item, entity)) {
-                                return;
-                            }
                         } else {
                             if (entity.hasComponent('netSend')) {
                                 GlobalSound.play(_.sample(['use']), entity.position);
                             }
+                        }
+
+                        if (!ItemService.onUseItem(item, entity)) {
+                            return;
                         }
                     }
                 },

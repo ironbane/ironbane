@@ -1,3 +1,4 @@
+/*jshint unused:false*/
 angular
 .module('game.itemBehaviors.baseItemBehavior', [])
 .factory('BaseItemBehavior', [
