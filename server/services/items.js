@@ -95,18 +95,23 @@ angular
 
                 rows.forEach(function(row) {
                     var item = {};
-                    for(var key in mapping) {
+                    for (var key in mapping) {
                         let value = getValue(row, headers, mapping[key]);
-                        
+
                         if (angular.isString(value)) {
                             value = value.trim();
                         }
 
                         if (key === 'behavior') {
-                            value = value.split(',').map(v => v.trim());
+                            value = value && value.split(',');
+                            if (value && value.length > 0) {
+                                value = value.map(v => v.trim());
+                            }
                         }
 
-                        item[key] = value;
+                        if (value || value === 0) {
+                            item[key] = value;
+                        }
                     }
 
                     item.id = ItemsCollection.insert(item);

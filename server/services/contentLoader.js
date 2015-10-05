@@ -127,6 +127,8 @@ angular
                                 };
 
                                 var mapping = {
+                                    name: 'Name',
+                                    type: 'Type',
                                     image: 'Image',
                                     invImage: 'Inventory Image',
                                     damage: 'Damage',
@@ -137,19 +139,33 @@ angular
                                     attackCooldown: 'Attack Cooldown',
                                     handedness: 'Handedness',
                                     price: 'Buy Price',
-                                    dropChance: 'Drop Chance %'
+                                    dropChance: 'Drop Chance %',
+                                    displayNotes: 'Display Notes',
+                                    devNotes: 'Special Powers & Notes',
+                                    behavior: 'Behavior'
                                 };
 
-                                _.each(mapping, function(val, key) {
-                                    var mappedValue = getValue(item, itemHeaders, val);
-                                    if (mappedValue || mappedValue === 0) {
-                                        inventory[slot][key] = mappedValue;
-                                    }
-                                });
+                                for (var key in mapping) {
+                                    let value = getValue(item, itemHeaders, mapping[key]);
 
+                                    if (angular.isString(value)) {
+                                        value = value.trim();
+                                    }
+
+                                    if (key === 'behavior') {
+                                        value = value && value.split(',');
+                                        if (value && value.length > 0) {
+                                            value = value.map(v => v.trim());
+                                        }
+                                    }
+
+                                    if (value || value === 0) {
+                                        inventory[slot][key] = value;
+                                    }
+                                }
 
                                 if (regexResult) {
-                                    inventory[slot].dropChance = parseInt(regexResult.join().substr(1), 10);
+                                    inventory[slot].dropChance = parseFloat(regexResult.join().substr(1), 10);
                                     // console.log('new', 'test', itemName, ', dropChance ', inventory[slot].dropChance);
                                 }
 
@@ -272,14 +288,14 @@ angular
 
             // TODO: rely on a better config file than hard coding these...
             var defaultProdFiles = [
-                'npcs.csv',
-                'items.csv'
-            ],
-            defaultDevFiles = [
-                'https://docs.google.com/spreadsheets/d/1a_dtZT1dUZnA3DlFTWbGKBCUZIAhuy2NQ6Hj8wtZJdU/pub?output=csv', // npcs
-                'https://docs.google.com/spreadsheets/d/1ZC-ydW7if6Ci0TytsSLaio0LMoCntQwaUkXAOwjn7Y8/pub?output=csv' // items
-            ],
-            filesToLoad = IB_CONSTANTS.isDev ? defaultDevFiles : defaultProdFiles;
+                    'npcs.csv',
+                    'items.csv'
+                ],
+                defaultDevFiles = [
+                    'https://docs.google.com/spreadsheets/d/1a_dtZT1dUZnA3DlFTWbGKBCUZIAhuy2NQ6Hj8wtZJdU/pub?output=csv', // npcs
+                    'https://docs.google.com/spreadsheets/d/1ZC-ydW7if6Ci0TytsSLaio0LMoCntQwaUkXAOwjn7Y8/pub?output=csv' // items
+                ],
+                filesToLoad = IB_CONSTANTS.isDev ? defaultDevFiles : defaultProdFiles;
 
             // allow override via commandline or env variable
             if (Meteor.settings.content) {
@@ -289,7 +305,9 @@ angular
                 ];
             }
 
-            return $q.all(filesToLoad.map(function(file) { return loadContent(file); })).then(function(result) {
+            return $q.all(filesToLoad.map(function(file) {
+                return loadContent(file);
+            })).then(function(result) {
                 var npcs = result[0],
                     items = result[1];
 
