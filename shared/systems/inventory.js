@@ -21,7 +21,8 @@ angular
         'GlobalSound',
         'INV_SLOTS',
         'ItemService',
-        function($log, System, Signal, EntityBuilder, IbUtils, Timer, $components, THREE, GlobalSound, INV_SLOTS, ItemService) {
+        'INV_TYPES',
+        function($log, System, Signal, EntityBuilder, IbUtils, Timer, $components, THREE, GlobalSound, INV_SLOTS, ItemService, INV_TYPES) {
             'use strict';
 
             var armorList = INV_SLOTS.armorList;
@@ -139,9 +140,7 @@ angular
                         GlobalSound.play(_.sample(['pickup']), entity.position);
                     }
 
-                    // if (Meteor.isServer) {
-                        this.world.publish('inventory:onItemAdded', entity, item, slot);
-                    // }
+                    this.world.publish('inventory:onItemAdded', entity, item, slot);
 
                     this.onItemAdded.emit(entity, item, slot);
                 },
@@ -154,7 +153,7 @@ angular
                     var me = this;
 
                     var found = null;
-                    _.each(invSlotList, function (slotName) {
+                    _.each(invSlotList, function(slotName) {
                         var slotItem = inventory[slotName];
                         if (slotItem && slotItem.uuid === uuid) {
                             found = slotItem;
@@ -173,7 +172,7 @@ angular
 
                     var me = this;
 
-                    _.each(invSlotList, function (slotName) {
+                    _.each(invSlotList, function(slotName) {
                         var slotItem = inventory[slotName];
                         if (slotItem && slotItem.uuid === item.uuid) {
                             inventory[slotName] = null;
@@ -194,7 +193,7 @@ angular
                     }
                     var inventoryComponent = entity.getComponent('inventory');
                     if (inventoryComponent) {
-                        _.each(slotNames, function (slotName) {
+                        _.each(slotNames, function(slotName) {
                             var slotItem = inventoryComponent[slotName];
                             if (slotItem) {
                                 fn(slotItem, slotName);
@@ -210,7 +209,7 @@ angular
 
                     var me = this;
 
-                    _.each(invSlotList, function (slotName) {
+                    _.each(invSlotList, function(slotName) {
                         var item = inventory[slotName];
                         if (item) {
                             var chance = IbUtils.getRandomInt(0, 100);
@@ -302,12 +301,12 @@ angular
 
                         world.addEntity(dropped);
 
-                        setTimeout(function () {
+                        setTimeout(function() {
                             dropped.removeComponent('teleport');
                         }, 1000);
 
                         // Remove the item after a while
-                        setTimeout(function () {
+                        setTimeout(function() {
                             world.removeEntity(dropped);
                         }, 20000);
 
@@ -319,15 +318,13 @@ angular
 
                 },
                 useItem: function(entity, item) {
-
                     var inventoryComponent = entity.getComponent('inventory');
 
                     if (!inventoryComponent) {
                         return;
                     }
 
-                    // TODO Maybe add a isUsable flag to items instead?
-                    if (['food','potion','poison'].indexOf(item.type) === -1) {
+                    if (INV_TYPES.equipable.indexOf(item.type) >= 0) {
                         var equipSlot = null;
                         if (item.type === 'weapon') {
                             if (item.handedness === 'r') { // specifically weapon must be right hand
@@ -346,8 +343,7 @@ angular
                                     equipSlot = 'rhand';
                                 }
                             }
-                        }
-                        else {
+                        } else {
                             equipSlot = item.type;
                         }
 
@@ -369,7 +365,7 @@ angular
                         }
 
                         var sourceSlot = null;
-                        this.loopItems(entity, function (loopItem, loopSlot) {
+                        this.loopItems(entity, function(loopItem, loopSlot) {
                             if (loopItem === item) {
                                 sourceSlot = loopSlot;
                             }
@@ -378,45 +374,47 @@ angular
                         if (Meteor.isClient && sourceSlot && equipSlot) {
                             this.world.publish('inventory:equipItem', entity, sourceSlot, equipSlot);
                         }
+                    } else if (INV_TYPES.consumable.indexOf(item.type) >= 0) {
+                        if (!ItemService.onBeforeUseItem(item, entity)) {
+                            return;
+                        }
 
-                    }
-                    else {
                         if (Meteor.isServer) {
+                            this.removeItem(entity, item);
+                            // TODO: turn these effects into behaviors?
                             if (item.type === 'food') {
-                                this.removeItem(entity, item);
-
                                 entity.addComponent('buff', {
                                     type: 'heal',
                                     amountPerInterval: 0.5,
                                     duration: item.damage * 2
                                 });
                             }
-                            if (item.type === 'potion') {
-                                this.removeItem(entity, item);
 
+                            if (item.type === 'potion') {
                                 entity.addComponent('buff', {
                                     type: 'heal',
                                     amountPerInterval: item.damage,
                                     duration: 1.0
                                 });
                             }
-                            if (item.type === 'poison') {
-                                this.removeItem(entity, item);
 
+                            if (item.type === 'poison') {
                                 entity.addComponent('buff', {
                                     type: 'poison',
                                     amountPerInterval: 0.5,
                                     duration: item.damage * 2
                                 });
                             }
-                        }
-                        else {
+                        } else {
                             if (entity.hasComponent('netSend')) {
                                 GlobalSound.play(_.sample(['use']), entity.position);
                             }
                         }
-                    }
 
+                        if (!ItemService.onUseItem(item, entity)) {
+                            return;
+                        }
+                    }
                 },
                 equipItem: function(entity, sourceSlot, targetSlot) {
                     if (sourceSlot === targetSlot) {

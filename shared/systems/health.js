@@ -21,7 +21,7 @@ angular
                     });
                 },
                 update: function() {
-                    var entities = this.world.getEntities('healthRegen', 'health');
+                    var entities = this.world.getEntities('health');
 
                     var damageSystem = this.world.getSystem('damage');
 
@@ -29,19 +29,21 @@ angular
                         var health = entity.getComponent('health'),
                             regen = entity.getComponent('healthRegen');
 
-                        if (health.value < health.max) {
-                            if (regen._regenTimer.isPaused) {
-                                regen._regenTimer.unpause(); // will check again next tick
-                            } else if (regen._regenTimer.isExpired) {
-                                health.value += regen.amount;
+                        if (regen) {
+                            if (health.value < health.max) {
+                                if (regen._regenTimer.isPaused) {
+                                    regen._regenTimer.unpause(); // will check again next tick
+                                } else if (regen._regenTimer.isExpired) {
+                                    health.value += regen.amount;
 
-                                damageSystem.addDamageParticles('healthRegen', regen.amount, entity.position);
+                                    damageSystem.addDamageParticles('healthRegen', regen.amount, entity.position);
 
-                                if (health.value < health.max) {
-                                    regen._regenTimer.reset();
-                                } else {
-                                    regen._regenTimer.reset();
-                                    regen._regenTimer.pause();
+                                    if (health.value < health.max) {
+                                        regen._regenTimer.reset();
+                                    } else {
+                                        regen._regenTimer.reset();
+                                        regen._regenTimer.pause();
+                                    }
                                 }
                             }
                         }
