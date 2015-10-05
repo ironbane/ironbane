@@ -35,10 +35,20 @@ angular
                                     icon: i,
                                     css: 'sprite-' + component.name + '_full'
                                 });
+                            } else if (component.value >= value - 0.25) {
+                                ctrl.icons.unshift({
+                                    icon: i,
+                                    css: 'sprite-' + component.name + '_3quarter'
+                                });
                             } else if (component.value >= value - 0.5) {
                                 ctrl.icons.unshift({
                                     icon: i,
                                     css: 'sprite-' + component.name + '_half'
+                                });
+                            } else if (component.value >= value - 0.75) {
+                                ctrl.icons.unshift({
+                                    icon: i,
+                                    css: 'sprite-' + component.name + '_quarter'
                                 });
                             } else {
                                 ctrl.icons.unshift({

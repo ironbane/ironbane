@@ -19,7 +19,7 @@
 .statBar-sprite {
     background-image: url(images/ui/stats.png);
     image-rendering: pixelated;
-    background-size: (64px * @stat-sprite-enlarging) (128px * @stat-sprite-enlarging);
+    background-size: (64px * @stat-sprite-enlarging) (256px * @stat-sprite-enlarging);
     background-repeat: no-repeat;
     display: block;
 
@@ -69,5 +69,29 @@
 
     &.sprite-health_half {
         .stat-sprite(3, 2, @stat-sprite-dimension, @stat-sprite-dimension);
+    }
+
+    &.sprite-health_quarter {
+        .stat-sprite(0, 7, @stat-sprite-dimension, @stat-sprite-dimension);
+    }
+
+    &.sprite-health_3quarter {
+        .stat-sprite(1, 7, @stat-sprite-dimension, @stat-sprite-dimension);
+    }
+
+    &.sprite-health_flash_quarter {
+        .stat-sprite(3, 7, @stat-sprite-dimension, @stat-sprite-dimension);
+    }
+
+    &.sprite-health_flash_3quarter {
+        .stat-sprite(2, 7, @stat-sprite-dimension, @stat-sprite-dimension);
+    }
+
+    &.sprite-armor_quarter {
+        .stat-sprite(0, 6, @stat-sprite-dimension, @stat-sprite-dimension);
+    }
+
+    &.sprite-armor_3quarter {
+        .stat-sprite(1, 6, @stat-sprite-dimension, @stat-sprite-dimension);
     }
 }

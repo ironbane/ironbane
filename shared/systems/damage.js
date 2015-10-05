@@ -90,7 +90,7 @@ angular
                                         h: indexH,
                                         v: indexV,
                                         nH: 4,
-                                        nV: 8
+                                        nV: 16
                                     }
                                 }
                             },

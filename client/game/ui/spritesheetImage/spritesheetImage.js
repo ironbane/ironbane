@@ -3,7 +3,11 @@ angular
         'engine.char-builder',
         'engine.util'
     ])
-    .directive('spritesheetImage', ["$log", "CharBuilder", "IbUtils", "$timeout", function($log, CharBuilder, IbUtils, $timeout) {
+    .directive('spritesheetImage', [
+        '$log',
+        'CharBuilder',
+        'IbUtils',
+        function($log, CharBuilder, IbUtils) {
             'use strict';
 
             var config = {
@@ -17,30 +21,29 @@ angular
                 // bindToController: true,
                 // controllerAs: 'spritesheetImage',
                 controller: ['$scope', '$attrs', function($scope, $attrs) {
-                    var ctrl = this;
                     var p;
 
                     if ($attrs.sheet === 'items') {
                         p = CharBuilder.getSpriteSheetTile('images/spritesheets/items.png',
                             IbUtils.spriteSheetIdToXY(parseInt($attrs.id, 10), 16).h,
                             IbUtils.spriteSheetIdToXY(parseInt($attrs.id, 10), 16).v,
-                            16, 128)
+                            16, 128);
                     }
                     if ($attrs.sheet === 'stats') {
                         p = CharBuilder.getSpriteSheetTile('images/ui/stats.png',
                             IbUtils.spriteSheetIdToXY(parseInt($attrs.id, 10), 4).h,
                             IbUtils.spriteSheetIdToXY(parseInt($attrs.id, 10), 4).v,
-                            4, 8)
+                            4, 16);
                     }
 
                     if (p) {
                         if ($attrs.scale) {
-                            p = p.then(function (url) {
+                            p = p.then(function(url) {
                                 return CharBuilder.resize(url, parseFloat($attrs.scale));
-                            })
+                            });
                         }
 
-                        p = p.then(function (url) {
+                        p = p.then(function(url) {
                             $scope.imageUrl = url;
                         });
                     }
@@ -48,4 +51,5 @@ angular
             };
 
             return config;
-        }]);
+        }
+    ]);
