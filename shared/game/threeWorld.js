@@ -17,15 +17,12 @@ angular
 
             // takes the normal CES world and fuses it with THREE
             var ThreeWorld = World.extend({
-                init: function(sceneName) {
+                init: function() {
                     this._super();
 
-                    this.name = sceneName;
+                    this.name = null;
 
                     this._timing = {};
-
-                    // can check on this in loops
-                    this._isLoading = {};
 
                     if (Meteor.isClient) {
                         this.renderer = new THREE.WebGLRenderer({
@@ -39,6 +36,8 @@ angular
                     }
 
                     this.scene = new THREE.Scene();
+
+                    this._loadTask = $q.when();
                 },
                 addEntity: function(entity) {
                     this._super(entity);
@@ -62,16 +61,37 @@ angular
                 load: function(sceneName) {
                     var world = this;
 
-                    // load any scene, or default to our own
-                    sceneName = sceneName || world.name;
-
-                    world._isLoading[sceneName] = true;
+                    if (this.name === sceneName) {
+                        // If this scene is already loading/loaded, just return
+                        // that promise
+                        return this._loadTask;
+                    }
 
                     if (Meteor.isClient) {
-                        world._loadTask = $http.get('scene/' + sceneName + '/scene.json')
-                            .then(function(response) {
-                                return response.data;
-                            }, $q.reject);
+                        Session.set('levelLoaded', false);
+                    }
+
+                    var nodesToBeRemoved = [];
+
+                    world.traverse(function(node) {
+                        if (node.isLoadedFromJsonFile) {
+                            nodesToBeRemoved.push(node);
+                        }
+                    });
+
+                    nodesToBeRemoved.forEach(function(node) {
+                        world.removeEntity(node);
+                    });
+
+                    this.name = sceneName;
+
+                    if (Meteor.isClient) {
+                        world._loadTask = world._loadTask.then(function () {
+                            return $http.get('scene/' + sceneName + '/scene.json')
+                                .then(function(response) {
+                                    return response.data;
+                                }, $q.reject);
+                        });
                     } else {
                         var loadFile = function() {
                             var deferred = $q.defer(),
@@ -110,11 +130,34 @@ angular
                             //$log.log('got json: ', Object.keys(json));
                             return EntityBuilder.load(json, sceneName).then(function (entityTree) {
                                 world.addEntity(entityTree);
-                                world._isLoading[sceneName] = false;
+
+                                var rigidBodyLoadPromises = [];
+
+                                if (Meteor.isClient) {
+                                    var rigidBodyEntities = world.getEntities('rigidBody');
+                                    rigidBodyEntities.forEach(function (rigidBodyEntity) {
+                                        var rigidBodyComponent = rigidBodyEntity.getComponent('rigidBody');
+
+                                        if (rigidBodyComponent) {
+                                            rigidBodyLoadPromises.push(function () {
+                                                return rigidBodyComponent.loadPromise;
+                                            });
+                                        }
+                                    });
+                                }
+
+                                return $q.all(rigidBodyLoadPromises);
                             });
                         }, function(err) {
                             $log.error('Error loading ', sceneName, ' ERR: ', err.stack);
                             return $q.reject('Error loading ', sceneName, err);
+                        })
+                        .then(function () {
+                            if (Meteor.isClient) {
+                                Session.set('levelLoaded', true);
+                            }
+
+                            return $q.when();
                         });
 
                     return world._loadTask;

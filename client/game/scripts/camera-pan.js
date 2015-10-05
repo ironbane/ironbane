@@ -1,10 +1,12 @@
 angular
     .module('game.scripts.camera-pan', [
-        'engine.scriptBank'
+        'engine.scriptBank',
+        'game.world-root'
     ])
     .run([
         'ScriptBank',
-        function(ScriptBank) {
+        '$rootWorld',
+        function(ScriptBank, $rootWorld) {
             'use strict';
 
             var PanScript = function(entity) {
@@ -25,7 +27,7 @@ angular
                 //var magic = 35;
                 var magic = 2;
 
-                var activeLevel = Session.get('activeLevel');
+                var activeLevel = $rootWorld.name;
 
                 if (activeLevel === 'dev-zone') {
                     cameraComponent._camera.position.set(Math.sin(elapsed * multiplier / 20) * -18, 5, Math.cos(elapsed * multiplier / 20) * 18);

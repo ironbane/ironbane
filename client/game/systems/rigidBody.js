@@ -305,9 +305,7 @@ angular
 
                         var mass = rigidBodyData.mass;
 
-                        var promise = $q.when();
-
-                        rigidBodyData.loadPromise = promise;
+                        rigidBodyData.loadPromise = $q.when();
 
                         // Preprocess triangles if we are dealing with a concave mesh
                         if (rigidBodyData.shape.type === 'concave') {
@@ -315,7 +313,7 @@ angular
                             if (meshComponent) {
                                 //$log.debug('rigidBody meshComponent', meshComponent);
                                 // Wait for the triangles to load first
-                                promise = meshComponent._meshLoadTask
+                                rigidBodyData.loadPromise = meshComponent._meshLoadTask
                                     .then(function(mesh) {
                                         return calculateMeshTriangles(mesh);
                                     })
@@ -329,7 +327,7 @@ angular
                             }
                         }
 
-                        promise.then(function() {
+                        rigidBodyData.loadPromise.then(function() {
                             var shape = createShape(rigidBodyData.shape);
 
                             var rigidBodyInfo;

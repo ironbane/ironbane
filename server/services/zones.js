@@ -50,8 +50,8 @@ angular
                         return;
                     }
 
-                    var world = $activeWorlds[sceneId] = new ThreeWorld(sceneId);
-                    console.log('Adding zone:', world.name);
+                    var world = $activeWorlds[sceneId] = new ThreeWorld();
+
                     // TODO: prolly track this elsewhere
                     world._ownerCache = {};
 
@@ -66,7 +66,11 @@ angular
                     });
 
                     // load the initial zone data from the world file
-                    Meteor.setTimeout(function() { world.load(sceneId); }, 10);
+                    Meteor.setTimeout(function() {
+                        world.load(sceneId).then(function () {
+                            console.log('Loaded zone:', world.name);
+                        });
+                    }, 10);
                 }));
 
             }), function (err) {

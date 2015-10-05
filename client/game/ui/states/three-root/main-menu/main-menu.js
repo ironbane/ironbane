@@ -96,14 +96,10 @@ angular
                     $rootScope.mainPlayer = null;
                     delete $rootScope.isTransitioning;
 
-                    Session.set('activeLevel', IB_CONSTANTS.world.mainMenuLevel);
-
-                    // $log.debug('mainMenu onEnter: ', this);
-                    $rootWorld.addEntity(MainMenuPanningCamera);
-
-                    $timeout(function () {
+                    $rootWorld.load(IB_CONSTANTS.world.mainMenuLevel).then(function () {
                         GlobalSound.play('theme', null, 5);
-                    }, 1000);
+                        $rootWorld.addEntity(MainMenuPanningCamera);
+                    });
                 }
             ],
             onExit: [
@@ -114,9 +110,7 @@ angular
                 function($rootWorld, MainMenuPanningCamera, GlobalSound, $timeout) {
                     $rootWorld.removeEntity(MainMenuPanningCamera);
 
-                    $timeout(function () {
-                        GlobalSound.stop('theme');
-                    }, 1000);
+                    GlobalSound.stop('theme');
                 }
             ]
         });
