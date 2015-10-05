@@ -11090,6 +11090,21 @@ THREE.BufferGeometry.prototype = {
 
 		}
 
+		if ( geometry.uvsNeedUpdate ) {
+
+				var attribute = this.attributes.uv;
+
+				if ( attribute !== undefined ) {
+
+						attribute.copyVector2sArray( geometry.uvs );
+						attribute.needsUpdate = true;
+
+				}
+
+				geometry.uvsNeedUpdate = false;
+
+		}
+
 		if ( geometry.lineDistancesNeedUpdate ) {
 
 			var attribute = this.attributes.lineDistance;
