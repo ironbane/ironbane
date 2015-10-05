@@ -203,37 +203,10 @@ angular
              *
              * @return {[type]}
              */
-            randomizeExistingVector3: function(v, base, spread) {
-                v.copy(base);
-
-                v.x += Math.random() * spread.x - (spread.x / 2);
-                v.y += Math.random() * spread.y - (spread.y / 2);
-                v.z += Math.random() * spread.z - (spread.z / 2);
-            },
-
-
-            /**
-             * Randomize a THREE.Color instance and given a base vector and
-             * spread range vector, assign random values.
-             *
-             * Note that THREE.Color RGB values are in the range of 0 - 1, not 0 - 255.
-             *
-             * @private
-             *
-             * @param  {THREE.Vector3} base
-             * @param  {THREE.Vector3} spread
-             * @return {THREE.Color}
-             */
-            randomizeExistingColor: function(v, base, spread) {
-                v.copy(base);
-
-                v.r += (Math.random() * spread.x) - (spread.x / 2);
-                v.g += (Math.random() * spread.y) - (spread.y / 2);
-                v.b += (Math.random() * spread.z) - (spread.z / 2);
-
-                v.r = Math.max(0, Math.min(v.r, 1));
-                v.g = Math.max(0, Math.min(v.g, 1));
-                v.b = Math.max(0, Math.min(v.b, 1));
+            randomizeExistingVector3Attribute: function(i, v, base, spread) {
+                v.setX(i, base.x + Math.random() * spread.x - (spread.x / 2));
+                v.setY(i, base.y + Math.random() * spread.y - (spread.y / 2));
+                v.setZ(i, base.z + Math.random() * spread.z - (spread.z / 2));
             },
 
             /**
@@ -246,7 +219,7 @@ angular
              * @param  {THREE.Vector3} base
              * @param  {Number} radius
              */
-            randomizeExistingVector3OnSphere: function(v, base, radius, radiusSpread, radiusScale, radiusSpreadClamp) {
+            randomizeExistingVector3AttributeOnSphere: function(i, v, base, radius, radiusSpread, radiusScale, radiusSpreadClamp) {
                 var z = 2 * Math.random() - 1,
                     t = 6.2832 * Math.random(),
                     r = Math.sqrt(1 - z * z),
@@ -256,12 +229,9 @@ angular
                     rand = Math.round(rand / radiusSpreadClamp) * radiusSpreadClamp;
                 }
 
-                v.set(
-                    (r * Math.cos(t)) * rand, (r * Math.sin(t)) * rand,
-                    z * rand
-                ).multiply(radiusScale);
-
-                v.add(base);
+                v.setX(i, r * Math.cos(t) * rand * radiusScale.x + base.x);
+                v.setY(i, r * Math.sin(t) * rand * radiusScale.y + base.y);
+                v.setZ(i, z * rand * radiusScale.z + base.z);
             },
 
 
@@ -275,7 +245,7 @@ angular
              * @param  {THREE.Vector3} base
              * @param  {Number} radius
              */
-            randomizeExistingVector3OnDisk: function(v, base, radius, radiusSpread, radiusScale, radiusSpreadClamp) {
+            randomizeExistingVector3AttributeOnDisk: function(i, v, base, radius, radiusSpread, radiusScale, radiusSpreadClamp) {
                 var t = 6.2832 * Math.random(),
                     rand = Math.abs(this._randomFloat(radius, radiusSpread));
 
@@ -283,24 +253,24 @@ angular
                     rand = Math.round(rand / radiusSpreadClamp) * radiusSpreadClamp;
                 }
 
-                v.set(
-                    Math.cos(t),
-                    Math.sin(t),
-                    0
-                ).multiplyScalar(rand);
+                var scale = new THREE.Vector3(1, 1, 1);
 
                 if (radiusScale) {
-                    v.multiply(radiusScale);
+                    scale = radiusScale;
                 }
 
-                v.add(base);
+                v.setX(i, Math.cos(t) * rand * scale.x * + base.x);
+                v.setY(i, Math.sin(t) * rand * scale.y + base.y);
+                v.setZ(i, 0 * rand * scale.z + base.z);
             },
 
-            randomizeExistingVelocityVector3OnSphere: function(v, base, position, speed, speedSpread) {
-                v.copy(position)
+            randomizeExistingVelocityVector3OnSphere: function(i, v, base, position, speed, speedSpread) {
+                var vec = new THREE.Vector3(position.getX(i), position.getY(i), position.getZ(i))
                     .sub(base)
                     .normalize()
                     .multiplyScalar(this._randomFloat(speed, speedSpread));
+
+                v.setXYZ(i, vec.x, vec.y, vec.z);
             },
 
             generateID: function() {
@@ -371,52 +341,80 @@ angular
 
             // Create a map of attributes that will hold values for each particle in this group.
             that.attributes = {
+                position: {
+                    type: 'v3',
+                    size: 3,
+                    typedArray: null,
+                    value: []
+                },
                 acceleration: {
                     type: 'v3',
+                    size: 3,
+                    typedArray: null,
                     value: []
                 },
                 velocity: {
                     type: 'v3',
+                    size: 3,
+                    typedArray: null,
                     value: []
                 },
 
                 alive: {
                     type: 'f',
+                    size: 1,
+                    typedArray: null,
                     value: []
                 },
                 age: {
                     type: 'f',
+                    size: 1,
+                    typedArray: null,
                     value: []
                 },
 
                 size: {
                     type: 'v3',
+                    size: 3,
+                    typedArray: null,
                     value: []
                 },
                 angle: {
                     type: 'v4',
+                    size: 4,
+                    typedArray: null,
                     value: []
                 },
                 spritesheet: {
                     type: 'v4',
+                    size: 4,
+                    typedArray: null,
                     value: []
                 },
 
                 colorStart: {
                     type: 'c',
+                    size: 3,
+                    typedArray: null,
                     value: []
                 },
                 colorMiddle: {
                     type: 'c',
+                    size: 3,
+                    typedArray: null,
                     value: []
                 },
                 colorEnd: {
                     type: 'c',
+                    size: 3,
+                    typedArray: null,
                     value: []
                 },
 
                 opacity: {
                     type: 'v3',
+                    size: 3,
+                    typedArray: null,
                     value: []
                 }
             };
@@ -434,12 +432,10 @@ angular
             // Create an empty geometry to hold the particles.
             // Each particle is a vertex pushed into this geometry's
             // vertices array.
-            that.geometry = new THREE.Geometry();
+            that.geometry = new THREE.BufferGeometry();
 
-            // Create the shader material using the properties we set above.
             that.material = new THREE.ShaderMaterial({
                 uniforms: that.uniforms,
-                attributes: that.attributes,
                 vertexShader: that.vertexShader,
                 fragmentShader: that.fragmentShader,
                 blending: that.blending,
@@ -451,8 +447,7 @@ angular
 
             // And finally create the ParticleSystem. It's got its `dynamic` property
             // set so that THREE.js knows to update it on each frame.
-            that.mesh = new THREE.PointCloud(that.geometry, that.material);
-            that.mesh.dynamic = true;
+            that.mesh = new THREE.Points(that.geometry, that.material);
         };
 
         SPE.Group.prototype = {
@@ -470,15 +465,33 @@ angular
 
                 // Set flags to update (causes less garbage than
                 // ```ParticleSystem.sortParticles = true``` in THREE.r58 at least)
-                that.attributes.age.needsUpdate = true;
-                that.attributes.alive.needsUpdate = true;
-                that.attributes.angle.needsUpdate = true;
-                // that.attributes.angleAlignVelocity.needsUpdate = true;
-                that.attributes.velocity.needsUpdate = true;
-                that.attributes.acceleration.needsUpdate = true;
-                that.geometry.verticesNeedUpdate = true;
+                that.geometry.attributes.age.needsUpdate = true;
+                that.geometry.attributes.alive.needsUpdate = true;
+                that.geometry.attributes.angle.needsUpdate = true;
+                // that.geometry.attributes.angleAlignVelocity.needsUpdate = true;
+                that.geometry.attributes.velocity.needsUpdate = true;
+                that.geometry.attributes.acceleration.needsUpdate = true;
+                that.geometry.attributes.position.needsUpdate = true;
 
                 return that;
+            },
+
+            _createTypedArray: function( parentObject, size ) {
+                var tmp;
+
+                // Make sure the size is multiplied by the number of components
+                // this array's data "type" should reflect (i.e. 3 for a vec3, 1
+                // for a float, etc.)
+                size *= parentObject.size;
+
+                // If a bufferAttribute already exists, it'll need resizing.
+                if ( parentObject.typedArray ) {
+                    size += parentObject.typedArray.length;
+                    tmp = new Float32Array( size );
+                    tmp.set( parentObject.typedArray );
+                }
+
+                return tmp || new Float32Array( size );
             },
 
             /**
@@ -497,85 +510,141 @@ angular
                     emitter.particlesPerSecond = emitter.particleCount / that.maxAge | 0
                 }
 
-                var vertices = that.geometry.vertices,
-                    start = vertices.length,
+                if (emitter.particlesPerSecond === 0) {
+                    console.warn('No particles to spawn!');
+                }
+
+                // Create, or update, the array buffers for each attribute.
+                for ( var attr in that.attributes ) {
+                    that.geometry.addAttribute(attr, new THREE.BufferAttribute(that._createTypedArray(
+                        that.attributes[attr],
+                        emitter.particleCount
+                    ), that.attributes[attr].size));
+                }
+
+                var start = 0,
                     end = emitter.particleCount + start,
-                    a = that.attributes,
-                    acceleration = a.acceleration.value,
-                    velocity = a.velocity.value,
-                    alive = a.alive.value,
-                    age = a.age.value,
-                    size = a.size.value,
-                    angle = a.angle.value,
-                    spritesheet = a.spritesheet.value,
-                    colorStart = a.colorStart.value,
-                    colorMiddle = a.colorMiddle.value,
-                    colorEnd = a.colorEnd.value,
-                    opacity = a.opacity.value;
+                    a = that.geometry.attributes,
+                    acceleration = a.acceleration,
+                    position = a.position,
+                    velocity = a.velocity,
+                    alive = a.alive,
+                    age = a.age,
+                    size = a.size,
+                    angle = a.angle,
+                    spritesheet = a.spritesheet,
+                    colorStart = a.colorStart,
+                    colorMiddle = a.colorMiddle,
+                    colorEnd = a.colorEnd,
+                    opacity = a.opacity;
 
                 emitter.particleIndex = parseFloat(start);
 
+                var setAttr = function (attr, index, size, data) {
+                    if (size === 1) {
+                        attr[index * size + 0] = data;
+                    }
+                    if (size === 2) {
+                        attr[index * size + 0] = data;
+                        attr[index * size + 1] = data;
+                    }
+                    if (size === 3) {
+                        attr[index * size + 0] = data;
+                        attr[index * size + 1] = data;
+                        attr[index * size + 2] = data;
+                    }
+                    if (size === 4) {
+                        attr[index * size + 0] = data;
+                        attr[index * size + 1] = data;
+                        attr[index * size + 2] = data;
+                        attr[index * size + 3] = data;
+                    }
+                };
+
                 // Create the values
                 for (var i = start; i < end; ++i) {
+                    var posVec, velVec;
 
                     if (emitter.type === 'sphere') {
-                        vertices[i] = that._randomVector3OnSphere(emitter.position, emitter.radius, emitter.radiusSpread, emitter.radiusScale, emitter.radiusSpreadClamp);
-                        velocity[i] = that._randomVelocityVector3OnSphere(vertices[i], emitter.position, emitter.speed, emitter.speedSpread);
+                        posVec = that._randomVector3OnSphere(emitter.position, emitter.radius, emitter.radiusSpread, emitter.radiusScale, emitter.radiusSpreadClamp);
+                        velVec = that._randomVelocityVector3OnSphere(posVec, emitter.position, emitter.speed, emitter.speedSpread);
                     } else if (emitter.type === 'disk') {
-                        vertices[i] = that._randomVector3OnDisk(emitter.position, emitter.radius, emitter.radiusSpread, emitter.radiusScale, emitter.radiusSpreadClamp);
-                        velocity[i] = that._randomVelocityVector3OnSphere(vertices[i], emitter.position, emitter.speed, emitter.speedSpread);
+                        posVec = that._randomVector3OnDisk(emitter.position, emitter.radius, emitter.radiusSpread, emitter.radiusScale, emitter.radiusSpreadClamp);
+                        velVec = that._randomVelocityVector3OnSphere(posVec, emitter.position, emitter.speed, emitter.speedSpread);
                     } else {
-                        vertices[i] = that._randomVector3(emitter.position, emitter.positionSpread);
-                        velocity[i] = that._randomVector3(emitter.velocity, emitter.velocitySpread);
+                        posVec = that._randomVector3(emitter.position, emitter.positionSpread);
+                        velVec = that._randomVector3(emitter.velocity, emitter.velocitySpread);
                     }
 
+                    position.setXYZ(i, posVec.x, posVec.y, posVec.z);
+                    velocity.setXYZ(i, velVec.x, velVec.y, velVec.z);
+
+                    var accVec;
                     if (emitter.type === 'sphere') {
-                        acceleration[i] = velocity[i].clone().multiply(emitter.acceleration);
+                        accVec = velVec.clone().multiply(emitter.acceleration);
                     }
                     else {
-                        acceleration[i] = that._randomVector3(emitter.acceleration, emitter.accelerationSpread);
+                        accVec = that._randomVector3(emitter.acceleration, emitter.accelerationSpread);
                     }
 
+                    acceleration.setXYZ(i, accVec.x, accVec.y, accVec.z);
 
-                    size[i] = new THREE.Vector3(
+                    var sizeVec = new THREE.Vector3(
                         Math.abs(that._randomFloat(emitter.sizeStart, emitter.sizeStartSpread)),
                         Math.abs(that._randomFloat(emitter.sizeMiddle, emitter.sizeMiddleSpread)),
                         Math.abs(that._randomFloat(emitter.sizeEnd, emitter.sizeEndSpread))
                     );
+                    size.setXYZ(i, sizeVec.x, sizeVec.y, sizeVec.z);
 
-                    angle[i] = new THREE.Vector4(
+
+                    var angleVec = new THREE.Vector4(
                         that._randomFloat(emitter.angleStart, emitter.angleStartSpread),
                         that._randomFloat(emitter.angleMiddle, emitter.angleMiddleSpread),
                         that._randomFloat(emitter.angleEnd, emitter.angleEndSpread),
                         emitter.angleAlignVelocity ? 1.0 : 0.0
                     );
+                    angle.setXYZW(i, angleVec.x, angleVec.y, angleVec.z, angleVec.w);
 
-                    spritesheet[i] = new THREE.Vector4(
+                    var spritesheetVec = new THREE.Vector4(
                         that._randomInt(0, emitter.numberOfSpritesH - 1),
                         that._randomInt(0, emitter.numberOfSpritesV - 1),
                         emitter.numberOfSpritesH,
                         emitter.numberOfSpritesV
                     );
+                    spritesheet.setXYZW(i, spritesheetVec.x, spritesheetVec.y, spritesheetVec.z, spritesheetVec.w);
 
-                    age[i] = 0.0;
-                    alive[i] = emitter.isStatic ? 1.0 : 0.0;
+                    age.setX(i, 0.0);
+                    alive.setX(i, emitter.isStatic ? 1.0 : 0.0);
 
-                    colorStart[i] = emitter.colorStartFn ? emitter.colorStartFn(i) : that._randomColor(emitter.colorStart, emitter.colorStartSpread);
-                    colorMiddle[i] = emitter.colorMiddleFn ? emitter.colorMiddleFn(i) : that._randomColor(emitter.colorMiddle, emitter.colorMiddleSpread);
-                    colorEnd[i] = emitter.colorEndFn ? emitter.colorEndFn(i) : that._randomColor(emitter.colorEnd, emitter.colorEndSpread);
+                    var sizeVec = new THREE.Vector3(
+                        Math.abs(that._randomFloat(emitter.sizeStart, emitter.sizeStartSpread)),
+                        Math.abs(that._randomFloat(emitter.sizeMiddle, emitter.sizeMiddleSpread)),
+                        Math.abs(that._randomFloat(emitter.sizeEnd, emitter.sizeEndSpread))
+                    );
+                    size.setXYZ(i, sizeVec.x, sizeVec.y, sizeVec.z);
 
-                    opacity[i] = new THREE.Vector3(
+                    var colorStartVec = emitter.colorStartFn ? emitter.colorStartFn(i) : that._randomColor(emitter.colorStart, emitter.colorStartSpread);
+                    colorStart.setXYZ(i, colorStartVec.r, colorStartVec.g, colorStartVec.b);
+
+                    var colorMiddleVec = emitter.colorMiddleFn ? emitter.colorMiddleFn(i) : that._randomColor(emitter.colorMiddle, emitter.colorMiddleSpread);
+                    colorMiddle.setXYZ(i, colorMiddleVec.r, colorMiddleVec.g, colorMiddleVec.b);
+
+                    var colorEndVec = emitter.colorEndFn ? emitter.colorEndFn(i) : that._randomColor(emitter.colorEnd, emitter.colorEndSpread);
+                    colorEnd.setXYZ(i, colorEndVec.r, colorEndVec.g, colorEndVec.b);
+
+                    var opacityVec = new THREE.Vector3(
                         Math.abs(that._randomFloat(emitter.opacityStart, emitter.opacityStartSpread)),
                         Math.abs(that._randomFloat(emitter.opacityMiddle, emitter.opacityMiddleSpread)),
                         Math.abs(that._randomFloat(emitter.opacityEnd, emitter.opacityEndSpread))
                     );
+                    opacity.setXYZ(i, opacityVec.x, opacityVec.y, opacityVec.z);
                 }
 
                 // Cache properties on the emitter so we can access
                 // them from its tick function.
                 emitter.verticesIndex = parseFloat(start);
                 emitter.attributes = a;
-                emitter.vertices = that.geometry.vertices;
+                emitter.geometry = that.geometry;
                 emitter.maxAge = that.maxAge;
 
                 // Assign a unique ID to this emitter
@@ -807,90 +876,91 @@ angular
 
                 // Integrate acceleration into velocity and apply it to the particle's position
                 'vec4 GetPos() {',
-                'vec3 newPos = vec3( position );',
+                    'vec3 newPos = vec3( position );',
 
-                // Move acceleration & velocity vectors to the value they
-                // should be at the current age
-                'vec3 a = acceleration * age;',
-                'vec3 v = velocity * age;',
+                    // Move acceleration & velocity vectors to the value they
+                    // should be at the current age
+                    'vec3 a = acceleration * age;',
+                    'vec3 v = velocity * age;',
 
-                // Move velocity vector to correct values at this age
-                'v = v + (a * age);',
+                    // Move velocity vector to correct values at this age
+                    'v = v + (a * age);',
 
-                // Add velocity vector to the newPos vector
-                'newPos = newPos + v;',
+                    // Add velocity vector to the newPos vector
+                    'newPos = newPos + v;',
 
-                // Convert the newPos vector into world-space
-                'vec4 mvPosition = modelViewMatrix * vec4( newPos, 1.0 );',
+                    // Convert the newPos vector into world-space
+                    'vec4 mvPosition = modelViewMatrix * vec4( newPos, 1.0 );',
 
-                'return mvPosition;',
+                    'return mvPosition;',
                 '}',
 
 
                 'void main() {',
 
-                'float positionInTime = (age / duration);',
-
-                'float lerpAmount1 = (age / (0.5 * duration));', // percentage during first half
-                'float lerpAmount2 = ((age - 0.5 * duration) / (0.5 * duration));', // percentage during second half
-                'float halfDuration = duration / 2.0;',
-                'float pointSize = 0.0;',
-
-                'vAngle = 0.0;',
-
-                'vSpritesheet.xyzw = spritesheet.xyzw;',
-
-                'if( alive > 0.5 ) {',
-
-                // lerp the color and opacity
-                'if( positionInTime < 0.5 ) {',
-                'vColor = vec4( mix(colorStart, colorMiddle, lerpAmount1), mix(opacity.x, opacity.y, lerpAmount1) );',
-                '}',
-                'else {',
-                'vColor = vec4( mix(colorMiddle, colorEnd, lerpAmount2), mix(opacity.y, opacity.z, lerpAmount2) );',
-                '}',
 
 
-                // Get the position of this particle so we can use it
-                // when we calculate any perspective that might be required.
-                'vec4 pos = GetPos();',
+                    'float positionInTime = (age / duration);',
+
+                    'float lerpAmount1 = (age / (0.5 * duration));', // percentage during first half
+                    'float lerpAmount2 = ((age - 0.5 * duration) / (0.5 * duration));', // percentage during second half
+                    'float halfDuration = duration / 2.0;',
+                    'float pointSize = 0.0;',
+
+                    'vAngle = 0.0;',
+
+                    'vSpritesheet.xyzw = spritesheet.xyzw;',
+
+                    'if( alive > 0.5 ) {',
+
+                        // lerp the color and opacity
+                        'if( positionInTime < 0.5 ) {',
+                            'vColor = vec4( mix(colorStart, colorMiddle, lerpAmount1), mix(opacity.x, opacity.y, lerpAmount1) );',
+                        '}',
+                        'else {',
+                            'vColor = vec4( mix(colorMiddle, colorEnd, lerpAmount2), mix(opacity.y, opacity.z, lerpAmount2) );',
+                        '}',
 
 
-                // Determine the angle we should use for this particle.
-                'if( angle[3] == 1.0 ) {',
-                'vAngle = -atan(pos.y, pos.x);',
-                '}',
-                'else if( positionInTime < 0.5 ) {',
-                'vAngle = mix( angle.x, angle.y, lerpAmount1 );',
-                '}',
-                'else {',
-                'vAngle = mix( angle.y, angle.z, lerpAmount2 );',
-                '}',
-
-                // Determine point size.
-                'if( positionInTime < 0.5) {',
-                'pointSize = mix( size.x, size.y, lerpAmount1 );',
-                '}',
-                'else {',
-                'pointSize = mix( size.y, size.z, lerpAmount2 );',
-                '}',
+                        // Get the position of this particle so we can use it
+                        // when we calculate any perspective that might be required.
+                        'vec4 pos = GetPos();',
 
 
-                'if( hasPerspective == 1 ) {',
-                'pointSize = pointSize * ( 300.0 / length( pos.xyz ) );',
-                '}',
+                        // Determine the angle we should use for this particle.
+                        'if( angle[3] == 1.0 ) {',
+                            'vAngle = -atan(pos.y, pos.x);',
+                        '}',
+                        'else if( positionInTime < 0.5 ) {',
+                        '   vAngle = mix( angle.x, angle.y, lerpAmount1 );',
+                        '}',
+                        'else {',
+                            'vAngle = mix( angle.y, angle.z, lerpAmount2 );',
+                        '}',
 
-                // Set particle size and position
-                'gl_PointSize = pointSize;',
-                'gl_Position = projectionMatrix * pos;',
-                '}',
+                        // Determine point size.
+                        'if( positionInTime < 0.5) {',
+                            'pointSize = mix( size.x, size.y, lerpAmount1 );',
+                        '}',
+                        'else {',
+                            'pointSize = mix( size.y, size.z, lerpAmount2 );',
+                        '}',
 
-                'else {',
-                // Hide particle and set its position to the (maybe) glsl
-                // equivalent of Number.POSITIVE_INFINITY
-                'vColor = vec4( 0.0, 0.0, 0.0, 0.0 );',
-                'gl_Position = vec4(1000000000.0, 1000000000.0, 1000000000.0, 0.0);',
-                '}',
+
+                        'if( hasPerspective == 1 ) {',
+                            'pointSize = pointSize * ( 300.0 / length( pos.xyz ) );',
+                        '}',
+
+                        // Set particle size and position
+                        'gl_PointSize = pointSize;',
+                        'gl_Position = projectionMatrix * pos;',
+                    '}',
+                    'else {',
+                        // Hide particle and set its position to the (maybe) glsl
+                        // equivalent of Number.POSITIVE_INFINITY
+                        'vColor = vec4( 0.0, 0.0, 0.0, 0.0 );',
+                        'gl_Position = vec4(1000000000.0, 1000000000.0, 1000000000.0, 0.0);',
+                    '}',
                 '}',
             ].join('\n'),
 
@@ -903,26 +973,26 @@ angular
                 'varying vec4 vSpritesheet;',
 
                 'void main() {',
-                'float c = cos(vAngle);',
-                'float s = sin(vAngle);',
+                    'float c = cos(vAngle);',
+                    'float s = sin(vAngle);',
 
-                'vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,',
-                'c * (gl_PointCoord.y - 0.5) - s * (gl_PointCoord.x - 0.5) + 0.5);',
+                    'vec2 rotatedUV = vec2(c * (gl_PointCoord.x - 0.5) + s * (gl_PointCoord.y - 0.5) + 0.5,',
+                    'c * (gl_PointCoord.y - 0.5) - s * (gl_PointCoord.x - 0.5) + 0.5);',
 
-                'rotatedUV.x /= vSpritesheet.z;',
-                'rotatedUV.y /= vSpritesheet.w;',
+                    'rotatedUV.x /= vSpritesheet.z;',
+                    'rotatedUV.y /= vSpritesheet.w;',
 
-                'rotatedUV.x += (1.0/vSpritesheet.z) * vSpritesheet.x;',
-                'rotatedUV.y += (1.0/vSpritesheet.w) * vSpritesheet.y;',
+                    'rotatedUV.x += (1.0/vSpritesheet.z) * vSpritesheet.x;',
+                    'rotatedUV.y += (1.0/vSpritesheet.w) * vSpritesheet.y;',
 
-                'vec4 rotatedTexture = texture2D( texture, rotatedUV );',
+                    'vec4 rotatedTexture = texture2D( texture, rotatedUV );',
 
-                'if( colorize == 1 ) {',
-                'gl_FragColor = vColor * rotatedTexture;',
-                '}',
-                'else {',
-                'gl_FragColor = rotatedTexture;',
-                '}',
+                    'if( colorize == 1 ) {',
+                        'gl_FragColor = vColor * rotatedTexture;',
+                    '}',
+                    'else {',
+                        'gl_FragColor = rotatedTexture;',
+                    '}',
                 '}'
             ].join('\n')
         };
@@ -1039,7 +1109,7 @@ angular
             // Generic
             that.duration = typeof options.duration === 'number' ? options.duration : null;
             that.alive = parseFloat(typeof options.alive === 'number' ? options.alive : 1.0);
-            that.isStatic = typeof options.isStatic === 'number' ? options.isStatic : 0;
+            that.isStatic = typeof options.isStatic === 'number' ? !!options.isStatic : typeof options.isStatic === 'boolean' ? options.isStatic : false;
 
             // Particle spawn callback function.
             that.onParticleSpawn = typeof options.onParticleSpawn === 'function' ? options.onParticleSpawn : null;
@@ -1074,9 +1144,7 @@ angular
                 var that = this,
                     type = that.type,
                     spread = that.positionSpread,
-                    particlePosition = that.vertices[i],
                     a = that.attributes,
-                    particleVelocity = a.velocity.value[i],
 
                     vSpread = that.velocitySpread,
                     aSpread = that.accelerationSpread;
@@ -1087,29 +1155,31 @@ angular
                     (type === 'sphere' && that.radius === 0) ||
                     (type === 'disk' && that.radius === 0)
                 ) {
-                    particlePosition.copy(that.position);
-                    that._randomizeExistingVector3(particleVelocity, that.velocity, vSpread);
+                    a.position.setXYZ(i, that.position.x, that.position.y, that.position.z);
+                    that._randomizeExistingVector3Attribute(i, a.velocity, that.velocity, vSpread);
 
                     if (type === 'cube') {
-                        that._randomizeExistingVector3(that.attributes.acceleration.value[i], that.acceleration, aSpread);
+                        that._randomizeExistingVector3Attribute(i, a.acceleration, that.acceleration, aSpread);
                     }
                 }
 
                 // If there is a position spread, then get a new position based on this spread.
                 else if (type === 'cube') {
-                    that._randomizeExistingVector3(particlePosition, that.position, spread);
-                    that._randomizeExistingVector3(particleVelocity, that.velocity, vSpread);
-                    that._randomizeExistingVector3(that.attributes.acceleration.value[i], that.acceleration, aSpread);
+                    that._randomizeExistingVector3Attribute(i, a.position, that.position, spread);
+                    that._randomizeExistingVector3Attribute(i, a.velocity, that.velocity, vSpread);
+                    that._randomizeExistingVector3Attribute(i, a.acceleration, that.acceleration, aSpread);
                 } else if (type === 'sphere') {
-                    that._randomizeExistingVector3OnSphere(particlePosition, that.position, that.radius, that.radiusSpread, that.radiusScale, that.radiusSpreadClamp);
-                    that._randomizeExistingVelocityVector3OnSphere(particleVelocity, that.position, particlePosition, that.speed, that.speedSpread);
+                    that._randomizeExistingVector3AttributeOnSphere(i, a.position, that.position, that.radius, that.radiusSpread, that.radiusScale, that.radiusSpreadClamp);
+                    that._randomizeExistingVelocityVector3OnSphere(i, a.velocity, that.position, a.position, that.speed, that.speedSpread);
                 } else if (type === 'disk') {
-                    that._randomizeExistingVector3OnDisk(particlePosition, that.position, that.radius, that.radiusSpread, that.radiusScale, that.radiusSpreadClamp);
-                    that._randomizeExistingVelocityVector3OnSphere(particleVelocity, that.position, particlePosition, that.speed, that.speedSpread);
+                    that._randomizeExistingVector3AttributeOnDisk(i, a.position, that.position, that.radius, that.radiusSpread, that.radiusScale, that.radiusSpreadClamp);
+                    that._randomizeExistingVelocityVector3OnSphere(i, a.velocity, that.position, a.position, that.speed, that.speedSpread);
                 }
 
                 if (type === 'sphere') {
-                    that.attributes.acceleration.value[i].copy(particleVelocity.clone().multiply(that.acceleration));
+                    a.acceleration.setX(i, a.acceleration.getX(i) * that.acceleration.x);
+                    a.acceleration.setY(i, a.acceleration.getY(i) * that.acceleration.y);
+                    a.acceleration.setZ(i, a.acceleration.getZ(i) * that.acceleration.z);
                 }
 
                 if (typeof that.onParticleSpawn === 'function') {
@@ -1132,8 +1202,8 @@ angular
                 // Cache some values for quicker access in loops.
                 var that = this,
                     a = that.attributes,
-                    alive = a.alive.value,
-                    age = a.age.value,
+                    alive = a.alive.array,
+                    age = a.age.array,
                     start = that.verticesIndex,
                     particleCount = that.particleCount,
                     end = start + particleCount,
@@ -1143,6 +1213,8 @@ angular
                     emitterAge = that.age,
                     duration = that.duration,
                     pIndex = that.particleIndex;
+
+
 
                 // Loop through all the particles in this emitter and
                 // determine whether they're still alive and need advancing
@@ -1175,8 +1247,6 @@ angular
                     return;
                 }
 
-
-
                 var n = Math.max(Math.min(end, pIndex + ppsdt), 0),
                     count = 0,
                     index = 0,
@@ -1196,6 +1266,7 @@ angular
                         if (alive[i] !== 1.0) {
                             alive[i] = 1.0;
                             age[i] = dtInc * index;
+
                             that._resetParticle(i);
                         }
                     }
