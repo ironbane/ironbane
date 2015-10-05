@@ -54,7 +54,15 @@ angular
 
                         // place above entity TODO: test size of entity, for now assume player
                         sprite.position.y = 0.6;
+
+                        component._sprite = sprite;
                         // sprite.position.x = 0.1;
+                    });
+
+                    world.entityRemoved('name-mesh').add(function(entity) {
+                        var component = entity.getComponent('name-mesh');
+
+                        entity.remove(component._sprite);
                     });
                 },
                 update: function() {
