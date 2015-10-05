@@ -4,7 +4,8 @@ angular
         'server.services.activeWorlds',
         'engine.entity-builder',
         'global.constants',
-        'server.services.chat'
+        'server.services.chat',
+        'three'
     ])
     .service('GameService', [
         'EntitiesCollection',
@@ -12,7 +13,8 @@ angular
         'IB_CONSTANTS',
         'EntityBuilder',
         'ChatService',
-        function(EntitiesCollection, $activeWorlds, IB_CONSTANTS, EntityBuilder, ChatService) {
+        'THREE',
+        function(EntitiesCollection, $activeWorlds, IB_CONSTANTS, EntityBuilder, ChatService, THREE) {
             'use strict';
 
             this.enterGame = function(charId) {
@@ -134,18 +136,22 @@ angular
                                     var spawns = $activeWorlds[startLevel].getEntities('spawnPoint');
                                     if (spawns.length === 0) {
                                         console.log(startLevel, ' has no spawn points defined!');
+                                        player.position.copy(new THREE.Vector3());
+                                        player.rotation.copy(new THREE.Euler());
                                     }
-                                    // Just pick one of them
-                                    // Having multiple spawns is useful against AFK players so
-                                    // we don't have players spawning in/on top of eachother too much.
-                                    (function(spawn) {
-                                        var component = spawn.getComponent('spawnPoint');
+                                    else {
+                                        // Just pick one of them
+                                        // Having multiple spawns is useful against AFK players so
+                                        // we don't have players spawning in/on top of eachother too much.
+                                        (function(spawn) {
+                                            var component = spawn.getComponent('spawnPoint');
 
-                                        if (component.tag === 'playerStart') {
-                                            player.position.copy(spawn.position);
-                                            player.rotation.copy(spawn.rotation);
-                                        }
-                                    })(_.sample(spawns));
+                                            if (component.tag === 'playerStart') {
+                                                player.position.copy(spawn.position);
+                                                player.rotation.copy(spawn.rotation);
+                                            }
+                                        })(_.sample(spawns));
+                                    }
 
                                     player.level = startLevel;
                                 }
