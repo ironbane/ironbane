@@ -97,6 +97,10 @@ angular
                     var item = {};
                     for(var key in mapping) {
                         let value = getValue(row, headers, mapping[key]);
+                        
+                        if (angular.isString(value)) {
+                            value = value.trim();
+                        }
 
                         if (key === 'behavior') {
                             value = value.split(',').map(v => v.trim());

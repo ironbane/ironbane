@@ -24,6 +24,7 @@ angular
                 
                 var item = ItemService.getItemTemplate(itemName);
                 if (!item) {
+                    console.log('item not found: ', itemName);
                     return;
                 }
 
