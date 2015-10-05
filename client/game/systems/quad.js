@@ -60,11 +60,16 @@ angular
                 mesh.geometry.uvsNeedUpdate = true;
             };
 
-            var QuadSystem = System.extend({
-                addedToWorld: function(world) {
-                    var sys = this;
+            class QuadSystem {
 
-                    sys._super(world);
+                constructor() {
+                    this.world = null;
+                }
+
+                addedToWorld(world) {
+                    this.world = world;
+
+                    var sys = this;
 
                     world.entityAdded('quad').add(function(entity) {
                         var quadData = entity.getComponent('quad'),
@@ -143,8 +148,13 @@ angular
                         var quad = entity.getComponent('quad')._quad;
                         world.scene.remove(quad);
                     });
-                },
-                update: function() {
+                }
+
+                removedFromWorld() {
+                    this.world = null;
+                }
+
+                update() {
                     var world = this.world,
                         quads = world.getEntities('quad'),
                         entitiesWithCamera = this.world.getEntities('camera'),
@@ -202,7 +212,7 @@ angular
 
                     });
                 }
-            });
+            }
 
             return QuadSystem;
         }

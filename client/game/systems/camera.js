@@ -9,11 +9,13 @@ angular
         function(System, THREE) {
             'use strict';
 
-            var CameraSystem = System.extend({
-                addedToWorld: function(world) {
-                    var sys = this;
+            class CameraSystem {
+                constructor() {
+                    this.world = null;
+                }
 
-                    sys._super(world);
+                addedToWorld(world) {
+                    this.world = world;
 
                     world.entityAdded('camera').add(function(entity) {
                         var camData = entity.getComponent('camera'),
@@ -39,8 +41,13 @@ angular
                     world.entityRemoved('camera').add(function(entity) {
                         entity.remove(entity.getComponent('camera')._camera);
                     });
-                },
-                update: function() {
+                }
+
+                removedFromWorld() {
+                    this.world = null;
+                }
+
+                update() {
                     var world = this.world;
                     var cameras = world.getEntities('camera');
 
@@ -64,7 +71,7 @@ angular
                         world.renderer.render(world.scene, camera.getComponent('camera')._camera);
                     });
                 }
-            });
+            }
 
             return CameraSystem;
         }
