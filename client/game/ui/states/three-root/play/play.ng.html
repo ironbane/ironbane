@@ -1,7 +1,7 @@
-<debug-div ng-if="IB_CONSTANTS.isDev"></debug-div>
+<debug-div ng-if="IB_CONSTANTS.isDev && (!mainPlayer.getComponent('cheats') || !mainPlayer.getComponent('cheats').screenshot)"></debug-div>
 <admin-div ng-if="gui.showAdminPanel" cheats="mainPlayer.getComponent('cheats')"></admin-div>
-<chat-box show-input="gui.showChatInput"></chat-box>
-<div class="stats-container">
+<chat-box show-input="gui.showChatInput" ng-if="!mainPlayer.getComponent('cheats') || !mainPlayer.getComponent('cheats').screenshot"></chat-box>
+<div class="stats-container" ng-if="!mainPlayer.getComponent('cheats') || !mainPlayer.getComponent('cheats').screenshot">
     <stat-bar id="healthBar" stat-component="mainPlayer.getComponent('health')"></stat-bar>
     <stat-bar id="armorBar" stat-component="mainPlayer.getComponent('armor')"></stat-bar>
     <div id="playerGold"><i class="gold-icon"></i><span>{{ mainPlayer.getComponent('inventory').gold }}</span></div>
@@ -9,5 +9,5 @@
 </div>
 <big-messages-box></big-messages-box>
 <drop-zone entity="mainPlayer"></drop-zone>
-<inventory-bar id="playerInventory" entity="mainPlayer"></inventory-bar>
-<button class="ibutton reset-player" tabindex="-1" click-sound ng-click="resetPlayer($event)"></button>
+<inventory-bar id="playerInventory" entity="mainPlayer" ng-if="!mainPlayer.getComponent('cheats') || !mainPlayer.getComponent('cheats').screenshot"></inventory-bar>
+<button class="ibutton reset-player" tabindex="-1" click-sound ng-click="resetPlayer($event)" ng-if="!mainPlayer.getComponent('cheats') || !mainPlayer.getComponent('cheats').screenshot"></button>

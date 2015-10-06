@@ -72,6 +72,8 @@ angular
                 playMap.map('attack', 'keyboard', 'F', 'D');
                 playMap.map('attack', 'mouse', 'MOUSE_BUTTON_LEFT', 'D');
 
+                playMap.map('attack2', 'mouse', 'MOUSE_BUTTON_RIGHT', 'D');
+
                 playMap.map('moveForward', 'keyboard', 'W', 'D');
                 playMap.map('moveForward', 'keyboard', 'UP', 'D');
                 playMap.map('moveForward', 'gamepad', 'XBOX360_STICK_LEFT_Y', 'A-');
@@ -255,8 +257,18 @@ angular
                 this.rotateLeft = playMap.test('rotateLeft');
                 this.jump = playMap.test('jump');
 
-                if (playMap.test('attack')) {
-                    this.primaryAttackHandler();
+                if (cheatComponent && cheatComponent.screenshot) {
+                    if (playMap.test('attack')) {
+                        this.entity.getComponent('camera')._camera.lookAt(this.entity.getComponent('mouseHelper').target);
+                    }
+                    if (playMap.test('attack2')) {
+                        this.entity.getComponent('camera')._camera.position.copy(this.entity.getComponent('mouseHelper').target);
+                    }
+                }
+                else {
+                    if (playMap.test('attack')) {
+                        this.primaryAttackHandler();
+                    }
                 }
 
                 var multiCamComponent = this.entity.getScript('/scripts/built-in/character-multicam.js');
@@ -387,19 +399,35 @@ angular
                         multiCamComponent.temporarilyDisableAutoCameraCorrection = true;
                     }
 
-                    if (this.rotateLeft) {
-                        multiCamComponent.thirdPersonPosition.applyEuler(new THREE.Euler(0, speedComponent.rotateSpeed * dt, 0));
-                    }
-                    if (this.rotateRight) {
-                        multiCamComponent.thirdPersonPosition.applyEuler(new THREE.Euler(0, -speedComponent.rotateSpeed * dt, 0));
-                    }
-
-                    if (multiCamComponent.cameraType === 'classic') {
+                    if (cheatComponent && cheatComponent.screenshot) {
                         if (this.rotateLeft) {
-                            this.entity.rotation.y += speedComponent.rotateSpeed * dt;
+                            this.entity.getComponent('camera')._camera.rotation.y += speedComponent.rotateSpeed * dt;
                         }
                         if (this.rotateRight) {
-                            this.entity.rotation.y -= speedComponent.rotateSpeed * dt;
+                            this.entity.getComponent('camera')._camera.rotation.y -= speedComponent.rotateSpeed * dt;
+                        }
+                        if (this.moveForward) {
+                            this.entity.getComponent('camera')._camera.position.y += 10 * dt;
+                        }
+                        if (this.moveBackward) {
+                            this.entity.getComponent('camera')._camera.position.y -= 10 * dt;
+                        }
+                    }
+                    else {
+                        if (this.rotateLeft) {
+                            multiCamComponent.thirdPersonPosition.applyEuler(new THREE.Euler(0, speedComponent.rotateSpeed * dt, 0));
+                        }
+                        if (this.rotateRight) {
+                            multiCamComponent.thirdPersonPosition.applyEuler(new THREE.Euler(0, -speedComponent.rotateSpeed * dt, 0));
+                        }
+
+                        if (multiCamComponent.cameraType === 'classic') {
+                            if (this.rotateLeft) {
+                                this.entity.rotation.y += speedComponent.rotateSpeed * dt;
+                            }
+                            if (this.rotateRight) {
+                                this.entity.rotation.y -= speedComponent.rotateSpeed * dt;
+                            }
                         }
                     }
                 }

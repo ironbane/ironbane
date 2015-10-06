@@ -131,6 +131,13 @@ angular
             MultiCamScript.prototype.update = function(dt, elapsed, timestamp) {
                 var cameraComponent = this.entity.getComponent('camera');
 
+                var cheatComponent = this.entity.getComponent('cheats');
+                if (cheatComponent) {
+                    if (cheatComponent.screenshot) {
+                        return;
+                    }
+                }
+
                 if (cameraComponent) {
                     if (camMode === camModeEnum.FirstPerson) {
                         localCam.lookAt(targetPosition);
