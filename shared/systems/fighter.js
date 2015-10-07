@@ -58,7 +58,7 @@ angular
                                         type: 'sphere',
                                         radius: 0.1
                                     },
-                                    mass: 1,
+                                    mass: 0.01,
                                     friction: 2.0,
                                     restitution: 0,
                                     allowSleep: false,
@@ -74,8 +74,8 @@ angular
                                             z: true
                                         }
                                     },
-                                    group: 'projectiles',
-                                    collidesWith: ['level', 'npcs']
+                                    group: entity.hasComponent('player') ? 'playerProjectiles' : 'enemyProjectiles',
+                                    collidesWith: ['level', 'npcs', 'otherPlayers']
                                 },
                                 quad: {
                                     transparent: true,

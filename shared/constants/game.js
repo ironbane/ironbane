@@ -26,9 +26,10 @@ angular
             mainPlayer: 2,
             otherPlayers: 4,
             npcs: 8,
-            projectiles: 16,
+            playerProjectiles: 16,
             pickups: 32,
             raycasts: 64,
+            enemyProjectiles: 128,
             all: 65535
         },
         rules: {

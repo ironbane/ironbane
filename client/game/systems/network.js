@@ -126,7 +126,7 @@ angular
                                 }
                             },
                             group: 'otherPlayers',
-                            collidesWith: ['level', 'npcs']
+                            collidesWith: ['level', 'npcs', 'enemyProjectiles']
                         });
                     }
 

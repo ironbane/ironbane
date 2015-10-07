@@ -238,7 +238,7 @@ angular
                                 }
                             },
                             group: 'npcs',
-                            collidesWith: ['level', 'npcs', 'otherPlayers', 'projectiles']
+                            collidesWith: ['level', 'npcs', 'otherPlayers', 'playerProjectiles']
                         },
                         script: {
                             scripts: [
