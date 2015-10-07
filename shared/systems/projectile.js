@@ -125,11 +125,11 @@ angular
                                     projectile._canDeliverEffect = false;
                                 }
                             }
-                        }
 
-                        if (projectile._canDeliverEffect) {
-                            if (victim.hasComponent('netSend') || attacker.hasComponent('netSend')) {
-                                world.publish('combat:damageEntity', victim, attacker, weapon);
+                            if (projectile._canDeliverEffect) {
+                                if (victim.hasComponent('netSend') || attacker.hasComponent('netSend')) {
+                                    world.publish('combat:damageEntity', victim, attacker, weapon);
+                                }
                             }
                         }
 

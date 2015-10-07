@@ -37,6 +37,7 @@ angular
                 });
 
                 world.subscribe('combat:damageEntity', function(victimEntity, sourceEntity, item) {
+                    console.log('damage: victim[%s] attacker[%s]', victimEntity.uuid, sourceEntity.uuid, item);
                     var damageableComponent = victimEntity.getComponent('damageable');
                     if (damageableComponent) {
                         damageableComponent.sources.push({
