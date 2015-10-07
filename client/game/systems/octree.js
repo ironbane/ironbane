@@ -32,7 +32,7 @@ angular
                         var meshComponent = entity.getComponent('mesh');
 
                         meshComponent._meshLoadTask.then(function(mesh) {
-                            me.octree.add(mesh);
+                            // me.octree.add(mesh);
                         });
                     });
 
@@ -40,7 +40,7 @@ angular
                         var meshComponent = entity.getComponent('mesh');
 
                         meshComponent._meshLoadTask.then(function(mesh) {
-                            me.octree.remove(mesh);
+                            // me.octree.remove(mesh);
                         });
                     });
 
