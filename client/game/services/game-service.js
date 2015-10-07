@@ -27,9 +27,9 @@ angular
             var _defaultSystems = [ // order matters
                 'NameMesh',
                 'Mesh',
+                'Octree',
                 'RigidBody',
                 'Quad',
-                'Octree',
                 'CollisionReporter',
                 'Damage', // needs to be higher than anything checking the applied dmg (Inventory)
                 'Steering',

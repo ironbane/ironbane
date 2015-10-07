@@ -62,11 +62,10 @@ angular
                 },
                 update: function() {
                     var world = this.world,
-                        shadows = world.getEntities('shadow'),
-                        octreeEnts = this.world.getEntities('octree');
+                        shadows = world.getEntities('shadow');
 
                     shadows.forEach(function(shadowEnt) {
-                        var shadowComponent = shadowEnt.getComponent('shadow')
+                        var shadowComponent = shadowEnt.getComponent('shadow');
                         var shadow = shadowComponent.shadow;
 
                         if (shadowComponent.simple) {
@@ -83,17 +82,9 @@ angular
                             shadow.position.copy(shadowEnt.position.clone().add(new THREE.Vector3(0, -simpleHeight+0.01, 0)));
                         }
                         else {
-                            octreeEnts.forEach(function(entity) {
-                                var octreeComponent = entity.getComponent('octree');
-
-                                if (octreeComponent.octreeResultsNearPlayer) {
-                                    var ray = new THREE.Raycaster(shadowEnt.position, new THREE.Vector3(0, -1, 0));
-
-                                    var intersections = ray.intersectOctreeObjects(octreeComponent.octreeResultsNearPlayer);
-
-                                    if (intersections.length) {
-                                        shadow.position.copy(intersections[0].point.add(new THREE.Vector3(0, 0.01, 0)));
-                                    }
+                            world.getSystem('octree').rayCast(shadowEnt.position, new THREE.Vector3(0, -1, 0), 'underPlayer', function (intersections) {
+                                if (intersections.length) {
+                                    shadow.position.copy(intersections[0].point.add(new THREE.Vector3(0, 0.01, 0)));
                                 }
                             });
                         }

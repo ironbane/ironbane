@@ -65,7 +65,6 @@ angular
                     var input = this.world.getSystem('input');
 
                     var mouseHelpers = this.world.getEntities('mouseHelper');
-                    var entitiesWithOctree = this.world.getEntities('octree');
                     var entitiesWithCamera = this.world.getEntities('camera');
 
                     // update the stored mouse pos (so I can fake it with the gamepad)
@@ -80,36 +79,31 @@ angular
                         var mouseHelperData = mouseHelperEnt.getComponent('mouseHelper');
                         var mesh = mouseHelperData.mesh;
 
-                        if (entitiesWithOctree.length && entitiesWithCamera.length) {
+                        if (entitiesWithCamera.length) {
                             var foundHitPoint = null;
+                            var activeCamera = entitiesWithCamera[0].getComponent('camera')._camera;
 
-                            entitiesWithOctree.forEach(function(octreeEntity) {
-                                var activeCamera = entitiesWithCamera[0].getComponent('camera')._camera;
-                                var octree = octreeEntity.getComponent('octree').octreeResultsNearPlayer;
+                            if (activeCamera) {
+                                //var mouse = input.mouse.getPosition();
+                                var mouse = sys._mousePos;
+                                var vector = new THREE.Vector3(mouse.x, mouse.y, 1);
+                                vector.unproject( activeCamera );
 
-                                if (activeCamera && octree) {
-                                    //var mouse = input.mouse.getPosition();
-                                    var mouse = sys._mousePos;
-                                    var vector = new THREE.Vector3(mouse.x, mouse.y, 1);
-                                    vector.unproject( activeCamera );
-
-                                    ray.set(activeCamera.position, vector.sub(activeCamera.position).normalize());
-
-                                    var intersections = ray.intersectOctreeObjects(octree);
-
+                                sys.world.getSystem('octree').rayCast(activeCamera.position, vector.sub(activeCamera.position).normalize(), 'mouseHelper', function (intersections) {
                                     if (intersections.length) {
                                         if (!foundHitPoint ||
                                             activeCamera.position.distanceToSquared(intersections[0].point) < activeCamera.position.distanceToSquared(foundHitPoint)) {
                                             foundHitPoint = intersections[0].point;
                                         }
                                     }
-                                }
-                            });
+                                });
+                            }
 
                             if (foundHitPoint) {
                                 mouseHelperData.target.copy(foundHitPoint);
                             }
                         }
+
 
                         var toTarget = mouseHelperData.target.clone().sub(mouseHelperEnt.position);
 

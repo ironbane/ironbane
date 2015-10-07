@@ -154,43 +154,27 @@ angular
 
                         // Make sure the cam doesn't go through walls here
                         // by raycasting
-                        var entitiesWithOctree = this.world.getEntities('octree');
-
                         var me = this;
 
                         me.camDistanceLimit = originalThirdPersonPositionLength;
 
-                        if (entitiesWithOctree.length) {
-                            entitiesWithOctree.forEach(function(octreeEntity) {
-                                var octree = octreeEntity.getComponent('octree').octreeResultsNearPlayer;
+                        var normalizedThirdPersonPosition = me.thirdPersonPosition.clone();
+                        normalizedThirdPersonPosition.normalize();
 
-                                if (octree) {
-                                    var normalizedThirdPersonPosition = me.thirdPersonPosition.clone();
-                                    normalizedThirdPersonPosition.normalize();
+                        this.world.getSystem('octree').rayCast(me.entity.position, normalizedThirdPersonPosition, 'camWall', function (intersections) {
+                            if (intersections.length) {
+                                var dist = intersections[0].distance;
+                                // debug.watch('cam ray distance', dist);
 
-                                    var ray = new THREE.Raycaster(me.entity.position, normalizedThirdPersonPosition);
-
-                                    // debug.drawVector(normalizedThirdPersonPosition, me.entity.position);
-
-                                    var intersections = ray.intersectOctreeObjects(octree);
-
-                                    if (intersections.length) {
-                                        var dist = intersections[0].distance;
-                                        // debug.watch('cam ray distance', dist);
-
-                                        if (dist < originalThirdPersonPositionLength) {
-                                        	me.camDistanceLimit = dist;
-                                        }
-                                    }
-
-                                    me.thirdPersonPosition.normalize();
-                                    me.thirdPersonPosition.y = originalThirdPersonPositionNormalizedYCoordinate;
-                                    me.thirdPersonPosition.multiplyScalar(me.camDistanceLimit);
-
-                                    // debug.watch('camDistanceLimit', me.camDistanceLimit);
+                                if (dist < originalThirdPersonPositionLength) {
+                                    me.camDistanceLimit = dist;
                                 }
-                            });
-                        }
+                            }
+
+                            me.thirdPersonPosition.normalize();
+                            me.thirdPersonPosition.y = originalThirdPersonPositionNormalizedYCoordinate;
+                            me.thirdPersonPosition.multiplyScalar(me.camDistanceLimit);
+                        });
 
                         var worldPos = new THREE.Vector3();
                         worldPos.setFromMatrixPosition(localCam.matrixWorld);
