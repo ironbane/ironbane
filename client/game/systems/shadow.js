@@ -82,7 +82,7 @@ angular
                             shadow.position.copy(shadowEnt.position.clone().add(new THREE.Vector3(0, -simpleHeight+0.01, 0)));
                         }
                         else {
-                            world.getSystem('octree').rayCast(shadowEnt.position, new THREE.Vector3(0, -1, 0), 'underPlayer', function (intersections) {
+                            world.getSystem('rigidbody').rayCast(shadowEnt.position, new THREE.Vector3(0, -1, 0), 'underPlayer', function (intersections) {
                                 if (intersections.length) {
                                     shadow.position.copy(intersections[0].point.add(new THREE.Vector3(0, 0.01, 0)));
                                 }

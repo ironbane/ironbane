@@ -161,10 +161,10 @@ angular
                         var normalizedThirdPersonPosition = me.thirdPersonPosition.clone();
                         normalizedThirdPersonPosition.normalize();
 
-                        this.world.getSystem('octree').rayCast(me.entity.position, normalizedThirdPersonPosition, 'camWall', function (intersections) {
+                        this.world.getSystem('rigidbody').rayCast(me.entity.position.clone().add(normalizedThirdPersonPosition.clone().multiplyScalar(0.55)),
+                            normalizedThirdPersonPosition, 'camWall', function (intersections) {
                             if (intersections.length) {
-                                var dist = intersections[0].distance;
-                                // debug.watch('cam ray distance', dist);
+                                var dist = intersections[0].point.sub(me.entity.position).length();
 
                                 if (dist < originalThirdPersonPositionLength) {
                                     me.camDistanceLimit = dist;

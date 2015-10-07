@@ -89,7 +89,7 @@ angular
                                 var vector = new THREE.Vector3(mouse.x, mouse.y, 1);
                                 vector.unproject( activeCamera );
 
-                                sys.world.getSystem('octree').rayCast(activeCamera.position, vector.sub(activeCamera.position).normalize(), 'mouseHelper', function (intersections) {
+                                sys.world.getSystem('rigidbody').rayCast(activeCamera.position, vector.sub(activeCamera.position).normalize(), 'mouseHelper', function (intersections) {
                                     if (intersections.length) {
                                         if (!foundHitPoint ||
                                             activeCamera.position.distanceToSquared(intersections[0].point) < activeCamera.position.distanceToSquared(foundHitPoint)) {

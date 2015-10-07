@@ -288,12 +288,6 @@ angular
                 return triangles;
             };
 
-            var RaycastResult = function(entity, point, normal) {
-                this.entity = entity;
-                this.point = point;
-                this.normal = normal;
-            };
-
             var RigidBodySystem = System.extend({
                 addedToWorld: function(world) {
                     var sys = this;
@@ -424,32 +418,74 @@ angular
                 // need to have our own raycast solution. threeoctree worked very well in old IB
                 // so we'll use that instead
 
-                // raycastFirst: function (start, end, callback) {
-                //     ammoRayStart.setValue(start.x, start.y, start.z);
-                //     ammoRayEnd.setValue(end.x, end.y, end.z);
-                //     var rayCallback = new Ammo.ClosestRayResultCallback(ammoRayStart, ammoRayEnd);
+                rayCast: function (start, end, name, callback) {
 
-                //     PhysicsWorld.rayTest(ammoRayStart, ammoRayEnd, rayCallback);
-                //     if (rayCallback.hasHit()) {
-                //         var collisionObjPtr = rayCallback.get_m_collisionObject(); // jshint ignore:line
-                //         var collisionObj = Ammo.wrapPointer(collisionObjPtr, Ammo.btCollisionObject);
-                //         var body = Ammo.castObject(collisionObj, Ammo.btRigidBody);
-                //         var point = rayCallback.get_m_hitPointWorld(); // jshint ignore:line
-                //         var normal = rayCallback.get_m_hitNormalWorld(); // jshint ignore:line
+                    var vecEndWorldSpace = start.clone().add(end.clone().multiplyScalar(100));
 
-                //         if (body) {
-                //             callback(new RaycastResult(
-                //                             body.entity,
-                //                             new THREE.Vector3(point.x(), point.y(), point.z()),
-                //                             new THREE.Vector3(normal.x(), normal.y(), normal.z())
-                //                         )
-                //                     );
-                //         }
-                //     }
+                    ammoRayStart.setValue(start.x, start.y, start.z);
+                    ammoRayEnd.setValue(vecEndWorldSpace.x, vecEndWorldSpace.y, vecEndWorldSpace.z);
+                    var rayCallback = new Ammo.ClosestRayResultCallback(ammoRayStart, ammoRayEnd);
 
-                //     Ammo.destroy(rayCallback);
-                // },
+                    // var filterGroup = rayCallback.get_m_collisionFilterGroup();
+                    // console.log(filterGroup);
 
+                    rayCallback.set_m_collisionFilterGroup(2);
+
+                    // var filterGroup = rayCallback.get_m_collisionFilterGroup();
+                    // console.log(filterGroup);
+
+                    PhysicsWorld.rayTest(ammoRayStart, ammoRayEnd, rayCallback);
+                    if (rayCallback.hasHit()) {
+                        var collisionObjPtr = rayCallback.get_m_collisionObject(); // jshint ignore:line
+                        var collisionObj = Ammo.wrapPointer(collisionObjPtr, Ammo.btCollisionObject);
+                        var body = Ammo.castObject(collisionObj, Ammo.btRigidBody);
+                        var point = rayCallback.get_m_hitPointWorld(); // jshint ignore:line
+                        var normal = rayCallback.get_m_hitNormalWorld(); // jshint ignore:line
+
+                        // var ammoRayStartVec = new THREE.Vector3(ammoRayStart.x(), ammoRayStart.y(), ammoRayStart.z())
+                        // var ammoRayEndVec = new THREE.Vector3(ammoRayEnd.x(), ammoRayEnd.y(), ammoRayEnd.z())
+                        // console.log(ammoRayStartVec, ammoRayEndVec);
+
+                        var pointVec = new THREE.Vector3(point.x(), point.y(), point.z())
+                        var normalVec = new THREE.Vector3(normal.x(), normal.y(), normal.z());
+
+                        if (body) {
+                            callback([{
+                                entity: body.entity,
+                                point: pointVec,
+                                normal: normalVec
+                            }]);
+                        }
+                    }
+                    else {
+                        callback([]);
+                    }
+
+                    Ammo.destroy(rayCallback);
+                },
+                getInfo: function(entity) {
+                    var rigidBodyComponent = entity.getComponent('rigidBody');
+
+                    if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
+                        var body = rigidBodyComponent.rigidBody;
+                        var motionState = body.getMotionState();
+                        // if (motionState) { // STATIC (or mass === 0) should not have this! but it does...
+                            var trans = new Ammo.btTransform();
+                            motionState.getWorldTransform(trans);
+
+                            var pos = trans.getOrigin();
+                            var rot = trans.getRotation();
+
+                            var pos = new THREE.Vector3().set(pos.x(), pos.y(), pos.z());
+                            var quat = new THREE.Quaternion().set(rot.x(), rot.y(), rot.z(), rot.w());
+
+                            return {
+                                pos: pos,
+                                quat: quat,
+                            }
+                        // }
+                    }
+                },
                 syncEntities: function() {
                     var rigidBodies = this.world.getEntities('rigidBody');
 

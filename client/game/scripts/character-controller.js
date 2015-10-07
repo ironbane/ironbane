@@ -177,9 +177,9 @@ angular
 
                 var me = this;
 
-                this.world.getSystem('octree').rayCast(me.entity.position, new THREE.Vector3(0, -1, 0), 'underPlayer', function (intersections) {
+                this.world.getSystem('rigidbody').rayCast(me.entity.position, new THREE.Vector3(0, -1, 0), 'underPlayer', function (intersections) {
                     if (intersections.length) {
-                        if (intersections[0].distance <= 0.55) {
+                        if (intersections[0].point.inRangeOf(me.entity.position, 0.55)) {
                             // We can jump when the ray distance is less than 0.5, since the player pos is at 0.5 and is 1 in height.
                             // Add 0.05 to take into account slopes, which have a small offset when casting rays downwards = 0.55
                             me.canJump = true;

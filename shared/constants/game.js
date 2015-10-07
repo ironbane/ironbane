@@ -28,6 +28,7 @@ angular
             npcs: 8,
             projectiles: 16,
             pickups: 32,
+            raycasts: 64,
             all: 65535
         },
         rules: {
