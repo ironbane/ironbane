@@ -24,6 +24,11 @@ angular
 
                     this._timing = {};
 
+                    this.entityTree = null;
+                    this.allEntities = null;
+                    this.knownEntities = null;
+
+
                     if (Meteor.isClient) {
                         this.renderer = new THREE.WebGLRenderer({
                             precision: 'lowp'
@@ -57,6 +62,103 @@ angular
                 },
                 getLoadPromise: function () {
                     return this._loadTask;
+                },
+                updateEntitiesLOD: function () {
+
+                    var world = this;
+
+                    world.allEntities = [];
+
+                    this.entityTree.traverse(function (entity) {
+                        if (entity.parent && entity.children.length) {
+                            entity._worldPosition = new THREE.Vector3().applyMatrix4(entity.matrixWorld);
+                            entity.parent = null;
+
+                            entity._size = 1.0;
+
+                            var promise = $q.when();
+                            entity.children.forEach(function (child) {
+                                if (child._components.$mesh) {
+                                    promise = promise
+                                        .then(function () {
+                                            return world.getSystem('mesh').checkIfGeoAndMatsAreThere(child._components.$mesh).then(function (data) {
+                                                var geo = data.geometry;
+                                                geo.computeBoundingSphere();
+
+                                                var worldScale = entity.getWorldScale();
+
+                                                entity._size = Math.max(entity._size, geo.boundingSphere.radius * worldScale.length());
+                                            });
+                                        });
+                                }
+                            });
+
+                            promise.then(function () {
+                                // console.log(entity.name, entity._size);
+
+                                entity._lodDistance = 10000;
+
+                                if (entity._size < 3) {
+                                    entity._lodDistance = 50;
+                                }
+                                else if (entity._size < 30) {
+                                    entity._lodDistance = 100;
+                                }
+                                else if (entity._size < 100) {
+                                    entity._lodDistance = 200;
+                                }
+
+                                world.allEntities.push(entity);
+                            })
+                            .then(null, function(err) {
+                                console.log(err.stack);
+                            });
+
+                        }
+                    });
+
+                },
+                update: function (dt, elapsed, timestamp) {
+                    this._super(dt, elapsed, timestamp);
+
+                    if (Meteor.isClient) {
+                        this.updateRange();
+                    }
+                },
+                updateRange: function () {
+
+                    var world = this;
+
+                    var entitiesWithCamera = world.getEntities('camera');
+
+                    if (entitiesWithCamera.length) {
+                        var activeCamera = entitiesWithCamera[0].getComponent('camera')._camera;
+
+                        var newlyFoundKnownEntities = [];
+
+                        this.allEntities.forEach(function (entity) {
+                            if (entity._worldPosition.inRangeOf(activeCamera.position, entity._lodDistance)) {
+                                newlyFoundKnownEntities.push(entity);
+                            }
+                        });
+
+                        _.each(this.knownEntities, function (knownEntity) {
+                            if (!_.contains(newlyFoundKnownEntities, knownEntity)) {
+                                // console.log('remove', knownEntity)
+                                world.removeEntity(knownEntity);
+                            }
+                        });
+
+                        _.each(newlyFoundKnownEntities, function (knownEntity) {
+                            if (!_.contains(world.knownEntities, knownEntity)) {
+                                // console.log('add', knownEntity)
+                                world.addEntity(knownEntity);
+                            }
+                        });
+
+                        world.knownEntities = newlyFoundKnownEntities;
+                    }
+
                 },
                 load: function(sceneName) {
                     var world = this;
@@ -129,7 +231,16 @@ angular
                         .then(function(json) {
                             //$log.log('got json: ', Object.keys(json));
                             return EntityBuilder.load(json, sceneName).then(function (entityTree) {
-                                world.addEntity(entityTree);
+
+                                world.entityTree = entityTree;
+
+                                if (Meteor.isServer) {
+                                    world.addEntity(entityTree);
+                                }
+                                else {
+                                    world.updateEntitiesLOD();
+                                    world.updateRange();
+                                }
 
                                 var rigidBodyLoadPromises = [];
 

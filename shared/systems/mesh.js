@@ -166,6 +166,7 @@ angular
                     world.entityAdded('mesh').add(onMeshAdded.bind(this));
                     world.entityRemoved('mesh').add(onMeshRemoved.bind(this));
                 },
+                checkIfGeoAndMatsAreThere: checkIfGeoAndMatsAreThere,
                 update: function() {
                     // nothing to do for meshes
                 }
