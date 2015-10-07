@@ -85,7 +85,7 @@ angular
                             if (toTarget.lengthSq() <= this.attackRange * this.attackRange) {
                                 var targetVector = this.entity.position.clone().add(toTarget);
 
-                                fighterComponent.attack(targetVector);
+                                fighterComponent.attack(targetVector, this.targetEntity);
                             }
                         }
                     }

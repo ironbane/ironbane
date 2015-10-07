@@ -133,7 +133,7 @@ angular
                             }
                         }
 
-                        console.log('collision: ', entity.uuid, attacker.name + '[' + attacker.uuid + ']', victim.name + '[' + victim.uuid + ']', projectile._canDeliverEffect);
+                        console.log('projectile[' + entity.uuid + ']', attacker.name + '[' + attacker.uuid + ']', victim.name + '[' + victim.uuid + ']', projectile._canDeliverEffect, weapon.name);
 
                         // always after first contact, we should remove this
                         entity.removeComponent('collisionReporter');
