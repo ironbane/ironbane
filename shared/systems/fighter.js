@@ -56,11 +56,14 @@ angular
                                 // Do a regular dash
                                 var damageSystem = world.getSystem('damage');
                                 var toTarget = targetPosition.clone().sub(entity.position);
+                                var toTargetEntity = targetEntity.position.clone().sub(entity.position);
                                 var direction = toTarget.normalize();
 
                                 if (toTarget.lengthSq() <= item.range * item.range) {
                                     damageSystem.dash(entity, direction, 'dealDamage');
-                                    if (targetEntity && (targetEntity.hasComponent('netSend') || entity.hasComponent('netSend'))) {
+                                    //console.log('dash: ', item.name, toTarget.lengthSq(), ' <= ', (item.range * item.range));
+                                    if (targetEntity && (toTargetEntity.lengthSq() <= item.range * item.range) && (targetEntity.hasComponent('netSend') || entity.hasComponent('netSend'))) {
+                                        //console.log('dash hit: ', item.name, toTargetEntity.lengthSq(), ' <= ', (item.range * item.range));
                                         world.publish('combat:damageEntity', targetEntity, entity, item);
                                     }
                                 }
