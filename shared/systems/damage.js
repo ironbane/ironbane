@@ -125,35 +125,77 @@ angular
             },
             addDamageParticles: function(type, amount, position) {
 
-                var halfParticle = false;
-                if (amount % 1 === 0.5) {
-                    amount -= 0.5;
-                    halfParticle = true;
+                var additionalType = null;
+
+                var rest = amount % 1;
+
+                if (rest >= 0.125 && rest < 0.375) {
+                    additionalType = 'quarter';
                 }
+                else if (rest >= 0.375 && rest < 0.625) {
+                    additionalType = 'half';
+                }
+                else if (rest >= 0.625 && rest < 0.875) {
+                    additionalType = 'threequarter';
+                }
+
+                amount = Math.floor(amount);
 
                 switch (type) {
                     case 'health':
-                        this._spawnParticle(1, 4, amount, position);
-                        if (halfParticle) {
+                        if (amount) {
+                            this._spawnParticle(1, 4, amount, position);
+                        }
+                        if (additionalType === 'half') {
                             this._spawnParticle(3, 4, 1, position);
+                        }
+                        if (additionalType === 'quarter') {
+                            this._spawnParticle(3, 5, 1, position);
+                        }
+                        if (additionalType === 'threequarter') {
+                            this._spawnParticle(3, 6, 1, position);
                         }
                         break;
                     case 'healthRegen':
-                        this._spawnParticle(0, 4, amount, position);
-                        if (halfParticle) {
+                        if (amount) {
+                            this._spawnParticle(0, 4, amount, position);
+                        }
+                        if (additionalType === 'half') {
                             this._spawnParticle(2, 4, 1, position);
+                        }
+                        if (additionalType === 'quarter') {
+                            this._spawnParticle(2, 5, 1, position);
+                        }
+                        if (additionalType === 'threequarter') {
+                            this._spawnParticle(2, 6, 1, position);
                         }
                         break;
                     case 'armor':
-                        this._spawnParticle(0, 3, amount, position);
-                        if (halfParticle) {
+                        if (amount) {
+                            this._spawnParticle(0, 3, amount, position);
+                        }
+                        if (additionalType === 'half') {
                             this._spawnParticle(3, 3, 1, position);
+                        }
+                        if (additionalType === 'quarter') {
+                            this._spawnParticle(3, 8, 1, position);
+                        }
+                        if (additionalType === 'threequarter') {
+                            this._spawnParticle(3, 9, 1, position);
                         }
                         break;
                     case 'armorRegen':
-                        this._spawnParticle(1, 3, amount, position);
-                        if (halfParticle) {
+                        if (amount) {
+                            this._spawnParticle(1, 3, amount, position);
+                        }
+                        if (additionalType === 'half') {
                             this._spawnParticle(2, 3, 1, position);
+                        }
+                        if (additionalType === 'quarter') {
+                            this._spawnParticle(2, 8, 1, position);
+                        }
+                        if (additionalType === 'threequarter') {
+                            this._spawnParticle(2, 9, 1, position);
                         }
                         break;
                 }
