@@ -284,6 +284,7 @@ angular
                             time = (DASH_TIME*0.5)-(time-(DASH_TIME*0.5));
                         }
                         time /= DASH_TIME;
+                        time = Math.max(time, 0);
                         quadComponent.offsetPosition.copy(new THREE.Vector3().lerp(damageableComponent.dashDirection, time))
 
                         if (wieldItemComponent) {
