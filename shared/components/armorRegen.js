@@ -8,7 +8,7 @@ angular
             $componentsProvider.register({
                 'armorRegen': {
                     rate: 2.0,
-                    amount: 0.5
+                    amount: 0.25
                 }
             });
         }

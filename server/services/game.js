@@ -48,6 +48,12 @@ angular
                     doc.components.netSend = {};
                     doc.components.netRecv = {};
 
+                    // Make sure regen stays the same across updates
+                    doc.components.armorRegen = {
+                        rate: 2.0,
+                        amount: 0.25
+                    };
+
                     var ent = EntityBuilder.build(doc);
                     if (ent) {
                         // it's unlikely that the server will not want to send an entity
