@@ -121,7 +121,7 @@ angular
                 update: function (dt, elapsed, timestamp) {
                     this._super(dt, elapsed, timestamp);
 
-                    if (Meteor.isClient) {
+                    if (Meteor.isClient && false) {
                         this.updateRange();
                     }
                 },
@@ -234,7 +234,7 @@ angular
 
                                 world.entityTree = entityTree;
 
-                                if (Meteor.isServer) {
+                                if (Meteor.isServer || true) {
                                     world.addEntity(entityTree);
                                 }
                                 else {
