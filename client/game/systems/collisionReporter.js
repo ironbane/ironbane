@@ -154,7 +154,6 @@ angular
                 this.normal = contactPoint.normal;
             };
 
-            /* jshint ignore:start */
             var createContactPointFromAmmo = function(contactPoint) {
                 var localPointA = new THREE.Vector3(contactPoint.get_m_localPointA().x(), contactPoint.get_m_localPointA().y(), contactPoint.get_m_localPointA().z());
                 var localPointB = new THREE.Vector3(contactPoint.get_m_localPointB().x(), contactPoint.get_m_localPointB().y(), contactPoint.get_m_localPointB().z());
@@ -172,7 +171,6 @@ angular
                 var normal = new THREE.Vector3(-contactPoint.get_m_normalWorldOnB().x(), -contactPoint.get_m_normalWorldOnB().y(), -contactPoint.get_m_normalWorldOnB().z());
                 return new ContactPoint(localPointB, localPointA, pointB, pointA, normal);
             };
-            /* jshint ignore:end */
 
             var storeCollision = function(entity, other) {
                 var isNewCollision = false;
@@ -239,6 +237,16 @@ angular
                         collisionReporterComponent.triggerLeave = new Signal();
                     });
 
+                    world.entityRemoved('collisionReporter').add(function(entity) {
+                        // clean up any left over events
+                        var component = entity.getComponent('collisionReporter');
+                        delete component.contact;
+                        delete component.collisionStart;
+                        delete component.collisionEnd;
+                        delete component.triggerEnter;
+                        delete component.triggerLeave;
+                    });
+
                 },
                 checkCollisions: function() {
 
@@ -287,10 +295,6 @@ angular
                                     //     this.fire(EVENT_CONTACT, new SingleContactResult(e0, e1, cachedContactPoint));
                                     // }
 
-                                    // jsHint complains here even though they are clearly defined above
-                                    // no idea why...
-                                    // jshint ignore:start
-
                                     if (useContacts0) {
                                         cachedContactPoint = cachedContactPoint || createContactPointFromAmmo(contactPoint);
                                         contacts0.push(cachedContactPoint);
@@ -299,7 +303,6 @@ angular
                                     if (useContacts1) {
                                         contacts1.push(createReverseContactPointFromAmmo(contactPoint));
                                     }
-                                    // jshint ignore:end
                                 }
 
                                 handleEntityCollision(e0, e1, contacts0, collisionFlags0);
