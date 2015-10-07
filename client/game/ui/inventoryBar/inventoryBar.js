@@ -179,6 +179,12 @@ angular
                     inventorySystem.onItemAdded.add(onChange);
                     inventorySystem.onItemRemoved.add(onChange);
 
+                    $scope.$on("$destroy", function() {
+                        inventorySystem.onEquipItem.remove(onChange);
+                        inventorySystem.onItemAdded.remove(onChange);
+                        inventorySystem.onItemRemoved.remove(onChange);
+                    });
+
                     $scope.$watch(function() {
                         return ctrl.entity;
                     }, function(entity) {
