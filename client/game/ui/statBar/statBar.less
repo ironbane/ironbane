@@ -1,18 +1,20 @@
 .stats-container {display: inline-block; margin: 8px 0 0 8px;}
 
+
+@stat-sprite-enlarging: 3;
+@stat-sprite-dimension: 16px;
+@stat-sprite-shortify: 10px;
+
 .statBar {
     margin: 0;
     padding: 0;
-    li {list-style: none;display: inline-block; margin: 2px;}
+    margin-left: @stat-sprite-shortify * 0.5;
+    li {list-style: none;display: inline-block; margin: 0px;}
 }
 
-@stat-sprite-enlarging: 2;
-@stat-sprite-dimension: 16px;
-
-
 .stat-sprite(@x: 0, @y: 0, @width: 0, @height: 0) {
-    background-position: -@x*@stat-sprite-dimension*@stat-sprite-enlarging -@y*@stat-sprite-dimension*@stat-sprite-enlarging;
-    width: @width * @stat-sprite-enlarging;
+    background-position: -(@x*@stat-sprite-dimension*@stat-sprite-enlarging + (@stat-sprite-shortify * 0.5)) -@y*@stat-sprite-dimension*@stat-sprite-enlarging;
+    width: @width * @stat-sprite-enlarging - (@stat-sprite-shortify);
     height: @height * @stat-sprite-enlarging;
 }
 

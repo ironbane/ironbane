@@ -54,6 +54,22 @@ angular
                         amount: 0.25
                     };
 
+                    var name = doc.name;
+
+                    if (Roles.userIsInRole(doc.owner, ['game-master'])) {
+                        name = '<GM> ' + name;
+
+                        // Later can add additional things like clans, ranks etc
+                    }
+
+                    doc.components['name-mesh'] = {
+                        text: name,
+                        color: Roles.userIsInRole(doc.owner, ['game-master']) ? '#4f87ee' : 'aqua',
+                        stroke: '#06452d',
+                        fontsize: 52,
+                        fontface: 'volter_goldfishregular'
+                    };
+
                     var ent = EntityBuilder.build(doc);
                     if (ent) {
                         // it's unlikely that the server will not want to send an entity

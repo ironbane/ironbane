@@ -1,6 +1,18 @@
 @import "mixins.import.less";
 @import "variables.import.less";
 
+@font-face {
+    font-family: 'volter_goldfishregular';
+    src: url('fonts/volter__28goldfish_29/volter__28goldfish_29-webfont.eot');
+    src: url('fonts/volter__28goldfish_29/volter__28goldfish_29-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/volter__28goldfish_29/volter__28goldfish_29-webfont.woff2') format('woff2'),
+         url('fonts/volter__28goldfish_29/volter__28goldfish_29-webfont.woff') format('woff'),
+         url('fonts/volter__28goldfish_29/volter__28goldfish_29-webfont.ttf') format('truetype'),
+         url('fonts/volter__28goldfish_29/volter__28goldfish_29-webfont.svg#volter_goldfishregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
 	margin: 0;
 	padding: 0;
@@ -10,7 +22,7 @@ body {
 	}
 
     overflow:hidden;
-    font-family: "Verdana",Verdana, Arial, Helvetica, sans-serif;
+    font-family: "volter_goldfishregular", Verdana;
     font-weight:bold;
     font-size:20px;
     color: @textColor;
@@ -35,12 +47,13 @@ strong {
 		border: 3px solid #255449;
 		display: block;
 		color: #37ffac;
-		font-family: Verdana;
+		font-family: "volter_goldfishregular", Verdana;
 		font-size: 19px;
 		font-weight: bold;
 		padding: 5px 0;
+        padding-top: 7px;
 		text-decoration: none;
-		text-shadow: 2px 1px 0 @borderColor;
+		text-shadow: 2px 2px 0 @borderColor;
 		// width: 200px;
 		background: #357768;
 		// margin: 25px auto;
@@ -61,7 +74,7 @@ strong {
 			border: 3px solid #33423e;
 			color: @borderColor;
 			font-weight: normal;
-			text-shadow: 1px 1px 0px #abe0cc;
+			text-shadow: 2px 2px 0px #abe0cc;
 		}
 		&:disabled {
 			background-color: #677874;
@@ -75,12 +88,12 @@ strong {
 		border: 3px solid #1f453c;
 		display: block;
 		color: #37ffac;
-		font-family: Verdana;
+		font-family: "volter_goldfishregular", Verdana;
 		font-size: 19px;
 		font-weight: bold;
 		padding: 5px 0px 5px 5px;
 		text-decoration: none;
-		text-shadow: 2px 1px 0 @borderColor;
+		text-shadow: 2px 2px 0 @borderColor;
 		// width: 200px;
 		background: lighten(#357768, 10%);
 		// margin: 25px auto;
@@ -99,27 +112,27 @@ strong {
 		&::-webkit-input-placeholder { /* WebKit browsers */
 		    color:    darken(@primary3, 10%);
 		    padding-left: 5px;
-		    text-shadow: 1px 1px 0 #10dd8f;
+		    text-shadow: 2px 2px 0 #10dd8f;
 		    font-style: italic;
 		}
 		&:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
 		   color:    darken(@primary3, 10%);
 		   padding-left: 5px;
-		   text-shadow: 1px 1px 0 #10dd8f;
+		   text-shadow: 2px 2px 0 #10dd8f;
 		   opacity:  1;
 		   font-style: italic;
 		}
 		&::-moz-placeholder { /* Mozilla Firefox 19+ */
 		   color:    darken(@primary3, 10%);
 		   padding-left: 5px;
-		   text-shadow: 1px 1px 0 #10dd8f;
+		   text-shadow: 2px 2px 0 #10dd8f;
 		   opacity:  1;
 		   font-style: italic;
 		}
 		&:-ms-input-placeholder { /* Internet Explorer 10+ */
 		   color:    darken(@primary3, 10%);
 		   padding-left: 5px;
-		   text-shadow: 1px 1px 0 #10dd8f;
+		   text-shadow: 2px 2px 0 #10dd8f;
 		   font-style: italic;
 		}
 	}

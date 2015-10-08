@@ -25,16 +25,17 @@ angular
                         var ctx = canvas.getContext('2d');
                         var component = entity.getComponent('name-mesh');
 
-                        ctx.font = 'Bold ' + component.fontsize + 'px ' + component.fontface;
+                        ctx.font = 'Bold ' + component.fontsize + 'px "' + component.fontface + '"';
 
                         ctx.textAlign = 'center';
 
                         ctx.fillStyle = component.color;
-                        ctx.lineWidth = 3;
+                        ctx.lineWidth = 8;
                         ctx.strokeStyle = component.stroke;
 
-                        ctx.fillText(component.text, 400, component.fontsize);
                         ctx.strokeText(component.text, 400, component.fontsize);
+                        ctx.fillText(component.text, 400, component.fontsize);
+
 
                         // canvas contents will be used for a texture
                         var texture = new THREE.Texture(canvas);

@@ -40,47 +40,55 @@ inventory-bar {
     }
 }
 
+@stat-enlargement-factor: 3.0;
+
 #playerIronblood {
     margin-top: 6px;
-    margin-left: 2px;
+    margin-left: 0px;
     i.ironblood-icon {
-        width: 16px * 2.0;
-        height: 16px * 2.0;
+        width: 16px * @stat-enlargement-factor;
+        height: 16px * @stat-enlargement-factor;
         background-image: url(images/spritesheets/items.png);
         background-repeat: no-repeat;
-        background-size: (256px * 2.0) (2048px * 2.0);
+        background-size: (256px * @stat-enlargement-factor) (2048px * @stat-enlargement-factor);
         image-rendering: pixelated;
         display: inline-block;
-        background-position: (12 * -16px * 2.0) (114 * -16px * 2.0);
+        background-position: (12 * -16px * @stat-enlargement-factor) (114 * -16px * @stat-enlargement-factor);
     }
     span {
+        font-size: 25px;
         position: relative;
+        font-family: 'volter_goldfishregular';
         color: @primary4;
-        left: 5px;
-        top: -7px;
-        text-shadow: 1px 1px 0px spin(@primary1, 140%), -1px 1px 0px spin(@primary1, 140%), 1px -1px 0px spin(@primary1, 140%), -1px -1px 0px spin(@primary1, 140%);
+        left: 7px;
+        top: -12px;
+        text-rendering: optimizeSpeed;
+        text-shadow: 2px 2px 0px spin(@primary1, 140%), -2px 2px 0px spin(@primary1, 140%), 2px -2px 0px spin(@primary1, 140%), -2px -2px 0px spin(@primary1, 140%);
     }
 }
 
 
 #playerGold {
     margin-top: 6px;
-    margin-left: 2px;
+    margin-left: 0px;
     i.gold-icon {
-        width: 16px * 2.0;
-        height: 16px * 2.0;
+        width: 16px * @stat-enlargement-factor;
+        height: 16px * @stat-enlargement-factor;
         background-image: url(images/ui/stats.png);
         background-repeat: no-repeat;
-        background-size: (64px * 2.0) (256px * 2.0);
+        background-size: (64px * @stat-enlargement-factor) (256px * @stat-enlargement-factor);
         image-rendering: pixelated;
         display: inline-block;
-        background-position: (0 * -16px * 2.0) (5 * -16px * 2.0);
+        background-position: (0 * -16px * @stat-enlargement-factor) (5 * -16px * @stat-enlargement-factor);
     }
     span {
+        font-size: 25px;
         position: relative;
+        font-family: 'volter_goldfishregular';
         color: @primary4;
-        left: 5px;
-        top: -7px;
-        text-shadow: 1px 1px 0px spin(@primary1, 260%), -1px 1px 0px spin(@primary1, 260%), 1px -1px 0px spin(@primary1, 260%), -1px -1px 0px spin(@primary1, 260%);
+        left: 7px;
+        top: -12px;
+        text-rendering: optimizeSpeed;
+        text-shadow: 2px 2px 0px spin(@primary1, 260%), -2px 2px 0px spin(@primary1, 260%), 2px -2px 0px spin(@primary1, 260%), -2px -2px 0px spin(@primary1, 260%);
     }
 }

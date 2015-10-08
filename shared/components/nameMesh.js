@@ -11,7 +11,7 @@ angular
                     color: '#FFFFFF',
                     stroke: '#000000',
                     fontsize: 52,
-                    fontface: 'Verdana'
+                    fontface: 'volter_goldfishregular'
                 }
             });
         }
