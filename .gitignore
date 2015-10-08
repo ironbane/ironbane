@@ -3,3 +3,4 @@ private/workshop
 deploy.sh
 private/*.csv
 settings.json
+public/scene
