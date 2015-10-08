@@ -99,44 +99,42 @@ angular
                 });
 
                 world.entityAdded('projectile', 'collisionReporter').add(function(entity) {
-                    var collsion = entity.getComponent('collisionReporter'),
+                    var collisionReporterComponent = entity.getComponent('collisionReporter'),
                         projectile = entity.getComponent('projectile');
 
-                    collsion.collisionStart.add(function(info) {
+                    collisionReporterComponent.collisionStart.add(function(info) {
                         let victim = info.other,
                             attacker = projectile._owner,
                             weapon = projectile._item;
 
-                        projectile._canDeliverEffect = true;
-
-                        if (attacker && attacker.uuid === victim.uuid) {
-                            projectile._canDeliverEffect = false;
+                        if (!projectile._canDeliverEffect) {
+                            return;
                         }
 
-                        if (projectile._canDeliverEffect && victim.hasComponent('damageable')) {
+                        if (attacker && attacker.uuid === victim.uuid) {
+                            return;
+                        }
+
+                        if (victim.hasComponent('damageable')) {
                             if (attacker.hasComponent('player')) {
                                 if (victim.hasComponent('player') || (victim.hasComponent('fighter') && victim.getComponent('fighter').faction === 'human')) {
-                                    projectile._canDeliverEffect = false;
+                                    return;
                                 }
                             }
 
                             if (!attacker.hasComponent('player')) {
                                 if (attacker.hasComponent('fighter') && victim.hasComponent('fighter') && victim.getComponent('fighter').faction === attacker.getComponent('fighter').faction) {
-                                    projectile._canDeliverEffect = false;
+                                    return;
                                 }
                             }
 
-                            if (projectile._canDeliverEffect) {
-                                if (victim.hasComponent('netSend') || attacker.hasComponent('netSend')) {
-                                    world.publish('combat:damageEntity', victim, attacker, weapon);
-                                }
+                            if (victim.hasComponent('netSend') || attacker.hasComponent('netSend')) {
+                                // console.log('projectile[' + entity.uuid + ']', attacker.name + '[' + attacker.uuid + ']', victim.name + '[' + victim.uuid + ']', projectile._canDeliverEffect, weapon.name);
+                                world.publish('combat:damageEntity', victim, attacker, weapon);
                             }
                         }
 
                         //console.log('projectile[' + entity.uuid + ']', attacker.name + '[' + attacker.uuid + ']', victim.name + '[' + victim.uuid + ']', projectile._canDeliverEffect, weapon.name);
-
-                        // always after first contact, we should remove this
-                        entity.removeComponent('collisionReporter');
                     });
                 });
             },
@@ -153,6 +151,9 @@ angular
                         if (currentVel.lengthSq() > 1.0) {
                             currentVel.normalize();
                             entity.lookAt(entity.position.clone().add(currentVel));
+                        }
+                        else {
+                            entity._canDeliverEffect = false;
                         }
                     }
                 });
