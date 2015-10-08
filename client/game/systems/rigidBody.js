@@ -470,11 +470,10 @@ angular
                         var body = rigidBodyComponent.rigidBody;
                         var motionState = body.getMotionState();
                         // if (motionState) { // STATIC (or mass === 0) should not have this! but it does...
-                            var trans = new Ammo.btTransform();
-                            motionState.getWorldTransform(trans);
+                            motionState.getWorldTransform(btTransform);
 
-                            var pos = trans.getOrigin();
-                            var rot = trans.getRotation();
+                            var pos = btTransform.getOrigin();
+                            var rot = btTransform.getRotation();
 
                             var pos = new THREE.Vector3().set(pos.x(), pos.y(), pos.z());
                             var quat = new THREE.Quaternion().set(rot.x(), rot.y(), rot.z(), rot.w());
@@ -496,11 +495,10 @@ angular
                             var body = rigidBodyComponent.rigidBody;
                             var motionState = body.getMotionState();
                             if (motionState && rigidBodyComponent.mass !== 0) { // STATIC (or mass === 0) should not have this! but it does...
-                                var trans = new Ammo.btTransform();
-                                motionState.getWorldTransform(trans);
+                                motionState.getWorldTransform(btTransform);
 
-                                var pos = trans.getOrigin();
-                                var rot = trans.getRotation();
+                                var pos = btTransform.getOrigin();
+                                var rot = btTransform.getRotation();
 
                                 entity.position.set(pos.x(), pos.y(), pos.z());
                                 if (!rigidBodyComponent.lock.rotation.x && !rigidBodyComponent.lock.rotation.y && !rigidBodyComponent.lock.rotation.z) {
