@@ -55,7 +55,7 @@ angular
                     projectileComponent._owner = world.scene.getObjectByProperty('uuid', projectileComponent.ownerUuid);
 
                     var inventorySystem = world.getSystem('inventory');
-                    projectileComponent._item = inventorySystem.findItemByUuid(projectileComponent._owner, projectileComponent.itemUuid);
+                    projectileComponent._item = inventorySystem.findItemByUuid(projectileComponent._owner, projectileComponent.itemUuid)                    ;
 
                     if (!projectileComponent._owner) {
                         $log.error('Error fetching projectile owner from uuid! ', projectileComponent);
@@ -96,46 +96,15 @@ angular
                     setTimeout(function() {
                         world.removeEntity(entity);
                     }, 5000);
-                });
 
-                world.entityAdded('projectile', 'collisionReporter').add(function(entity) {
-                    var collisionReporterComponent = entity.getComponent('collisionReporter'),
-                        projectile = entity.getComponent('projectile');
+                    var collisionReporterComponent = entity.getComponent('collisionReporter');
+                    if (collisionReporterComponent) {
+                        collisionReporterComponent.collisionStart.add(function() {
+                            entity.removeComponent('collisionReporter');
+                            projectileComponent._canDeliverEffect = false;
+                        });
+                    }
 
-                    collisionReporterComponent.collisionStart.add(function(info) {
-                        let victim = info.other,
-                            attacker = projectile._owner,
-                            weapon = projectile._item;
-
-                        if (!projectile._canDeliverEffect) {
-                            return;
-                        }
-
-                        if (attacker && attacker.uuid === victim.uuid) {
-                            return;
-                        }
-
-                        if (victim.hasComponent('damageable')) {
-                            if (attacker.hasComponent('player')) {
-                                if (victim.hasComponent('player') || (victim.hasComponent('fighter') && victim.getComponent('fighter').faction === 'human')) {
-                                    return;
-                                }
-                            }
-
-                            if (!attacker.hasComponent('player')) {
-                                if (attacker.hasComponent('fighter') && victim.hasComponent('fighter') && victim.getComponent('fighter').faction === attacker.getComponent('fighter').faction) {
-                                    return;
-                                }
-                            }
-
-                            if (victim.hasComponent('netSend') || attacker.hasComponent('netSend')) {
-                                // console.log('projectile[' + entity.uuid + ']', attacker.name + '[' + attacker.uuid + ']', victim.name + '[' + victim.uuid + ']', projectile._canDeliverEffect, weapon.name);
-                                world.publish('combat:damageEntity', victim, attacker, weapon);
-                            }
-                        }
-
-                        //console.log('projectile[' + entity.uuid + ']', attacker.name + '[' + attacker.uuid + ']', victim.name + '[' + victim.uuid + ']', projectile._canDeliverEffect, weapon.name);
-                    });
                 });
             },
             update: function() {
@@ -152,9 +121,57 @@ angular
                             currentVel.normalize();
                             entity.lookAt(entity.position.clone().add(currentVel));
                         }
-                        else {
-                            var projectileComponent = entity.getComponent('projectile');
-                            projectileComponent._canDeliverEffect = false;
+                    }
+
+                    var projectileComponent = entity.getComponent('projectile');
+
+                    // Check for entities that can be hit with this projectile
+                    // apply the effect (e.g. damage but can also be beneficial)
+                    // and flag that we did so
+                    if (projectileComponent &&
+                        projectileComponent._owner &&
+                        projectileComponent._canDeliverEffect) {
+
+                        if (projectileComponent._item && projectileComponent._item.type === 'weapon') {
+                            var damageableEntities = me.world.getEntities('damageable');
+
+                            damageableEntities.forEach(function(damageableEntity) {
+
+                                var fighterComponent = damageableEntity.getComponent('fighter');
+
+                                var hitSize = 1.0;
+
+                                var quadComponent = damageableEntity.getComponent('quad');
+
+                                if (quadComponent) {
+                                    hitSize = (quadComponent.width + quadComponent.height) / 2;
+                                }
+
+                                if (damageableEntity !== projectileComponent._owner &&
+                                    damageableEntity.position.inRangeOf(entity.position, hitSize)) {
+
+                                    // Only allow hits if an NPC + player is involved
+                                    if ((projectileComponent._owner.hasComponent('player') && !damageableEntity.hasComponent('player')) ||
+                                        (!projectileComponent._owner.hasComponent('player') && damageableEntity.hasComponent('player'))) {
+
+                                        // Don't attack human faction NPC
+                                        if (fighterComponent && fighterComponent.faction === 'human') {
+                                            return;
+                                        }
+
+                                        // Only publish if the projectile has something to do with the local client's entities (netSend)
+                                        // Other projectile hit events will be sent over the network
+
+                                        if (damageableEntity.hasComponent('netSend') ||
+                                            projectileComponent._owner.hasComponent('netSend')) {
+
+                                            me.world.publish('combat:damageEntity', damageableEntity, projectileComponent._owner, projectileComponent._item);
+                                        }
+
+                                        projectileComponent._canDeliverEffect = false;
+                                    }
+                                }
+                            });
                         }
                     }
                 });

@@ -96,7 +96,7 @@ angular
                                             }
                                         },
                                         group: entity.hasComponent('player') ? 'playerProjectiles' : 'enemyProjectiles',
-                                        collidesWith: ['level', 'npcs', 'otherPlayers']
+                                        collidesWith: ['level']
                                     },
                                     quad: {
                                         transparent: true,
