@@ -153,7 +153,8 @@ angular
                             entity.lookAt(entity.position.clone().add(currentVel));
                         }
                         else {
-                            entity._canDeliverEffect = false;
+                            var projectileComponent = entity.getComponent('projectile');
+                            projectileComponent._canDeliverEffect = false;
                         }
                     }
                 });
