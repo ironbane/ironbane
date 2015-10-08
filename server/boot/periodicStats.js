@@ -85,6 +85,7 @@ angular
         else if (process.env.VIRTUAL_HOST === 'dev.alabaster.ironbane.com') {
             Meteor.setTimeout(function() {
                 HipChat.postMessage('Code', 'Dev server started!');
+                HipChat.postMessage('Levels', 'Dev server started!');
             }, 5 * 1000);
         }
     }]);
