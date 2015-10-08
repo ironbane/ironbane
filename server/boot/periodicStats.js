@@ -82,4 +82,9 @@ angular
                 Meteor.setInterval(notifyAlexaRank, 3600 * 24 * 1000);
             }
         }
+        else if (process.env.VIRTUAL_HOST === 'dev.alabaster.ironbane.com') {
+            Meteor.setTimeout(function() {
+                HipChat.postMessage('Code', 'Dev server started!');
+            }, 5 * 1000);
+        }
     }]);
