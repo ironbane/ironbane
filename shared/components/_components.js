@@ -1,6 +1,7 @@
 angular.module('components', [
     'components.armor',
     'components.armorRegen',
+    'components.bogus',
     'components.buff',
     'components.camera',
     'components.cheats',
