@@ -152,6 +152,11 @@ angular
                         return;
                     }
 
+                    entity.onComponentAdded.removeListeners();
+                    entity.onComponentRemoved.removeListeners();
+                    entity.onChildAdded.removeListeners();
+                    entity.onChildRemoved.removeListeners();
+
                     var families, familyId;
 
                     // try to remove the entity from each family

@@ -55,6 +55,15 @@ angular.module('ces.signal', [
                 for (i = 0, len = listeners.length; i < len; ++i) {
                     listeners[i].apply(null, messages);
                 }
+            },
+
+
+            /**
+             * Clear listeners
+             * @public
+             */
+            removeListeners: function () {
+                this._listeners = [];
             }
         });
 
