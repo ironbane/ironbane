@@ -284,6 +284,9 @@ angular
                                 teleportSelf: {
                                     targetEntityUuid: entity.uuid,
                                     offsetPosition: IbUtils.getRandomVector3(new THREE.Vector3(), new THREE.Vector3(2, 0, 2)).normalize().multiplyScalar(1.1)
+                                },
+                                lifespan: {
+                                    duration: 20
                                 }
                             }
                         });
@@ -299,17 +302,6 @@ angular
                         dropped.level = world.name;
 
                         world.addEntity(dropped);
-
-                        setTimeout(function() {
-                            dropped.removeComponent('teleport');
-                        }, 1000);
-
-                        // Remove the item after a while
-                        setTimeout(function() {
-                            world.removeEntity(dropped);
-                        }, 20000);
-
-                        // $log.debug('drop item: ', entity.uuid, dropped.name, item);
                     }
 
                     this.removeItem(entity, item);

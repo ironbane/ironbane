@@ -46,5 +46,6 @@ angular.module('components', [
     'components.teleportSelf',
     'components.teleporter',
     'components.trigger',
-    'components.wieldItem'
+    'components.wieldItem',
+    'components.lifespan'
 ]);

@@ -130,20 +130,6 @@ angular
                         });
                     }
 
-                    var teleportComponent = builtEntity.getComponent('teleportSelf');
-                    if (teleportComponent) {
-                        if (teleportComponent.targetEntityUuid) {
-                            var targetEntity = world.scene.getObjectByProperty('uuid', teleportComponent.targetEntityUuid);
-                            if (targetEntity) {
-                                builtEntity.position.copy(targetEntity.position);
-                            }
-                            if (teleportComponent.offsetPosition) {
-                                builtEntity.position.add(new THREE.Vector3().copy(teleportComponent.offsetPosition));
-                            }
-                        }
-
-                    }
-
                     $rootWorld.load(builtEntity.level).then(function() {
                         world.addEntity(builtEntity);
                     });

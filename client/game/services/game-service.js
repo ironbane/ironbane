@@ -15,7 +15,8 @@ angular
         'systems.mesh',
         'systems.projectile',
         'systems.steering',
-        'systems.pickup'
+        'systems.pickup',
+        'systems.lifespan'
     ])
     .service('GameService', [
         '$injector',
@@ -25,6 +26,7 @@ angular
             'use strict';
 
             var _defaultSystems = [ // order matters
+                'LifeSpan',
                 'NameMesh',
                 'Mesh',
                 'Octree',
@@ -54,7 +56,8 @@ angular
                 'Shadow',
                 'Particle',
                 'Teleporter',
-                'Camera'
+                'Camera',
+                'LocalTeleporter'
             ];
 
             this.start = function() {

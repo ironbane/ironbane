@@ -4,7 +4,8 @@ angular
         'services.contentLoader',
         'global.constants.game',
         'server.services',
-        'game.threeWorld'
+        'game.threeWorld',
+        'systems.lifespan'
     ])
     .run([
         'ZonesCollection',
@@ -26,7 +27,7 @@ angular
                 'Movers',
                 'Actor',
                 'Inventory',
-                'Pickup',
+                'LifeSpan',
                 'Armor',
                 'Health',
                 'Teleporter'

@@ -17,4 +17,5 @@ angular
         'game.systems.sound',
         'game.systems.sprite',
         'game.systems.wieldItem',
+        'game.systems.localTeleporter'
     ]);

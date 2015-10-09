@@ -1,12 +1,10 @@
 angular
     .module('systems.pickup', [
         'ces.entityProcessingSystem',
-        'engine.timing'
     ])
     .factory('PickupSystem', [
         'EntityProcessingSystem',
-        'Timer',
-        function(EntityProcessingSystem, Timer) {
+        function(EntityProcessingSystem) {
             'use strict';
 
             var PickupSystem = EntityProcessingSystem.extend({
@@ -14,17 +12,12 @@ angular
                     this._super('pickup', 'quad');
                 },
                 onEntityAdded: function(entity) {
-                    var pickup = entity.getComponent('pickup');
-                    pickup._lifeSpanTimer = new Timer(20);
+                    // TODO: hook into collision for pickup
+                    // handle teleport here as well
                 },
                 updateEntity: function(timing, entity) {
                     var pickupComponent = entity.getComponent('pickup'),
                         quadComponent = entity.getComponent('quad');
-
-                    if (Meteor.isServer && pickupComponent._lifeSpanTimer.isExpired) {
-                        this.world.removeEntity(entity);
-                        return;
-                    }
 
                     // animate hover
                     if (pickupComponent.hover) {

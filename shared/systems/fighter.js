@@ -117,6 +117,9 @@ angular
                                     },
                                     collisionReporter: {
 
+                                    },
+                                    lifespan: {
+                                        duration: 5
                                     }
                                 }
                             });

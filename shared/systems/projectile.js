@@ -53,13 +53,10 @@ angular
                 addedToWorld: function(world) {
                     this._super(world);
 
-                    var rigidBodySystem = world.getSystem('rigidbody');
-                    var inventorySystem = world.getSystem('inventory');
-
                     world.entityAdded('projectile').add(function(entity) {
+                        var rigidBodySystem = world.getSystem('rigidbody');
+                        var inventorySystem = world.getSystem('inventory');
                         var projectileComponent = entity.getComponent('projectile');
-
-                        projectileComponent._lifeSpanTimer = new Timer(5);
 
                         projectileComponent._canDeliverEffect = true;
                         projectileComponent._owner = world.scene.getObjectByProperty('uuid', projectileComponent.ownerUuid);
@@ -122,11 +119,6 @@ angular
                     projectileEntities.forEach(function(entity) {
                         var rigidBodyComponent = entity.getComponent('rigidBody');
                         var projectileComponent = entity.getComponent('projectile');
-
-                        if (projectileComponent._lifeSpanTimer.isExpired) {
-                            me.world.removeEntity(entity);
-                            return;
-                        }
 
                         if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
                             var currentVel = rigidBodyComponent.rigidBody.getLinearVelocity().toTHREEVector3();
