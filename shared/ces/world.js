@@ -152,11 +152,6 @@ angular
                         return;
                     }
 
-                    entity.onComponentAdded.removeListeners();
-                    entity.onComponentRemoved.removeListeners();
-                    entity.onChildAdded.removeListeners();
-                    entity.onChildRemoved.removeListeners();
-
                     var families, familyId;
 
                     // try to remove the entity from each family
@@ -170,6 +165,11 @@ angular
                     this._onEntityRemoveChild(null, entity);
 
                     this.singleEntityRemoved.emit(entity);
+
+                    entity.onComponentAdded.removeListeners();
+                    entity.onComponentRemoved.removeListeners();
+                    entity.onChildAdded.removeListeners();
+                    entity.onChildRemoved.removeListeners();
                 },
 
                 _purgePendingRemovals: function() {
