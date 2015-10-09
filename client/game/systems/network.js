@@ -299,7 +299,8 @@ angular
 
                                 world.removeEntity(obj);
                             } else {
-                                $log.debug('not found to remove...');
+                                // this is prolly OK, we removed it on the client first for perf
+                                //console.debug('not found to remove...');
                             }
 
                             $rootScope.$apply();

@@ -362,25 +362,25 @@ angular
                             });
 
                             if (!victimEntity) {
-                                $log.error('victim entity not found!');
+                                console.error('victim entity not found!');
                                 return;
                             }
 
                             if (!sourceEntity) {
-                                $log.error('source entity not found!');
+                                console.error('source entity not found!');
                                 return;
                             }
 
                             if (sourceEntity.owner !== entity.owner &&
                                 victimEntity.owner !== entity.owner) {
-                                $log.error('sourceEntity has wrong owner!');
+                                console.error('sourceEntity has wrong owner!');
                                 return;
                             }
 
                             var inventorySystem = world.getSystem('inventory');
                             var item = inventorySystem.findItemByUuid(sourceEntity, data.itemUuid);
                             if (!item) {
-                                $log.error('item for damageEntity not found!');
+                                console.error('item for damageEntity not found!');
                                 return;
                             }
 

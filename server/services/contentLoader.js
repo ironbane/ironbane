@@ -44,10 +44,11 @@ angular
             // otherwise in the privates
             if (filename.search(/http/) >= 0) {
                 request(filename, function(error, response, body) {
-                    if (!error && response.statusCode === 200) {
+                    var statusCode = response.statusCode;
+                    if (!error && statusCode === 200) {
                         load(body);
                     } else {
-                        deferred.reject(error);
+                        deferred.reject({error, statusCode});
                     }
                 });
             } else {

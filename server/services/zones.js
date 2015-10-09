@@ -76,7 +76,11 @@ angular
                 }));
 
             }), function (err) {
-                console.log(err.stack);
+                if (err) {
+                    console.log('error zones.js:79 ', err);
+                } else {
+                    console.log('undefined error zones.js:79');
+                }
             })
             .then(function () {}, function (err) {
                 console.log(err.stack);

@@ -116,17 +116,15 @@ angular
                                 // colorEnd: 'white',
                                 particleCount: amount
                             }
+                        },
+                        lifespan: {
+                            duration: 5
                         }
                     }
                 });
 
                 particle.position.copy(position);
                 me.world.addEntity(particle);
-
-                setTimeout(function () {
-                    me.world.removeEntity(particle);
-                }, 5000);
-
             },
             addDamageParticles: function(type, amount, position) {
 
