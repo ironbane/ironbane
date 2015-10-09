@@ -2,7 +2,7 @@
     <ul scroll-glue>
         <li ng-repeat="message in chatBox.messages | orderBy:'+ts'" class="chat-message" ng-class="message.flags">
             <span class="char-name" ng-class="message.from.flags" ng-if="message.flags.direct">{{ message.from.name }} -> </span>
-            <span class="char-name" ng-class="message.user.flags" ng-if="!message.flags.direct && message.user.name">[{{ message.user.name }}]</span>
+            <span class="char-name" ng-class="message.user.flags" ng-if="!message.flags.direct && message.user.name">{{ message.user.name }}</span>
             {{ message.msg }}
             <p ng-if="message.flags.warn && message.flags.warnings">{{ message.flags.warnings }} warnings</p>
         </li>

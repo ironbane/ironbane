@@ -42,6 +42,14 @@ angular
                     return;
                 }
 
+                var name = character.name;
+
+                if (Roles.userIsInRole(userId, ['game-master'])) {
+                    name = '<GM> ' + name;
+
+                    // Later can add additional things like clans, ranks etc
+                }
+
                 ChatMessagesCollection.insert({
                     server: Meteor.settings.server.id,
                     room: 'global',
@@ -50,7 +58,7 @@ angular
                     flags: flags,
                     user: {
                         userId: userId,
-                        name: character.name,
+                        name: name,
                         flags: getUserFlags(userId)
                     }
                 });
