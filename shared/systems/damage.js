@@ -67,6 +67,7 @@ angular
                         entity.removeComponent('armor');
                         entity.removeComponent('rigidBody');
                         entity.removeComponent('script');
+                        entity.removeComponent('name-mesh');
 
                         if (!entity.hasComponent('player')) {
                             // me.world.removeEntity(entity);
@@ -452,9 +453,9 @@ angular
                                             // and remove ourselves from the world
                                             if (Meteor.isServer) {
                                                 me.world.publish('fighter:die', entity, source.sourceEntity);
+                                            } else {
+                                                healthComponent.__hasDied = true;
                                             }
-
-
                                         }
                                     }
 
