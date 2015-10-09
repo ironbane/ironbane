@@ -101,7 +101,6 @@ angular
                         inv.gold += item.price;
                         if (Meteor.isClient) {
                             GlobalSound.play('coins', entity.position);
-                            $log.debug('coin pickup');
                         }
                         this.world.publish('inventory:onPickupGold', entity, item);
                     } else {

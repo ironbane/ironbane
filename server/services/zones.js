@@ -26,6 +26,7 @@ angular
                 'Movers',
                 'Actor',
                 'Inventory',
+                'Pickup',
                 'Armor',
                 'Health',
                 'Teleporter'
