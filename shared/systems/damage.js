@@ -54,11 +54,14 @@ angular
                     // We died, so add proper particles
                     // and remove ourselves from the world
                     if (Meteor.isClient) {
+                        //console.debug('death particles: ', entity);
                         me.addDeathParticles(entity, entity.position);
 
                         GlobalSound.play(_.sample(['die1','die2','die3']), entity.position);
 
-                        entity.removeComponent('quad');
+                        me.world.removeEntity(entity);
+
+                        /*entity.removeComponent('quad');
                         entity.removeComponent('wieldItem');
                         entity.removeComponent('fighter');
                         entity.removeComponent('shadow');
@@ -72,7 +75,7 @@ angular
                         if (!entity.hasComponent('player')) {
                             // me.world.removeEntity(entity);
                         }
-                        else if (entity.hasComponent('netSend')) {
+                        else*/ if (entity.hasComponent('netSend')) {
                             BigMessagesService.add('You died!');
                         }
                     }
@@ -213,7 +216,7 @@ angular
                 }
 
                 if (!texture) {
-                    $log.debug('Cannot build deathParticle texture for entity ' + entity.name);
+                    console.debug('Cannot build deathParticle texture for entity ' + entity.name);
                     return;
                 }
 
@@ -243,17 +246,15 @@ angular
                                 numberOfSpritesH: 3 * 8,
                                 numberOfSpritesV: 8 * 9
                             }
+                        },
+                        lifespan: {
+                            duration: 5
                         }
                     }
                 });
 
                 particle.position.copy(position);
                 this.world.addEntity(particle);
-
-                var me = this;
-                setTimeout(function () {
-                    me.world.removeEntity(particle);
-                }, 5000);
             },
             dash: function (entity, direction, type) {
                 var damageableComponent = entity.getComponent('damageable');
