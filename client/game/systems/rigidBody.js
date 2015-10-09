@@ -463,31 +463,31 @@ angular
 
                     Ammo.destroy(rayCallback);
                 },
-                getInfo: function(entity) {
-                    var rigidBodyComponent = entity.getComponent('rigidBody');
+                // getInfo: function(entity) {
+                //     var rigidBodyComponent = entity.getComponent('rigidBody');
 
-                    if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
-                        var body = rigidBodyComponent.rigidBody;
-                        var motionState = body.getMotionState();
-                        // if (motionState) { // STATIC (or mass === 0) should not have this! but it does...
-                            var trans = new Ammo.btTransform();
-                            motionState.getWorldTransform(trans);
+                //     if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
+                //         var body = rigidBodyComponent.rigidBody;
+                //         var motionState = body.getMotionState();
+                //         // if (motionState) { // STATIC (or mass === 0) should not have this! but it does...
+                //             var trans = new Ammo.btTransform();
+                //             motionState.getWorldTransform(trans);
 
-                            var pos = trans.getOrigin();
-                            var rot = trans.getRotation();
+                //             var pos = trans.getOrigin();
+                //             var rot = trans.getRotation();
 
-                            var pos = new THREE.Vector3().set(pos.x(), pos.y(), pos.z());
-                            var quat = new THREE.Quaternion().set(rot.x(), rot.y(), rot.z(), rot.w());
+                //             var pos = new THREE.Vector3().set(pos.x(), pos.y(), pos.z());
+                //             var quat = new THREE.Quaternion().set(rot.x(), rot.y(), rot.z(), rot.w());
 
-                            Ammo.destroy(trans);
+                //             Ammo.destroy(trans);
 
-                            return {
-                                pos: pos,
-                                quat: quat,
-                            }
-                        // }
-                    }
-                },
+                //             return {
+                //                 pos: pos,
+                //                 quat: quat,
+                //             }
+                //         // }
+                //     }
+                // },
                 syncEntities: function() {
                     var rigidBodies = this.world.getEntities('rigidBody');
 
@@ -498,16 +498,13 @@ angular
                             var body = rigidBodyComponent.rigidBody;
                             var motionState = body.getMotionState();
                             if (motionState && rigidBodyComponent.mass !== 0) { // STATIC (or mass === 0) should not have this! but it does...
-                                var trans = new Ammo.btTransform();
-                                motionState.getWorldTransform(trans);
+                                motionState.getWorldTransform(btTransform);
 
-                                var pos = trans.getOrigin();
-                                var rot = trans.getRotation();
-
-                                Ammo.destroy(trans);
-
+                                var pos = btTransform.getOrigin();
                                 entity.position.set(pos.x(), pos.y(), pos.z());
+
                                 if (!rigidBodyComponent.lock.rotation.x && !rigidBodyComponent.lock.rotation.y && !rigidBodyComponent.lock.rotation.z) {
+                                    var rot = btTransform.getRotation();
                                     entity.quaternion.set(rot.x(), rot.y(), rot.z(), rot.w());
                                 }
                             }
