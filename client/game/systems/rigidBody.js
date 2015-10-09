@@ -470,13 +470,16 @@ angular
                         var body = rigidBodyComponent.rigidBody;
                         var motionState = body.getMotionState();
                         // if (motionState) { // STATIC (or mass === 0) should not have this! but it does...
-                            motionState.getWorldTransform(btTransform);
+                            var trans = new Ammo.btTransform();
+                            motionState.getWorldTransform(trans);
 
-                            var pos = btTransform.getOrigin();
-                            var rot = btTransform.getRotation();
+                            var pos = trans.getOrigin();
+                            var rot = trans.getRotation();
 
                             var pos = new THREE.Vector3().set(pos.x(), pos.y(), pos.z());
                             var quat = new THREE.Quaternion().set(rot.x(), rot.y(), rot.z(), rot.w());
+
+                            Ammo.destroy(trans);
 
                             return {
                                 pos: pos,
@@ -495,10 +498,13 @@ angular
                             var body = rigidBodyComponent.rigidBody;
                             var motionState = body.getMotionState();
                             if (motionState && rigidBodyComponent.mass !== 0) { // STATIC (or mass === 0) should not have this! but it does...
-                                motionState.getWorldTransform(btTransform);
+                                var trans = new Ammo.btTransform();
+                                motionState.getWorldTransform(trans);
 
-                                var pos = btTransform.getOrigin();
-                                var rot = btTransform.getRotation();
+                                var pos = trans.getOrigin();
+                                var rot = trans.getRotation();
+
+                                Ammo.destroy(trans);
 
                                 entity.position.set(pos.x(), pos.y(), pos.z());
                                 if (!rigidBodyComponent.lock.rotation.x && !rigidBodyComponent.lock.rotation.y && !rigidBodyComponent.lock.rotation.z) {
