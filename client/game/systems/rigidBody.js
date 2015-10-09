@@ -277,7 +277,7 @@ angular
                 $rootWorld.scene.updateMatrixWorld();
 
                 triangles.map(function(triangle) {
-                    triangle.forEach(function (vertex) {
+                    triangle.forEach(function(vertex) {
                         var vec = new THREE.Vector3().copy(vertex).applyMatrix4(mesh.matrixWorld);
                         vertex.x = vec.x;
                         vertex.y = vec.y;
@@ -289,6 +289,10 @@ angular
             };
 
             var RigidBodySystem = System.extend({
+                getBulletVec: function getBulletVec(vec) {
+                    btVec3a.setValue(vec.x, vec.y, vec.z);
+                    return btVec3a;
+                },
                 addedToWorld: function(world) {
                     var sys = this;
 
@@ -314,9 +318,9 @@ angular
                                     .then(function(triangles) {
                                         rigidBodyData.shape.triangles = triangles;
 
-                                        setTimeout(function () {
-					                    	$rootWorld.renderer.shadowMapAutoUpdate = false;
-					                    }, 100);
+                                        setTimeout(function() {
+                                            $rootWorld.renderer.shadowMapAutoUpdate = false;
+                                        }, 100);
                                     });
                             }
                         }
@@ -375,23 +379,16 @@ angular
 
                                 var mask = 0;
 
-                                rigidBodyData.collidesWith.forEach(function (maskName) {
+                                rigidBodyData.collidesWith.forEach(function(maskName) {
                                     mask |= IB_CONSTANTS.collisionMasks[maskName];
                                 })
 
                                 PhysicsWorld.addRigidBody(rigidBody,
                                     IB_CONSTANTS.collisionMasks[rigidBodyData.group],
                                     mask);
-                            }
-                            else {
+                            } else {
                                 PhysicsWorld.addRigidBody(rigidBody);
                             }
-
-                            // Add some helpers methods
-                            rigidBodyData.getBulletVec = function (vec) {
-                                btVec3a.setValue(vec.x, vec.y, vec.z);
-                                return btVec3a;
-                            };
 
                             var lv = rigidBodyData.launchVelocity;
                             btVec3a.setValue(lv.x, lv.y, lv.z);
@@ -418,7 +415,7 @@ angular
                 // need to have our own raycast solution. threeoctree worked very well in old IB
                 // so we'll use that instead
 
-                rayCast: function (start, end, name, callback) {
+                rayCast: function(start, end, name, callback) {
 
                     var vecEndWorldSpace = start.clone().add(end.clone().multiplyScalar(100));
 
@@ -456,8 +453,7 @@ angular
                                 normal: normalVec
                             }]);
                         }
-                    }
-                    else {
+                    } else {
                         callback([]);
                     }
 
@@ -511,14 +507,14 @@ angular
                         }
                     });
                 },
-                applyCentralImpulse: function (entity, impulse) {
+                applyCentralImpulse: function(entity, impulse) {
                     btVec3a.setValue(impulse.x, impulse.y, impulse.z);
                     var rigidBodyComponent = entity.getComponent('rigidBody');
                     if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
                         rigidBodyComponent.rigidBody.applyCentralImpulse(btVec3a);
                     }
                 },
-                setLinearVelocity: function (entity, vel) {
+                setLinearVelocity: function(entity, vel) {
                     btVec3a.setValue(vel.x, vel.y, vel.z);
                     var rigidBodyComponent = entity.getComponent('rigidBody');
                     if (rigidBodyComponent && rigidBodyComponent.rigidBody) {
