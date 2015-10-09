@@ -11,16 +11,29 @@ angular
 
             var LocalTeleporterSystem = System.extend({
                 addedToWorld: function(world) {
-                    var sys = this;
+                    var me = this;
 
-                    sys._super(world);
+                    me._super(world);
+
+                    var _positionCache = {};
+
+                    world.entityAdded('fighter').add(function(entity) {
+                        _positionCache[entity.uuid] = entity.position;
+                    });
+
+                    world.entityRemoved('fighter').add(function(entity) {
+                        (function(uuid) {
+                            setTimeout(function () {
+                                delete _positionCache[uuid];
+                            }, 10000);
+                        })(entity.uuid);
+                    });
 
                     world.entityAdded('teleportSelf').add(function(entity) {
                         var teleportComponent = entity.getComponent('teleportSelf');
                         if (teleportComponent.targetEntityUuid) {
-                            var targetEntity = world.scene.getObjectByProperty('uuid', teleportComponent.targetEntityUuid);
-                            if (targetEntity) {
-                                entity.position.copy(targetEntity.position);
+                            if (_positionCache[teleportComponent.targetEntityUuid]) {
+                                entity.position.copy(_positionCache[teleportComponent.targetEntityUuid]);
                             }
                             if (teleportComponent.offsetPosition) {
                                 entity.position.add(new THREE.Vector3().copy(teleportComponent.offsetPosition));
