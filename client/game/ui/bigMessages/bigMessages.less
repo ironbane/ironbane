@@ -17,5 +17,17 @@ big-messages-box {
         font-size: 25px;
         color: @primary4;
         text-shadow: 2px 2px 0px @primary2, -2px 2px 0px @primary2, 2px -2px 0px @primary2, -2px -2px 0px @primary2;
+
+        .deathIcon {
+            @enlargement-factor: 8.0;
+            width: 16px * @enlargement-factor;
+            height: 16px * @enlargement-factor;
+            background-image: url(images/spritesheets/items.png);
+            background-repeat: no-repeat;
+            background-size: (256px * @enlargement-factor) (2048px * @enlargement-factor);
+            image-rendering: pixelated;
+            display: inline-block;
+            background-position: (11 * -16px * @enlargement-factor) (83 * -16px * @enlargement-factor);
+        }
     }
 }

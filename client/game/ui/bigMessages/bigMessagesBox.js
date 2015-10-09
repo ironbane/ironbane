@@ -11,7 +11,7 @@ angular.module('game.ui.bigMessages.bigMessagesBox', [
             controller: function() {
                     this.messages = BigMessagesService.messages;
                 },
-            link: function(scope) {
+            /*link: function(scope) {
                 // speed this one up to get a more "realtime" feel
                 var boost = setInterval(function() {
                     scope.$digest();
@@ -20,7 +20,7 @@ angular.module('game.ui.bigMessages.bigMessagesBox', [
                 scope.$on('$destroy', function() {
                     clearInterval(boost);
                 });
-            }
+            }*/
         };
     }]
 );

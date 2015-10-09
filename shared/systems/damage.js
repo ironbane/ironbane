@@ -76,7 +76,7 @@ angular
                             // me.world.removeEntity(entity);
                         }
                         else*/ if (entity.hasComponent('netSend')) {
-                            BigMessagesService.add('You died!');
+                            BigMessagesService.add('You died.<br><div class="deathIcon"></div>');
                         }
                     }
                 });

@@ -1,5 +1,5 @@
 <ul>
     <li ng-repeat="msg in bigMessagesBox.messages">
-        {{ msg.text }}
+        <span ng-bind-html="msg.text"></span>
     </li>
 </ul>

@@ -1,6 +1,8 @@
 angular
     .module('game.ui.bigMessages.bigMessagesService', [])
-    .service('BigMessagesService', function() {
+    .service('BigMessagesService', [
+        '$timeout',
+        function($timeout) {
             'use strict';
 
             var me = this;
@@ -8,17 +10,15 @@ angular
             this.messages = [];
 
             this.add = function(text) {
-
                 var msg = {
                     text: text
                 };
 
                 me.messages.push(msg);
 
-                setTimeout(function () {
+                $timeout(function() {
                     me.messages.shift();
                 }, 5000);
             };
-
         }
-    );
+    ]);
