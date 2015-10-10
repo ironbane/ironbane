@@ -80,12 +80,12 @@ angular
                             ]);
                         }
 
-                        // this is pretty much the only one we want to netSend
+                        // this is pretty much the only on Ge we want to netSend
                         builtEntity.addComponent('netSend');
 
-                        builtEntity.inGame = true;
-
                         $entityCache.put('mainPlayer', builtEntity);
+                        delete $rootScope.isTransitioning;
+
                         // needed somewhere on the scope for the UI, prolly doesn't *need* to be root
                         $rootScope.mainPlayer = builtEntity;
                     } else {
@@ -288,12 +288,11 @@ angular
                             var obj = world.scene.getObjectByProperty('uuid', entityUuid);
                             // test if instanceof Entity?
                             if (obj) {
+                                world.removeEntity(obj);
 
                                 if (obj === $entityCache.get('mainPlayer')) {
-                                    obj.inGame = false;
+                                    $rootScope.isTransitioning = true;
                                 }
-
-                                world.removeEntity(obj);
                             } else {
                                 // this is prolly OK, we removed it on the client first for perf
                                 //console.debug('not found to remove...');

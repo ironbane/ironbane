@@ -33,7 +33,8 @@ angular
                     '$meteor',
                     'BigMessagesService',
                     '$rootScope',
-                    function($scope, $rootWorld, $log, $state, $clientSettings, dialogService, $meteor, BigMessagesService, $rootScope) {
+                    '$entityCache',
+                    function($scope, $rootWorld, $log, $state, $clientSettings, dialogService, $meteor, BigMessagesService, $rootScope, $entityCache) {
                         $scope.gui = {
                             showChatInput: false,
                             showAdminPanel: false
@@ -49,18 +50,20 @@ angular
                             },
                             escapeHandler = function() {
                                 // $log.debug('escape pressed');
-                                $meteor.call('leaveGame')
-                                    .then(function () {
-                                        $rootScope.isTransitioning = true;
-                                        setTimeout(function () {
+                                $rootScope.isTransitioning = true;
+                                setTimeout(function () {
+                                    $meteor.call('leaveGame')
+                                        .then(function () {
+                                            $entityCache.put('mainPlayer', null);
                                             delete $rootScope.isTransitioning;
                                             $state.go('^.main-menu.enter-world');
-                                        }, 1000);
-                                    }, function(err) {
-                                        if (err) {
-                                            dialogService.alert(err.reason);
-                                        }
-                                    });
+                                        }, function(err) {
+                                            delete $rootScope.isTransitioning;
+                                            if (err) {
+                                                dialogService.alert(err.reason);
+                                            }
+                                        });
+                                }, 1000);
                             },
                             adminHandler = function() {
                                 $scope.gui.showAdminPanel = !$scope.gui.showAdminPanel;

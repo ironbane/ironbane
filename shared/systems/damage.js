@@ -63,7 +63,7 @@ angular
 
                         if (entity.hasComponent('netSend')) {
                             setTimeout(function () {
-                                entity.inGame = false;
+                                $rootScope.isTransitioning = true;
                             }, 2000);
 
                             BigMessagesService.add('<p>You died.</p><div class="deathIcon"></div>');
