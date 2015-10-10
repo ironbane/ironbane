@@ -224,14 +224,24 @@ angular
                     // $log.debug('inventory.dropItem', entity.uuid, item);
 
                     var world = this.world,
-                        me = this,
                         dropped;
 
                     function buildPickup(item) {
                         var image = item.invImage ? item.invImage : item.image;
-                        var launchVelocity = IbUtils.getRandomVector3(new THREE.Vector3(), new THREE.Vector3(1, 1, 1));
-                        launchVelocity.y = Math.abs(launchVelocity.y);
+                        var launchVelocity;
+
+                        if (entity.hasComponent('player')) {
+                            // Drop the item in front of us
+                            launchVelocity = new THREE.Vector3(0, 0, -1).applyQuaternion(entity.quaternion);
+                        }
+                        else {
+                            // Just launch it in a random direction
+                            launchVelocity = IbUtils.getRandomVector3(new THREE.Vector3(), new THREE.Vector3(1, 0, 1));
+                        }
+
+                        launchVelocity.y = 1.0;
                         launchVelocity.normalize().multiplyScalar(5);
+
                         var pickup = EntityBuilder.build('pickup: ' + item.name, {
                             components: {
                                 quad: {
@@ -282,8 +292,7 @@ angular
                                 },
                                 netSend: {},
                                 teleportSelf: {
-                                    targetEntityUuid: entity.uuid,
-                                    offsetPosition: IbUtils.getRandomVector3(new THREE.Vector3(), new THREE.Vector3(2, 0, 2)).normalize().multiplyScalar(1.1)
+                                    targetEntityUuid: entity.uuid
                                 },
                                 lifespan: {
                                     duration: 20
