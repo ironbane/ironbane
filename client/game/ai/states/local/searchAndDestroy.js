@@ -22,6 +22,7 @@ angular
                     }
 
                     this.strafeTimer = new Timer(2.0);
+                    this.jumpTimer = new Timer(2.0);
                     this.isStrafing = false;
 
                     this.originalSpeed = this.steeringBehaviour.speed;
@@ -59,6 +60,15 @@ angular
                                 }
 
                                 this.randomStrafeTarget.copy(this.entity.position.clone().add(offset));
+                            }
+                        }
+
+                        if (this.monsterBehaviour['Jumps A Lot']) {
+                            if (this.jumpTimer.isExpired) {
+                                this.jumpTimer.set(IbUtils.getRandomFloat(2.0, 8.0));
+                                this.jumpTimer.reset();
+
+                                this.world.publish('fighter:jump', this.entity);
                             }
                         }
 
