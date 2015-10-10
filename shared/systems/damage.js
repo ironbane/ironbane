@@ -9,7 +9,7 @@ angular
         'game.services.globalsound',
         'game.world-root'
     ])
-    .factory('DamageSystem', ["$log", "System", "EntityBuilder", "IbUtils", "THREE", "BigMessagesService", "GlobalSound", "Timer", "$rootWorld", function($log, System, EntityBuilder, IbUtils, THREE, BigMessagesService, GlobalSound, Timer, $rootWorld) {
+    .factory('DamageSystem', ["$log", "System", "EntityBuilder", "IbUtils", "THREE", "BigMessagesService", "GlobalSound", "Timer", "$rootWorld", "$rootScope", function($log, System, EntityBuilder, IbUtils, THREE, BigMessagesService, GlobalSound, Timer, $rootWorld, $rootScope) {
         'use strict';
 
         var DASH_TIME = 0.2;
@@ -165,7 +165,7 @@ angular
                         break;
                     case 'armor':
                         if (amount) {
-                            this._spawnParticle(0, 3, amount, position);
+                            this._spawnParticle(1, 3, amount, position);
                         }
                         if (additionalType === 'half') {
                             this._spawnParticle(3, 3, 1, position);
