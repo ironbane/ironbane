@@ -4,6 +4,7 @@ angular
         'three',
         'ammo',
         'engine.debugger',
+        'engine.entity-cache',
         'engine.util',
         'game.clientSettings',
         'game.ui.bigMessages.bigMessagesService',
@@ -19,7 +20,8 @@ angular
         '$clientSettings',
         'BigMessagesService',
         'INV_SLOTS',
-        function($log, ScriptBank, THREE, Ammo, Debugger, IbUtils, $clientSettings, BigMessagesService, INV_SLOTS) {
+        '$entityCache',
+        function($log, ScriptBank, THREE, Ammo, Debugger, IbUtils, $clientSettings, BigMessagesService, INV_SLOTS, $entityCache) {
             'use strict';
 
             // The amount of time that must pass before you can jump again
@@ -139,6 +141,8 @@ angular
                     return;
                 }
 
+                var mainCamera = $entityCache.get('mainCamera');
+
                 var input = this.world.getSystem('input'), // should cache this during init?
                     leftStick = input.virtualGamepad.leftThumbstick,
                     rightStick = input.virtualGamepad.rightThumbstick,
@@ -245,10 +249,10 @@ angular
 
                 if (cheatComponent && cheatComponent.screenshot) {
                     if (playMap.test('attack')) {
-                        this.entity.getComponent('camera')._camera.lookAt(this.entity.getComponent('mouseHelper').target);
+                        mainCamera.getComponent('camera')._camera.lookAt(this.entity.getComponent('mouseHelper').target);
                     }
                     if (playMap.test('attack2')) {
-                        this.entity.getComponent('camera')._camera.position.copy(this.entity.getComponent('mouseHelper').target);
+                        mainCamera.getComponent('camera')._camera.position.copy(this.entity.getComponent('mouseHelper').target);
                     }
                 }
                 else {
@@ -257,7 +261,7 @@ angular
                     }
                 }
 
-                var multiCamComponent = this.entity.getScript('/scripts/built-in/character-multicam.js');
+                var multiCamComponent = mainCamera.getScript('/scripts/built-in/character-multicam.js');
 
                 if (multiCamComponent.cameraType === 'classic') {
                     var tml = this.moveLeft;

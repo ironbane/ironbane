@@ -2,8 +2,10 @@ angular
     .module('game.scripts.character-multicam', [
         'engine.scriptBank',
         'three',
+        'engine.entity-cache',
         'engine.ib-config',
-        'engine.util'
+        'engine.util',
+        'game.world-root'
     ])
     .run([
         '$log',
@@ -12,7 +14,9 @@ angular
         'THREE',
         'IbUtils',
         '$meteor',
-        function($log, ScriptBank, IbConfig, THREE, IbUtils, $meteor) {
+        '$entityCache',
+        '$rootWorld',
+        function($log, ScriptBank, IbConfig, THREE, IbUtils, $meteor, $entityCache, $rootWorld) {
             'use strict';
 
             // The multicam gives you first and third person in one script
@@ -131,71 +135,93 @@ angular
             MultiCamScript.prototype.update = function(dt, elapsed, timestamp) {
                 var cameraComponent = this.entity.getComponent('camera');
 
-                var cheatComponent = this.entity.getComponent('cheats');
-                if (cheatComponent) {
-                    if (cheatComponent.screenshot) {
-                        return;
-                    }
-                }
+                var mainPlayer = $entityCache.get('mainPlayer');
 
                 if (cameraComponent) {
-                    if (camMode === camModeEnum.FirstPerson) {
-                        localCam.lookAt(targetPosition);
+                    if (mainPlayer) {
 
-                        this.entity.quaternion.copy(localCam.quaternion);
-                        localCam.quaternion.copy(new THREE.Quaternion());
-                    }
-                    if (camMode === camModeEnum.ThirdPerson) {
+                        var cheatComponent = mainPlayer.getComponent('cheats');
+                        if (cheatComponent) {
+                            if (cheatComponent.screenshot) {
+                                return;
+                            }
+                        }
 
-                        localCam.position.copy(this.thirdPersonPosition);
+                        if (camMode === camModeEnum.FirstPerson) {
+                            localCam.lookAt(targetPosition);
 
-                        cameraThirdPersonLookAtTargetOffset.copy(originalCameraThirdPersonLookAtTargetOffset, dt * 5);
+                            mainPlayer.quaternion.copy(localCam.quaternion);
+                            localCam.quaternion.copy(new THREE.Quaternion());
+                        }
+                        if (camMode === camModeEnum.ThirdPerson) {
+
+                            localCam.position.copy(this.thirdPersonPosition);
+
+                            cameraThirdPersonLookAtTargetOffset.copy(originalCameraThirdPersonLookAtTargetOffset, dt * 5);
 
 
-                        // Make sure the cam doesn't go through walls here
-                        // by raycasting
-                        var me = this;
+                            // Make sure the cam doesn't go through walls here
+                            // by raycasting
+                            var me = this;
 
-                        me.camDistanceLimit = originalThirdPersonPositionLength;
+                            me.camDistanceLimit = originalThirdPersonPositionLength;
 
-                        var normalizedThirdPersonPosition = me.thirdPersonPosition.clone();
-                        normalizedThirdPersonPosition.normalize();
+                            var normalizedThirdPersonPosition = me.thirdPersonPosition.clone();
+                            normalizedThirdPersonPosition.normalize();
 
-                        this.world.getSystem('rigidbody').rayCast(me.entity.position.clone().add(normalizedThirdPersonPosition.clone().multiplyScalar(0.55)),
-                            normalizedThirdPersonPosition, 'camWall', function (intersections) {
-                            if (intersections.length) {
-                                var dist = intersections[0].point.sub(me.entity.position).length();
+                            this.world.getSystem('rigidbody').rayCast(me.entity.position.clone().add(normalizedThirdPersonPosition.clone().multiplyScalar(0.55)),
+                                normalizedThirdPersonPosition, 'camWall', function (intersections) {
+                                if (intersections.length) {
+                                    var dist = intersections[0].point.sub(me.entity.position).length();
 
-                                if (dist < originalThirdPersonPositionLength) {
-                                    me.camDistanceLimit = dist;
+                                    if (dist < originalThirdPersonPositionLength) {
+                                        me.camDistanceLimit = dist;
+                                    }
                                 }
+
+                                me.thirdPersonPosition.normalize();
+                                me.thirdPersonPosition.y = originalThirdPersonPositionNormalizedYCoordinate;
+                                me.thirdPersonPosition.multiplyScalar(me.camDistanceLimit);
+                            });
+
+                            var worldPos = new THREE.Vector3();
+                            worldPos.setFromMatrixPosition(localCam.matrixWorld);
+                            detachedCam.position.lerp(mainPlayer.position.clone().add(this.thirdPersonPosition), dt * 4);
+
+                            cameraThirdPersonLookAtTargetOffset.applyEuler(new THREE.Euler(0, IbUtils.vecToEuler(this.thirdPersonPosition) + Math.PI/2, 0));
+                            cameraThirdPersonLookAtTarget.lerp(mainPlayer.position.clone().add(cameraThirdPersonLookAtTargetOffset), dt * 4);
+
+                            detachedCam.lookAt(cameraThirdPersonLookAtTarget);
+
+                            var vectorThatIsAlwaysBehindThePlayer = originalThirdPersonPosition.clone();
+
+                            vectorThatIsAlwaysBehindThePlayer.applyQuaternion(mainPlayer.quaternion);
+                            // debug.drawVector(vectorThatIsAlwaysBehindThePlayer, this.entity.position);
+
+                            if (!this.temporarilyDisableAutoCameraCorrection && this.cameraType === 'arcade') {
+                                this.thirdPersonPosition.lerp(vectorThatIsAlwaysBehindThePlayer, dt * 2.5);
                             }
 
-                            me.thirdPersonPosition.normalize();
-                            me.thirdPersonPosition.y = originalThirdPersonPositionNormalizedYCoordinate;
-                            me.thirdPersonPosition.multiplyScalar(me.camDistanceLimit);
-                        });
+                            // debug.watch('cameraThirdPersonLookAtTarget', cameraThirdPersonLookAtTarget);
+                            // debug.watch('detachedCam.position', detachedCam.position);
+                        }
+                    }
+                    else {
+                        var multiplier = 1.0;
 
-                        var worldPos = new THREE.Vector3();
-                        worldPos.setFromMatrixPosition(localCam.matrixWorld);
-                        detachedCam.position.lerp(this.entity.position.clone().add(this.thirdPersonPosition), dt * 4);
+                        //var magic = 35;
+                        var magic = 2;
 
-                        cameraThirdPersonLookAtTargetOffset.applyEuler(new THREE.Euler(0, IbUtils.vecToEuler(this.thirdPersonPosition) + Math.PI/2, 0));
-						cameraThirdPersonLookAtTarget.lerp(this.entity.position.clone().add(cameraThirdPersonLookAtTargetOffset), dt * 4);
+                        var activeLevel = $rootWorld.name;
 
-                        detachedCam.lookAt(cameraThirdPersonLookAtTarget);
-
-                        var vectorThatIsAlwaysBehindThePlayer = originalThirdPersonPosition.clone();
-
-                        vectorThatIsAlwaysBehindThePlayer.applyQuaternion(this.entity.quaternion);
-                        // debug.drawVector(vectorThatIsAlwaysBehindThePlayer, this.entity.position);
-
-						if (!this.temporarilyDisableAutoCameraCorrection && this.cameraType === 'arcade') {
-							this.thirdPersonPosition.lerp(vectorThatIsAlwaysBehindThePlayer, dt * 2.5);
-						}
-
-                        // debug.watch('cameraThirdPersonLookAtTarget', cameraThirdPersonLookAtTarget);
-                        // debug.watch('detachedCam.position', detachedCam.position);
+                        if (activeLevel === 'dev-zone') {
+                            cameraComponent._camera.position.set(Math.sin(elapsed * multiplier / 20) * -18, 5, Math.cos(elapsed * multiplier / 20) * 18);
+                            cameraComponent._camera.lookAt(new THREE.Vector3());
+                        }
+                        else {
+                            cameraComponent._camera.position.set(Math.sin(elapsed * multiplier / 20) * -18, 30 + (magic + 2) + Math.cos(elapsed * multiplier / 20) * magic, Math.cos(elapsed * multiplier / 20) * 18);
+                            cameraComponent._camera.rotation.set(0, -elapsed * multiplier / 20, 0);
+                        }
                     }
                 }
             };

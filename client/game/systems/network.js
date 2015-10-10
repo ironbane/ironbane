@@ -73,14 +73,10 @@ angular
                             color: 0x60511b,
                             distance: 3.5
                         });
-                        builtEntity.addComponent('camera', {
-                            aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
-                        });
 
                         if (scriptComponent) {
                             scriptComponent.scripts = scriptComponent.scripts.concat([
-                                '/scripts/built-in/character-controller.js',
-                                '/scripts/built-in/character-multicam.js',
+                                '/scripts/built-in/character-controller.js'
                             ]);
                         }
 

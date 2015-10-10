@@ -11,47 +11,18 @@ angular
         'game.services.globalsound',
         'game.world-root',
         'engine.entity-builder',
+        'engine.entity-cache',
         'engine.util',
         'global.constants'
     ])
     .config(['$stateProvider', function($stateProvider) {
         'use strict';
 
+        var camera = null;
+
         $stateProvider.state('three-root.main-menu', {
             templateUrl: 'client/game/ui/states/three-root/main-menu/main-menu.ng.html',
             abstract: true,
-            resolve: {
-                MainMenuPanningCamera: [
-                    '$rootWorld',
-                    'EntityBuilder',
-                    '$window',
-                    function($rootWorld, EntityBuilder, $window) {
-                        var camera;
-
-                        // Problem: aspectRatio is set to 2 at this point because
-                        // domElement is not set to the windowSize yet. Ideally, the MainMenuPanningCamera
-                        // should be constructed AFTER entering three-root OnEnter, as it only knows about
-                        // the real domElement size there.
-                        // For now we'll just set the $window size here, but it's a hack really.
-                        $rootWorld.renderer.setSize($window.innerWidth, $window.innerHeight);
-
-                        camera = EntityBuilder.build('MainMenuPanningCamera', {
-                            components: {
-                                camera: {
-                                    aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
-                                },
-                                script: {
-                                    scripts: [
-                                        '/scripts/built-in/camera-pan.js'
-                                    ]
-                                }
-                            }
-                        });
-
-                        return camera;
-                    }
-                ]
-            },
             controllerAs: 'mainMenu',
             controller: [
                 '$log',
@@ -86,30 +57,49 @@ angular
             ],
             onEnter: [
                 '$rootWorld',
-                'MainMenuPanningCamera',
                 '$log',
                 'GlobalSound',
                 '$timeout',
                 '$rootScope',
                 'IB_CONSTANTS',
-                function($rootWorld, MainMenuPanningCamera, $log, GlobalSound, $timeout, $rootScope, IB_CONSTANTS) {
+                'EntityBuilder',
+                '$window',
+                '$entityCache',
+                function($rootWorld, $log, GlobalSound, $timeout, $rootScope, IB_CONSTANTS, EntityBuilder, $window, $entityCache) {
                     $rootScope.mainPlayer = null;
                     delete $rootScope.isTransitioning;
 
                     $rootWorld.load(IB_CONSTANTS.world.mainMenuLevel).then(function () {
                         GlobalSound.play('theme', null, 5);
-                        $rootWorld.addEntity(MainMenuPanningCamera);
                     });
+
+                    if (!camera) {
+                        $rootWorld.renderer.setSize($window.innerWidth, $window.innerHeight);
+
+                        camera = EntityBuilder.build('MainCamera', {
+                            components: {
+                                camera: {
+                                    aspectRatio: $rootWorld.renderer.domElement.width / $rootWorld.renderer.domElement.height
+                                },
+                                script: {
+                                    scripts: [
+                                        '/scripts/built-in/character-multicam.js',
+                                    ]
+                                }
+                            }
+                        });
+
+                        $entityCache.put('mainCamera', camera);
+
+                        $rootWorld.addEntity(camera);
+                    }
                 }
             ],
             onExit: [
                 '$rootWorld',
-                'MainMenuPanningCamera',
                 'GlobalSound',
                 '$timeout',
-                function($rootWorld, MainMenuPanningCamera, GlobalSound, $timeout) {
-                    $rootWorld.removeEntity(MainMenuPanningCamera);
-
+                function($rootWorld, GlobalSound, $timeout) {
                     GlobalSound.stop('theme');
                 }
             ]
