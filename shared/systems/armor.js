@@ -17,15 +17,17 @@ angular
                     var inventorySystem = world.getSystem('inventory');
 
                     var buildArmor = function(entity) {
+                        var armorComponent = entity.getComponent('armor');
 
-                        var totalArmor = 0;
+                        var totalArmor = entity.hasComponent('player') ? 0 : armorComponent.value;
+
                         inventorySystem.loopItems(entity, function (item, slot) {
                             if (item.armor) {
                                 totalArmor += item.armor;
                             }
                         }, 'equipment');
 
-                        if (!entity.hasComponent('armor')) {
+                        if (!armorComponent) {
                             entity.addComponent('armor', {
                                 value: 0,
                                 max: totalArmor
