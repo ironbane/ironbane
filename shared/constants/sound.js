@@ -113,5 +113,12 @@ angular
             type: 'sound'
         },
 
+        teleport: {
+            path: 'sound/effects/teleport',
+            volume: 0.5,
+            loop: false,
+            type: 'sound'
+        },
+
         __bogusSoundFile: {}
     });
