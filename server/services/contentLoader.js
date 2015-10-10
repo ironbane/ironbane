@@ -86,6 +86,8 @@ angular
                     var lastPart = itemNameParts[itemNameParts.length - 1];
                     if (lastPart.substring(lastPart.length - 1) === '%') {
                         lootDropChance = parseFloat(lastPart.substring(0, lastPart.length - 1));
+                        itemNameParts.pop();
+                        itemName = itemNameParts.join(' ');
                     }
 
                     if (!addToEquipment) {
