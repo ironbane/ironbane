@@ -61,22 +61,12 @@ angular
 
                         me.world.removeEntity(entity);
 
-                        /*entity.removeComponent('quad');
-                        entity.removeComponent('wieldItem');
-                        entity.removeComponent('fighter');
-                        entity.removeComponent('shadow');
-                        entity.removeComponent('health');
-                        entity.removeComponent('damageable');
-                        entity.removeComponent('armor');
-                        entity.removeComponent('rigidBody');
-                        entity.removeComponent('script');
-                        entity.removeComponent('name-mesh');
+                        if (entity.hasComponent('netSend')) {
+                            setTimeout(function () {
+                                entity.inGame = false;
+                            }, 2000);
 
-                        if (!entity.hasComponent('player')) {
-                            // me.world.removeEntity(entity);
-                        }
-                        else*/ if (entity.hasComponent('netSend')) {
-                            BigMessagesService.add('You died.<br><div class="deathIcon"></div>');
+                            BigMessagesService.add('<p>You died.</p><div class="deathIcon">');
                         }
                     }
                 });
