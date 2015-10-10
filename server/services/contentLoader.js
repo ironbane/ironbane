@@ -80,12 +80,37 @@ angular
                 return function(itemName) {
                     itemName = itemName.trim();
 
-                    var regex = /%[0-9]+/;
-                    var regexResult = itemName.match(regex);
+                    var lootDropChance = 0.0;
 
-                    if (regexResult) {
-                        itemName = itemName.replace(regexResult, '').trim();
+                    var itemNameParts = itemName.split(' ');
+                    var lastPart = itemNameParts[itemNameParts.length - 1];
+                    if (lastPart.substring(lastPart.length - 1) === '%') {
+                        lootDropChance = parseFloat(lastPart.substring(0, lastPart.length - 1));
                     }
+
+                    if (!addToEquipment) {
+                        // We'll filter here, so if they managed to go through
+                        // set the lootDropChance to 100
+
+                        var roll = IbUtils.getRandomFloat(0, 100);
+
+                        // console.log(itemName, 'lootDropChance', lootDropChance, 'roll', roll);
+                        if (roll > lootDropChance) {
+                            // console.log('not adding');
+                            return;
+                        }
+                        else {
+                            // console.log('adding');
+                        }
+
+                        lootDropChance = 100.0;
+                    }
+                    else {
+                        // In the case of equipment, loopDropChance will be 0.0
+                        // unless they explicitly set something different in the sheet
+                    }
+
+                    // console.log('lootDropChance', lootDropChance, itemName);
 
                     rawItems.forEach(function(item) {
                         var name = getValue(item, itemHeaders, 'Name');
@@ -165,11 +190,7 @@ angular
                                     }
                                 }
 
-                                if (regexResult) {
-                                    inventory[slot].dropChance = parseFloat(regexResult.join().substr(1), 10);
-                                    // console.log('new', 'test', itemName, ', dropChance ', inventory[slot].dropChance);
-                                }
-
+                                inventory[slot].dropChance = lootDropChance;
                             }
 
                         }

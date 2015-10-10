@@ -211,9 +211,9 @@ angular
                     _.each(invSlotList, function(slotName) {
                         var item = inventory[slotName];
                         if (item) {
-                            var chance = IbUtils.getRandomInt(0, 100);
+                            var roll = IbUtils.getRandomFloat(0, 100);
 
-                            if (item.dropChance > chance) {
+                            if (item.dropChance > roll) {
                                 me.dropItem(entity, item);
                             }
                         }
