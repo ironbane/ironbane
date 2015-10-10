@@ -87,7 +87,7 @@ angular
                     world.subscribe('combat:damageEntity', function(victimEntity, sourceEntity, item) {
                         var totalList = [];
                         var sendComponentV = victimEntity.getComponent('netSend');
-                        var sendComponentS = victimEntity.getComponent('netSend');
+                        var sendComponentS = sourceEntity.getComponent('netSend');
 
                         if (sendComponentV) {
                             totalList = totalList.concat(sendComponentV.__knownEntities);
