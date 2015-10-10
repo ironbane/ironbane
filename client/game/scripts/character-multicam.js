@@ -169,10 +169,10 @@ angular
                             var normalizedThirdPersonPosition = me.thirdPersonPosition.clone();
                             normalizedThirdPersonPosition.normalize();
 
-                            this.world.getSystem('rigidbody').rayCast(me.entity.position.clone().add(normalizedThirdPersonPosition.clone().multiplyScalar(0.55)),
+                            this.world.getSystem('rigidbody').rayCast(mainPlayer.position.clone().add(normalizedThirdPersonPosition.clone().multiplyScalar(0.55)),
                                 normalizedThirdPersonPosition, 'camWall', function (intersections) {
                                 if (intersections.length) {
-                                    var dist = intersections[0].point.sub(me.entity.position).length();
+                                    var dist = intersections[0].point.sub(mainPlayer.position).length();
 
                                     if (dist < originalThirdPersonPositionLength) {
                                         me.camDistanceLimit = dist;
