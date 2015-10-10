@@ -5,7 +5,7 @@ angular
         'game.services.globalsound',
         'three'
     ])
-    .factory('TeleporterSystem', ["EntityProcessingSystem", "EntityBuilder", "THREE", "GlobalSound", function(EntityProcessingSystem, EntityBuilder, THREE, GlobalSound) {
+    .factory('TeleporterSystem', ['EntityProcessingSystem', 'EntityBuilder', 'THREE', 'GlobalSound', function(EntityProcessingSystem, EntityBuilder, THREE, GlobalSound) {
             'use strict';
 
             return EntityProcessingSystem.extend({
@@ -13,11 +13,17 @@ angular
                     this._super('teleporter');
                 },
                 addedToWorld: function(world) {
-                    this._super(world);;
+                    this._super(world);
 
                     world.entityRemoved('fighter').add(function(entity) {
                         var teleporterEntities = world.getEntities('teleporter');
                         teleporterEntities.forEach(function (teleporterEntity) {
+                            var teleporterComponent = teleporterEntity.getComponent('teleporter');
+
+                            if (teleporterComponent.isExit) {
+                                return;
+                            }
+
                             if (teleporterEntity.position.inRangeOf(entity.position, 2.0)) {
                                 GlobalSound.play('teleport');
 
