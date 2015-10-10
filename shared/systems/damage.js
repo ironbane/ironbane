@@ -66,7 +66,7 @@ angular
                                 entity.inGame = false;
                             }, 2000);
 
-                            BigMessagesService.add('<p>You died.</p><div class="deathIcon">');
+                            BigMessagesService.add('<p>You died.</p><div class="deathIcon"></div>');
                         }
                     }
                 });
