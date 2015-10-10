@@ -28,6 +28,8 @@ angular
                     this.allEntities = null;
                     this.knownEntities = null;
 
+                    this.loaded = false;
+
 
                     if (Meteor.isClient) {
                         this.renderer = new THREE.WebGLRenderer({
@@ -169,9 +171,7 @@ angular
                         return this._loadTask;
                     }
 
-                    if (Meteor.isClient) {
-                        Session.set('levelLoaded', false);
-                    }
+                    this.loaded = false;
 
                     var nodesToBeRemoved = [];
 
@@ -264,9 +264,7 @@ angular
                             return $q.reject('Error loading ', sceneName, err);
                         })
                         .then(function () {
-                            if (Meteor.isClient) {
-                                Session.set('levelLoaded', true);
-                            }
+                            world.loaded = true;
 
                             return $q.when();
                         });

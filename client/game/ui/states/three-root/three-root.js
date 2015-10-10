@@ -98,7 +98,12 @@ angular
                         $meteor.call('updateProfile', 'enableSound', !user.profile.enableSound);
                     };
 
-                    $meteor.session('levelLoaded').bind($scope, 'levelLoaded');
+
+                    $scope.$watch(function() {
+                        return $rootWorld.loaded;
+                    }, function(loaded) {
+                        $scope.levelLoaded = loaded;
+                    });
                 }
             ],
             onEnter: [
