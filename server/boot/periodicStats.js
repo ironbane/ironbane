@@ -37,9 +37,9 @@ angular
                 counts.total++;
             });
 
-            messages.push('Players online [' + counts.total + ']: users(' + counts.user + ') guests(' + counts.guests + ') gm(' + counts.gm + ')');
+            messages.push('[' + Meteor.settings.server.name + '] ' + counts.total + ' players online (' + counts.guests + ' guests, ' + counts.user + ' registered, ' + counts.gm + ' GMs)');
 
-            messages.push('Registered players: ' + Meteor.users.find({
+            messages.push('Total registrations: ' + Meteor.users.find({
                 'profile.guest': {
                     $exists: false
                 }
