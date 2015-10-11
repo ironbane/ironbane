@@ -3,7 +3,8 @@ angular
     .module('game.threeWorld', [
         'ces',
         'three',
-        'engine.entity-builder'
+        'engine.entity-builder',
+        'global.constants.game'
     ])
     .factory('ThreeWorld', [
         'World',
@@ -12,7 +13,8 @@ angular
         '$q',
         'EntityBuilder',
         '$log',
-        function(World, THREE, $http, $q, EntityBuilder, $log) {
+        'IB_CONSTANTS',
+        function(World, THREE, $http, $q, EntityBuilder, $log, IB_CONSTANTS) {
             'use strict';
 
             // takes the normal CES world and fuses it with THREE
@@ -189,7 +191,7 @@ angular
 
                     if (Meteor.isClient) {
                         world._loadTask = world._loadTask.then(function () {
-                            return $http.get('scene/' + sceneName + '/scene.json')
+                            return $http.get('scene/' + sceneName + '/scene.json' + '?v' + IB_CONSTANTS.GAME_VERSION.replace(/[^0-9a-zA-Z]/g, ''))
                                 .then(function(response) {
                                     return response.data;
                                 }, $q.reject);
