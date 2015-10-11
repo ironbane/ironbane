@@ -32,6 +32,8 @@ angular
                 '$meteor',
                 function($log, $scope, IB_CONSTANTS, IbUtils, $meteor) {
 
+                    $scope.$meteorSubscribe('servers');
+
                     $scope.characters = [];
 
                     $meteor.autorun($scope, function() {
