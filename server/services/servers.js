@@ -22,7 +22,7 @@ angular
 
                 return ServersCollection.find({
                     lastUpdate: {
-                        $gt: (new Date().getTime()) - 60
+                        $gt: (new Date().getTime()) - 10
                     }
                 });
             });
@@ -45,6 +45,6 @@ angular
                     }
                 })
 
-            }, 10000);
+            }, 3000);
         }
     ])

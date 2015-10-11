@@ -2,7 +2,7 @@ Meteor.Stream = function Stream(name, callback) {
   EV.call(this);
 
   var self = this;
-  var streamName = 'stream-' + name;
+  var streamName = 's-' + name;
 
   var mongoCollections = Mongo.Collection.getAll();
   var foundCollection = _.find(mongoCollections, function (col) {
@@ -20,7 +20,7 @@ Meteor.Stream = function Stream(name, callback) {
 
   collection.find({}).observe({
     "added": function(item) {
-      if(item.type == 'subscriptionId') {
+      if(item.type == 'sId') {
         subscriptionId = item._id;
         connected = true;
         pendingEvents.forEach(function(args) {

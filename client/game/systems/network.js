@@ -187,7 +187,7 @@ angular
                         if (entity.hasComponent('netSend')) {
                             me._stream.emit('combat:primaryAttack', {
                                 entityUuid: entity.uuid,
-                                targetVector: targetVector.toArray()
+                                targetVector: targetVector.serialize()
                             });
                         }
                     });
@@ -233,7 +233,7 @@ angular
                             return;
                         }
 
-                        var streamName = [Meteor.userId(), 'entities'].join('_');
+                        var streamName = IbUtils.shortMD5(Meteor.userId());
 
                         me._stream = new Meteor.Stream(streamName);
                         me._stream.resetListeners();
@@ -479,8 +479,8 @@ angular
                         // we only want to send changed
                         var sendComponent = entity.getComponent('netSend');
                         if (sendComponent._last) {
-                            var pos = entity.position.toArray(),
-                                rot = entity.rotation.y,
+                            var pos = entity.position.serialize(),
+                                rot = IbUtils.roundNumber(entity.rotation.y, 2),
                                 lastPos = sendComponent._last.pos,
                                 lastRot = sendComponent._last.rot;
 
@@ -492,8 +492,8 @@ angular
                             }
                         } else {
                             sendComponent._last = {
-                                pos: entity.position.toArray(),
-                                rot: entity.rotation.y
+                                pos: entity.position.serialize(),
+                                rot: IbUtils.roundNumber(entity.rotation.y, 2)
                             };
                             packet[entity.uuid] = sendComponent._last;
                         }

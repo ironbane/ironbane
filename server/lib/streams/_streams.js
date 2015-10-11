@@ -6,7 +6,7 @@ Meteor.Stream = function Stream(name) {
   EV.call(this);
 
   var self = this;
-  var streamName = 'stream-' + name;
+  var streamName = 's-' + name;
   var allowFunction;
   var allowResultCache = true;
   var allowResults = {};
@@ -30,7 +30,7 @@ Meteor.Stream = function Stream(name) {
   self.addFilter = function addFilter(callback) {
     filters.push(callback);
   };
-  
+
   self.emitToSubscriptions = function emitToSubscriptions(args, subscriptionId, userId) {
     events.emit('item', {args: args, userId: userId, subscriptionId: subscriptionId});
   };
@@ -41,7 +41,7 @@ Meteor.Stream = function Stream(name) {
     var publication = this;
 
     //send subscription id as the first document
-    publication.added(streamName, subscriptionId, {type: 'subscriptionId'});
+    publication.added(streamName, subscriptionId, {type: 'sId'});
     publication.ready();
     events.on('item', onItem);
 
@@ -91,7 +91,7 @@ Meteor.Stream = function Stream(name) {
       }
       //need to send this to server always
       self._emit.apply(methodContext, args);
-      
+
       //register onDisconnect handlers if provided
       if(typeof(methodContext.onDisconnect) == 'function') {
         disconnectEvents.on(subscriptionId, methodContext.onDisconnect)

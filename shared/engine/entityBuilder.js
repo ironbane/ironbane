@@ -191,7 +191,7 @@ angular
                 return function(data) {
                     var entity = new Entity();
 
-                    entity.uuid = data.uuid;
+                    entity.uuid = data.uuid.substr(0, 5);
 
                     entity.data = data;
 

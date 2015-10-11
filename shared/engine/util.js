@@ -1,8 +1,9 @@
 angular
     .module('engine.util', [
-        'three'
+        'three',
+        'util.hash'
     ])
-    .service('IbUtils', ['$q', 'THREE', function($q, THREE) {
+    .service('IbUtils', ['$q', 'THREE', 'Hash', function($q, THREE, Hash) {
         'use strict';
 
         this.getRandomInt = function(min, max) {
@@ -13,6 +14,10 @@ angular
         this.getRandomFloat = function(minValue, maxValue, precision) {
             precision = precision || 2;
             return parseFloat(Math.min(minValue + (Math.random() * (maxValue - minValue)), maxValue).toFixed(precision));
+        };
+
+        this.shortMD5 = function (str) {
+            return Hash.md5(str).substr(0, 4);
         };
 
         this.getRandomVector3 = function(base, spread) {
@@ -72,19 +77,7 @@ angular
             return value;
         };
 
-        this.generateUuid = function() {
-            var str = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-
-            str = str.replace(/[xy]/g, function(c) {
-                var rand = Math.random();
-                var r = rand * 16 | 0 % 16,
-                    v = c === 'x' ? r : (r & 0x3 | 0x8);
-
-                return v.toString(16);
-            });
-
-            return str;
-        };
+        this.generateUuid = THREE.Math.generateUUID;
 
         // TODO: replace with moment.js
         this.timeSince = function(date) {

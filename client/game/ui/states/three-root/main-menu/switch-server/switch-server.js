@@ -12,6 +12,8 @@ angular
             templateUrl: 'client/game/ui/states/three-root/main-menu/switch-server/switch-server.ng.html',
             controller: ["$scope", "$rootScope", "$state", "dialogService", "IB_CONSTANTS", "$meteor", "ServersCollection", function($scope, $rootScope, $state, dialogService, IB_CONSTANTS, $meteor, ServersCollection) {
 
+                $scope.$meteorSubscribe('servers');
+
                 $scope.servers = $meteor.collection(ServersCollection);
 
                 $scope.switchServer = function (server) {

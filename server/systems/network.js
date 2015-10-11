@@ -5,7 +5,8 @@ angular
         'server.services.chat',
         'global.constants.inv',
         'global.constants.game',
-        'engine.timing'
+        'engine.timing',
+        'engine.util'
     ])
     .factory('NetworkSystem', [
         'System',
@@ -15,7 +16,8 @@ angular
         'INV_SLOTS',
         'IB_CONSTANTS',
         'Timer',
-        function(System, $log, ChatService, THREE, INV_SLOTS, IB_CONSTANTS, Timer) {
+        'IbUtils',
+        function(System, $log, ChatService, THREE, INV_SLOTS, IB_CONSTANTS, Timer, IbUtils) {
             'use strict';
 
             function arraysAreEqual(a1, a2) {
@@ -53,7 +55,7 @@ angular
                     'profile.server.id': Meteor.settings.server.id
                 }).observe({
                     added: function(user) {
-                        var streamName = [user._id, 'entities'].join('_');
+                        var streamName = IbUtils.shortMD5(user._id);
 
                         if (!streams[streamName]) {
                             streams[streamName] = new Meteor.Stream(streamName);
@@ -71,13 +73,6 @@ angular
                     this.entityComponentRemovedHandler = this._entityCRH.bind(this);
 
                     this.updateFrequencyTimer = new Timer(0.5);
-                },
-                addStream: function (user) {
-                    var streamName = [user._id, 'entities'].join('_');
-
-                    if (!streams[streamName]) {
-                        streams[streamName] = new Meteor.Stream(streamName);
-                    }
                 },
                 addedToWorld: function(world) {
                     var self = this;
@@ -238,7 +233,7 @@ angular
                     });
 
                     world.entityAdded('netSend', 'player').add(function (entity) {
-                        var streamName = [entity.owner, 'entities'].join('_');
+                        var streamName = IbUtils.shortMD5(entity.owner);
 
                         if (!streams[streamName]) {
                             console.error('stream not found:', streamName);
@@ -626,24 +621,32 @@ angular
                         if (entity.hasComponent('player')) {
                             sendComponent.__knownEntities.forEach(function (knownEntity) {
                                 var packet = {};
-                                if (sendComponent._last) {
-                                    var pos = knownEntity.position.toArray(),
-                                        rot = knownEntity.rotation.toArray(),
-                                        lastPos = sendComponent._last.pos,
-                                        lastRot = sendComponent._last.rot;
+
+                                if (!sendComponent._last) {
+                                    sendComponent._last = {};
+                                }
+
+                                var last = sendComponent._last[knownEntity.uuid];
+
+                                if (last) {
+                                    var pos = knownEntity.position.serialize(),
+                                        rot = knownEntity.rotation.serialize(),
+                                        lastPos = last.pos,
+                                        lastRot = last.rot;
 
                                     if (!arraysAreEqual(pos, lastPos) || !arraysAreEqual(rot, lastRot)) {
-                                        sendComponent._last.pos = pos;
-                                        sendComponent._last.rot = rot;
+                                        last.pos = pos;
+                                        last.rot = rot;
 
-                                        packet[knownEntity.uuid] = sendComponent._last;
+                                        packet[knownEntity.uuid] = last;
                                     }
                                 } else {
-                                    sendComponent._last = {
-                                        pos: knownEntity.position.toArray(),
-                                        rot: knownEntity.rotation.toArray()
+                                    last = {
+                                        pos: knownEntity.position.serialize(),
+                                        rot: knownEntity.rotation.serialize()
                                     };
-                                    packet[knownEntity.uuid] = sendComponent._last;
+                                    packet[knownEntity.uuid] = last;
+                                    sendComponent._last[knownEntity.uuid] = last;
                                 }
 
                                 if (Object.keys(packet).length > 0) {
