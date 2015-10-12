@@ -39,10 +39,14 @@ angular
                     var me = this;
 
                     var fighterComponent = this.entity.getComponent('fighter');
+                    var netSendComponent = this.entity.getComponent('netSend');
 
-                    var potentialTargets = this.world.getEntities('fighter', 'health')
+                    var potentialTargets = netSendComponent.__knownEntities
                         .filter(function (entity) {
                             var otherFighterComponent = entity.getComponent('fighter');
+
+                            if (!otherFighterComponent) return false;
+
                             if (fighterComponent.faction === otherFighterComponent.faction) return false;
 
                             var otherHealthComponent = entity.getComponent('health');
