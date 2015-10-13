@@ -61,10 +61,12 @@ angular
         var _sequencedTimers = {};
 
         // TODO: descriptive var names
-        this.chooseFromSequence = function(a) {
-            var uid = '';
-            for (var b in a) {
-                uid += b;
+        this.chooseFromSequence = function(a, uid) {
+            if (!uid) {
+                uid = '';
+                for (var b in a) {
+                    uid += b;
+                }
             }
             if (angular.isUndefined(_sequencedTimers[uid])) {
                 _sequencedTimers[uid] = 0;
