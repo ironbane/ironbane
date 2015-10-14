@@ -100,25 +100,25 @@ angular
                                     targetEntityUuid: this.lastFollowingEntity.uuid
                                 }
                             }));
+
+                            this.wanderWaypointChangeTimer = -1;
                         }
                     }
-
-                    if (this.lastFollowingEntity) {
+                    else if (this.lastFollowingEntity) {
                         // Stop pursuing if they are no longer in our target list
                         if (!_.contains(potentialTargets, this.lastFollowingEntity)) {
                             if (this.entity.hasComponent('localState')) {
                                 this.entity.removeComponent('localState');
                             }
                             this.lastFollowingEntity = null;
+                            this.wanderWaypointChangeTimer = -1;
                         }
                     }
-
-                    if (!potentialTargets.length) {
-
+                    else {
                         if (this.wanderWaypointChangeTimer < 0) {
                             this.wanderWaypointChangeTimer = this.wanderWaypointChangeTimeout || DEFAULT_WANDER_WAYPOINT_CHANGE_TIMEOUT;
 
-                            var targetPosition = IbUtils.getRandomVector3(this.entity.position, new THREE.Vector3(this.config.wanderRange || DEFAULT_WANDER_RANGE, 0, this.config.wanderRange || DEFAULT_WANDER_RANGE));
+                            this.targetPosition = IbUtils.getRandomVector3(this.entity.position, new THREE.Vector3(this.config.wanderRange || DEFAULT_WANDER_RANGE, 0, this.config.wanderRange || DEFAULT_WANDER_RANGE));
 
                             // console.log(this.entity.name + ' changed position');
                             // console.log('position: ', this.entity.position);
@@ -131,7 +131,7 @@ angular
                             this.entity.addComponent($components.get('localState', {
                                 state: 'findPathToPosition',
                                 config: {
-                                    targetPosition: targetPosition
+                                    targetPosition: this.targetPosition
                                 }
                             }));
                         }
