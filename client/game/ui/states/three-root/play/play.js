@@ -54,8 +54,6 @@ angular
                                 setTimeout(function () {
                                     $meteor.call('leaveGame')
                                         .then(function () {
-                                            $entityCache.put('mainPlayer', null);
-                                            delete $rootScope.isTransitioning;
                                             $state.go('^.main-menu.enter-world');
                                         }, function(err) {
                                             delete $rootScope.isTransitioning;
@@ -112,6 +110,8 @@ angular
                                 $state.go('^.main-menu.enter-world');
                                 dialogService.alert('Connection lost.', 'Reload')
                                 .then(function () {
+                                    location.reload();
+                                }, function () {
                                     location.reload();
                                 });
                             }

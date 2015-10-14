@@ -164,6 +164,21 @@ angular
                     }
 
                 },
+                clearNetworkEntities: function () {
+                    var world = this;
+
+                    var nodesToBeRemoved = [];
+
+                    world.traverse(function(node) {
+                        if (node.hasComponent && (node.hasComponent('netSend') || node.hasComponent('netRecv'))) {
+                            nodesToBeRemoved.push(node);
+                        }
+                    });
+
+                    nodesToBeRemoved.forEach(function(node) {
+                        world.removeEntity(node);
+                    });
+                },
                 load: function(sceneName) {
                     var world = this;
 

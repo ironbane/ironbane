@@ -68,7 +68,11 @@ angular
                 '$window',
                 '$entityCache',
                 function($rootWorld, $log, GlobalSound, $timeout, $rootScope, IB_CONSTANTS, EntityBuilder, $window, $entityCache) {
+
+                    $entityCache.put('mainPlayer', null);
                     $rootScope.mainPlayer = null;
+                    $rootWorld.clearNetworkEntities();
+
                     delete $rootScope.isTransitioning;
 
                     $rootWorld.load(IB_CONSTANTS.world.mainMenuLevel).then(function () {
