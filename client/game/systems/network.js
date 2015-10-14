@@ -124,6 +124,15 @@ angular
                             group: 'otherPlayers',
                             collidesWith: ['level', 'npcs']
                         });
+
+                        if ($rootScope.currentUser._id !== entity.owner) {
+                            builtEntity.addComponent('localState', {
+                                state: 'goToPosition',
+                                config: {
+                                    targetPosition: builtEntity.position
+                                }
+                            });
+                        }
                     }
 
                     $rootWorld.load(builtEntity.level).then(function() {
