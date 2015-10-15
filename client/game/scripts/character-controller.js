@@ -71,7 +71,6 @@ angular
                 playMap.map('jump', 'keyboard', 'SPACE');
 
                 playMap.map('attack', 'gamepad', 'XBOX360_RIGHT_TRIGGER', 'D');
-                playMap.map('attack', 'keyboard', 'F', 'D');
                 playMap.map('attack', 'mouse', 'MOUSE_BUTTON_LEFT', 'D');
 
                 playMap.map('attack2', 'mouse', 'MOUSE_BUTTON_RIGHT', 'D');
@@ -99,6 +98,8 @@ angular
                 playMap.map('rotateRight', 'gamepad', 'XBOX360_RIGHT_BUMPER', 'D');
 
                 playMap.map('changeCamera', 'keyboard', 'C', 'P');
+
+                playMap.map('pickupItem', 'keyboard', 'F', 'P');
                 // TODO add Xbox control for changeCamera
 
                 for (var i = 1; i <= 8; i++) {
@@ -306,6 +307,13 @@ angular
 
                 var inventorySystem = this.world.getSystem('inventory');
                 var inventoryComponent = this.entity.getComponent('inventory');
+
+                if (playMap.test('pickupItem')) {
+                    if (inventorySystem.closePickup) {
+                        this.world.publish('pickup:entity', this.entity, inventorySystem.closePickup);
+                        inventorySystem.closePickup = null;
+                    }
+                }
 
                 if (inventoryComponent) {
                     for (var i = 0; i <= 7; i++) {

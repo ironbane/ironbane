@@ -38,7 +38,9 @@ angular
                     this.onItemAdded = new Signal();
                     this.onItemRemoved = new Signal();
 
-                    this._pickupTimer = new Timer(0.5);
+                    this._pickupTimer = new Timer(0.01);
+
+                    this.closePickup = null;
                 },
                 addedToWorld: function(world) {
                     this._super(world);
@@ -63,6 +65,55 @@ angular
                         if (Meteor.isServer) {
                             me.dropItem(entity, item);
                         }
+                    });
+
+                    world.subscribe('pickup:entity', function(entity, pickup) {
+                        var particle = EntityBuilder.build('particle', {
+                            components: {
+                                particleEmitter: {
+                                    group: {
+                                        texture: 'images/particles/small.png',
+                                        hasPerspective: true,
+                                        colorize: true,
+                                        // depthWrite: true,
+                                        blending: THREE.NormalBlending,
+                                        maxAge: 1.0
+                                    },
+                                    emitter: {
+                                        type: 'cube',
+
+                                        acceleration: [0, 0, 0],
+                                        // accelerationSpread: [0.2, 0.2, 0.2],
+                                        positionSpread: [0.2, 0.2, 0.2],
+                                        velocity: [0, 0, 0],
+                                        velocitySpread: [2, 2, 2],
+                                        duration: 0.2,
+
+                                        sizeStart: 0.3,
+                                        // sizeEnd: 3.0,
+                                        opacityStart: 1.0,
+                                        // opacityMiddle: 0.0,
+                                        opacityEnd: 0,
+                                        colorStart: '#5fff72',
+                                        // colorStartFn: colorfn,
+                                        // colorMiddleFn: colorfn,
+                                        // colorEndFn: colorfn,
+                                        // colorStartSpread: new THREE.Vector3(0.1, 0.1, 0.1),
+                                        // colorMiddle: '#1480ff',
+                                        // colorEnd: '#14feff',
+                                        particleCount: 10
+                                    }
+                                },
+                                lifespan: {
+                                    duration: 5
+                                }
+                            }
+                        });
+
+                        particle.position.copy(pickup.position);
+                        world.addEntity(particle);
+
+                        world.removeEntity(pickup);
                     });
                 },
                 findEmptySlot: function(entity, slotBank) {
@@ -572,20 +623,27 @@ angular
                     }
                     if (Meteor.isClient) {
                         if (invSystem._pickupTimer.isExpired) {
+                            me.closePickup = null;
                             //$log.debug('pickup scan');
 
                             var grabbers = this.world.getEntities('inventory', 'player'),
                                 pickups = this.world.getEntities('pickup');
 
                             grabbers.forEach(function(entity) {
-                                // TODO: some sort of spacial awareness so that it's not always the first in the array that wins
+
+                                pickups.sort(function(a, b) {
+                                    return a.position.distanceToSquared(entity.position) - b.position.distanceToSquared(entity.position);
+                                });
+
                                 pickups.forEach(function(pickup) {
                                     //$log.debug('pickup hunting: ', entity, pickups);
                                     if (entity.position.inRangeOf(pickup.position, 1.0)) {
-                                        // $log.debug('picking up: ', entity.name, ' -> ', pickup.name);
-
-                                        me.world.publish('pickup:entity', entity, pickup);
-                                        // invSystem.world.removeEntity(pickup);
+                                        if (pickup.getComponent('pickup').item.type === 'cash') {
+                                            me.world.publish('pickup:entity', entity, pickup);
+                                        }
+                                        else {
+                                            me.closePickup = pickup;
+                                        }
                                     }
                                 });
                             });

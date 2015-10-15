@@ -9,5 +9,6 @@
 </div>
 <big-messages-box></big-messages-box>
 <drop-zone entity="mainPlayer"></drop-zone>
+<pickup-button></pickup-button>
 <inventory-bar id="playerInventory" entity="mainPlayer" ng-if="!mainPlayer.getComponent('cheats') || !mainPlayer.getComponent('cheats').screenshot"></inventory-bar>
 <button class="ibutton reset-player" tabindex="-1" click-sound ng-click="resetPlayer($event)" ng-if="!mainPlayer.getComponent('cheats') || !mainPlayer.getComponent('cheats').screenshot"></button>

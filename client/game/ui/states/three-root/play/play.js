@@ -14,6 +14,7 @@ angular
         'game.ui.spritesheetImage',
         'game.ui.bigMessages.bigMessagesBox',
         'game.ui.dropZone',
+        'game.ui.pickupButton',
         'game.clientSettings'
     ])
     .config([

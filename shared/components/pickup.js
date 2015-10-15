@@ -10,7 +10,8 @@ angular
                     hover: {
                         amplitude: 0.15,
                         speed: 3.25
-                    }
+                    },
+                    item: null
                 }
             });
         }
