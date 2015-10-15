@@ -46,7 +46,7 @@ angular
 
                 angular.forEach(packet, function(entity, uuid) {
 
-                    // $log.debug('[NetworkSystem : add]', uuid);
+                    console.debug('[NetworkSystem : add]', entity, uuid);
 
                     var exists = world.scene.getObjectByProperty('uuid', uuid);
                     if (exists) {
@@ -83,8 +83,13 @@ angular
                         // this is pretty much the only on Ge we want to netSend
                         builtEntity.addComponent('netSend');
 
-                        $entityCache.put('mainPlayer', builtEntity);
-                        delete $rootScope.isTransitioning;
+                        var mainPlayer = $entityCache.get('mainPlayer');
+                        if (mainPlayer) {
+                            delete $rootScope.isTransitioning;
+                        }
+                        else {
+                            $entityCache.put('mainPlayer', builtEntity);
+                        }
 
                         // needed somewhere on the scope for the UI, prolly doesn't *need* to be root
                         $rootScope.mainPlayer = builtEntity;
