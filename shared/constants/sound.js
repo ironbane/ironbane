@@ -2,7 +2,7 @@ angular
     .module('global.constants.sound', [])
     .constant('SOUND_CONFIG', {
         theme: {
-            path: 'music/ib_theme',
+            path: 'music/caketown_1',
             volume: 0.55,
             loop: false,
             type: 'music'
