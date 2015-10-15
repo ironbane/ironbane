@@ -61,11 +61,12 @@ angular
                         projectileComponent._canDeliverEffect = true;
                         projectileComponent._owner = world.scene.getObjectByProperty('uuid', projectileComponent.ownerUuid);
 
-                        projectileComponent._item = inventorySystem.findItemByUuid(projectileComponent._owner, projectileComponent.itemUuid);
-
                         if (!projectileComponent._owner) {
-                            console.error('Error fetching projectile owner from uuid! ', projectileComponent);
+                            console.warn('Error fetching projectile owner from uuid! ', projectileComponent);
+                            return;
                         }
+
+                        projectileComponent._item = inventorySystem.findItemByUuid(projectileComponent._owner, projectileComponent.itemUuid);
 
                         var alteredTargetPosition = projectileComponent.targetPosition.clone();
                         alteredTargetPosition.y += 0.2;
