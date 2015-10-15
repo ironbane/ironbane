@@ -310,8 +310,14 @@ angular
 
                 if (playMap.test('pickupItem')) {
                     if (inventorySystem.closePickup) {
-                        this.world.publish('pickup:entity', this.entity, inventorySystem.closePickup);
-                        inventorySystem.closePickup = null;
+                        var slot = inventorySystem.findEmptySlot(this.entity);
+                        if (!slot) {
+                            BigMessagesService.add('Inventory full');
+                        }
+                        else {
+                            this.world.publish('pickup:entity', this.entity, inventorySystem.closePickup);
+                            inventorySystem.closePickup = null;
+                        }
                     }
                 }
 
