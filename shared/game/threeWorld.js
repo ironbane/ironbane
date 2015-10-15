@@ -206,7 +206,7 @@ angular
 
                     if (Meteor.isClient) {
                         world._loadTask = world._loadTask.then(function () {
-                            return $http.get('scene/' + sceneName + '/scene.json' + '?v' + IB_CONSTANTS.GAME_VERSION.replace(/[^0-9a-zA-Z]/g, ''))
+                            return $http.get('scene/' + sceneName + '/scene.json')
                                 .then(function(response) {
                                     return response.data;
                                 }, $q.reject);
