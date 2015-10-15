@@ -145,8 +145,8 @@ angular
                     },
                     components: {
                         inventory: ContentLoader.buildInventory([
-                            'Potion',
-                            'Potion',
+                            'Potion 100%',
+                            'Potion 100%',
                         ], [
                             'Dull Sword',
                             'Peasant Shirt',
