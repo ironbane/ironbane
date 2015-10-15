@@ -165,11 +165,11 @@ angular
                                             // Only publish if the projectile has something to do with the local client's entities (netSend)
                                             // Other projectile hit events will be sent over the network
 
-                                            if (damageableEntity.hasComponent('netSend') ||
-                                                projectileComponent._owner.hasComponent('netSend')) {
+                                            // if (damageableEntity.hasComponent('netSend') ||
+                                                // projectileComponent._owner.hasComponent('netSend')) {
 
                                                 me.world.publish('combat:damageEntity', damageableEntity, projectileComponent._owner, projectileComponent._item);
-                                            }
+                                            // }
 
                                             projectileComponent._canDeliverEffect = false;
                                         }

@@ -37,7 +37,7 @@ angular
                 });
 
                 world.subscribe('combat:damageEntity', function(victimEntity, sourceEntity, item) {
-                    //console.log('damage: victim[%s] attacker[%s]', victimEntity.uuid, sourceEntity.uuid, item);
+                    console.log('damage: victim[%s] attacker[%s]', victimEntity || victimEntity.uuid, sourceEntity || sourceEntity.uuid);
                     var damageableComponent = victimEntity.getComponent('damageable');
                     if (damageableComponent) {
                         damageableComponent.sources.push({
@@ -50,23 +50,29 @@ angular
 
                 var me = this;
 
-                world.subscribe('fighter:die', function (entity) {
+                world.subscribe('fighter:die', function (victimEntity, sourceEntity) {
                     // We died, so add proper particles
                     // and remove ourselves from the world
                     if (Meteor.isClient) {
-                        //console.debug('death particles: ', entity);
-                        me.addDeathParticles(entity, entity.position);
+                        //console.debug('death particles: ', victimEntity);
+                        me.addDeathParticles(victimEntity, victimEntity.position);
 
-                        GlobalSound.play(_.sample(['die1','die2','die3']), entity.position);
+                        GlobalSound.play(_.sample(['die1','die2','die3']), victimEntity.position);
 
-                        me.world.removeEntity(entity);
+                        me.world.removeEntity(victimEntity);
 
-                        if (entity.hasComponent('netSend')) {
+                        if (victimEntity.hasComponent('netSend')) {
                             setTimeout(function () {
                                 $rootScope.isTransitioning = true;
                             }, 2000);
 
                             BigMessagesService.add('<p>You died.</p><div class="deathIcon"></div>');
+                        }
+                    }
+                    else {
+                        var healthComponent = victimEntity.getComponent('health');
+                        if (healthComponent) {
+                            healthComponent.value = 0;
                         }
                     }
                 });
@@ -411,7 +417,7 @@ angular
 
                                         damage -= armorDamageDone;
 
-                                        if (Meteor.isServer) {
+                                        if (Meteor.isClient) {
                                             armorComponent.value -= armorDamageDone;
                                         }
 
@@ -427,7 +433,7 @@ angular
 
                                         damage -= healthDamageDone;
 
-                                        if (Meteor.isServer) {
+                                        if (Meteor.isClient) {
                                             healthComponent.value -= healthDamageDone;
                                         }
 
@@ -440,15 +446,15 @@ angular
                                         if (healthComponent.value <= 0 && !healthComponent.__hasDied) {
                                             // We died, so add proper particles
                                             // and remove ourselves from the world
-                                            if (Meteor.isServer) {
+                                            if (Meteor.isClient) {
                                                 me.world.publish('fighter:die', entity, source.sourceEntity);
-                                            } else {
+                                            // } else {
                                                 healthComponent.__hasDied = true;
                                             }
                                         }
                                     }
 
-                                    me.world.publish('fighter:updateStats', entity);
+                                    // me.world.publish('fighter:updateStats', entity);
 
                                     break;
                             }

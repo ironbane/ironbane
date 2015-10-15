@@ -62,7 +62,7 @@ angular
                                 if (toTarget.lengthSq() <= item.range * item.range) {
                                     damageSystem.dash(entity, direction, 'dealDamage');
                                     //console.log('dash: ', item.name, toTarget.lengthSq(), ' <= ', (item.range * item.range));
-                                    if (targetEntity && (toTargetEntity.lengthSq() <= item.range * item.range) && (targetEntity.hasComponent('netSend') || entity.hasComponent('netSend'))) {
+                                    if (targetEntity && (toTargetEntity.lengthSq() <= item.range * item.range)) {
                                         //console.log('dash hit: ', item.name, toTargetEntity.lengthSq(), ' <= ', (item.range * item.range));
                                         world.publish('combat:damageEntity', targetEntity, entity, item);
                                     }

@@ -28,8 +28,8 @@ angular
                 'Actor',
                 'Inventory',
                 'LifeSpan',
-                'Armor',
-                'Health',
+                // 'Armor',
+                // 'Health',
                 'Teleporter'
             ];
 

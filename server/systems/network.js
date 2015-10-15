@@ -79,10 +79,39 @@ angular
 
                     this._super(world);
 
-                    world.subscribe('combat:damageEntity', function(victimEntity, sourceEntity, item) {
+                    // world.subscribe('combat:damageEntity', function(victimEntity, sourceEntity, item) {
+                    //     var totalList = [];
+                    //     var sendComponentV = victimEntity.getComponent('netSend');
+                    //     var sendComponentS = sourceEntity.getComponent('netRecv');
+
+                    //     if (sendComponentV) {
+                    //         totalList = totalList.concat(sendComponentV.__knownEntities);
+                    //     }
+
+                    //     if (sendComponentS) {
+                    //         totalList = totalList.concat(sendComponentV.__knownEntities);
+                    //     }
+
+                    //     totalList = _.unique(totalList);
+
+                    //     totalList.forEach(function(knownEntity) {
+                    //         if (knownEntity.hasComponent('player') &&
+                    //             knownEntity !== sourceEntity &&
+                    //             knownEntity !== victimEntity) {
+                    //             knownEntity.stream.emit('combat:damageEntity', {
+                    //                 victimEntityUuid: victimEntity.uuid,
+                    //                 sourceEntityUuid: sourceEntity.uuid,
+                    //                 itemUuid: item.uuid
+                    //             });
+                    //         }
+                    //     });
+
+                    // });
+
+                    world.subscribe('fighter:die', function(victimEntity, sourceEntity) {
                         var totalList = [];
                         var sendComponentV = victimEntity.getComponent('netSend');
-                        var sendComponentS = sourceEntity.getComponent('netSend');
+                        var sendComponentS = sourceEntity.getComponent('netRecv');
 
                         if (sendComponentV) {
                             totalList = totalList.concat(sendComponentV.__knownEntities);
@@ -98,10 +127,9 @@ angular
                             if (knownEntity.hasComponent('player') &&
                                 knownEntity !== sourceEntity &&
                                 knownEntity !== victimEntity) {
-                                knownEntity.stream.emit('combat:damageEntity', {
+                                knownEntity.stream.emit('fighter:die', {
                                     victimEntityUuid: victimEntity.uuid,
-                                    sourceEntityUuid: sourceEntity.uuid,
-                                    itemUuid: item.uuid
+                                    sourceEntityUuid: sourceEntity.uuid
                                 });
                             }
                         });
@@ -340,7 +368,50 @@ angular
                             });
                         });
 
-                        entity.stream.on('combat:damageEntity', function(data) {
+                        // entity.stream.on('combat:damageEntity', function(data) {
+
+                        //     if (!_.isObject(data)) {
+                        //         return;
+                        //     }
+
+                        //     var damageableEntities = world.getEntities('damageable');
+
+                        //     var victimEntity = _.findWhere(damageableEntities, {
+                        //         uuid: data.victimEntityUuid
+                        //     });
+
+                        //     var sourceEntity = _.findWhere(damageableEntities, {
+                        //         uuid: data.sourceEntityUuid
+                        //     });
+
+                        //     if (!victimEntity) {
+                        //         console.error('victim entity not found!');
+                        //         return;
+                        //     }
+
+                        //     if (!sourceEntity) {
+                        //         console.error('source entity not found!');
+                        //         return;
+                        //     }
+
+                        //     if (sourceEntity.owner !== entity.owner &&
+                        //         victimEntity.owner !== entity.owner) {
+                        //         console.error('sourceEntity has wrong owner!');
+                        //         return;
+                        //     }
+
+                        //     var inventorySystem = world.getSystem('inventory');
+                        //     var item = inventorySystem.findItemByUuid(sourceEntity, data.itemUuid);
+                        //     if (!item) {
+                        //         console.error('item for damageEntity not found!');
+                        //         return;
+                        //     }
+
+                        //     world.publish('combat:damageEntity', victimEntity, sourceEntity, item);
+
+                        // });
+
+                        entity.stream.on('fighter:die', function(data) {
 
                             if (!_.isObject(data)) {
                                 return;
@@ -372,14 +443,13 @@ angular
                                 return;
                             }
 
-                            var inventorySystem = world.getSystem('inventory');
-                            var item = inventorySystem.findItemByUuid(sourceEntity, data.itemUuid);
-                            if (!item) {
-                                console.error('item for damageEntity not found!');
+                            if (sourceEntity.hasComponent('player') &&
+                                victimEntity.hasComponent('player')) {
+                                console.error('no PvP allowed!');
                                 return;
                             }
 
-                            world.publish('combat:damageEntity', victimEntity, sourceEntity, item);
+                            world.publish('fighter:die', victimEntity, sourceEntity);
 
                         });
 

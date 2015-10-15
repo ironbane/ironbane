@@ -133,18 +133,20 @@ angular
                                             if (spawns.length === 0) {
                                                 $log.log(IB_CONSTANTS.world.startLevel, ' has no spawn points defined!');
                                             }
-                                            // Just pick one of them
-                                            // Having multiple spawns is useful against AFK players so
-                                            // we don't have players spawning in/on top of eachother too much.
-                                            (function(spawn) {
-                                                var component = spawn.getComponent('spawnPoint');
+                                            else {
+                                                // Just pick one of them
+                                                // Having multiple spawns is useful against AFK players so
+                                                // we don't have players spawning in/on top of eachother too much.
+                                                (function(spawn) {
+                                                    var component = spawn.getComponent('spawnPoint');
 
-                                                if (component.tag === 'playerStart') {
-                                                    entity.level = IB_CONSTANTS.world.startLevel;
-                                                    entity.position.copy(spawn.position);
-                                                    entity.rotation.copy(spawn.rotation);
-                                                }
-                                            })(_.sample(spawns));
+                                                    if (component.tag === 'playerStart') {
+                                                        entity.level = IB_CONSTANTS.world.startLevel;
+                                                        entity.position.copy(spawn.position);
+                                                        entity.rotation.copy(spawn.rotation);
+                                                    }
+                                                })(_.sample(spawns));
+                                            }
 
                                             $activeWorlds[IB_CONSTANTS.world.startLevel].addEntity(entity);
                                         }

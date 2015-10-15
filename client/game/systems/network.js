@@ -209,17 +209,37 @@ angular
                         }
                     });
 
-                    world.subscribe('combat:damageEntity', function(victimEntity, sourceEntity, item) {
-                        // We only tell the server if the event has something to do with our local client
-                        // otherwise it's none of our business
+                    world.subscribe('fighter:die', function(victimEntity, sourceEntity) {
                         if (victimEntity.hasComponent('netSend') || sourceEntity.hasComponent('netSend')) {
-                            me._stream.emit('combat:damageEntity', {
+                            me._stream.emit('fighter:die', {
                                 victimEntityUuid: victimEntity.uuid,
-                                sourceEntityUuid: sourceEntity.uuid,
-                                itemUuid: item.uuid
+                                sourceEntityUuid: sourceEntity.uuid
                             });
                         }
                     });
+
+                    // world.subscribe('combat:damageEntity', function(victimEntity, sourceEntity, item) {
+                    //     // We only tell the server if the event has something to do with our local client
+                    //     // otherwise it's none of our business
+                    //     if (victimEntity.hasComponent('netSend') || sourceEntity.hasComponent('netSend')) {
+                    //         me._stream.emit('combat:damageEntity', {
+                    //             victimEntityUuid: victimEntity.uuid,
+                    //             sourceEntityUuid: sourceEntity.uuid,
+                    //             itemUuid: item.uuid
+                    //         });
+                    //     }
+                    // });
+
+                    // world.subscribe('combat:die', function(victimEntity, sourceEntity, item) {
+                    //     // We only tell the server if the event has something to do with our local client
+                    //     // otherwise it's none of our business
+                    //     if (victimEntity.hasComponent('netSend') || sourceEntity.hasComponent('netSend')) {
+                    //         me._stream.emit('combat:die', {
+                    //             victimEntityUuid: victimEntity.uuid,
+                    //             sourceEntityUuid: sourceEntity.uuid
+                    //         });
+                    //     }
+                    // });
 
                     // Set up streams and make sure it reruns everytime we change levels or change user
                     // $meteor.autorun is linked to $scope which we don't have here,
@@ -426,13 +446,30 @@ angular
                                     armorComponent.value = data.armor;
                                 }
 
-                                if (healthComponent && healthComponent.value <= 0) {
-                                    me.world.publish('fighter:die', entity);
-                                }
+                                // if (healthComponent && healthComponent.value <= 0) {
+                                //     me.world.publish('fighter:die', entity);
+                                // }
                             }
                         });
 
-                        me._stream.on('combat:damageEntity', function(data) {
+                        // me._stream.on('combat:damageEntity', function(data) {
+                        //     var damageableEntities = world.getEntities('damageable');
+                        //     var victimEntity = _.findWhere(damageableEntities, {
+                        //         uuid: data.victimEntityUuid
+                        //     });
+                        //     var sourceEntity = _.findWhere(damageableEntities, {
+                        //         uuid: data.sourceEntityUuid
+                        //     });
+                        //     if (sourceEntity) {
+                        //         var inventorySystem = world.getSystem('inventory');
+                        //         var item = inventorySystem.findItemByUuid(sourceEntity, data.itemUuid);
+                        //         if (item) {
+                        //             me.world.publish('combat:damageEntity', victimEntity, sourceEntity, item);
+                        //         }
+                        //     }
+                        // });
+
+                        me._stream.on('fighter:die', function(data) {
                             var damageableEntities = world.getEntities('damageable');
 
                             var victimEntity = _.findWhere(damageableEntities, {
@@ -444,15 +481,9 @@ angular
                             });
 
                             if (sourceEntity) {
-                                var inventorySystem = world.getSystem('inventory');
-                                var item = inventorySystem.findItemByUuid(sourceEntity, data.itemUuid);
-                                if (item) {
-                                    me.world.publish('combat:damageEntity', victimEntity, sourceEntity, item);
-                                }
+                                me.world.publish('fighter:die', victimEntity, sourceEntity);
                             }
-
                         });
-
 
                         me._stream.on('inventory:equipItem', function(data) {
                             var inv = world.getSystem('inventory'),
