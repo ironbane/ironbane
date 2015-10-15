@@ -97,10 +97,11 @@ angular
                             },
                             emitter: {
                                 type: 'cube',
-                                acceleration: [0, 1, 0],
+                                acceleration: [0, 0.5, 0],
                                 accelerationSpread: [0.2, 0.2, 0.2],
+                                position: [0.0, 0.5, 0.0],
                                 positionSpread: [0.2, 0.2, 0.2],
-                                velocity: [0, 1, 0],
+                                velocity: [0, 0.5, 0],
                                 velocitySpread: [0, 0, 0],
                                 duration: 0.5,
                                 // particlesPerSecond: 1,
@@ -110,6 +111,8 @@ angular
                                 angleEnd: Math.PI,
                                 // colorStart: 'blue',
                                 // colorEnd: 'white',
+                                opacityStart: 1.0,
+                                opacityEnd: 1.0,
                                 particleCount: amount
                             }
                         },
