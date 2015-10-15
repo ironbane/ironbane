@@ -433,6 +433,7 @@ angular
                         if (Meteor.isServer) {
                             this.removeItem(entity, item);
                             // TODO: turn these effects into behaviors?
+                        } else {
                             if (item.type === 'food') {
                                 entity.addComponent('buff', {
                                     type: 'heal',
@@ -456,7 +457,7 @@ angular
                                     duration: item.damage * 2
                                 });
                             }
-                        } else {
+
                             if (entity.hasComponent('netSend')) {
                                 GlobalSound.play(_.sample(['use']), entity.position);
                             }
