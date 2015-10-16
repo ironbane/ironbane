@@ -87,9 +87,8 @@ angular
                         if (mainPlayer) {
                             delete $rootScope.isTransitioning;
                         }
-                        else {
-                            $entityCache.put('mainPlayer', builtEntity);
-                        }
+
+                        $entityCache.put('mainPlayer', builtEntity);
 
                         // needed somewhere on the scope for the UI, prolly doesn't *need* to be root
                         $rootScope.mainPlayer = builtEntity;
