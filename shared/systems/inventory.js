@@ -437,8 +437,8 @@ angular
                             if (item.type === 'food') {
                                 entity.addComponent('buff', {
                                     type: 'heal',
-                                    amountPerInterval: 0.5,
-                                    duration: item.damage * 2
+                                    amountPerInterval: 0.25,
+                                    duration: item.damage * 4
                                 });
                             }
 
