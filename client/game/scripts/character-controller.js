@@ -405,16 +405,16 @@ angular
 
                     if (cheatComponent && cheatComponent.screenshot) {
                         if (this.rotateLeft) {
-                            this.entity.getComponent('camera')._camera.rotation.y += speedComponent.rotateSpeed * dt;
+                            mainCamera.getComponent('camera')._camera.rotation.y += speedComponent.rotateSpeed * dt;
                         }
                         if (this.rotateRight) {
-                            this.entity.getComponent('camera')._camera.rotation.y -= speedComponent.rotateSpeed * dt;
+                            mainCamera.getComponent('camera')._camera.rotation.y -= speedComponent.rotateSpeed * dt;
                         }
                         if (this.moveForward) {
-                            this.entity.getComponent('camera')._camera.position.y += 10 * dt;
+                            mainCamera.getComponent('camera')._camera.position.y += 10 * dt;
                         }
                         if (this.moveBackward) {
-                            this.entity.getComponent('camera')._camera.position.y -= 10 * dt;
+                            mainCamera.getComponent('camera')._camera.position.y -= 10 * dt;
                         }
                     }
                     else {
