@@ -1,6 +1,6 @@
 # Ironbane MMO
 
-Experimental client and server written in MeteorJS.
+An open source 3D action MMO written in Javascript.
 
 ## Installing and running
 
@@ -11,3 +11,7 @@ Clone this project somewhere.
 From the root directory, run `meteor`.
 
 Open `http://localhost:3000/`.
+
+## License
+
+This project falls under the MIT license unless explicitly stated otherwise.
