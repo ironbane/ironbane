@@ -1,6 +1,4 @@
-private/clara.json
-private/workshop
+private
 update.sh
-private/*.csv
 settings.json
 public/scene
