@@ -46,7 +46,7 @@ angular
 
                 angular.forEach(packet, function(entity, uuid) {
 
-                    console.debug('[NetworkSystem : add]', entity, uuid);
+                    // console.debug('[NetworkSystem : add]', entity, uuid);
 
                     var exists = world.scene.getObjectByProperty('uuid', uuid);
                     if (exists) {
