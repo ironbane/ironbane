@@ -9,7 +9,6 @@ angularui:angular-ui-router
 accounts-password
 artwells:accounts-guest
 mizzao:user-status
-meteorhacks:npm
 
 
 alanning:roles
@@ -35,3 +34,4 @@ npm-container
 angular:angular-sanitize
 ecmascript
 es5-shim
+meteorhacks:npm
